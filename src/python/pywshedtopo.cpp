@@ -31,10 +31,8 @@ namespace pink {
 
       char_image result;
       result = orig.clone();
-      if (! lwshedtopo_lwshedtopo(  result.get_output(), connex ) )
-      {
+      if (! lwshedtopo_lwshedtopo( result, connex ) )
         pink_error("lwshedtopo_lwshedtopo failed");
-      }
   
       return result;
     } /* wshedtopo */
@@ -43,12 +41,12 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_ONE_FUNCTION(
-  wshedtopo,
-  pink::python::wshedtopo, 
-  ( arg("image"), arg("connex") ),
-  doc__wshedtopo__c__
-  );
+// UI_EXPORT_ONE_FUNCTION(
+//   wshedtopo,
+//   pink::python::wshedtopo, 
+//   ( arg("image"), arg("connex") ),
+//   doc__wshedtopo__c__
+//   );
 
 
 

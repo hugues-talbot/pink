@@ -63,20 +63,19 @@ namespace pink {
       //   pink_error("%s: allocimage failed");
       // }
 
-      N = image.get_size().prod();//rowsize(image) * colsize(image) * depth(image);
-      F = UCHARDATA(image.get_output());
+      N = pink::prod(image.size());//rowsize(image) * colsize(image) * depth(image);
+      F = image.get();
 
       if (mode == 0)
       {
-
-        int_image rimage( image.get_size() );        
+        int_image rimage( image.size() );        
 
         for (int i = 0; i < N; i++) // inverse l'image
         {
           if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
         }
         
-        if (depth(image.get_output()) == 1) /* the image is 2D */
+        if (image.depth() == 1) /* the image is 2D */
         {
           if (! ldisteuc(image, rimage))
           {
@@ -98,14 +97,14 @@ namespace pink {
       else if (mode == 1)
       {
 
-        int_image rimage( image.get_size() );
+        int_image rimage( image.size() );
 
         for (int i = 0; i < N; i++) // inverse l'image
         {
           if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
         }
         
-        if (depth(image.get_output()) == 1) /* the image is 2D */
+        if (image.depth() == 1) /* the image is 2D */
         {
           if (! ldistquad(image, rimage))
           {
@@ -127,7 +126,7 @@ namespace pink {
       else if (mode == 2)
       {
 
-        int_image rimage( image.get_size() );
+        int_image rimage( image.size() );
 
         for (int i = 0; i < N; i++) // inverse l'image
         {
@@ -146,7 +145,7 @@ namespace pink {
       else if ((mode == 3) || (mode == 5))
       {
 
-        int_image rimage( image.get_size() );        
+        int_image rimage( image.size() );        
 
         if (! lsedt_meijster(image, rimage))
         {
@@ -174,7 +173,7 @@ namespace pink {
       else if (mode < 40)
       {
 
-        int_image rimage( image.get_size() );        
+        int_image rimage( image.size() );        
 
         for (int i = 0; i < N; i++) // inverse l'image
         {
@@ -192,7 +191,7 @@ namespace pink {
       }
       else /* NOT mode < 40 */
       {
-        char_image rimage( image.get_size() );        
+        char_image rimage( image.size() );        
 
         if (! ldistbyte(image, mode, rimage))
         {
@@ -243,14 +242,14 @@ namespace pink {
       //   pink_error("%s: allocimage failed");
       // }
 
-      N = image.get_size().prod();//rowsize(image) * colsize(image) * depth(image);
-      F = UCHARDATA(image.get_output());
+      N = pink::prod(image.size());//rowsize(image) * colsize(image) * depth(image);
+      F = image.get();
 
       if (mode == 0)
       {
-        int_image rimage( image.get_size() );
+        int_image rimage( image.size() );
         
-        if (depth(image.get_output()) == 1) /* image is 2D */
+        if (image.depth() == 1) /* image is 2D */
         {
           if (! ldisteuc(image, rimage))
           {
@@ -270,9 +269,9 @@ namespace pink {
       }
       else if (mode == 1)
       {
-        int_image rimage( image.get_size() );        
+        int_image rimage( image.size() );        
 
-        if (depth(image.get_output()) == 1) /* image is 2D */
+        if (image.depth() == 1) /* image is 2D */
         {
           if (! ldistquad(image, rimage))
           {
@@ -294,7 +293,7 @@ namespace pink {
       else if (mode == 2)
       {
         
-        int_image rimage( image.get_size() );
+        int_image rimage( image.size() );
 
         if (! lchamfrein(image, rimage))
         {
@@ -308,7 +307,7 @@ namespace pink {
       else if ((mode == 3) || (mode == 5))
       {
 
-        int_image rimage( image.get_size() );  
+        int_image rimage( image.size() );  
         
         for (int i = 0; i < N; i++) // inverse l'image
           if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
@@ -340,7 +339,7 @@ namespace pink {
       else if (mode < 40)
       {
 
-        int_image rimage( image.get_size() );        
+        int_image rimage( image.size() );        
 
         if (! ldist(image, mode, rimage))
         {
@@ -353,7 +352,7 @@ namespace pink {
       }
       else /* NOT mode < 40 */
       {
-        char_image rimage( image.get_size() );        
+        char_image rimage( image.size() );        
 
         if (! ldistbyte(image, mode, rimage))
         {
@@ -379,22 +378,22 @@ namespace pink {
 void distc_export()
 {
 
-  UI_DEFINE_ONE_FUNCTION(
-    dist,
-    pink::python::dist,
-    ( arg("image"), arg("mode")),
-    doc__dist__c__
-    // end of the documenation    
-    );
+  // UI_DEFINE_ONE_FUNCTION(
+  //   dist,
+  //   pink::python::dist,
+  //   ( arg("image"), arg("mode")),
+  //   doc__dist__c__
+  //   // end of the documenation    
+  //   );
   
   
-  UI_DEFINE_ONE_FUNCTION(
-    distc,
-    pink::python::distc,
-    ( arg("image"), arg("mode")),
-    doc__distc__c__
-    // end of the documenation
-    );
+  // UI_DEFINE_ONE_FUNCTION(
+  //   distc,
+  //   pink::python::distc,
+  //   ( arg("image"), arg("mode")),
+  //   doc__distc__c__
+  //   // end of the documenation
+  //   );
   
   
 } /* distc_export */

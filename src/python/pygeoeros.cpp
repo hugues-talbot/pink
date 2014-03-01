@@ -37,24 +37,19 @@ namespace pink {
 
       char_image result;
       result = F.clone();
-      char_image G_const_away;
-      G_const_away = G.clone();
 
-
-      if (result.get_size().size()!=result.get_size().size()){
+      if (result.size().size()!=result.size().size())
         pink_error("error: the dimensions of F and G must be equal");
-      } 
 
-
-      if (result.get_size().size()==2)
+      if (result.size().size()==2)
       {
-        lgeoeros( result.get_output(), G_const_away.get_output(), connex, numb_iter ); 
+        lgeoeros( result, G, connex, numb_iter ); 
       } 
       else 
       { /* NOT result.get_size().size()==2 */
-        if (result.get_size().size()==3)
+        if (result.size().size()==3)
         {      
-          lgeoeros3d( result.get_output(), G_const_away.get_output(), connex, numb_iter );
+          lgeoeros3d( result, G, connex, numb_iter );
         } 
         else 
         { /* NOT result.get_size().size()==3 */
@@ -70,13 +65,13 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_ONE_FUNCTION (
-  geoeros,
-  pink::python::geoeros,
-  ( arg("G image"), arg("F image"), arg("connexity"), arg("number of iterations")=-1 ),
-  doc__geoeros__c__
-  // end of the documenation
-  );
+// UI_EXPORT_ONE_FUNCTION (
+//   geoeros,
+//   pink::python::geoeros,
+//   ( arg("G image"), arg("F image"), arg("connexity"), arg("number of iterations")=-1 ),
+//   doc__geoeros__c__
+//   // end of the documenation
+//   );
 
   
 

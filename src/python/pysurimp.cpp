@@ -44,9 +44,9 @@ namespace pink {
       char_image copy_B;
       copy_B = B.clone();
   
-      writergbimage( copy_R.get_output(),
-                     copy_G.get_output(),
-                     copy_B.get_output(),
+      writergbimage( copy_R,
+                     copy_G,
+                     copy_B,
                      c_str_filename.get()
         );
   
@@ -75,11 +75,11 @@ namespace pink {
       struct xvimage * tmp3;
 
 
-      tmp = copyimage(image2.get_output());
+      tmp = copyimage(image2);
       linverse(tmp);
-      tmp3 = copyimage(image1.get_output());
+      tmp3 = copyimage(image1);
       lmin(tmp3,tmp);
-      copy2image(tmp,image2.get_output());
+      copy2image(tmp,image2);
       ladd(tmp,tmp3);
       writergbimage(tmp, tmp3, tmp3, c_str_filename.get());
       //freeimage(image1); this image is freed automatically by boost 
@@ -98,21 +98,21 @@ namespace pink {
 
 
 
-UI_EXPORT_ONE_FUNCTION(
-  surimp, 
-  pink::python::surimp, 
-  ( arg("greyscale image"), arg("the binary red marker image"), arg("the ppm filename")),
-  doc__surimp__c__
-  );
+// UI_EXPORT_ONE_FUNCTION(
+//   surimp, 
+//   pink::python::surimp, 
+//   ( arg("greyscale image"), arg("the binary red marker image"), arg("the ppm filename")),
+//   doc__surimp__c__
+//   );
 
 
 
-UI_EXPORT_ONE_FUNCTION(
-  generate_rgb_image, 
-  pink::python::generate_rgb_image, 
-  (arg("red image"), arg("green image"), arg("blue image"), arg("the ppm filename")),
-  "WRITE ME!!!\n"
-  );
+// UI_EXPORT_ONE_FUNCTION(
+//   generate_rgb_image, 
+//   pink::python::generate_rgb_image, 
+//   (arg("red image"), arg("green image"), arg("blue image"), arg("the ppm filename")),
+//   "WRITE ME!!!\n"
+//   );
 
 
 

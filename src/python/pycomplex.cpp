@@ -32,57 +32,57 @@ using namespace boost::python;
 namespace complex
 {
   
-  UI_WRAP_CPP(
-    "any2complex",
-    pink::lany2complex,
-    (arg("real part"), arg("imaginary part")),
-    doc__ui_any_to_complex__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+//   UI_WRAP_CPP(
+//     "any2complex",
+//     pink::lany2complex,
+//     (arg("real part"), arg("imaginary part")),
+//     doc__ui_any_to_complex__c__
+//     );
+// # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "fft",
-    lfft,
-    (arg("image"), arg("direction")),
-    doc__fft__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+//   UI_WRAP_FUNCTION(
+//     "fft",
+//     lfft,
+//     (arg("image"), arg("direction")),
+//     doc__fft__c__
+//     );
+// # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_RESULT(
-    float_image,
-    "complex_modulus",
-    lmodulus,
-    (arg("image")),
-    doc__complex_modulus__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+//   UI_WRAP_RESULT(
+//     float_image,
+//     "complex_modulus",
+//     lmodulus,
+//     (arg("image")),
+//     doc__complex_modulus__c__
+//     );
+// # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_RESULT(
-    float_image,
-    "modulus",
-    lmodulus,
-    (arg("image")),
-    "WRITE ME!!!"
-    );
-#include BOOST_PP_UPDATE_COUNTER()
+//   UI_WRAP_RESULT(
+//     float_image,
+//     "modulus",
+//     lmodulus,
+//     (arg("image")),
+//     "WRITE ME!!!"
+//     );
+// #include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_RESULT(
-    float_image,
-    "real",
-    lreal,
-    (arg("image")),
-    "WRITE ME!!!"
-    );
-#include BOOST_PP_UPDATE_COUNTER()
+//   UI_WRAP_RESULT(
+//     float_image,
+//     "real",
+//     lreal,
+//     (arg("image")),
+//     "WRITE ME!!!"
+//     );
+// #include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_RESULT(
-    float_image,
-    "imaginary",
-    limaginary,
-    (arg("image")),
-    "WRITE ME!!!"
-    );
-#include BOOST_PP_UPDATE_COUNTER()
+//   UI_WRAP_RESULT(
+//     float_image,
+//     "imaginary",
+//     limaginary,
+//     (arg("image")),
+//     "WRITE ME!!!"
+//     );
+// #include BOOST_PP_UPDATE_COUNTER()
 
 
 } /* namespace complex */
@@ -91,7 +91,7 @@ using namespace complex;
 
 void pycomplex()
 {
-  CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
+  // CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
 }
 
 

@@ -23,53 +23,28 @@
 
 namespace pink { 
 
-  template <class image_type>  
-  typename image_type::pixel_type lmaxval( const image_type & I ){
-
-    // getting the pixel type of the image
-    typedef typename image_type::pixel_type pixel_type;
-
+  template <class image_t>  
+  typename image_t::pixel_type lmaxval( const image_t & I ){
+    typedef typename image_t::pixel_type pixel_type;
+        
     // the variable to hold the maximum value
     pixel_type max = I(0);
     
-    //calculating the number of pixels in the image
-    int length_glob = I.get_size().prod();
-
-    FOR(q, length_glob)
-    {
-      if (I(q) > max)
-      {
-	max = I(q);
-      } /* if (I[q] > max) */
-	
-    } /* FOR */
+    for ( const auto & pixel : I ) if (pixel > max) max = pixel;
 
     return max;
   } /* image::pixel_type maxval */
 
 
   template <class image_type>
-  typename image_type::pixel_type lminval( const image_type & I ){
+  typename image_type::pixel_type lminval( const image_type & I ) {
 
-    // getting the pixel type of the image
     typedef typename image_type::pixel_type pixel_type;
 
     // the variable to hold the minimum value
     pixel_type min = I(0);
-    
 
-    //calculating the number of pixels in the image
-    int length_glob = I.get_size().prod();
-
-
-    FOR(q, length_glob)
-    {
-      if (I(q) < min)
-      {
-	min = I(q);
-      } /* if (I[q] > min) */
-	
-    } /* FOR */
+    for ( auto & pixel : I ) if (pixel < min) min = pixel;
 
     return min;
   } /* image::pixel_type minval */
@@ -87,7 +62,7 @@ namespace pink {
     
     
     std::pair< const pixel_type * , const pixel_type *> 
-      tmp = boost::minmax_element( (&I(0)), (&I(I.get_size().prod())) ); // here the prod is the correct position because it iterates up to
+      tmp = boost::minmax_element( (&I(0)), (&I(pink::prod(I.size()))) ); // here the prod is the correct position because it iterates up to
 
     result.first = (*tmp.first);
     result.second = (*tmp.second);
@@ -97,69 +72,69 @@ namespace pink {
   } /* minmaxval */
   
 
-  template <class image_type> 
-  image_type immap(
-    const image_type & image1,
-    const image_type & image2,
-    bool (*map_function)( typename image_type::pixel_type val1,  
-                          typename image_type::pixel_type val2 
-			   )
-    )
-  {
-    image_type result(image1.get_size());
+  // template <class image_type> 
+  // image_type immap(
+  //   const image_type & image1,
+  //   const image_type & image2,
+  //   bool (*map_function)( typename image_type::pixel_type val1,  
+  //                         typename image_type::pixel_type val2 
+  //       		   )
+  //   )
+  // {
+  //   image_type result(image1.get_size());
     
-    FOR(q, image1.get_size().prod())
-    {
-      map_function( image1[q], image2[q]) ? result[q]=image1[q] : result[q]=image2[q];
+  //   FOR(q, image1.get_size().prod())
+  //   {
+  //     map_function( image1[q], image2[q]) ? result[q]=image1[q] : result[q]=image2[q];
       
-    } /* FOR */
+  //   } /* FOR */
     
-    return result;
-  } /* immap */
+  //   return result;
+  // } /* immap */
   
-  namespace lminmax 
-  {
+  // namespace lminmax 
+  // {
 
-    template <class pixel_type>
-    bool max_map( pixel_type val1, pixel_type val2 )
-    {
-      return (val1>=val2);
-    } /* max_map */
+  //   template <class pixel_type>
+  //   bool max_map( pixel_type val1, pixel_type val2 )
+  //   {
+  //     return (val1>=val2);
+  //   } /* max_map */
 
-    template <class pixel_type>
-    bool min_map( pixel_type val1, pixel_type val2 )
-    {
-      return (val1<=val2);
-    } /* min_map */
+  //   template <class pixel_type>
+  //   bool min_map( pixel_type val1, pixel_type val2 )
+  //   {
+  //     return (val1<=val2);
+  //   } /* min_map */
         
 
-  } /* namespace lminmax */
+  // } /* namespace lminmax */
   
 
-  template <class image_type> 
-  image_type immap_max( const image_type & image1,
-                        const image_type & image2
-    )
-  {
+  // template <class image_type> 
+  // image_type immap_max( const image_type & image1,
+  //                       const image_type & image2
+  //   )
+  // {
 
-    typedef typename image_type::pixel_type pixel_type;
+  //   typedef typename image_type::pixel_type pixel_type;
 
-    return immap( image1, image2, &lminmax::max_map<pixel_type> );
+  //   return immap( image1, image2, &lminmax::max_map<pixel_type> );
     
-  } /* immap_max */
+  // } /* immap_max */
   
 
 
-  template <class image_type> 
-  image_type immap_min( const image_type & image1,
-                        const image_type & image2
-    )
-  {
+  // template <class image_type> 
+  // image_type immap_min( const image_type & image1,
+  //                       const image_type & image2
+  //   )
+  // {
 
-    typedef typename image_type::pixel_type pixel_type;
+  //   typedef typename image_type::pixel_type pixel_type;
 
-    return immap( image1, image2, &lminmax::min_map<pixel_type> );
-  } /* immap_min */
+  //   return immap( image1, image2, &lminmax::min_map<pixel_type> );
+  // } /* immap_min */
     
 
   

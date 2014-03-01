@@ -110,22 +110,22 @@ namespace pink {
   template<class image_type>
   image_type ungerflow<image_type>::start()
   {
-    this->sentinel.maxPos(this->iteration);
-    this->sentinel.minPos(0);
-    this->sentinel << 0;
-    this->sentinel.start();
-    std::cout << "starting the iteration\n";
+    this->m_sentinel.maxPos(this->m_iteration);
+    this->m_sentinel.minPos(0);
+    this->m_sentinel << 0;
+    this->m_sentinel.start();
+    std::cout << "starting the m_iteration\n";
     
 
-    FOR( e, this->iteration ) {    
+    FOR( e, this->m_iteration ) {    
 
       if ( e % REPORT_INTERVAL == 0 ) 
       {
-      	if ( this->sentinel.timeToReport() )
+      	if ( this->m_sentinel.timeToReport() )
       	{
-      	  std::cout << "Estimated time remaining: " << (this->sentinel << e) << std::endl;
+      	  std::cout << "Estimated time remaining: " << (this->m_sentinel << e) << std::endl;
       	} /* timeToReport() */
-      } /* if iterations ... */
+      } /* if m_iterations ... */
 //      _DEBUG(e);
 
       this->upDateSrcSink();
@@ -142,8 +142,8 @@ namespace pink {
         
         
         
-      FOR( w, this->d ){
-        FOR( par, this->dibFlow[w].size() )
+      FOR( w, this->m_d ){
+        FOR( par, this->m_dibFlow[w].size() )
         {
           this->upDateFlow( par, par + 1, w );
         } /* FOR */
@@ -160,15 +160,15 @@ namespace pink {
       
       this->upDateThreshold();
       
-      this->potencial.swap(dual_potencial); /// !!!!
+      this->m_potencial.swap(dual_potencial); /// !!!!
 
-    } /* FOR(e, iteration) */
+    } /* FOR(e, m_iteration) */
 
-    this->sentinel.stop();
-    std::cout << "total time of iteration: " << this->sentinel.elapsedTime() << std::endl;
+    this->m_sentinel.stop();
+    std::cout << "total time of m_iteration: " << this->m_sentinel.elapsedTime() << std::endl;
 
 
-    return this->potencial;
+    return this->m_potencial;
     
 
   } /* ungerflow::start */
@@ -178,17 +178,17 @@ namespace pink {
   template <class image_type>
   void ungerflow<image_type>::upDateThreshold(void)
   {
-    FOR(q, this->length_glob)
+    FOR(q, this->m_length_glob)
     {
-      if ( this->potencial(q) - guidence_f(q) > lambda(q) * theta )
+      if ( this->m_potencial(q) - guidence_f(q) > lambda(q) * theta )
       {
-	dual_potencial(q) = this->potencial(q) - lambda(q) * theta;	
+	dual_potencial(q) = this->m_potencial(q) - lambda(q) * theta;	
       }
       else /* NOT (*potencial)(q) - (*guidence_f)(q) > (*lambda)(q) * theta */
       {
-	if ( this->potencial(q) - guidence_f(q) < - lambda(q) * theta )
+	if ( this->m_potencial(q) - guidence_f(q) < - lambda(q) * theta )
 	{
-	  dual_potencial(q) = this->potencial(q) + lambda(q) * theta;
+	  dual_potencial(q) = this->m_potencial(q) + lambda(q) * theta;
 	}
 	else /* NOT (*potencial)(q) - (*guidence_f)(q) < - (*lambda)(q) * theta => |u-f| < lambda * theta */	
 	{

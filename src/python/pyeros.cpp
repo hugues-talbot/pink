@@ -14,8 +14,6 @@
 #include "pink_python.h"
 #include "ldilateros3d.h"
 
-using namespace boost::python;
-using namespace pink;
 
 namespace pink {
   namespace python {
@@ -28,7 +26,7 @@ namespace pink {
       )
     {
 
-      if (! elem.get_size().inside(elem.get_center()) )
+      if (! pink::inside(elem.size(), elem.center()) )
       {
         pink_error("The center of 'elem' must be specified.");
       } /* if center not inside*/
@@ -37,18 +35,18 @@ namespace pink {
       result = src.clone();
 
 
-      if ( src.get_size().size()==2) // the image is 2D
+      if ( src.size().size()==2) // the image is 2D
       {        
-        if (! ldilateros_leros( result.get_output(), elem.get_output(),
-                                elem.get_center()[0], elem.get_center()[1]))
+        if (! ldilateros_leros( result, elem,
+                                elem.center()[0], elem.center()[1]))
         {
           pink_error("function ldilateros_leros failed");
         } /* (! ldilateros_leros( src, elem_const_away, x, y)) */
       }
       else  // NOT the image is 2D
       {
-        if (! leros3d( result.get_output(), elem.get_output(),
-                       elem.get_center()[0], elem.get_center()[1], elem.get_center()[2]))          
+        if (! leros3d( result, elem,
+                       elem.center()[0], elem.center()[1], elem.center()[2]))          
         {
           pink_error("function leros3d failed");
         } /* (! leros3d( src, elem_const_away, x, y)) */        
@@ -61,13 +59,13 @@ namespace pink {
 } /* namespace pink */
 
     
-UI_EXPORT_FUNCTION(
-  erosion,
-  pink::python::erosion,
-  (arg("src"), arg("elem")),
-  doc__erosion__c__
-  // end of the documenation
-  );
+// UI_EXPORT_FUNCTION(
+//   erosion,
+//   pink::python::erosion,
+//   (arg("src"), arg("elem")),
+//   doc__erosion__c__
+//   // end of the documenation
+//   );
 
 
 

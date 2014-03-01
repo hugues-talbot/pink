@@ -62,8 +62,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <sys/types.h>
 
 
-//#include <sqlite3ext.h> // not yet needed
-
 #ifndef __cplusplus
 #  include <string.h>
 #  include <ctype.h>
@@ -104,7 +102,6 @@ knowledge of the CeCILL license and that you accept its terms.
 
 
 
-#include "sqlite3.h"
 #include "bdd.h"
 #include "lballincl.h"
 #include "mccodimage.h"
@@ -320,7 +317,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #  include "ui_pink_types.hpp"
 #  include "ujimage.hpp"
 #  include "uiFrame.hpp"
-#  include "uiSqhool.hpp"
 #  include "readpnm.h"
 #  include "uiBorder.h"
 #  include "uiImage.h"

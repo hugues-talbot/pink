@@ -49,19 +49,19 @@ namespace pink {
   } /* namespace python */
 } /* namespace pink */
 
-UI_EXPORT_FUNCTION(
-  zoom,
-  pink::python::zoom,
-  ( arg("src"),
-    arg("zoom factor X"),
-    arg("zoom factor Y"),
-    arg("zoom factor Z" ) ),
-  "Zoom (shrink or engarle) an image. "
-  "The three arguments are the zoom factors. "
-  "More advanced parametrization through the 'pink.zoom' function."
-  "Note: this function is too rigid (you can't choose the zoom algorithm) "
-  " and should definitely be replaced later"
-  );
+// UI_EXPORT_FUNCTION(
+//   zoom,
+//   pink::python::zoom,
+//   ( arg("src"),
+//     arg("zoom factor X"),
+//     arg("zoom factor Y"),
+//     arg("zoom factor Z" ) ),
+//   "Zoom (shrink or engarle) an image. "
+//   "The three arguments are the zoom factors. "
+//   "More advanced parametrization through the 'pink.zoom' function."
+//   "Note: this function is too rigid (you can't choose the zoom algorithm) "
+//   " and should definitely be replaced later"
+//   );
 
 
 

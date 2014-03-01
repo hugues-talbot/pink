@@ -48,13 +48,15 @@ Running time in independent of the size of the SE.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <mccodimage.h>
-#include <mcimage.h>
 
 #include "pink.h"
 #include "liarp.h"
+#include "mcimage.h"
 #include "fseries.hpp"
+#include "mccodimage.h"
 #include "liar_fseries.h"
+
+
 
 /* 3D square morphological operation*/
 

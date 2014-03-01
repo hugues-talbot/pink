@@ -26,12 +26,12 @@ pylfmm(
   float threshold )
 {
 
-  int32_t  rs, cs, ss, dim[4], ndim;
-  int32_t *SeedIn,  *SeedOut;
+  index_t  rs, cs, ss, ndim;
+  int32_t *SeedIn,  *SeedOut, dim[4];
   float   *SpeedIn, *SpeedOut;
   
-  SeedIn  = seeds.get_pixels().get(); //SLONGDATA(seeds);
-  SpeedIn = speeds.get_pixels().get(); // FLOATDATA(speed);
+  SeedIn  = seeds.get(); //SLONGDATA(seeds);
+  SpeedIn = speeds.get(); // FLOATDATA(speed);
     
   pink::int_image voronoi;
   voronoi = seeds.clone();  
@@ -39,19 +39,19 @@ pylfmm(
   pink::float_image distance;
   distance = speeds.clone();
     
-  SeedOut  = voronoi.get_pixels().get();
-  SpeedOut = distance.get_pixels().get();
+  SeedOut  = voronoi.get();
+  SpeedOut = distance.get();
 
   /* careful: rowsize is the size of a row => nx */
-  rs = seeds.get_size()[0];
-  cs = seeds.get_size()[1];
-  ss = seeds.get_size()[2];
+  rs = seeds.rows();  
+  cs = seeds.cols();
+  ss = seeds.depth();
 
 #if UJIMAGE_DEBUG > 1
   fprintf(stderr, "dimensions: [%d x %d x %d]\n", rs, cs, ss);
 #endif
 
-  ndim = seeds.get_size().size();  
+  ndim = seeds.size().size();  
   // ndim = 2;
   // if (ss > 1)
   //   ++ndim;

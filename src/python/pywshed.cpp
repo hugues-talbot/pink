@@ -29,80 +29,80 @@ namespace wshed
 {
   
 
-  UI_WRAP_FUNCTION(
-    "watershed",
-    lwshedtopobin,
-    ( arg("image"), arg("mark"), arg("connexity") ),
-    doc__watershed__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+//   UI_WRAP_FUNCTION(
+//     "watershed",
+//     lwshedtopobin,
+//     ( arg("image"), arg("mark"), arg("connexity") ),
+//     doc__watershed__c__
+//     );
+// # include BOOST_PP_UPDATE_COUNTER()
 
-// by HT for Claire
-  UI_WRAP_FUNCTION(
-    "watershedMeyer2",
-    llpemeyer_llpemeyer2,
-    ( arg("markers"), arg("image"), arg("mask"), arg("connexity") ),
-    doc__watershedMeyer2__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// // by HT for Claire
+//   UI_WRAP_FUNCTION(
+//     "watershedMeyer2",
+//     llpemeyer_llpemeyer2,
+//     ( arg("markers"), arg("image"), arg("mask"), arg("connexity") ),
+//     doc__watershedMeyer2__c__
+//     );
+// # include BOOST_PP_UPDATE_COUNTER()
 
-// by MC
-  UI_WRAP_FUNCTION(
-    "watershedMeyer2lab",
-    llpemeyer2lab,
-    ( arg("markers"), arg("image"), arg("mask"), arg("connexity") ),
-    doc__watershedMeyer2lab__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// // by MC
+//   UI_WRAP_FUNCTION(
+//     "watershedMeyer2lab",
+//     llpemeyer2lab,
+//     ( arg("markers"), arg("image"), arg("mask"), arg("connexity") ),
+//     doc__watershedMeyer2lab__c__
+//     );
+// # include BOOST_PP_UPDATE_COUNTER()
 
-// by MC
-  UI_WRAP_FUNCTION(
-    "watershedMeyer2labnomask",
-    llpemeyer2lab_nomask,
-    ( arg("markers"), arg("image"), arg("connexity") ),
-    doc__watershedMeyer2lab__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// // by MC
+//   UI_WRAP_FUNCTION(
+//     "watershedMeyer2labnomask",
+//     llpemeyer2lab_nomask,
+//     ( arg("markers"), arg("image"), arg("connexity") ),
+//     doc__watershedMeyer2lab__c__
+//     );
+// # include BOOST_PP_UPDATE_COUNTER()
 
-// by HT for Claire
-  UI_WRAP_FUNCTION(
-    "watershedMeyer2NM",
-    llpemeyer2_nomask,
-    ( arg("markers"), arg("image"), arg("connexity") ),
-    doc__watershedMeyer2__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// // by HT for Claire
+//   UI_WRAP_FUNCTION(
+//     "watershedMeyer2NM",
+//     llpemeyer2_nomask,
+//     ( arg("markers"), arg("image"), arg("connexity") ),
+//     doc__watershedMeyer2__c__
+//     );
+// # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "wshedval",
-    lwshedval,
-    (arg("image"), arg("connex")),
-    doc__wshedval__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+//   UI_WRAP_FUNCTION(
+//     "wshedval",
+//     lwshedval,
+//     (arg("image"), arg("connex")),
+//     doc__wshedval__c__
+//     );
+// # include BOOST_PP_UPDATE_COUNTER()
 
 
-    UI_WRAP_RESULT(
-        int_image,
-        "powerwatershedCol",
-        compute_power_watershed_col,
-        (arg("image_r"), arg("image_g"), arg("image_b"), arg("seeds"), arg("geodesic"), arg("multiple")),
-        "WRITE ME!!!"
-        //doc__powerwshedval__c__
-        );
+//     UI_WRAP_RESULT(
+//         int_image,
+//         "powerwatershedCol",
+//         compute_power_watershed_col,
+//         (arg("image_r"), arg("image_g"), arg("image_b"), arg("seeds"), arg("geodesic"), arg("multiple")),
+//         "WRITE ME!!!"
+//         //doc__powerwshedval__c__
+//         );
 
-# include BOOST_PP_UPDATE_COUNTER()
+// # include BOOST_PP_UPDATE_COUNTER()
     
-    UI_WRAP_RESULT(
-        int_image,
-        "powerwatershedBW",
-        compute_power_watershed_bw,
-        (arg("image_bw"), arg("seeds"), arg("geodesic"), arg("multiple")),
-        "WRITE ME!!!"
-        //doc__powerwshedval__c__
-        );
+//     UI_WRAP_RESULT(
+//         int_image,
+//         "powerwatershedBW",
+//         compute_power_watershed_bw,
+//         (arg("image_bw"), arg("seeds"), arg("geodesic"), arg("multiple")),
+//         "WRITE ME!!!"
+//         //doc__powerwshedval__c__
+//         );
 
-# include BOOST_PP_UPDATE_COUNTER()
+// # include BOOST_PP_UPDATE_COUNTER()
 
 
     
@@ -112,7 +112,7 @@ using namespace wshed;
 
 void pywshed()
 {
-  CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
+//  CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
 }
 
 

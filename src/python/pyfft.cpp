@@ -26,16 +26,16 @@ namespace pink {
       int32_t dir
       )
     {
-      if (image.get_size().size()!=2)
+      if (image.size().size()!=2)
       {
         pink_error("Only 2D complex images are supported by FFT.");        
       } /* if */
 
       int32_t rs, cs, cs2, rs2;
-      fcomplex_image * result;
+      fcomplex_image result;
       
-      cs = image.get_size()[0];            /* Number of rows */
-      rs = image.get_size()[1];            /* Number of columns */
+      cs = image.size()[0];            /* Number of rows */
+      rs = image.size()[1];            /* Number of columns */
   
       rs2 = cs2 = 1;
 
@@ -46,30 +46,26 @@ namespace pink {
 
       if ((rs2 != rs) || (cs2 != cs))
       {
-        pink::types::vint new_size(2);
-        new_size << rs2, cs2;
-        
-        result = new fcomplex_image(new_size);
+        result.reset(rs2, cs2);
 
-        result->get_output()->xdim = image.get_output()->xdim;
-        result->get_output()->ydim = image.get_output()->ydim;
-        result->get_output()->zdim = image.get_output()->zdim;
+        result.xdim() = image.xdim();
+        result.ydim() = image.ydim();
+        result.zdim() = image.zdim();
         
-        razimage(result->get_output());
-        if (!linsert(image.get_output(), result->get_output(), 0, 0, 0))
-        {
+        razimage(result);
+        
+        if (!linsert(image, result, 0, 0, 0))
           pink_error("function linsert failed");
-        }
         
         // NOTE: these commands are not necessary in C++
         ///freeimage(image);
         //image = image2;
       }
-      else /* NOT rs2!=rs or cs2!=cs */
-      {
-        result = new fcomplex_image();
-        (*result) = image.clone();
-      } /* NOT rs2!=rs or cs2!=cs */
+      // else /* NOT rs2!=rs or cs2!=cs */
+      // {
+      //   result = new fcomplex_image();
+      //   (*result) = image.clone();
+      // } /* NOT rs2!=rs or cs2!=cs */
       
   
       /* if (! lfft(image, dir)) */
@@ -77,20 +73,20 @@ namespace pink {
       /*   fprintf(stderr, "%s: function lfft failed\n", argv[0]); */
       /*   exit(1); */
       /* } */
-      lfft(result->get_output(), dir);
+      lfft(result, dir);
 
-      return *result;      
+      return result;      
     } /* py_fft */
 
   } /* namespace python */
 } /* namespace pink */
 
 
-UI_EXPORT_ONE_FUNCTION( fft, 
-                        pink::python::py_fft, 
-                        (arg("image"), arg("direction")=0),
-                        doc__fft__c__
-  );
+// UI_EXPORT_ONE_FUNCTION( fft, 
+//                         pink::python::py_fft, 
+//                         (arg("image"), arg("direction")=0),
+//                         doc__fft__c__
+//   );
 
 
 

@@ -22,62 +22,60 @@
 // you shouldn't use one character macros
 #undef N
 
-using namespace std;
-
 namespace pink {
 
 
-  template <>
-  index_t
-  maxint<short_image::pixel_type>()
-  {
-    return USHRT_MAX;    
-  }
+  // template <>
+  // index_t
+  // maxint<short_image::pixel_type>()
+  // {
+  //   return USHRT_MAX;    
+  // }
 
-  template <>
-  index_t
-  maxint<char_image::pixel_type>()
-  {
-    return UCHAR_MAX;    
-  }
+  // template <>
+  // index_t
+  // maxint<char_image::pixel_type>()
+  // {
+  //   return UCHAR_MAX;    
+  // }
 
-  template <>
-  index_t
-  maxint<int_image::pixel_type>()
-  {
-    return INT_MAX;    
-  }
+  // template <>
+  // index_t
+  // maxint<int_image::pixel_type>()
+  // {
+  //   return INT_MAX;    
+  // }
 
-  char_image long2byte(
-    const int_image & src,
-    int mode,
-    int nbnewval
-    )
-  {
-    int_image local_copy = src.clone();
+  // char_image long2byte(
+  //   const int_image & src,
+  //   int mode,
+  //   int nbnewval
+  //   )
+  // {
+  //   int_image local_copy = src.clone();
   
-    xvimage * res = long2byte( local_copy.get_output(), mode, nbnewval );
+  //   xvimage * res = long2byte( local_copy.get_output(), mode, nbnewval );
 
-    char_image result(res);
-    free(res); // NOT freeimage!!!!
+  //   char_image result(res);
+  //   free(res); // NOT freeimage!!!!
 
-    return result;    
-  } /* long2byte */
+  //   return result;    
+  // } /* long2byte */
   
-  char_image float2byte( const float_image & src, int mode )
-  {
-    return convert_image<float_image, char_image>(src, mode);
-  } /* float2byte */
+  // char_image float2byte( const float_image & src, int mode )
+  // {
+  //   return convert_image<float_image, char_image>(src, mode);
+  // } /* float2byte */
 
-  short_image long2short( const int_image & src, int mode )
-  {
-    return convert_image<int_image, short_image>(src, mode);
-  } /* long2short */
+  // short_image long2short( const int_image & src, int mode )
+  // {
+  //   return convert_image<int_image, short_image>(src, mode);
+  // } /* long2short */
   
-  char_image short2byte( const short_image & src, int mode )
-  {
-    return convert_image<short_image, char_image>(src, mode);
-  } /* short2byte */
+  // char_image short2byte( const short_image & src, int mode )
+  // {
+  //   return convert_image<short_image, char_image>(src, mode);
+  // } /* short2byte */
 
 
 #ifdef MCNEW

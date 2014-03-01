@@ -55,7 +55,7 @@ typedef enum {
 
 
 
-pink::float_image readPNMImage(const std::string & filename);
+pink::image<float> readPNMImage(const std::string & filename);
 //int pnmnbsubfiles(const char *);
 
 #endif /* READPNM_H */

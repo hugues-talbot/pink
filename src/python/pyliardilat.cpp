@@ -98,19 +98,19 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_FUNCTION(
-  fdilaterect,
-  pink::python::liardilaterect,
-  ( arg("src"), arg("SEnx"),arg("SEny"), arg("SEnz") ),
-  "Fast dilation by a flat 2D rectangle or 3D rectangle parallelepiped"
-  );
+// UI_EXPORT_FUNCTION(
+//   fdilaterect,
+//   pink::python::liardilaterect,
+//   ( arg("src"), arg("SEnx"),arg("SEny"), arg("SEnz") ),
+//   "Fast dilation by a flat 2D rectangle or 3D rectangle parallelepiped"
+//   );
 
-UI_EXPORT_FUNCTION(
-  fdilatepoly,
-  pink::python::liardilatepoly,
-  ( arg("src"), arg("Radius"),arg("Type"), arg("Sides") ),
-  "Fast 2D dilation by a flat polygon, given a radius, a type of line (0=periodic or 1=Bresenham) and a number of sides (can be zero)"
-  );
+// UI_EXPORT_FUNCTION(
+//   fdilatepoly,
+//   pink::python::liardilatepoly,
+//   ( arg("src"), arg("Radius"),arg("Type"), arg("Sides") ),
+//   "Fast 2D dilation by a flat polygon, given a radius, a type of line (0=periodic or 1=Bresenham) and a number of sides (can be zero)"
+//   );
 
 
 

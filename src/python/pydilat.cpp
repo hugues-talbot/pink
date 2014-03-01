@@ -23,37 +23,24 @@ namespace pink {
   namespace python {
 
     template <class image_t>
-    image_t dilation
-    (
-      const image_t & src, 
-      char_image elem
-      )
+    image_t
+    dilation ( const image_t & image, const char_image & elem )
     {
   
-      if (! elem.get_size().inside(elem.get_center()) )
-      {
+      if (! pink::inside( elem.size(), elem.center() ) )
         pink_error("The center of 'elem' must be specified.");
-      } /* if center not inside*/
       
-      image_t result;
-      result = src.clone();
-      
-      
-      if ( src.get_size().size()==2) // the image is 2D
+      image_t result = image.clone();
+            
+      if ( image.size().size()==2) // the image is 2D
       {        
-        if (! ldilateros_ldilat( result.get_output(), elem.get_output(),
-                                elem.get_center()[0], elem.get_center()[1]))
-        {
+        if (! ldilateros_ldilat( result, elem, elem.center()[0], elem.center()[1]))
           pink_error("function ldilateros_ldilat failed");
-        } /* (! ldilateros_ldilat( src, elem_const_away, x, y)) */
       }
       else  // NOT the image is 2D
       {
-        if (! ldilat3d( result.get_output(), elem.get_output(),
-                       elem.get_center()[0], elem.get_center()[1], elem.get_center()[2]))          
-        {
+        if (! ldilat3d( result, elem, elem.center()[0], elem.center()[1], elem.center()[2]))          
           pink_error("function ldilat3d failed");
-        } /* (! ldilat3d( src, elem_const_away, x, y)) */        
       } // NOT the image is 2D
 
       return result;    
@@ -63,13 +50,13 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_FUNCTION(
+// UI_EXPORT_FUNCTION(
  
-  dilation,
-  pink::python::dilation,
-  ( arg("src"), arg("elem") ),
-  doc__dilation__c__
-  );
+//   dilation,
+//   pink::python::dilation,
+//   ( arg("image"), arg("elem") ),
+//   doc__dilation__c__
+//   );
 
 
 

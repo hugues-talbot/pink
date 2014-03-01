@@ -41,10 +41,10 @@ namespace pink {
 // #define __ETAP_FLOW 1232
 // #define __ETAP_CONSTR 9120
   
-#  define ATOMIC( code )                                        \
-  parent->global_lock->lock();					\
-  code								\
-  parent->global_lock->unlock();
+#  define ATOMIC( code )                                                \
+  parent->m_global_lock->lock();					\
+  code                                                                  \
+  parent->m_global_lock->unlock();
 
   
   
@@ -68,10 +68,10 @@ namespace pink {
     
     friend class max_flow<image_type>;    
     
-    parent_type * parent;
+    parent_type * m_parent;
     
-    index_t ID, start_dibble, end_dibble, direction, current_iteration;
-    maxflow_types::etap etap; // this is the current state of iteration
+    index_t m_ID, m_start_dibble, m_end_dibble, m_direction, m_current_iteration;
+    maxflow_types::etap m_etap; // this is the current state of iteration
     
     
   }; /* class packet */
@@ -85,30 +85,30 @@ namespace pink {
   private:
     
     // variables for threading
-    boost::shared_ptr<boost::mutex> global_lock;
-    boost::shared_ptr<boost::shared_mutex> shared_lock;
+    boost::shared_ptr<boost::mutex> m_global_lock;
+    boost::shared_ptr<boost::shared_mutex> m_shared_lock;
 
     friend class packet<image_type>;
 
     typedef typename image_type::pixel_type pixel_type;
 
     // the result will be put in this image
-    image_type gg;
-    char_image src_sink;
+    image_type m_gg;
+    char_image m_src_sink;
 
 //    boost::shared_array<pixel_type> pot_glob;
-    boost::shared_array<pixel_type> g_glob;
-    boost::shared_array<pixel_type> flow_glob;
+    pixel_type * m_g_glob;
+    boost::shared_array<pixel_type> m_flow_glob;
 
-    index_t starttime;
-    index_t number_of_threads;
-    bool flow_calculated;  // this variable hold if start function has already been called, 
+    index_t m_starttime;
+    index_t m_number_of_threads;
+    bool m_flow_calculated;  // this variable hold if start function has already been called, 
                            // if it hasn't than pot_glob and flow_flob are not yet allocated
    
     // functions for threading    
-    boost::shared_ptr<packet<image_type> > reference;
+    boost::shared_ptr<packet<image_type> > m_reference;
     bool conductor( packet<image_type> & thread );
-    index_t packet_size; // this variable holds the number of consecutive
+    index_t m_packet_size; // this variable holds the number of consecutive
                      // dibbles to be processed by the same thread. If
                      // packet_size==n then each thread processes n
                      // dibbles for on one charge. n dibbles is called
@@ -118,13 +118,13 @@ namespace pink {
     
   protected:
 
-    index_t d;
-    float   tau;
-    bool    verbose;   // debug info messages
-    index_t iteration; // the number of desired iterations
-    index_t length_glob;
-    pink::types::progress_bar sentinel;    
-    boost::shared_ptr<pink::types::vint> dim;
+    index_t m_d;
+    float   m_tau;
+    bool    m_verbose;   // debug info messages
+    index_t m_iteration; // the number of desired iterations
+    index_t m_length_glob;
+    pink::types::progress_bar m_sentinel;    
+    boost::shared_ptr<std::vector<index_t>> m_dim;
 
     // functions for calculation 
     void upDateConstrain(index_t startDibble, index_t endDibble);
@@ -136,16 +136,16 @@ namespace pink {
     std::vector<dibble_t> dibConstrain;
     std::vector<dibble_t> dibPotencial;
 
-    image_type potencial;
+    image_type m_potencial;
 
 
     // this way when the smart pointer destroyes the array it will
     // destroy all the elements as well
-    std::vector< std::vector<dibble_t> > dibFlow; 
+    std::vector< std::vector<dibble_t> > m_dibFlow; 
 
   public:
 
-    double time;    
+    double m_time;    
     
     boost::shared_array<pixel_type> get_flow(); // returns the calculated flow in raw format (the length 
                                // of the array is dimension * pixels, and the vectors are grouped by direction)
@@ -173,8 +173,8 @@ namespace pink {
   template<class image_type>
   packet<image_type>::packet( )
   {
-    start_dibble = end_dibble = direction = current_iteration = 0;
-    etap = maxflow_types::unknown;
+    m_start_dibble = m_end_dibble = m_direction = m_current_iteration = 0;
+    m_etap = maxflow_types::unknown;
     
   } /* packet::packet */
   
@@ -192,40 +192,40 @@ namespace pink {
     )
   {
 
-    this->ID = ID;
-    this->parent = parent;
+    this->m_ID = ID;
+    this->m_parent = parent;
     barrier->wait(); // signalling that we are ready to start the iteration
     barrier->wait(); // waiting to start the iteration
     bool _continue;
     
     ATOMIC(
       _continue = parent->conductor( *this );
-      parent->shared_lock->lock_shared();
+      parent->m_shared_lock->lock_shared();
       );
 
     while ( _continue )
     {
 
-      switch ( this->etap )
+      switch ( this->m_etap )
       {
       case maxflow_types::pot:
-	parent -> upDatePotencial( start_dibble, end_dibble );
+	parent -> upDatePotencial( m_start_dibble, m_end_dibble );
 #       if UJIMAGE_DEBUG >= 3
-	std::cerr << "pot " << start_dibble << " " << end_dibble << " this = " << this << "" << std::endl;
+	std::cerr << "pot " << m_start_dibble << " " << m_end_dibble << " this = " << this << "" << std::endl;
 #       endif /* UJIMAGE_DEBUG >= 3 */
 	break;
 	
       case maxflow_types::flow:
-	parent -> upDateFlow( start_dibble, end_dibble, direction );
+	parent -> upDateFlow( m_start_dibble, m_end_dibble, m_direction );
 #       if UJIMAGE_DEBUG >= 3
-	std::cerr << "flow " << start_dibble << " " << end_dibble << " this = " << this << "" << std::endl;
+	std::cerr << "flow " << m_start_dibble << " " << m_end_dibble << " this = " << this << "" << std::endl;
 #       endif /* UJIMAGE_DEBUG >= 3 */
 	break;
 	
       case maxflow_types::constr:
-	parent -> upDateConstrain( start_dibble, end_dibble );
+	parent -> upDateConstrain( m_start_dibble, m_end_dibble );
 #       if UJIMAGE_DEBUG >= 3
-	std::cerr << "constr " << start_dibble << " " << end_dibble << " this = " << this << "" << std::endl;
+	std::cerr << "constr " << m_start_dibble << " " << m_end_dibble << " this = " << this << "" << std::endl;
 #       endif /* UJIMAGE_DEBUG >= 3 */
 	break;
 	
@@ -233,15 +233,15 @@ namespace pink {
 	  pink_error("Packet is not properly set up.");
       } /* switch */
 
-      parent->shared_lock->unlock_shared();
+      parent->m_shared_lock->unlock_shared();
 
       ATOMIC(
 	_continue = parent->conductor( *this );
-	parent->shared_lock->lock_shared();  // shared lock is used for the synchronization of the etaps
+	parent->m_shared_lock->lock_shared();  // shared lock is used for the synchronization of the etaps
 	);
     }
 
-    parent->shared_lock->unlock_shared();
+    parent->m_shared_lock->unlock_shared();
     barrier->wait(); // signalling the end of the the iteration
   } /* packet::operator() */
 
@@ -253,23 +253,23 @@ namespace pink {
     pixel_type * f_out;
     pixel_type * f_in;
     index_t fm1 /*fm1_vec[d]*/, start, end, length, q, w, e;
-    pink::types::vint fm1_vec(d);
+    std::vector<index_t> fm1_vec(m_d);
     
-    FORR(w, d){
-      fm1_vec.reset();
+    FORR(w, m_d){
+      pink::reset(fm1_vec);      
       fm1_vec[w]=1;//we are calculating the distance the opposite direction but it should be the same
-      fm1=dim->position(fm1_vec);
+      fm1=pink::position(*m_dim, fm1_vec);
       for (/*int*/ e=startDibble; e<=endDibble-1; e++){
 	start = dibPotencial[e].first; // start
 	end   = dibPotencial[e].second; // end
 	
-	p_c=&(potencial[start]);
-	f_out=&(flow_glob[w*length_glob+start]);
-	f_in=&(flow_glob[w*length_glob+start-fm1]);
+	p_c=&(m_potencial(start));
+	f_out=&(m_flow_glob[w*m_length_glob+start]);
+	f_in=&(m_flow_glob[w*m_length_glob+start-fm1]);
 	length = end - start;
 	//the hyper-super ultra fast loop
 	FORR(q, length) {
-	  p_c[q] -= tau * ( f_out[q]-f_in[q] );
+	  p_c[q] -= m_tau * ( f_out[q]-f_in[q] );
 	}
       }
     }
@@ -281,21 +281,21 @@ namespace pink {
   void max_flow<image_type>::upDateFlow(index_t startDibble, index_t endDibble, index_t w /*direction*/){
     pixel_type *p, *pp1, *f;
     index_t start, end, length, pp1_pos, q, e;
-    pink::types::vint pp1_vec(d);
+    std::vector<index_t> pp1_vec(m_d);
 
-    pp1_vec.reset();
+    pink::reset(pp1_vec);    
     pp1_vec[w]=1;
-    pp1_pos=dim->position(pp1_vec);
+    pp1_pos=pink::position(*m_dim, pp1_vec);
 
     for ( /*int*/ e=startDibble; e<=endDibble-1; e++ ){
-      start=dibFlow[w][e].first;
-      end=dibFlow[w][e].second;
-      f=&(flow_glob[w*length_glob+start]);
-      p=&(potencial[start]);
-      pp1=&(potencial[start+pp1_pos]);
+      start=m_dibFlow[w][e].first;
+      end=m_dibFlow[w][e].second;
+      f=&(m_flow_glob[w*m_length_glob+start]);
+      p=&(m_potencial(start));
+      pp1=&(m_potencial(start+pp1_pos));
       length=end-start;
       FORR(q, length){
-	f[q] -= tau*(pp1[q]-p[q]);
+	f[q] -= m_tau*(pp1[q]-p[q]);
       }
     }
   } /* void upDateFlow */
@@ -305,21 +305,21 @@ namespace pink {
   template <class image_type>
   void max_flow<image_type>::upDateConstrain(index_t startDibble, index_t endDibble){
 //     //local copies
-    pixel_type *  dFabs      = new pixel_type [d/*compileDim*/];
-    pixel_type ** locInFlow  = new pixel_type*[d/*compileDim*/];
-    pixel_type ** locOutFlow = new pixel_type*[d/*compileDim*/];
+    pixel_type *  dFabs      = new pixel_type [m_d/*compileDim*/];
+    pixel_type ** locInFlow  = new pixel_type*[m_d/*compileDim*/];
+    pixel_type ** locOutFlow = new pixel_type*[m_d/*compileDim*/];
     pixel_type *  locG;
     pixel_type v;
 	
     //locals
-    pink::types::vint fm1s(d), fm1_vec(d);
+    std::vector<index_t> fm1s(m_d), fm1_vec(m_d);
     index_t start, end, length, q, w, e;
 	
     // calculating differences between the flow and the point
-    FORR( w, d ) {
-      fm1_vec.reset();
+    FORR( w, m_d ) {
+      pink::reset(fm1_vec);
       fm1_vec[w]=1;//we are calculating the distance the opposite direction but it should be the same
-      fm1s[w]=dim->position(fm1_vec);
+      fm1s[w]=pink::position(*m_dim, fm1_vec);
     }
 	
     //for (/*int*/ e=0; e<=dibConstrain->length-1; e++){
@@ -327,14 +327,14 @@ namespace pink {
       start=dibConstrain[e].first;
       end=dibConstrain[e].second;
       length=end-start;
-      locG=&(g_glob[start]);
-      FORR(w,d) {
-	locOutFlow[w]=&(flow_glob[w*length_glob+start]);
-	locInFlow[w]=&(flow_glob[w*length_glob+start-fm1s[w]]);
+      locG=&(m_g_glob[start]);
+      FORR(w, m_d) {
+	locOutFlow[w]=&(m_flow_glob[w*m_length_glob+start]);
+	locInFlow[w]=&(m_flow_glob[w*m_length_glob+start-fm1s[w]]);
       }
       FORR(q, length) {
 	v=0.;
-	FORR(w, d) {
+	FORR(w, m_d) {
 	  // dFabs=max(-Fin, 0, Fout)
 	  dFabs[w] = -locInFlow[w][q] > locOutFlow[w][q] ? -locInFlow[w][q] : locOutFlow[w][q];
 	  if (0. > dFabs[w]) dFabs[w] = 0.;
@@ -342,7 +342,7 @@ namespace pink {
 	  v += static_cast<pixel_type>(dFabs[w] * dFabs[w]);
 	}
 
-	FORR(w, d) {
+	FORR(w, m_d) {
 	  // multiplying
 	  if (locG[q]*locG[q] < v ) dFabs[w] *= locG[q]/static_cast<pixel_type>(sqrt(v));
 	  // testing the final condition
@@ -359,17 +359,17 @@ namespace pink {
   // value of the source pixel does not change
   {
 
-    FOR( q, length_glob ) 
+    FOR( q, m_length_glob ) 
     {
-      if ( src_sink(q) == 1 ) 
+      if ( m_src_sink(q) == 1 ) 
       {
-	potencial(q)=1.; 
+	m_potencial(q)=1.; 
       }
       else /* NOT  (*srcsink) == 1. */
       {
-	if ( src_sink(q)==255 )
+	if ( m_src_sink(q)==255 )
 	{ 
-	  potencial(q)=0.;	
+	  m_potencial(q)=0.;	
 	} /* if (*srcsink) == -1. */
       } /* NOT (*srcsink) == 1.  */
     } /* FOR */
@@ -400,9 +400,9 @@ namespace pink {
 	  bool started = false;
 	  index_t start=0, end=0;
 	  index_t currlength=0;
-	  boost::shared_array<unsigned char> curr;
-	  curr = src_sink.get_pixels();
-	  FOR(q, length_glob) {
+	  uint8_t * curr;
+	  curr = m_src_sink.get();
+	  FOR(q, m_length_glob) {
 	    if (started) {
 	      currlength++;
 	      if (curr[q]!=0) {
@@ -430,7 +430,7 @@ namespace pink {
 		currlength=1;
 	      } /* (curr[q]==0) */
 	    } /* NOT (started) */
-	  } /* FOR(q, length_glob) */
+	  } /* FOR(q, m_length_glob) */
 	} /* end pragma omp section */
   
   
@@ -441,29 +441,28 @@ namespace pink {
 	{
 	  bool started=false;
 	  index_t start=0, end=0;
-          std::vector<unsigned char*> pp1(d);
-	  boost::shared_array<unsigned char> p;
-	  pink::types::vint pp1_vec(d);
+          std::vector<uint8_t*> pp1(m_d);
+	  uint8_t * p;
+	  std::vector<index_t> pp1_vec(m_d);
 	  index_t currlength=0;
-	  pink::types::vint pp1_pos(d);
+	  std::vector<index_t> pp1_pos(m_d);
 	  // Calculating the shift of the neighbourh elements
-	  FOR(w, d) {
-	    pp1_vec.reset();
+	  FOR(w, m_d) {
+            pink::reset(pp1_vec);            
 	    pp1_vec[w]=1;
-	    int currpos = dim->position(pp1_vec);
+	    int currpos = pink::position( *m_dim, pp1_vec );
 ///!!!	std::cout << "currpos=" << currpos << "" << std::endl;
 	    pp1_pos[w]=currpos;
-	    pp1[w]=&(src_sink(currpos));
+	    pp1[w]=&(m_src_sink(currpos));
 	  } /* FOR(w, d) */
-	  p=src_sink.get_pixels();
-	  FOR(w, d) {
-	    FOR(q, length_glob - pp1_pos[w] /* - 1 */ ) { /////////
-              // std::cout << " dim " << w << " and position " << q << std::endl;              
+	  p = m_src_sink.get();
+	  FOR(w, m_d) {
+	    FOR(q, m_length_glob - pp1_pos[w] /* - 1 */ ) { /////////
 	      if (started){
 		currlength++;
 		if ((p[q]!=0) && (pp1[w][q]!=0)){
 		  end=q;
-		  dibFlow[w].push_back(dibble_t(start, end));
+		  m_dibFlow[w].push_back(dibble_t(start, end));
 		  ///!!! std::cout << "dibFlow[" << w << "]->addElement(" << start << "," << end << ")\n";
 		  start=0;
 		  end=0;
@@ -471,7 +470,7 @@ namespace pink {
 		} else /* NOT ((p[q]!=0) and (pp1[w][q]!=0)) */
 		  if (currlength>=MaxDibble){
 		    end=q+1;/////!!!!!!!!!!!!!!!
-		    dibFlow[w].push_back(dibble_t(start, end));
+		    m_dibFlow[w].push_back(dibble_t(start, end));
 		    start=0;
 		    end=0;
 		    started=false;
@@ -483,11 +482,11 @@ namespace pink {
 		  currlength=1;
 		}
 	      } /* NOT (started) */
-	    } /* FOR(q, length_glob-pp1_pos[w]-1) */
-	  } /* FOR(w, d) */
+	    } /* FOR(q, m_length_glob-pp1_pos[w]-1) */
+	  } /* FOR(w, m_d) */
 	} /* pragma omp section */
 
-        if (verbose)
+        if (m_verbose)
           std::cout << "creating the dibbles from the constrain" << std::endl;
 	//  -------- constrain -------
 	// all the regular points and sources with at least one regular neighbour
@@ -495,27 +494,27 @@ namespace pink {
 	{
 	  bool started=false;
 	  index_t start=0, end=0;
-          std::vector<unsigned char*> pp1(d), pm1(d);
-	  boost::shared_array<unsigned char> p;
-	  pink::types::vint pp1_vec(d);
+          std::vector<uint8_t*> pp1(m_d), pm1(m_d);
+	  uint8_t * p;
+	  std::vector<index_t> pp1_vec(m_d);
 	  index_t currlength=0;
 	  index_t max=0;
-	  FOR(w, d) {
-	    pp1_vec.reset();
+	  FOR(w, m_d) {
+            pink::reset(pp1_vec);            
 	    pp1_vec[w]=1;
-	    index_t currpos = dim->position(pp1_vec);
+	    index_t currpos = pink::position( *m_dim, pp1_vec);
 	    max = max > currpos ? max : currpos;
-	    pp1[w]=&( src_sink(currpos) );
-	    pm1[w]=&( src_sink(0) ) - currpos;// risky, we always read far enough from the beginning
-	  } /* FOR(w, d) */
-	  p=src_sink.get_pixels();
-          for( index_t q = max; q <= length_glob - max - 1; q++ )
-//	  FOR( q, length_glob - max /*-1*/ ){ ///////////
+	    pp1[w]=&( m_src_sink(currpos) );
+	    pm1[w]=&( m_src_sink(0) ) - currpos;// risky, we always read far enough from the beginning
+	  } /* FOR(w, m_d) */
+	  p = m_src_sink.get();
+          for( index_t q = max; q <= m_length_glob - max - 1; q++ )
+//	  FOR( q, m_length_glob - max /*-1*/ ){ ///////////
           {            
 	    bool i_am_a_regular_point = (p[q]==0.);
             bool i_am_a_source = (p[q]==1.);
             bool there_is_a_regular_point_near = false;
-            FOR(w, d) {
+            FOR(w, m_d) {
               if ((pp1[w][q]==0.) || (pm1[w][q]==0.)) there_is_a_regular_point_near=true;
 	    }
 	    bool i_want_to_be_in_a_dibble = (i_am_a_regular_point || (i_am_a_source && there_is_a_regular_point_near));
@@ -545,7 +544,7 @@ namespace pink {
 		currlength=1;
 	      } /* if (i_want_to_be_in_a_dibble) */
 	    } /* NOT started */
-	  } /* FOR ( q, length_glob-max-1 ) */
+	  } /* FOR ( q, m_length_glob-max-1 ) */
 	} /* pragma omp section*/
       } /* pragma omp sections */
     } /* pragma omp parallel */
@@ -575,54 +574,56 @@ namespace pink {
     index_t packet_size,       /* = 1000, */
     bool    verbose           /* = false */
     ) :
-    packet_size(packet_size), verbose(verbose),
-    d(gg.get_size().size()),
-    length_glob(gg.get_size().prod()),
+    m_packet_size(packet_size),
+    m_verbose(verbose),
+    m_d(gg.size().size()),
+    m_length_glob(pink::prod(gg.size())),
     // setting up the lock
-    global_lock( new boost::mutex ),
-    shared_lock( new boost::shared_mutex ),
-    tau(tau), iteration(iteration),
-    flow_calculated(false),
-    number_of_threads(number_of_threads)
+    m_global_lock( new boost::mutex ),
+    m_shared_lock( new boost::shared_mutex ),
+    m_tau(tau),
+    m_iteration(iteration),
+    m_flow_calculated(false),
+    m_number_of_threads(number_of_threads)
   {
 #   ifdef UJIMAGE_DEBUG
     std::cout << "creating the max_flow object (" << static_cast<void*>(this) << ")" << std::endl;	
 #   endif /* UJIMAGE_DEBUG */        
 
-    potencial = gg.clone(); // "potencial";
-    potencial.fill(0.);
+    m_potencial.reset(gg.size()); // "m_potencial";
+    pink::fill(m_potencial, 0.);
     
-    if (( this->number_of_threads == 0 ) || (this->number_of_threads > boost::thread::hardware_concurrency() ))
+    if (( this->m_number_of_threads == 0 ) || (this->m_number_of_threads > boost::thread::hardware_concurrency() ))
     {
-      this->number_of_threads = boost::thread::hardware_concurrency();            
+      this->m_number_of_threads = boost::thread::hardware_concurrency();            
     }
 
     // Now we copy the pointers to global variables, so the threads can see them.
     // boost::shared_ptr is boost's 'shared_array' smart pointer.
-    this->gg = gg.clone();
-    g_glob = this->gg.get_pixels();    
-    flow_glob.reset(new pixel_type[ d * length_glob ]);
+    this->m_gg = gg.clone();
+    m_g_glob = this->m_gg.get();    
+    m_flow_glob.reset(new pixel_type[ m_d * m_length_glob ]);
 
     //cleaning the flow
-    FOR( q,  d * length_glob)
+    FOR( q,  m_d * m_length_glob)
     {
-      flow_glob[q]=0.;
+      m_flow_glob[q]=0.;
     } /* end of parallel FOR */
 
     // making 
-    src_sink = SS.clone();
+    m_src_sink = SS.clone();
     //int dim [d];
-    dim.reset(new pink::types::vint(potencial.get_size()));
+    m_dim.reset(new std::vector<index_t>(m_potencial.size()));
 
     if (verbose)
     {      
       std::cout << "dibble edition" << std::endl;
-      // creating a local copy of image, srcsink potencial and flows ---------------------------
-      std::cout << "dimension   = " << dim->repr() << " (" << d << "D)" << std::endl;
-      std::cout << "length_glob = " << this->length_glob << std::endl;
-      std::cout << "tau         = " << this->tau << std::endl;
-      std::cout << "iteration   = " << this->iteration << std::endl;
-      std::cout << "threads     = " << this->number_of_threads << " (of " << boost::thread::hardware_concurrency() << ")" <<  std::endl;
+      // creating a local copy of image, srcsink m_potencial and flows ---------------------------
+      std::cout << "dimension   = " << pink::repr(*m_dim) << " (" << m_d << "D)" << std::endl;
+      std::cout << "length_glob = " << this->m_length_glob << std::endl;
+      std::cout << "tau         = " << this->m_tau << std::endl;
+      std::cout << "iteration   = " << this->m_iteration << std::endl;
+      std::cout << "threads     = " << this->m_number_of_threads << " (of " << boost::thread::hardware_concurrency() << ")" <<  std::endl;
     } /* if verbose */
 
     
@@ -632,12 +633,12 @@ namespace pink {
       std::cout << "setting up source" << std::endl;
     
     pixel_type *ps;
-    unsigned char *ss;
+    uint8_t *ss;
 		
-    ss = &( src_sink(0) );
-    ps = &( potencial(0));
+    ss = &( m_src_sink(0) );
+    ps = &( m_potencial(0));
 
-    FOR(q, length_glob) {
+    FOR(q, m_length_glob) {
       if ( ss[q] == 1 ) 
       {
 	ps[q]=1.; 
@@ -658,8 +659,8 @@ namespace pink {
     
     //dibPotencial.reset( new uiDibbles() );
     //dibConstrain.reset( new uiDibbles() );
-    dibFlow.resize(d+3); //reset( new boost::shared_ptr<uiDibbles>[d+3] ); // we adding here 3 becaus of the parallelization later
-    //FOR(q,d+3) dibFlow[q].reset(new uiDibbles()); // we adding here 3 becaus of the parallelization later
+    m_dibFlow.resize(m_d+3); //reset( new boost::shared_ptr<uiDibbles>[d+3] ); // we adding here 3 becaus of the parallelization later
+    //FOR(q,d+3) m_dibFlow[q].reset(new uiDibbles()); // we adding here 3 becaus of the parallelization later
 	
     uiCreateDibbles();
     if (verbose)
@@ -682,16 +683,16 @@ namespace pink {
   boost::shared_array<typename image_type::pixel_type>
   max_flow<image_type>::get_flow()
   {
-    if ( /*not*/ ! flow_calculated)
+    if ( /*not*/ ! m_flow_calculated)
     {
       pink_error("The flow has not yet been calculated. You can only call get_flow after at least 1 iteration."
 	    " For the courious souls after the 0th iteration the flow is zero everywhere");
     }
     else /* (flow_calculated) */
     {
-      return flow_glob;
+      return m_flow_glob;
     }/* (flow_calculated) */
-    return flow_glob;
+    return m_flow_glob;
   } /* get_flow */
 
 
@@ -709,19 +710,19 @@ namespace pink {
   {
     //// --------------------- initializing the time measure -------------------------------
         
-    if (verbose)
+    if (m_verbose)
       std::cout << "starting the iteration" << std::endl;
     
-    index_t nbt = this -> number_of_threads;
-    boost::shared_ptr<boost::barrier> barrier(new boost::barrier(number_of_threads + 1) );    
+    index_t nbt = this -> m_number_of_threads;
+    boost::shared_ptr<boost::barrier> barrier(new boost::barrier(m_number_of_threads + 1) );    
     
     std::vector< boost::shared_ptr<boost::thread> > threads(nbt);
 
     std::vector< boost::shared_ptr< packet<image_type> > > packets(nbt);
 
     // Thread attributes
-    reference.reset( new packet<image_type> );
-    reference->etap = maxflow_types::pot;
+    m_reference.reset( new packet<image_type> );
+    m_reference->m_etap = maxflow_types::pot;
     FOR( q, nbt )
     {
       packets[q].reset( new packet<image_type> );
@@ -729,33 +730,33 @@ namespace pink {
     } /* FOR(q, nbt) */
 
     barrier->wait(); // waiting the threads to initialize
-    sentinel.maxPos(iteration);
-    sentinel.minPos(0);
-    sentinel << 0;
-    sentinel.start(); // new time measurement
+    m_sentinel.maxPos(m_iteration);
+    m_sentinel.minPos(0);
+    m_sentinel << 0;
+    m_sentinel.start(); // new time measurement
     double starttime = pink::benchmark::now();    
     barrier->wait(); // signalling the threads to begin the iteration
 
 
     barrier->wait(); // waiting the threads to finish the iteration    
     //// --------------------- printing out the measured time ------------------------------
-    sentinel.stop();
+    m_sentinel.stop();
     double endtime = pink::benchmark::now();
-    this->time = static_cast<double>( endtime - starttime );
+    this->m_time = static_cast<double>( endtime - starttime );
     
     FOR( q, nbt )
     {
       threads[q]->join();
     } /* FOR(q, nbt) */
 
-    this->time = static_cast<double>(endtime - starttime);
+    this->m_time = static_cast<double>(endtime - starttime);
     
-    if (verbose)      
-      std::cout << "total time of iteration (timer)   : " << this->time << "s" << std::endl;
+    if (m_verbose)      
+      std::cout << "total time of iteration (timer)   : " << this->m_time << "s" << std::endl;
     
-    this->flow_calculated = true; 
+    this->m_flow_calculated = true; 
 
-    return potencial; /* measure field picture */
+    return m_potencial; /* measure field picture */
     //local variables are deleted automaticly
   } /*    max_flow<image_type>::start() */
 
@@ -783,140 +784,140 @@ namespace pink {
     )
   {
 
-    switch ( reference->etap )
+    switch ( m_reference->m_etap )
     {
     case maxflow_types::pot:
-      if (reference->end_dibble >= dibPotencial.size()) // the case, when the last iteration has been assigned and now we begin the next part
+      if (m_reference->m_end_dibble >= dibPotencial.size()) // the case, when the last iteration has been assigned and now we begin the next part
       {
-	shared_lock->lock(); // we wait for the threads to finish the calculation
-	reference->etap = maxflow_types::flow;
-	reference->start_dibble = 0;
-	reference->end_dibble = std::min<index_t>( this->packet_size, dibFlow[0].size() );
-	reference->direction = 0;
+	m_shared_lock->lock(); // we wait for the threads to finish the calculation
+	m_reference->m_etap = maxflow_types::flow;
+	m_reference->m_start_dibble = 0;
+	m_reference->m_end_dibble = std::min<index_t>( this->m_packet_size, m_dibFlow[0].size() );
+	m_reference->m_direction = 0;
 
-	thread.start_dibble = reference->start_dibble;
-	thread.end_dibble = reference->end_dibble;
-	thread.etap = reference->etap;
-	thread.direction = reference->direction;
+	thread.m_start_dibble = m_reference->m_start_dibble;
+	thread.m_end_dibble = m_reference->m_end_dibble;
+	thread.m_etap = m_reference->m_etap;
+	thread.m_direction = m_reference->m_direction;
 
-	shared_lock->unlock(); // from now on all the threads are starting the flow iteration.
+	m_shared_lock->unlock(); // from now on all the threads are starting the flow iteration.
       } 
-      else /* NOT reference->end_dibble >= dibPotencial->get_length() */
+      else /* NOT m_reference->m_end_dibble >= dibPotencial->get_length() */
       {
-	reference->start_dibble = reference->end_dibble;
-	reference->end_dibble = std::min<index_t>( reference->end_dibble + this->packet_size, dibPotencial.size() );
+	m_reference->m_start_dibble = m_reference->m_end_dibble;
+	m_reference->m_end_dibble = std::min<index_t>( m_reference->m_end_dibble + this->m_packet_size, dibPotencial.size() );
 
-	thread.etap = reference->etap;
-	thread.start_dibble = reference->start_dibble;
-	thread.end_dibble = reference->end_dibble;
-      } /* NOT reference->end_dibble >= dibPotencial->get_length() */
+	thread.m_etap = m_reference->m_etap;
+	thread.m_start_dibble = m_reference->m_start_dibble;
+	thread.m_end_dibble = m_reference->m_end_dibble;
+      } /* NOT m_reference->m_end_dibble >= dibPotencial->get_length() */
 
       return true;
       break;
       
     case maxflow_types::flow:
 
-      if (reference->end_dibble >= dibFlow[reference->direction].size()) // the case, when the last iteration has been assigned and now we begin the next part
+      if (m_reference->m_end_dibble >= m_dibFlow[m_reference->m_direction].size()) // the case, when the last iteration has been assigned and now we begin the next part
       {
 
-	if ( reference->direction >= d - 1 )
+	if ( m_reference->m_direction >= m_d - 1 )
 	{	  
-	  shared_lock->lock(); // we wait for all threads to finish the calculation	  
-	  reference->etap = maxflow_types::constr;
-	  reference->start_dibble = 0;
-	  reference->end_dibble = std::min<index_t>( this->packet_size, dibConstrain.size());
+	  m_shared_lock->lock(); // we wait for all threads to finish the calculation	  
+	  m_reference->m_etap = maxflow_types::constr;
+	  m_reference->m_start_dibble = 0;
+	  m_reference->m_end_dibble = std::min<index_t>( this->m_packet_size, dibConstrain.size());
 	  
-	  thread.start_dibble = reference->start_dibble;
-	  thread.end_dibble = reference->end_dibble;
-	  thread.etap = reference->etap;	  
-	  thread.direction = reference->direction;
-	  shared_lock->unlock(); // from now on all the threads are starting the constraint iteration.
+	  thread.m_start_dibble = m_reference->m_start_dibble;
+	  thread.m_end_dibble = m_reference->m_end_dibble;
+	  thread.m_etap = m_reference->m_etap;	  
+	  thread.m_direction = m_reference->m_direction;
+	  m_shared_lock->unlock(); // from now on all the threads are starting the constraint iteration.
 	}
-	else /* NOT reference->current_direction >= d - 1 */
+	else /* NOT m_reference->current_direction >= d - 1 */
 	{
 //	  shared_lock->lock(); // we wait for all threads to finish the calculation
 
-	  reference->direction += 1;
-	  reference->start_dibble = 0;
-	  reference->end_dibble = std::min<index_t>( this->packet_size, 
-					dibFlow[reference->direction].size());
+	  m_reference->m_direction += 1;
+	  m_reference->m_start_dibble = 0;
+	  m_reference->m_end_dibble = std::min<index_t>( this->m_packet_size, 
+					m_dibFlow[m_reference->m_direction].size());
 	  
-	  thread.start_dibble = reference->start_dibble;
-	  thread.end_dibble = reference->end_dibble;
-	  thread.direction = reference->direction;
-	  thread.etap = reference->etap;
+	  thread.m_start_dibble = m_reference->m_start_dibble;
+	  thread.m_end_dibble = m_reference->m_end_dibble;
+	  thread.m_direction = m_reference->m_direction;
+	  thread.m_etap = m_reference->m_etap;
 
 //	  shared_lock->unlock(); // from now on all the threads are starting the constraint iteration.
 
-	} /* NOT reference->current_direction >= d - 1 */
+	} /* NOT m_reference->current_direction >= d - 1 */
       } 
-      else /* NOT reference->end_dibble >= dibFlow->get_length() */
+      else /* NOT m_reference->m_end_dibble >= m_dibFlow->get_length() */
       {
-	reference->start_dibble = reference->end_dibble;
-	reference->end_dibble = std::min<index_t>( reference->end_dibble + this->packet_size, dibFlow[reference->direction].size());
+	m_reference->m_start_dibble = m_reference->m_end_dibble;
+	m_reference->m_end_dibble = std::min<index_t>( m_reference->m_end_dibble + this->m_packet_size, m_dibFlow[m_reference->m_direction].size());
 
-	thread.start_dibble = reference->start_dibble;
-	thread.end_dibble = reference->end_dibble;
-	thread.etap = reference->etap;
-	thread.direction = reference->direction;
-      } /* NOT reference->end_dibble >= dibFlow->get_length() */
+	thread.m_start_dibble = m_reference->m_start_dibble;
+	thread.m_end_dibble = m_reference->m_end_dibble;
+	thread.m_etap = m_reference->m_etap;
+	thread.m_direction = m_reference->m_direction;
+      } /* NOT m_reference->m_end_dibble >= m_dibFlow->get_length() */
 
       return true;
       break;
       
     case maxflow_types::constr:
       
-      if (reference->end_dibble >= dibConstrain.size()) // the case, when the last iteration has been assigned and now we begin the next part
+      if (m_reference->m_end_dibble >= dibConstrain.size()) // the case, when the last iteration has been assigned and now we begin the next part
       {
-	if ( reference->current_iteration >= iteration - 1 )
+	if ( m_reference->m_current_iteration >= m_iteration - 1 )
 	{ // we are finished with the iterations.
 	  // we wait for the rest of the threads
-	  shared_lock->lock();	
+	  m_shared_lock->lock();	
 	  
 	  // we let the threads to finish
-	  shared_lock->unlock();
+	  m_shared_lock->unlock();
 	  return false;		  
 	} 
-	else /* NOT current_iteration >= iterations - 1 */	  
+	else /* NOT m_current_iteration >= iterations - 1 */	  
 	{
-          if (verbose)
+          if (m_verbose)
           {            
-            if ( reference->current_iteration % REPORT_INTERVAL == 0 ) 
+            if ( m_reference->m_current_iteration % REPORT_INTERVAL == 0 ) 
             {
-              if ( sentinel.timeToReport() )
+              if ( m_sentinel.timeToReport() )
               {
-                std::cout << "Estimated time remaining: " << (sentinel << reference -> current_iteration) << std::endl;
+                std::cout << "Estimated time remaining: " << (m_sentinel << m_reference -> m_current_iteration) << std::endl;
               } /* timeToReport() */
-            } /* if current_iterations ... */
+            } /* if m_current_iterations ... */
           } /* if verbose */          
 	  
-	  shared_lock->lock(); // we wait for all threads to finish the calculation
-	  reference->current_iteration++;
+	  m_shared_lock->lock(); // we wait for all threads to finish the calculation
+	  m_reference->m_current_iteration++;
 
-	  reference->etap = maxflow_types::pot;
-	  reference->start_dibble = 0;
-	  reference->end_dibble = std::min<index_t>(this->packet_size, dibPotencial.size());
+	  m_reference->m_etap = maxflow_types::pot;
+	  m_reference->m_start_dibble = 0;
+	  m_reference->m_end_dibble = std::min<index_t>(this->m_packet_size, dibPotencial.size());
 
-	  thread.start_dibble = reference->start_dibble;
-	  thread.end_dibble = reference->end_dibble;
-	  thread.etap = reference->etap;
+	  thread.m_start_dibble = m_reference->m_start_dibble;
+	  thread.m_end_dibble = m_reference->m_end_dibble;
+	  thread.m_etap = m_reference->m_etap;
 
-	  shared_lock->unlock(); // from now on all the threads are starting the constraint iteration.
+	  m_shared_lock->unlock(); // from now on all the threads are starting the constraint iteration.
 	  
 	  return true;
-	} /* NOT reference->current_iteration >= iterations - 1 */
+	} /* NOT m_reference->m_current_iteration >= iterations - 1 */
       }
-      else /* NOT reference->end_dibble 1 >= dibConstraint->get_length() */
+      else /* NOT m_reference->m_end_dibble 1 >= dibConstraint->get_length() */
       {
-	reference->start_dibble = reference->end_dibble;
-	reference->end_dibble = std::min<index_t>( reference->end_dibble + this->packet_size, dibConstrain.size());
+	m_reference->m_start_dibble = m_reference->m_end_dibble;
+	m_reference->m_end_dibble = std::min<index_t>( m_reference->m_end_dibble + this->m_packet_size, dibConstrain.size());
 
-	thread.start_dibble = reference->start_dibble;
-	thread.end_dibble = reference->end_dibble;
-	thread.etap = reference->etap;
+	thread.m_start_dibble = m_reference->m_start_dibble;
+	thread.m_end_dibble = m_reference->m_end_dibble;
+	thread.m_etap = m_reference->m_etap;
 
 	return true;
-      } /* NOT reference->end_dibble >= dibConstraint->get_length() */
+      } /* NOT m_reference->m_end_dibble >= dibConstraint->get_length() */
 
 
       break;
@@ -952,9 +953,9 @@ namespace pink {
     //     // creating the n+1D flow_image
     
     //     vint dim(3,0);
-    //     dim[0]=SS.get_size()[0];
-    //     dim[1]=SS.get_size()[1];
-    //     dim[2]=SS.get_size().size();
+    //     dim[0]=SS.size()[0];
+    //     dim[1]=SS.size()[1];
+    //     dim[2]=SS.size().size();
     
     //     float_image result_flow(maxflow_obj->get_flow(), "result_flow");
     
@@ -992,7 +993,7 @@ namespace pink {
 
     if (debug)
     {        
-      boost::python::tuple result = boost::python::make_tuple(rimage, obj.time);         
+      boost::python::tuple result = boost::python::make_tuple(rimage, obj.m_time);         
       return result;
     }
     else /* NOT debug */

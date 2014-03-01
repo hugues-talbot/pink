@@ -28,9 +28,6 @@
 #include "ltopotypes.h"
 #include "lfiltrestopo.h"
 
-using namespace boost::python;
-using namespace pink;
-
 
 /*! \file pypink.c
   For exporting functions from pink you should make them into the following
@@ -176,38 +173,20 @@ void Pimview_sendcommand_export();
 #endif /* UNIXIO */
 
 
-// functions dealing with complex variables
 void pycomplex();
-
-// functions for conversion
 void pyconversion();
-
-// development functions
 void pydevel();
-
-// normalization and ball generation
 void pynormalization();
-
 void pyimage_types();
-
 void pywshed();
-
 void pypoints();
-
 void pyliar();
-
 void pyconnect();
-
 void pytopo();
-
 void pymorpho();
-
 void pyarithmetic();
-
 void pymemtest();
-
 void pysept();
-
 void numpy_export();
 
 // for wrapping every type with one function
@@ -225,123 +204,86 @@ void numpy_export();
 /// ********************************************************************************************
 
 
-#include <boost/preprocessor/slot/counter.hpp>
-
-
-
-// NOTE: 3dlabel input byte 3d output int 3d
+// UI_WRAP_FUNCTION(
+//   "simplepair",
+//   lsimplepair,
+//   (arg("image"), arg("all")),
+//   doc__simplepair__c__
+//   );
 
 // UI_WRAP_FUNCTION(
-//   "",
-//   l,
-//   (arg("image") ),
-//   doc____c__
+//   "skew",
+//   lskew,
+//   (arg("image"), arg("skew")),
+//   doc__skew__c__
 //   );
-// #include BOOST_PP_UPDATE_COUNTER()
+
+// UI_WRAP_FUNCTION(
+//   "squel",
+//   lsquel,
+//   (arg("image"), arg("threshold"), arg("ni threshold")),
+//   doc__squel__c__
+//   );
+
+// UI_WRAP_FUNCTION(
+//   "squelbin",
+//   lsquelbin,
+//   (arg("image"), arg("connexity"), arg("ni threshold")),
+//   doc__squelbin__c__
+//   );
+
+// UI_WRAP_FUNCTION(
+//   "stretch",
+//   lstretch,
+//   (arg("image")),
+//   doc__stretch__c__
+//   );
+
+// UI_WRAP_FUNCTION(
+//   "sym",
+//   lsym,
+//   (arg("image"), arg("mode")),
+//   doc__sym__c__
+//   );
+
+// UI_WRAP_FUNCTION(
+//   "t26pp",
+//   ltopotypes_t26pp,
+//   (arg("image")),
+//   doc__t26pp__c__
+//   );
+
+// UI_WRAP_FUNCTION(
+//   "t4pp",
+//   lt4pp,
+//   (arg("image")),
+//   doc__t4pp__c__
+//   );
+
+// UI_WRAP_FUNCTION(
+//   "t8pp",
+//   lt8pp,
+//   (arg("image")),
+//   doc__t8pp__c__
+//   );
+
+// UI_WRAP_FUNCTION(
+//   "tlf",
+//   ltlf,
+//   (arg("image"), arg("connexmin"), arg("radius")),
+//   doc__tlf__c__
+//   );
+
+// UI_WRAP_FUNCTION(
+//   "translate",
+//   loffset,
+//   (arg("image"), arg("ox"), arg("oy"), arg("oz"), arg("mode") =0),
+//   doc__translate__c__
+//   );
 
 
-
-UI_WRAP_FUNCTION(
-  "simplepair",
-  lsimplepair,
-  (arg("image"), arg("all")),
-  doc__simplepair__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
-
-UI_WRAP_FUNCTION(
-  "skew",
-  lskew,
-  (arg("image"), arg("skew")),
-  doc__skew__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
-
-UI_WRAP_FUNCTION(
-  "squel",
-  lsquel,
-  (arg("image"), arg("threshold"), arg("ni threshold")),
-  doc__squel__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
-
-UI_WRAP_FUNCTION(
-  "squelbin",
-  lsquelbin,
-  (arg("image"), arg("connexity"), arg("ni threshold")),
-  doc__squelbin__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
-
-UI_WRAP_FUNCTION(
-  "stretch",
-  lstretch,
-  (arg("image")),
-  doc__stretch__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
-
-UI_WRAP_FUNCTION(
-  "sym",
-  lsym,
-  (arg("image"), arg("mode")),
-  doc__sym__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
-
-UI_WRAP_FUNCTION(
-  "t26pp",
-  ltopotypes_t26pp,
-  (arg("image")),
-  doc__t26pp__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
-
-UI_WRAP_FUNCTION(
-  "t4pp",
-  lt4pp,
-  (arg("image")),
-  doc__t4pp__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
-
-UI_WRAP_FUNCTION(
-  "t8pp",
-  lt8pp,
-  (arg("image")),
-  doc__t8pp__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
-
-UI_WRAP_FUNCTION(
-  "tlf",
-  ltlf,
-  (arg("image"), arg("connexmin"), arg("radius")),
-  doc__tlf__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
-
-UI_WRAP_FUNCTION(
-  "translate",
-  loffset,
-  (arg("image"), arg("ox"), arg("oy"), arg("oz"), arg("mode") =0),
-  doc__translate__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
-
-// NOTE: volume's using &vol
-
-
-// // UI_WRAP_FUNCTION(
-// //   "ccv",
-// //   lccv,
-// //   (arg("image"), arg("elem")),
-// //   doc__ccv__c__
-// //   );
-// // #include BOOST_PP_UPDATE_COUNTER()
-
-
-
+using boost::python::arg;
+using boost::python::def;
 
 
 BOOST_PYTHON_MODULE(libcpp_pink)
@@ -354,86 +296,70 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   std::cerr << "Pink was compiled in debug level " << UJIMAGE_DEBUG << ". You will see various debug messages.\n" <<  std::endl;
 # endif /* UJIMAGE_DEBUG */
 
-  CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
-
   def("greet", greet, "Gently greets the user.");
-  vector_int_object_export();
 
-  // obsolete
-  // xvimage_object_export(); // self explaining
-  // deep_xvimage_object_export(); // self explaining
-  // shallow_xvimage_object_export(); // self explaining
+//   wshedtopo_export(); /* erosball_export();*/  medianfilter_export();
 
-  // created as a method of the object
-  //  writeimage_export(); // self explaining
+//   // the skeleton function
+//   skeleton2_export();  zoom_export();
 
-  vint_object_export(); // self explaining
-
-  wshedtopo_export(); /* erosball_export();*/  medianfilter_export();
-
-  // the skeleton function
-  skeleton2_export();  zoom_export();
-
-  dilation_export(); erosion_export();  geodilat_export();  geoeros_export();
-  opening_export();  drawcurve2D_export();
-  // liar operator functions
-  fdilaterect_export();
-  fdilatepoly_export();
-  feroderect_export();
-  ferodepoly_export();
-  fcloserect_export();
-  fclosepoly_export();
-  fopenrect_export();
-  fopenpoly_export();
+//   dilation_export(); erosion_export();  geodilat_export();  geoeros_export();
+//   opening_export();  drawcurve2D_export();
+//   // liar operator functions
+//   fdilaterect_export();
+//   fdilatepoly_export();
+//   feroderect_export();
+//   ferodepoly_export();
+//   fcloserect_export();
+//   fclosepoly_export();
+//   fopenrect_export();
+//   fopenpoly_export();
   
-  openbun_export();
-  closebin_export();
+//   openbun_export();
+//   closebin_export();
 
-//  specialize_export();
-
-  uiSqhool_object_export();
-//  gradient_export();
-
-  read_raw_image_export();  seuil_export();  plane3d_export();
-//  draw_plane_export();
-//  project_plane_export();
-  border_export();  identifyline_export();  surimp_export();  generate_rgb_image_export();
-  closing_export(); /* closeball_export();*/  minmax_export();  /* dilatball_export();*/
-  asfbin_export();  skelcurv_export();
-  readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
-  htkern_export();  /*openball_export();*/    gradmorph_export(); mcube_export(); minima_export();
-  complex_export(); fft_export();  mult_export();  numpy_export();
+//   read_raw_image_export();  seuil_export();  plane3d_export();
+// //  draw_plane_export();
+// //  project_plane_export();
+//   border_export();  identifyline_export();  surimp_export();  generate_rgb_image_export();
+//   closing_export(); /* closeball_export();*/  minmax_export();  /* dilatball_export();*/
+//   asfbin_export();  skelcurv_export();
+//   readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
+//   htkern_export();  /*openball_export();*/    gradmorph_export(); mcube_export(); minima_export();
+//   complex_export(); fft_export();  mult_export();  numpy_export();
 
 
   // this part is not yet ready for windows
 # ifdef UNIXIO
   // is this enough ? HT
   // this calls the definition in the right place
-  Pimview_export();
-  Pimviewlogin_export();
-  Pimviewputimage_export();
-  PLiarEnableDebug_export();
-  Pimview_force_socket_export();
-  Pimview_sendcommand_export();
+
+  // Pimview_export();
+  // Pimviewlogin_export();
+  // Pimviewputimage_export();
+  // PLiarEnableDebug_export();
+  // Pimview_force_socket_export();
+  // Pimview_sendcommand_export();
+
 # endif /* UNIXIO */
 
-  pysept();
-  pytopo();
-  pyliar();
-  pywshed();
-  pydevel();
-  pygraph();  
-  pymorpho();
-  pypoints();
-  pymemtest();
-  pyconnect();
-  pymaxflow();
-  pycomplex();
-  pyskeleton();
-  pyarithmetic();
-  pyconversion();
-  pyimage_types();
-  pynormalization();
+  // pysept();
+  // pytopo();
+  // pyliar();
+  // pywshed();
+  // pydevel();
+  // pygraph();  
+  // pymorpho();
+  // pypoints();
+  // pymemtest();
+  // pyconnect();
+  // pymaxflow();
+  // pycomplex();
+  // pyskeleton();
+  // pyarithmetic();
+  // pyconversion();
+  // pyimage_types();
+  // pynormalization();
 
 } /* BOOST_PYTHON_MODULE */
 

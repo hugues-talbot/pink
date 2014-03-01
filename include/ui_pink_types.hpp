@@ -104,7 +104,8 @@ namespace pink
 {
 
   template <class T0>
-  T0 round_up( T0 global_size, T0 group_size )
+  T0
+  round_up( T0 global_size, T0 group_size )
   {
     T0 r = global_size % group_size;
     if( r == 0 )
@@ -113,46 +114,137 @@ namespace pink
   } /* round_up */
 
 
+  template <class T0>
+  T0
+  prod( const std::vector<T0> & vector ) {
+    T0 result(1);
+    
+    for ( auto & elem : vector ) result *= elem;
+    
+    return result;
+  } // prod
+
+
+  template <class T0>
+  bool
+  on_side( const T0 & image_size, const T0 & point )
+  {
+    if (point.size() != image_size.size()) pink_error("The 'point' must have same dimension (length) than the 'vector'.");
+  
+    FOR(q, image_size.size())
+      if ( (point[q]==0) || (point[q]==image_size[q]-1) ) return true;	
+  
+    return false;
+  } /* vint::on_side */
+
+  template <class T0>
+  bool
+  inside( const T0 & image_size, const T0 & point ) 
+  {
+    assert(image_size.size() == point.size());    
+    FOR( q, image_size.size() )
+      if ( (point[q]<0) || (point[q]>=image_size[q]) ) return false;	
+  
+    return true;
+  } /* vint::inside */
+
+
+  template <class T0>
+  void
+  reset( T0 & t0 )
+  {
+    index_t q = t0.size()-1;
+    do 
+    { 
+      t0[q--]=0; 
+    } 
+    while (q>=0);
+  } /* vint::reset */
+
+
+  template <class T0>
+  index_t
+  position( const T0 & size, const T0 & elem ) 
+  {
+    // tested in harmony with uiNextStep_it, uiNextStep_fast and Positions
+    // ATTENITON !!!!!!!! New version, now the X is the fastest
+    // also note, that the size should be the parameter and the object should change
+    // to comply with the no parameter change paradigm
+
+    index_t d = size.size();
+    index_t pos = 0;
+    index_t t = 1;
+    index_t q = 0;
+
+    while ( q <= d - 1 ) {
+      pos += elem[q] * t;
+      t *= size[q];
+      q+=1;
+    }
+    
+    return pos;
+  } /* vint::position */
+
+
+  template <class T0, class T1>
+  void
+  fill( T0 & t0, const T1 & t1 ) {
+    for ( auto & pixel : t0 ) pixel = t1;
+    return;
+  }
+
+  template <class T0>
+  std::string
+  repr( const T0 & t0 ) {
+    std::stringstream ss;
+    ss << "[ ";
+    for ( auto & coord : t0 ) ss << coord << ", ";
+    ss << "]";
+
+    return ss.str();    
+  } // repr
+  
+
   
   namespace types
   {
     
 
-    class vint: public std::vector<index_t>
-    {
-#   ifdef UJIMAGE_DEBUG
-    private:
-      std::string debug;
-#   endif /* UJIMAGE_DEBUG */
+//     class vint: public std::vector<index_t>
+//     {
+// #   ifdef UJIMAGE_DEBUG
+//     private:
+//       std::string debug;
+// #   endif /* UJIMAGE_DEBUG */
 
-    public:
+//     public:
 
-      vint();
-      vint( const vint & src ); //copy constructor
-      vint( const vint & src, std::string debug ); // copy constructor with debugging
-      vint( index_t size, std::string debug=""  );
-      vint( index_t size, index_t defvalue );
-#     ifdef PINK_HAVE_PYTHON
-      vint( const boost::python::list & src );
-#     endif /* PINK_HAVE_PYTHON */
-      ~vint();
-      void reset();
-      index_t prod() const;
-      index_t prod_except( index_t p ) const;
-      double fabs() const;
-      std::string repr() const;
-      void next_step( index_t step, vint & result ) const;
-      bool on_side( const vint & point ) const;
-      bool inside( const vint & ) const;
-      //bool inside( const boost::python::list & point ) const;
-      bool next_step_it( vint & result ) const;
-      bool operator==( const vint & other ) const;
-      bool operator!=( const vint & other ) const;
-      index_t position( const vint & elem ) const;
-      bool add_set( const vint & other );
-      vint & operator << ( const index_t & initiator );
-      vint & operator,   ( const index_t & next );
-    }; /* class vint */
+//       vint();
+//       vint( const vint & src ); //copy constructor
+//       vint( const vint & src, std::string debug ); // copy constructor with debugging
+//       vint( index_t size, std::string debug=""  );
+//       vint( index_t size, index_t defvalue );
+// #     ifdef PINK_HAVE_PYTHON
+//       vint( const boost::python::list & src );
+// #     endif /* PINK_HAVE_PYTHON */
+//       ~vint();
+//       void reset();
+//       index_t prod() const;
+//       index_t prod_except( index_t p ) const;
+//       double fabs() const;
+//       std::string repr() const;
+//       void next_step( index_t step, vint & result ) const;
+//       bool on_side( const vint & point ) const;
+//       bool inside( const vint & ) const;
+//       //bool inside( const boost::python::list & point ) const;
+//       bool next_step_it( vint & result ) const;
+//       bool operator==( const vint & other ) const;
+//       bool operator!=( const vint & other ) const;
+//       index_t position( const vint & elem ) const;
+//       bool add_set( const vint & other );
+//       vint & operator << ( const index_t & initiator );
+//       vint & operator,   ( const index_t & next );
+//     }; /* class vint */
 
 
     

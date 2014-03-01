@@ -34,8 +34,7 @@ namespace pink
 void uiWriteFloatImage3D( float_image& image, const std::string& filename )
 {
   std::ofstream s;
-  pink::types::vint dim;
-  int x, y, z, currX, currY, currZ;
+  int rows, cols, depth, currX, currY, currZ;
   ////!!!!!!!!!!!!!1unsigned char pix;
   int pix;
   double piq, min, max;
@@ -43,14 +42,13 @@ void uiWriteFloatImage3D( float_image& image, const std::string& filename )
 
   s.open(filename.c_str(), std::ios_base::out | std::ios_base::trunc ); // create a new file, or empty existing one
 
-  dim = pink::types::vint(3);
-  x = image.get_size()[0];
-  y = image.get_size()[1];
-  z = image.get_size()[2];
+  rows = image.rows();
+  cols = image.cols();
+  depth = image.depth();
 
   ss << "P8\n";
   ss << "# UjoImro Design Group, 2007\n";
-  ss << x << " " << y << " " << z << std::endl;
+  ss << rows << " " << cols << " " << depth << std::endl;
   ss << "4294967295\n";
 
   s << ss.str();// writing the header into the file
@@ -58,14 +56,11 @@ void uiWriteFloatImage3D( float_image& image, const std::string& filename )
   max = lmaxval<float_image>(image);
   min = lminval<float_image>(image);
   printf( "%f < Image < %f\n", min,max );
-  FOR(q,  x * y * z - 1) {
-    currX=(q % ( y * x )) / y;
-    currY=(q % ( y * x )) % y;
-    currZ=q / ( y * x );
-    dim[0]=currX;
-    dim[1]=currY;
-    dim[2]=currZ;
-    piq = image[dim];
+  FOR(q,  rows * cols * depth - 1) {
+    currX=(q % ( cols * rows )) / cols;
+    currY=(q % ( cols * rows )) % cols;
+    currZ=q / ( cols * rows );
+    piq = image( currX, currY, currZ );
     pix = int((piq-min)*2000000/* *4294967295.*/ / (max-min));
     s.write( (char*)&pix, 4 );
   };
@@ -82,39 +77,34 @@ void uiWriteImage3D( float_image& image, const std::string& filename )
 {
   std::cout << "warning: uiWriteImage3D has been tuned to the CELL PROJECT\n";
   std::cout << "Writing image to file '" << filename << "'" << std::endl;
-  std::ofstream s;
-  pink::types::vint dim;
-  int x, y, z, currX, currY, currZ;
+  std::ofstream output;
+  int rows, cols, depth, currX, currY, currZ;
   unsigned char pix;
   double piq;
   double min;
   double max;
 
-  s.open(filename.c_str(), std::ios_base::out | std::ios_base::trunc);
+  output.open(filename.c_str(), std::ios_base::out | std::ios_base::trunc);
 
-  dim = pink::types::vint( 3 );
-  x = image.get_size()[0];
-  y = image.get_size()[1];
-  z = image.get_size()[2];
+  rows = image.rows();  
+  cols = image.cols();  
+  depth = image.depth();
 
-  max = lmaxval<float_image>(image);
-  min = lminval<float_image>(image);
+  max = lmaxval(image);
+  min = lminval(image);
   printf( "%f < Image < %f\n", min,max );
-  FOR(q, x * y * z - 1) {
-    currY=(q % ( y * x )) / x;
-    currX=(q % ( y * x )) % x;
-    currZ=q / ( y * x );
+  FOR(q, rows * cols * depth - 1) {
+    currY=(q % ( cols * rows )) / rows;
+    currX=(q % ( cols * rows )) % rows;
+    currZ=q / ( cols * rows );
 
-    dim[0]=currX;
-    dim[1]=currY;
-    dim[2]=currZ;
-
-    piq = image[dim];
+    piq = image(currX, currY, currZ);    
     pix = int ( ( piq - min ) * 255 / ( max - min ) );
-    s.write( (char*)&pix, 1 );
+    output.write( (char*)&pix, 1 );
   };
 
-  s.close();
+  output.close();
+  return;
 };
 
 /**
@@ -124,25 +114,23 @@ void uiWriteImage3D( float_image& image, const std::string& filename )
  */
 void uiWriteImage2D( float_image& image, const std::string& filename )
 {
-  std::ofstream s;
+  std::ofstream output;
   std::stringstream ss;
-  pink::types::vint dim;
-  int x, y, pix;
+  int rows, cols, pix;
   double piq, min, max;
   std::string tmp;
 
-  s.open( filename.c_str(), std::ios_base::out | std::ios_base::trunc );
+  output.open( filename.c_str(), std::ios_base::out | std::ios_base::trunc );
 
   ss << "P2\n";
   ss << "# UjoImro Design Group, 2006\n";
 
-  dim = pink::types::vint(2);
-  x = image.get_size()[0];
-  y = image.get_size()[1];
+  rows = image.rows();  
+  cols = image.cols();
 
-  std::cout << "x=" << x << ", y=" << y << std::endl;
+  std::cout << "rows=" << rows << ", cols=" << cols << std::endl;
 
-  ss << x << " " << y << std::endl;
+  ss << rows << " " << cols << std::endl;
 
   ss << "255\n";
 
@@ -152,38 +140,25 @@ void uiWriteImage2D( float_image& image, const std::string& filename )
   std::cout << "Image.max = " << max  << std::endl;
   std::cout << "Image.min = " << min  << std::endl;
 
-  if (max==min)
-  {
-    pink_error("uiWarning: every element equals in the image")
-  };
+  if (max==min) pink_error("uiWarning: every element equals in the image");
+    
+  output << ss.str(); //writing image header
 
-  s << ss.str(); //writing image header
-
-  FOR( q, x * y ) {
-    //if (q==1300){
-    //	printf("itten vagyok.\n");
-    //};
-    dim[0]=q % x;
-    dim[1]=q / x;
-    piq = image[dim];
-
-    if (max==min) {
-      pix=0;
-
-    } else {
-      pix = int ( ( piq - min ) * 255 / ( max - min ) );
-    }
+  for ( auto & pixel : image ) {
+    pix = 0;
+    
+    if (max!=min) 
+      pix = index_t ( ( pixel - min ) * 255 / ( max - min ) );
 
     if ((pix<0) || (pix>255)) {
-      std::cout << "uiWarning: garbage at the image "
-                << filename << "[" << dim[0] << "," << dim[1] << "](" << q << ")=" << pix << std::endl;
+      std::cout << "uiWarning: garbage at the image " << std::endl;      
       pix=150;
     };
 
-    s << pix << std::endl;
+    output << pix << std::endl;
   };
 
-  s.close();
+  output.close();
 }; /* uiWriteImage2D */
 
 /**
@@ -193,18 +168,12 @@ void uiWriteImage2D( float_image& image, const std::string& filename )
  */
 void uiWriteImage ( float_image& image, const std::string& filename )
 {
-  if ( image.get_size().size() == 2 ) {
+  if ( image.size().size() == 2 ) 
     uiWriteImage2D( image, filename );
-
-  } else
-    if ( image.get_size().size() == 3 ) {
+  else if ( image.size().size() == 3 ) 
       uiWriteImage3D( image, filename );
-
-    }
-    else
-    {
-      pink_error("error uiWriteImage: image of this dimension can not be saved (saving not implemented)\n");
-    };
+  else
+    pink_error("error uiWriteImage: image of this dimension can not be saved (saving not implemented)\n");
 }; /*  uiWriteImage  */
 
 

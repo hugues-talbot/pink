@@ -32,7 +32,7 @@ namespace pink {
       char_image result;
       result = src.clone();
 
-      if (!mctopo3d_lborder(result.get_output(), connex))
+      if (!mctopo3d_lborder(result, connex))
       {
         pink_error("mctopo3d_lborder failed");        
       }
@@ -44,12 +44,12 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_ONE_FUNCTION(
-  border, 
-  pink::python::border, 
-  (arg("image"), arg("connexity")),
-  doc__border__c__
-  );
+// UI_EXPORT_ONE_FUNCTION(
+//   border, 
+//   pink::python::border, 
+//   (arg("image"), arg("connexity")),
+//   doc__border__c__
+//   );
 
 
 

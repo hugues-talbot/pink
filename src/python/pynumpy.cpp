@@ -84,10 +84,10 @@ namespace pink {
     wrap2numpy( image_type & image )
     {
       // the dimension of the image
-      index_t nd = image.get_size().size();
+      index_t nd = image.size().size();
       // the sizes of the image
       boost::shared_array<npy_intp> dims( new npy_intp[nd] );            
-      for ( index_t q=0; q<nd; ++q ) dims[q] = image.get_size()[q];
+      for ( index_t q=0; q<nd; ++q ) dims[q] = image.size()[q];
             
       PyObject* numpy_array;
       numpy_array =
@@ -95,7 +95,7 @@ namespace pink {
           nd,
           dims.get(),
           detail::numpy_type_map<typename image_type::pixel_type>::typenum,
-          reinterpret_cast<void*>(image.get_pixels().get())
+          reinterpret_cast<void*>(image.get())
           );
       
       if (numpy_array == NULL)
@@ -113,10 +113,10 @@ namespace pink {
     pink2numpy( image_type & image )
     {
       // the dimension of the image
-      index_t nd = image.get_size().size();
+      index_t nd = image.size().size();
       // the sizes of the image
       boost::shared_array<npy_intp> dims( new npy_intp[nd] );            
-      for ( index_t q=0; q<nd; ++q ) dims[q] = image.get_size()[q];
+      for ( index_t q=0; q<nd; ++q ) dims[q] = image.size()[q];
             
       PyObject* numpy_array;
       numpy_array =
@@ -141,7 +141,7 @@ namespace pink {
       typedef typename image_type::pixel_type type;      
       type * data = reinterpret_cast<type*>(PyArray_DATA(tmparray));
       
-      std::copy( (&image[0]), (&image[image.get_size().prod()]), data );      
+      std::copy( (&image(0)), (&image(pink::prod(image.size()))), data );      
 
       boost::python::handle<> handle(numpy_array); // making boost handle the array as a smart pointer
       boost::python::object result(handle);
@@ -164,7 +164,7 @@ namespace pink {
 
       npy_intp nd = PyArray_NDIM(tmparray);
       npy_intp * dims = PyArray_DIMS(tmparray);
-      pink::types::vint dim( nd, 0 );
+      std::vector<index_t> dim( nd, 0 );
 
       FOR(q, nd) dim[q]=dims[q];
 
@@ -173,14 +173,12 @@ namespace pink {
       if ( detail::numpy_type_map<pixel_type>::typenum == PyArray_TYPE(tmparray) ) // one more check to be sure
       {
         pixel_type * data = reinterpret_cast<pixel_type *>(PyArray_DATA(tmparray));
-        image_type result_image( dim, data, "numpy image" );
+        image_type result_image(dim, data);
         boost::python::object result(result_image);
         return result;
       }
       else
-      {
         pink_error("Cannot convert into Pink Image. Internal error 03.");        
-      }
 
       return boost::python::object();      
     } // numpy2pink

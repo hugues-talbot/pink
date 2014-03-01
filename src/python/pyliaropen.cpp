@@ -90,20 +90,20 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_FUNCTION(
-  fopenrect,
-  pink::python::liaropenrect,
-  ( arg("src"), arg("SEnx"),arg("SEny"), arg("SEnz") ),
-  "Fast opening by a flat 2D rectangle or 3D rectangle parallelepiped"
-  // end of the documenation
-  );
+// UI_EXPORT_FUNCTION(
+//   fopenrect,
+//   pink::python::liaropenrect,
+//   ( arg("src"), arg("SEnx"),arg("SEny"), arg("SEnz") ),
+//   "Fast opening by a flat 2D rectangle or 3D rectangle parallelepiped"
+//   // end of the documenation
+//   );
 
-UI_EXPORT_FUNCTION(
-  fopenpoly,
-  pink::python::liaropenpoly,
-  ( arg("src"), arg("Radius"),arg("Type"), arg("Sides") ),
-  "Fast 2D opening  by a flat polygon, given a radius, a type of line (0=periodic or 1=Bresenham) and a number of sides (can be zero)"
-  );
+// UI_EXPORT_FUNCTION(
+//   fopenpoly,
+//   pink::python::liaropenpoly,
+//   ( arg("src"), arg("Radius"),arg("Type"), arg("Sides") ),
+//   "Fast 2D opening  by a flat polygon, given a radius, a type of line (0=periodic or 1=Bresenham) and a number of sides (can be zero)"
+//   );
 
 
 

@@ -25,10 +25,6 @@
 #include "lskeletons.h"
 
 
-
-using namespace boost::python;
-using namespace pink;
-
 // you should not define N as a macro
 #undef N
 
@@ -38,7 +34,8 @@ namespace pink {
 
     // ERROR this function changes the parameters
     // If somebody uses it again it'll have to be corrected
-    int_image priority_image(
+    int_image
+    priority_image(
       char_image image,
       int priovalue
       )
@@ -46,29 +43,25 @@ namespace pink {
       
       int32_t i, N;
       uint8_t *F;
-      xvimage * prio;        
-      prio = allocimage(NULL, rowsize(image.get_output()), colsize(image.get_output()), depth(image.get_output()), VFF_TYP_4_BYTE);
-      if (prio == NULL)
-      {   
-        pink_error("allocimage failed");
-      }
-      N = rowsize(image.get_output()) * colsize(image.get_output()) * depth(image.get_output());
-      F = UCHARDATA(image.get_output());
+      int_image prio(image.rows(), image.cols(), image.depth());
+
+      N = pink::prod(image.size());
+      F = image.get();
       for (i = 0; i < N; i++) // inverse l'image
         if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
   
       if (priovalue == 0)
       {
-        if (depth(image.get_output()) == 1)
+        if (image.depth() == 1)
         {
-          if (! ldisteuc(image.get_output(), prio))
+          if (! ldisteuc(image, prio))
           {
             pink_error("ldisteuc failed");
           }
         }
         else
         {
-          if (! ldisteuc3d(image.get_output(), prio))
+          if (! ldisteuc3d(image, prio))
           {
             pink_error("ldisteuc3d failed");
           }
@@ -77,16 +70,16 @@ namespace pink {
       else
         if (priovalue == 1)
         {
-          if (depth(image.get_output()) == 1)
+          if (image.depth() == 1)
           {
-            if (! ldistquad(image.get_output(), prio))
+            if (! ldistquad(image, prio))
             {
               pink_error("ldistquad failed");
             }
           }
           else
           {
-            if (! ldistquad3d(image.get_output(), prio))
+            if (! ldistquad3d(image, prio))
             {
               pink_error("ldistquad3d failed");
             }
@@ -95,7 +88,7 @@ namespace pink {
         else
           if (priovalue == 2)
           {
-            if (! lchamfrein(image.get_output(), prio))
+            if (! lchamfrein(image, prio))
             {
               pink_error("lchamfrein failed");
             }
@@ -103,26 +96,22 @@ namespace pink {
           else
             if (priovalue == 3)
             {
-              if (! lsedt_meijster(image.get_output(), prio))
+              if (! lsedt_meijster(image, prio))
               {
                 pink_error("lsedt_meijster failed");
               }
             }
             else
             {
-              if (! ldist(image.get_output(), priovalue, prio))
+              if (! ldist(image, priovalue, prio))
               {
                 pink_error("ldist failed");
               }
             }
       for (i = 0; i < N; i++) // re-inverse l'image
         if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
-        
-      
-      int_image result(prio);
-      free(prio); // NOT freeimage!!!
-      
-      return result;      
+              
+      return prio;      
     } /* priority_image */
     
     template <class priority_image_type>    
@@ -136,7 +125,7 @@ namespace pink {
       char_image result;
       result = image.clone();
 
-      if (image.get_size().size()==2)
+      if (image.size().size()==2)
       {
         if (! lskelcurv(result, prio, can_be_null(inhibit), connex))
         {
@@ -145,7 +134,7 @@ namespace pink {
       }
       else /* NOT size==2 */
       {
-        if (image.get_size().size()==3)
+        if (image.size().size()==3)
         {
           if (! lskelcurv3d(result, prio, can_be_null(inhibit), connex))
           {
@@ -221,16 +210,18 @@ namespace pink {
   } /* namespace python */
 } /* namespace pink */
 
+using boost::python::arg;
+using boost::python::def;
 
 void skelcurv_export()
 {
 
-  UI_DEFINE_FUNCTION(
-  "skelcurv",
-  pink::python::skelcurv,
-  ( arg("image"),  arg("priority"), arg("connex"), arg("inhibit") ),
-  doc__skelcurv__c__
-  );
+  // UI_DEFINE_FUNCTION(
+  // "skelcurv",
+  // pink::python::skelcurv,
+  // ( arg("image"),  arg("priority"), arg("connex"), arg("inhibit") ),
+  // doc__skelcurv__c__
+  // );
   
   def("skelcurv",
       &pink::python::skelcurv2,
@@ -238,12 +229,12 @@ void skelcurv_export()
       doc__skelcurv__c__
     );
 
-  UI_DEFINE_FUNCTION(
-  "skelcurv",
-  pink::python::skelcurv_short,
-  ( arg("image"),  arg("priority"), arg("connex") ),
-  doc__skelcurv__c__
-  );
+  // UI_DEFINE_FUNCTION(
+  // "skelcurv",
+  // pink::python::skelcurv_short,
+  // ( arg("image"),  arg("priority"), arg("connex") ),
+  // doc__skelcurv__c__
+  // );
   
   def("skelcurv",
       &pink::python::skelcurv2_short,

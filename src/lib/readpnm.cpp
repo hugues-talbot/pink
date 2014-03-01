@@ -259,7 +259,7 @@ pink::float_image readPNMImage(const std::string & filename)
     pink_error("color images are out of question.");    
   };
 
-  pink::types::vint dim;
+  std::vector<index_t> dim;
 
   if ((end[2]-start[2]+1)==1) { // the image is 2D
     dim.resize(2,-1);
@@ -272,23 +272,23 @@ pink::float_image readPNMImage(const std::string & filename)
   pink::float_image presult(dim);
 
   if ((end[2]-start[2]+1)==1) { // the image is 2D
-    pink::types::vint curr(2,-1);
-    int n = dim.prod();
+    std::vector<index_t> curr(2,-1);
+    int n = pink::prod(dim);
     FOR(q, n) {
       curr[0]=q % dim[0] ;
       curr[1]=q / dim[0];
       switch (thepixtype){
       case (IM_UINT1):
-	presult[curr]=double(((unsigned char*)((void**)p)[0])[q]);
+	presult(curr)=double(((unsigned char*)((void**)p)[0])[q]);
 	break;
       case (IM_SHORT):
-	presult[curr]=double(((unsigned short*)((void**)p)[0])[q]);
+	presult(curr)=double(((unsigned short*)((void**)p)[0])[q]);
 	break;
       case (IM_INT4):
-	presult[curr]=double(((unsigned int*)((void**)p)[0])[q]);
+	presult(curr)=double(((unsigned int*)((void**)p)[0])[q]);
 	break;
       case (IM_FLOAT):
-	presult[curr]=double(((float*)((void**)p)[0])[q]);
+	presult(curr)=double(((float*)((void**)p)[0])[q]);
 	break;
       default:
 	std::cout << "image type= "<< thepixtype << std::endl;
@@ -297,8 +297,8 @@ pink::float_image readPNMImage(const std::string & filename)
       };
     };
   } else { // the image is 3D
-    pink::types::vint curr(3,-1);
-    index_t n = dim.prod();
+    std::vector<index_t> curr(3,-1);
+    index_t n = pink::prod(dim);
     FOR(q, n){
       curr[0]=(q % ( dim[1] * dim[0] )) % dim[0];
       curr[1]=(q % ( dim[1] * dim[0] )) / dim[0];
@@ -306,16 +306,16 @@ pink::float_image readPNMImage(const std::string & filename)
 
       switch (thepixtype){
       case (IM_UINT1):
-	presult[curr]=float(((unsigned char*)((void**)p)[0])[q]);
+	presult(curr)=float(((unsigned char*)((void**)p)[0])[q]);
 	break;
       case (IM_SHORT):
-	presult[curr]=float(((unsigned short*)((void**)p)[0])[q]);
+	presult(curr)=float(((unsigned short*)((void**)p)[0])[q]);
 	break;
       case (IM_INT4):
-	presult[curr]=float(((unsigned int*)((void**)p)[0])[q]);
+	presult(curr)=float(((unsigned int*)((void**)p)[0])[q]);
 	break;
       case (IM_FLOAT):
-	presult[curr]=double(((float*)((void**)p)[0])[q]);
+	presult(curr)=double(((float*)((void**)p)[0])[q]);
 	break;
       default:
 	std::cout << "image type= "<< thepixtype << std::endl;

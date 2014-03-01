@@ -17,72 +17,40 @@
 // you shouldn't use one character macros
 #undef N
 
-using namespace std;
-
-
-
 namespace pink {
 
-  char_image genball( double radius, int dim )
-  {
-    char_image result;
+  image<uint8_t>
+  genball( double radius, int dim )
+  {    
+    image<uint8_t> result;
     
     if (dim==2) 
     {
-      pink::types::vint size(2), curr(2), tmp(2);
-      size << 2*radius+1, 2*radius+1;
-      
-      result=char_image(size);
-      result.get_center() << radius, radius;      
+      result.reset( 2*radius+1, 2*radius+1 );
+      result.center() = {radius, radius};
 
-      FOR(q, result.get_size()[0])
-      {    
-        FOR(w, result.get_size()[1])
-        {
-          curr << radius-q, radius-w;          
-          if (curr.fabs() <= radius)
-          {
-            tmp << q,w;            
-            result[tmp]=255;            
-          }
-        } /* FOR */
-      } /* FOR */      
+      FOR(q, result.cols())
+        FOR(w, result.rows())
+        if ( sqrt(q*q + w*w) <= radius )
+          result(q, w) = 255;
     }
     else /* NOT dim == 2 */
-    {
       if (dim==3)
       {               
-        pink::types::vint size(3), curr(3), tmp(3);
-        size << 2*radius+1, 2*radius+1, 2*radius+1;
-      
-        result=char_image(size);
-        result.get_center() << radius, radius, radius;        
+        result.reset( 2*radius+1, 2*radius+1, 2*radius+1 );
+        result.center() = { radius, radius, radius };
 
-        FOR(q, result.get_size()[0])
-        {    
-          FOR(w, result.get_size()[1])
-          {
-            FOR(e, result.get_size()[2])
-            {
-              curr << radius-q, radius-w, radius-e;
-              if (curr.fabs()<=radius)
-              {
-                tmp << q,w,e;            
-                result[tmp]=255;            
-              }
-            } /* FOR */            
-          } /* FOR */
-        } /* FOR */      
-        
+        FOR(q, result.depth())
+          FOR(w, result.cols())
+          FOR(e, result.rows())
+          if ( sqrt( q*q + w*w + e*e )<=radius)
+            result(e,w,q)=255;
       }
       else /* NOT dim == 3 */
-      {
         pink_error("only 2D and 3D supported in this moment.");           
-      } /* NOT dim == 3 */      
-    } /* NOT dim == 2 */
 
     
-      return result;  
+    return result;  
     
   } /* genball */
   

@@ -34,7 +34,7 @@ namespace pink {
       char_image result;
       result = image.clone();
      
-      if (! lskelsurf3d(result.get_output(), priority_image.get_output(), /*can_be_null(inhibit)*/ NULL, connexity))
+      if (! lskelsurf3d(result, priority_image, /*can_be_null(inhibit)*/ NULL, connexity))
       {
         pink_error("lskelsurf3d failed");        
       } /* if */
@@ -62,21 +62,21 @@ namespace pink {
 void skelsurf_export()
 {
 
-UI_DEFINE_FUNCTION(
-  "skelsurf",
-  pink::python::skelsurf,
-  ( arg("image"), arg("priority_image"), arg("inhibit"), arg("connexity")),
-  doc__skelsurf__c__
-  // end of the documentation
-   );
+// UI_DEFINE_FUNCTION(
+//   "skelsurf",
+//   pink::python::skelsurf,
+//   ( arg("image"), arg("priority_image"), arg("inhibit"), arg("connexity")),
+//   doc__skelsurf__c__
+//   // end of the documentation
+//    );
 
-UI_DEFINE_FUNCTION(
-  "skelsurf",
-  pink::python::skelsurf_short,
-  ( arg("image"), arg("priority_image"), arg("connexity")),
-  doc__skelsurf__c__
-  // end of the documentation
-   );
+// UI_DEFINE_FUNCTION(
+//   "skelsurf",
+//   pink::python::skelsurf_short,
+//   ( arg("image"), arg("priority_image"), arg("connexity")),
+//   doc__skelsurf__c__
+//   // end of the documentation
+//    );
 
 
 } /* skelsurf_export */

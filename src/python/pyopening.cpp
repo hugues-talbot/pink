@@ -27,80 +27,59 @@ namespace pink {
     template <class image_t>
     image_t opening(
       const image_t    & image, 
-      const char_image & elem
+      const char_image & c_elem
       )
     {
 
-      if (!elem.get_size().inside(elem.get_center()))
-      {
+      if (!pink::inside( c_elem.size(), c_elem.center()))
         pink_error("The center of 'elem' must be specified.");
-      }
 
-      if (image.get_size().size()!=elem.get_size().size()){
+      if (image.size().size()!=c_elem.size().size())
         pink_error("error: the dimensions of 'image' and 'elem' must be equal");
-      }
 
       image_t result;
       result = image.clone();
-      char_image elem_ca;
-      elem_ca = elem.clone();
 
-      if (result.get_size().size()==2)
+      char_image elem = c_elem.clone();
+            
+      if (result.size().size()==2)
       {
-        int rs = elem_ca.get_size()[0];
-        int cs = elem_ca.get_size()[1];
-        int x = elem_ca.get_center()[0];
-        int y = elem_ca.get_center()[1];
+        index_t rs = elem.size()[0];
+        index_t cs = elem.size()[1];
+        index_t x = elem.center()[0];
+        index_t y = elem.center()[1];
 
-        if (! ldilateros_leros( result.get_output(), elem_ca.get_output(), x, y))
-        {
-          pink_error("function leros failed");
-        }              
+        if (! ldilateros_leros( result, elem, x, y)) pink_error("function leros failed");
         
-        if (! lsym( elem_ca.get_output(), 'c'))
-        {
-          pink_error("function lsym failed");
-        }
+        if (! lsym( elem, 'c')) pink_error("function lsym failed");
         
-        if (! ldilateros_ldilat( result.get_output(), elem_ca.get_output(), rs - 1 - x, cs - 1 - y))
-        {
-          pink_error("function ldilat failed");
-        }
+        if (! ldilateros_ldilat( result, elem, rs - 1 - x, cs - 1 - y)) pink_error("function ldilat failed");
       }
-      else /* NOT result.get_size()==2 */ 
+      else /* NOT result.size()==2 */ 
       {
-        if (result.get_size().size()==3)
+        if (result.size().size()==3)
         {
 
-          int rs = elem_ca.get_size()[0];
-          int cs = elem_ca.get_size()[1];
-          int ds = elem_ca.get_size()[2];
-          int x = elem_ca.get_center()[0];
-          int y = elem_ca.get_center()[1];
-          int z = elem_ca.get_center()[2];
+          index_t rs = elem.size()[0];
+          index_t cs = elem.size()[1];
+          index_t ds = elem.size()[2];
+          index_t x = elem.center()[0];
+          index_t y = elem.center()[1];
+          index_t z = elem.center()[2];
 
-          if (! leros3d( result.get_output(), elem_ca.get_output(), x, y, z))
-          {
-            pink_error("function leros3d failed");
-          }
+          if (! leros3d( result, elem, x, y, z)) pink_error("function leros3d failed");
       
-          if (! lsym(elem_ca.get_output(), 'c'))
-          {
-            pink_error("function lsym failed");
-          }
+          if (! lsym(elem, 'c')) pink_error("function lsym failed");
       
-          if (! ldilat3d( result.get_output(), elem_ca.get_output(), rs - 1 - x, cs - 1 - y, ds - 1 - z))
-          {
-            pink_error("function leros3d failed");
-          }
+          if (! ldilat3d( result, elem, rs - 1 - x, cs - 1 - y, ds - 1 - z)) pink_error("function leros3d failed");
 
         } 
-        else /* NOT result.get_size()==3 */
+        else /* NOT result.size()==3 */
         {
           pink_error("pyopening: the image must be 2D or 3D");
-        } /* NOT result.get_size()==3 */
+        } /* NOT result.size()==3 */
     
-      } /* NOT result.get_size()==2 */ 
+      } /* NOT result.size()==2 */ 
   
   
       return result;    
@@ -123,7 +102,7 @@ namespace pink {
     //     pink_error("dist = [0|2|4|8|6|18|26] ");
     //   }
 
-    //   if (result.get_size().size()==2) // the result is 2D
+    //   if (result.size().size()==2) // the result is 2D
     //   {
     //     if (! lerosdisc(result, radius, mode))
     //     {
@@ -160,13 +139,13 @@ namespace pink {
   } /* namespace python */
 } /* namespace pink */
 
-UI_EXPORT_FUNCTION(
-  opening,
-  pink::python::opening,
-  ( arg("image"), arg("elem") ),
-  doc__opening__c__
-  // end of the documenation
-  );
+// UI_EXPORT_FUNCTION(
+//   opening,
+//   pink::python::opening,
+//   ( arg("image"), arg("elem") ),
+//   doc__opening__c__
+//   // end of the documenation
+//   );
 
 
 // UI_EXPORT_ONE_FUNCTION(

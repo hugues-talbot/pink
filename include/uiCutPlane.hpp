@@ -22,7 +22,8 @@
 
 namespace pink {
 
-  char_image draw_plane( const char_image & original, float a, float b, float c, float d );
+  pink::image<uint8_t>
+  draw_plane( const pink::image<uint8_t> & original, float a, float b, float c, float d );
 
 # ifdef PINK_HAVE_PYTHON
   char_image project_plane( const char_image & original,

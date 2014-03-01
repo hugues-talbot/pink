@@ -35,17 +35,16 @@ namespace pink {
       image_type result;
       result = image.clone();
       
-      if (!linverse(result.get_output()))
-      {
+      if (!linverse(result))
         pink_error("function linverse failed");
-      }
       
       return result;
     } /* inverse */
 
   
-    std::string mcube(
-      char_image image,
+    std::string
+    mcube(
+      const char_image & image,
       int seuil,
       int nregul,
       int obj_id,
@@ -76,17 +75,13 @@ namespace pink {
     
       if (seuil == 255)
       { // with fix-point preservation
-        if (! lmarchingcubes2(tmp.get_output(), nregul, obj_id, reinterpret_cast<FILE*>(&result), T_VTK_PYTHON))
-        {
+        if (! lmarchingcubes2(tmp, nregul, obj_id, reinterpret_cast<FILE*>(&result), T_VTK_PYTHON))
           pink_error("function lmarchingcubes2 failed");
-        }
       }
       else
       {
-        if (! lmarchingcubes(tmp.get_output(), seuil, nregul, obj_id, reinterpret_cast<FILE*>(&result), T_VTK_PYTHON))
-        {
+        if (! lmarchingcubes(tmp, seuil, nregul, obj_id, reinterpret_cast<FILE*>(&result), T_VTK_PYTHON))
           pink_error("function lmarchingcubes failed");
-        }
       }
       
       TermineMesh();
@@ -99,13 +94,13 @@ namespace pink {
   } /* namespace python */
 } /* namespace pink */
 
-UI_EXPORT_ONE_FUNCTION(
-  mcube,
-  pink::python::mcube,
-  (arg("image"), arg("seuil"), arg("nregul"), arg("obj_id"), arg("connex")=26),
-  doc__mcube__c__
-  // end of documentation
-  );
+// UI_EXPORT_ONE_FUNCTION(
+//   mcube,
+//   pink::python::mcube,
+//   (arg("image"), arg("seuil"), arg("nregul"), arg("obj_id"), arg("connex")=26),
+//   doc__mcube__c__
+//   // end of documentation
+//   );
 
 
 

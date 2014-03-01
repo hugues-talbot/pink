@@ -20,54 +20,54 @@ namespace pink {
   namespace python {
 
 
-    // if there will be many scripts, than i will need to
-    // move these functions into the library
+    // // if there will be many scripts, than i will need to
+    // // move these functions into the library
 
-    template <class image_t>
-    image_t dilation
-    (
-      const image_t & src, 
-      char_image elem
-      );
+    // template <class image_t>
+    // image_t dilation
+    // (
+    //   const image_t & src, 
+    //   const char_image & elem
+    //   );
     
-    template <class image_t>
-    image_t erosion
-    (
-      const image_t & src, 
-      char_image elem
-      );
-
-    
+    // template <class image_t>
+    // image_t erosion
+    // (
+    //   const image_t & src, 
+    //   const char_image & elem
+    //   );
 
     
-    char_image gradmorph(
-      const char_image & image,
-      const char_image & elem      
-      )
-    {
-      char_image result;
-      //result.copy(image);
 
-      char_image dilated;
-      char_image eroded;
+    
+    // char_image gradmorph(
+    //   const char_image & image,
+    //   const char_image & elem      
+    //   )
+    // {
+    //   char_image result;
+    //   //result.copy(image);
 
-      dilated = dilation(image, elem);
-      eroded = erosion(image, elem);
-      result = dilated - eroded;
+    //   char_image dilated;
+    //   char_image eroded;
+
+    //   dilated = dilation(image, elem);
+    //   eroded = erosion(image, elem);
+    //   result = dilated - eroded;
       
-      return result;      
-    } /* ptcurve */
+    //   return result;      
+    // } /* ptcurve */
     
 
   } /* namespace python */
 } /* namespace pink */
 
-UI_EXPORT_ONE_FUNCTION(
-  gradmorph,
-  pink::python::gradmorph,
-  ( arg("image"),  arg("structuring element") ),
-  "Calculated the morphologic gradient according to the structuring element."
-  );
+// UI_EXPORT_ONE_FUNCTION(
+//   gradmorph,
+//   pink::python::gradmorph,
+//   ( arg("image"),  arg("structuring element") ),
+//   "Calculated the morphologic gradient according to the structuring element."
+//   );
 
 
 

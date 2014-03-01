@@ -26,124 +26,55 @@ using namespace pink;
 namespace pink {
   namespace python {
 
-    template <class image_type>
-    image_type read_raw_image(
+
+    boost::python::object
+    py_read_raw_image (
       const std::string & filename,
-      const boost::python::list & python_dim
+      const boost::python::list & python_dim,
+      const int inttype
       )
     {
-  
-      typedef typename image_type::pixel_type pixel_type;
+      
+      std::vector<index_t> dim;
 
-      pink::types::vint dim(python_dim);
-  
+      // converting the python list into std::vector
+      for ( index_t coord = 0; coord<boost::python::len(python_dim); coord++ ) {
+        try {
+          dim.push_back( boost::python::extract<index_t>(python_dim[coord]) );
+        }
+        catch (...)
+        {
+          pink_error("the elements of the list must be convertible to integers.");
+        }
+      } // for coord
+      
       std::ifstream file;
   
-      if ( file_size(filename) != sizeof(pixel_type) * dim.prod() )
+      if ( file_size(filename) != pink::typesize(inttype) * pink::prod(dim) )
       {
-        std::cout << "requested file size = " << sizeof(pixel_type) * dim.prod() << "\n";
+        std::cout << "requested file size = " << pink::typesize(inttype) * pink::prod(dim) << "\n";
         std::cout << "but '" << filename << "' is only " << file_size(filename) << " byte-long\n"; 
         pink_error( "the file size does not equal with the image size");
       } /* if */
 
       file.open( filename.c_str(), std::ios_base::binary );
-  
-      boost::shared_array<pixel_type> data(new pixel_type[dim.prod()]);
-    
-      try 
-      {    
-        file.read( 
-          reinterpret_cast<char*>(data.get()), 
-          sizeof(pixel_type)*dim.prod()
-          );
+
+      cxvimage image( inttype, dim );
+      try {
+        file.read(
+          image.pdata<char>(),
+          pink::typesize(inttype) * pink::prod(dim) );
       }
       catch (...)
       {
         pink_error("the raw data couldn't be read from the file");
       }
   
-
-      file.close();
-  
-      image_type result( dim, data );
-
-      return result;
-  
-    } /* read_raw_image */
-
-
-
-    boost::python::object py_read_raw_image (
-      const std::string & filename,
-      const boost::python::list & python_dim,
-      const int inttype
-      )
-    {
-      boost::python::object * result;
-
-      // determining the image type and creating
-      // the appropriate python object
-      switch (inttype)
-      {        
-      case VFF_TYP_1_BYTE: /* pixels are byte (uint8_t) */
-      {
-        char_image a = read_raw_image<char_image>(filename, python_dim);
-        result = new boost::python::object(a);
-      }      
-      break;
-        
-      case VFF_TYP_2_BYTE: /* pixels are two byte (int16_t) */
-      {
-        short_image a = read_raw_image<short_image>(filename, python_dim);
-        result = new boost::python::object(a);                
-      }      
-      break;
-        
-      case VFF_TYP_4_BYTE: /* pixels are four byte (integer) */
-      {        
-        int_image a = read_raw_image<int_image>(filename, python_dim);
-        result = new boost::python::object(a);
-      }
-      break;
-        
-      case VFF_TYP_FLOAT: /* pixels are float (single precision) */
-      {
-        float_image a = read_raw_image<float_image>(filename, python_dim);
-        result = new boost::python::object(a);
-
-      }
-      break;
-        
-      case VFF_TYP_DOUBLE: /* pixels are float (double precision)*/
-      {
-        double_image a = read_raw_image<double_image>(filename, python_dim);
-        result = new boost::python::object(a);
-      }
-      break;
-
-      case VFF_TYP_COMPLEX: /* pixels are float (single precision) */
-      {
-        fcomplex_image a = read_raw_image<fcomplex_image>(filename, python_dim);
-        result = new boost::python::object(a);        
-      }
-      break;
-        
-      case VFF_TYP_DCOMPLEX: /* pixels are float (double precision)*/
-      {
-        dcomplex_image a = read_raw_image<dcomplex_image>(filename, python_dim);
-        result = new boost::python::object(a);
-      }
-      break;
+      boost::python::object result(image);
       
-      default:
-        pink_error("c_readimage returned bad image type");
-      } /* switch im_type */
-      
-      return *result;      
+      return result;      
     } /* py_read_raw_image */
     
-
-
 
   } /* namespace python */
 } /* namespace pink */

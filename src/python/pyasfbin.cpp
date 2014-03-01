@@ -104,12 +104,12 @@ namespace pink {
   } /* namespace python */
 } /* namespace pink */
 
-UI_EXPORT_ONE_FUNCTION(
-  asfbin,
-  pink::python::asfbin,
-  ( arg("image"), arg("max radius"), arg("min radius")=1),
-  doc__asfbin__c__
-  );
+// UI_EXPORT_ONE_FUNCTION(
+//   asfbin,
+//   pink::python::asfbin,
+//   ( arg("image"), arg("max radius"), arg("min radius")=1),
+//   doc__asfbin__c__
+//   );
 
 
 

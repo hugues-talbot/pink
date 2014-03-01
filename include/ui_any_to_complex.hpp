@@ -16,31 +16,31 @@
 
 #include "pink.h"
 
-namespace pink {
+// namespace pink {
 
-  template <class image_type>
-  fcomplex_image lany2complex(
-    const image_type & re,
-    const image_type & im
-    )
-  {
-    //COMPARE_SIZE(re.get_output(), im.get_output());
-    if (re.get_size() != im.get_size())
-    {
-      pink_error("The image sizes must be equal!");      
-    }
+//   template <class image_type>
+//   fcomplex_image lany2complex(
+//     const image_type & re,
+//     const image_type & im
+//     )
+//   {
+//     //COMPARE_SIZE(re.get_output(), im.get_output());
+//     if (re.get_size() != im.get_size())
+//     {
+//       pink_error("The image sizes must be equal!");      
+//     }
         
-    fcomplex_image result(re.get_size());
+//     fcomplex_image result(re.get_size());
 
-    FOR(q, result.get_size().prod())
-    {
-      result[q].im=im[q];
-      result[q].re=re[q];      
-    }
+//     FOR(q, result.size().prod())
+//     {
+//       result[q].im=im[q];
+//       result[q].re=re[q];      
+//     }
 
-    return result;
+//     return result;
     
-  } /* lany2complex */
+//   } /* lany2complex */
   
 
 
@@ -53,7 +53,7 @@ namespace pink {
 
 
   
-} /* namespace pink */
+// } /* namespace pink */
 
 #endif /* UI_ANY_TO_COMPLEX_HPP_ */
 #endif /* __cplusplus */

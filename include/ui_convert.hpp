@@ -68,14 +68,11 @@ namespace pink {
   template <class image_type, class result_type>
   result_type simple_convert( const image_type & image )
   {
-    result_type result(image.get_size());
+    result_type result(image.size());
     
-    index_t nbp = image.get_size().prod();
+    index_t nbp = pink::prod(image.size());
     
-    FOR(q, nbp)
-    {
-      result[q]=image[q];      
-    }
+    FOR(q, nbp) result[q]=image[q];      
     
     return result;      
   } /* simple_convert */

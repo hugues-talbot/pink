@@ -25,21 +25,15 @@ namespace pink {
 
     char_image plane3d(
       const char_image & image, 
-      double a,
-      double b,
-      double c,
-      double d
-      )
-    {
+      const double &a,
+      const double & b,
+      const double & c,
+      const double & d ) {
       
       char_image result;
       result = image.clone();
       
-      if ( !l3dplane( result.get_output(), a, b, c, d ) )
-      {
-        pink_error("function l3dplane failed");
-      } /* if */
-      
+      if ( !l3dplane( result, a, b, c, d ) ) pink_error("function l3dplane failed");
       
       return result;
       
@@ -50,12 +44,12 @@ namespace pink {
 
 
 
-UI_EXPORT_ONE_FUNCTION(
-  plane3d, 
-  pink::python::plane3d, 
-  ( arg("image"), arg("coefficient of x"), arg("coefficient of y"), arg("coefficient of z"), arg("absolut part")),
-  doc__3dplane__c__
-  );
+// UI_EXPORT_ONE_FUNCTION(
+//   plane3d, 
+//   pink::python::plane3d, 
+//   ( arg("image"), arg("coefficient of x"), arg("coefficient of y"), arg("coefficient of z"), arg("absolut part")),
+//   doc__3dplane__c__
+//   );
 
 
 

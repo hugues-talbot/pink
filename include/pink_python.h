@@ -22,14 +22,6 @@
 #include "python_doc.h"
 #include "pyexport.hpp"
 #include "pyujimage.hpp"
-#include "ui_wrap_value.hpp"
-#include "ui_make_value.hpp"
-#include "ui_wrap_malloc.hpp"
-#include "ui_make_malloc.hpp"
-#include "ui_wrap_result.hpp"
-#include "ui_make_result.hpp"
-#include "ui_wrap_function.hpp"
-#include "ui_make_function.hpp"
 
 
 

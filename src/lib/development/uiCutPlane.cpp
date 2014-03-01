@@ -151,6 +151,8 @@ namespace pink {
   
     
 
+  // !!!!!!!!!! CHECK MEE!!!
+  
   char_image draw_plane( 
     const char_image & original, 
     float a, 
@@ -158,34 +160,14 @@ namespace pink {
     float c, 
     float d )
   {
-    // PTR<char_image> plane(new char_image(original.get_size()));
     
     char_image result;
     result = original.clone();
 
-    pink::types::vint curr( result.get_size().size(), "curr"  );
-    
-    FOR(q, result.get_size().prod())
-    {
-      result.get_size().next_step( q, curr );
+    for ( auto pixel = result.begin(); pixel != result.end(); ++pixel ) 
+      if ( a * pixel.row() + b * pixel.col() + c * pixel.depth() + d < 1 ) *pixel = 255;
       
-//       if ( uiAbs(a*curr[0]+b*curr[1]+c*curr[2]+d) 
-// 	   / sqrt( a*a + b*b + c*c ) <= 0.5 )
-//       {
-//     	(*plane)[q]=255;	
-//       } /* if */
-
-    if ( a*curr[0]+b*curr[1]+c*curr[2]+d  > 0 )
-    {
-      result[q]=0;	
-    } /* if */
-
-      
-    } /* FOR */
-    
-    // result = immap_min( original, *plane );
-
-    return result;
+    return result;    
   } /* draw_plane */
 
 
@@ -197,11 +179,8 @@ namespace pink {
                             double alpha
     )
   {
-
-    pink::types::vint size2D;
-    size2D << src.get_size()[0], src.get_size()[1];
     
-    char_image result(size2D);
+    char_image result(src.rows(), src.cols());
     
     v3d pA(A);
     v3d pB(B);
@@ -343,30 +322,27 @@ namespace pink {
 
     VectorXd point(4);
     VectorXd inpoint(4);
-    pink::types::vint curr;
-    pink::types::vint pcurr;
+    std::vector<index_t> curr(3);
+    std::vector<index_t> pcurr(2);
     
-    FOR(q, result.get_size()[0])
+    FOR(q, result.rows())
     {
-      FOR(w, result.get_size()[1])
+      FOR(w, result.cols())
       {
 	point << q, w, 0, 1;
 	inpoint = TR*point;
 	//DVECT(point);
 	
-	curr << 
-	  tmp_round(inpoint[0]), 
-	  tmp_round(inpoint[1]),
-	  tmp_round(inpoint[2]);
+	curr = { tmp_round(inpoint[0]), tmp_round(inpoint[1]), tmp_round(inpoint[2]) };
 
 	//_DEBUG(curr.repr());
 	
-	if (src.get_size().inside(curr))
+	if (pink::inside(src.size(), curr))
 	{
-	  pcurr << q,w;
+	  pcurr = { q, w };
 	  // _DEBUG(pcurr.repr());
 	  
-	  result[pcurr]=src[curr];
+	  result(pcurr)=src(curr);
 	} /* src.inside(curr) */
 	
 

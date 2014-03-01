@@ -76,12 +76,12 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_ONE_FUNCTION(
-  identifyline, 
-  pink::python::identifyline, 
-  ( arg("list of X coordinates"), arg("list of Y coordinates") ),
-  doc__identifyline__c__
-  );
+// UI_EXPORT_ONE_FUNCTION(
+//   identifyline, 
+//   pink::python::identifyline, 
+//   ( arg("list of X coordinates"), arg("list of Y coordinates") ),
+//   doc__identifyline__c__
+//   );
 
 
 

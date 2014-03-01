@@ -21,11 +21,11 @@ namespace pink {
   template<class image_type>
   image_type extractplane(
     const image_type & image,
-    int n, /*the number of the plane*/
-    std::string mode
+    const index_t & n, /*the number of the plane*/
+    const std::string & mode
     )
   {
-    int32_t i, j, k, t, offset, rs, cs, ds;
+    index_t i, j, k, t, offset, rs, cs, ds;
 
     if (! (((mode[0] == 'x') && (mode[1] == 'y')) ||
            ((mode[0] == 'y') && (mode[1] == 'x')) ||
@@ -38,9 +38,9 @@ namespace pink {
       pink_error("extractplane called with incorrect mode " << mode );
     }
 
-    rs = image.get_size()[0]; //rowsize(image);
-    cs = image.get_size()[1]; //colsize(image);
-    ds = image.get_size()[2]; //depth(image);
+    rs = image.rows(); //rowsize(image);
+    cs = image.cols(); //colsize(image);
+    ds = image.depth(); //depth(image);
 
     /* ---------------------------------------------------------- */
     /* extraction d'un plan */
@@ -48,13 +48,9 @@ namespace pink {
 
     if ((mode[0] == 'x') && (mode[1] == 'y'))
     {
-      pink::types::vint size(2,0);
-      size << rs,cs;      
-      image_type result(size);
-      if ((n < 0) || (n >= ds))
-      {
-        pink_error("bad plane number " << n);
-      }
+      image_type result(rs,cs);
+      if ((n < 0) || (n >= ds)) pink_error("bad plane number " << n);
+
       t = rs * cs;
       offset = n * t;
       for (i = 0; i < t; i++) result(i) = image(i + offset);
@@ -63,13 +59,8 @@ namespace pink {
     } 
     else if ((mode[0] == 'y') && (mode[1] == 'x'))
     {
-      pink::types::vint size(2,0);
-      size << cs,rs;      
-      image_type result(size);
-      if ((n < 0) || (n >= ds))
-      {
-        pink_error("bad plane number " << n);
-      }
+      image_type result(cs, rs);
+      if ((n < 0) || (n >= ds)) pink_error("bad plane number " << n);
       t = rs * cs;
       for (j = 0; j < cs ; j++)
         for (i = 0; i < rs ; i++)
@@ -79,31 +70,21 @@ namespace pink {
     }
     else if ((mode[0] == 'x') && (mode[1] == 'z'))
     {
-      pink::types::vint size(2,0);
-      size << rs,ds;      
-      image_type result(size);
+      image_type result(rs, ds);
 
-      if ((n < 0) || (n >= cs))
-      {
-        pink_error("bad plane number " << n);
-      }
+      if ((n < 0) || (n >= cs)) pink_error("bad plane number " << n);
       t = rs * cs;
       for (k = 0; k < ds ; k++)
         for (i = 0; i < rs ; i++)
           result(k*rs + i) = image(k*t + n*rs + i);
 
-      return result;      
+      return result;
     }
     else if ((mode[0] == 'z') && (mode[1] == 'x'))
     {
-      pink::types::vint size(2,0);
-      size << ds,rs;      
-      image_type result(size);
+      image_type result(ds, rs);
       
-      if ((n < 0) || (n >= cs))
-      {
-        pink_error("bad plane number " << n ); //,n
-      }
+      if ((n < 0) || (n >= cs)) pink_error("bad plane number " << n ); //,n
       t = rs * cs;
       for (k = 0; k < ds ; k++)
         for (i = 0; i < rs ; i++)
@@ -112,15 +93,10 @@ namespace pink {
       return result;      
     }
     else if ((mode[0] == 'y') && (mode[1] == 'z'))
-    {
-      pink::types::vint size(2,0);
-      size << cs,ds;      
-      image_type result(size);
+    {  
+      image_type result(cs, ds);
      
-      if ((n < 0) || (n >= rs))
-      {
-        pink_error("bad plane number " << n);
-      }
+      if ((n < 0) || (n >= rs)) pink_error("bad plane number " << n);
       t = rs * cs;
       for (k = 0; k < ds ; k++)
         for (j = 0; j < cs ; j++)
@@ -130,9 +106,7 @@ namespace pink {
     }
     else if ((mode[0] == 'z') && (mode[1] == 'y'))
     {
-      pink::types::vint size(2,0);
-      size << ds,cs;      
-      image_type result(size);
+      image_type result( ds, cs);
       
       if ((n < 0) || (n >= rs))
       {

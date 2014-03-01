@@ -90,20 +90,20 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_FUNCTION(
-  fcloserect,
-  pink::python::liarcloserect,
-  ( arg("src"), arg("SEnx"),arg("SEny"), arg("SEnz") ),
-  "Fast closing by a flat 2D rectangle or 3D rectangle parallelepiped"
-  // end of the documenation
-  );
+// UI_EXPORT_FUNCTION(
+//   fcloserect,
+//   pink::python::liarcloserect,
+//   ( arg("src"), arg("SEnx"),arg("SEny"), arg("SEnz") ),
+//   "Fast closing by a flat 2D rectangle or 3D rectangle parallelepiped"
+//   // end of the documenation
+//   );
 
-UI_EXPORT_FUNCTION(
-  fclosepoly,
-  pink::python::liarclosepoly,
-  ( arg("src"), arg("Radius"),arg("Type"), arg("Sides") ),
-  "Fast 2D closing  by a flat polygon, given a radius, a type of line (0=periodic or 1=Bresenham) and a number of sides (can be zero)"
-  );
+// UI_EXPORT_FUNCTION(
+//   fclosepoly,
+//   pink::python::liarclosepoly,
+//   ( arg("src"), arg("Radius"),arg("Type"), arg("Sides") ),
+//   "Fast 2D closing  by a flat polygon, given a radius, a type of line (0=periodic or 1=Bresenham) and a number of sides (can be zero)"
+//   );
 
 
 

@@ -15,18 +15,15 @@
 #include "uiGradient.hpp"
 
 using namespace boost::python;
-using namespace pink;
-
-
 
 void py_gradient_export(){
 
-  def( "cpp_spline_absolut_gradient_float", &uiGradientAbs,
-       args("source image"),
-       "returns the image's spline approximated gradient's absolute value\n"
-       " \n"
-// end of the documenation
-    );
+//   def( "cpp_spline_absolut_gradient_float", &uiGradientAbs,
+//        args("source image"),
+//        "returns the image's spline approximated gradient's absolute value\n"
+//        " \n"
+// // end of the documenation
+//     );
 
   
 

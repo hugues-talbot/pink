@@ -22,7 +22,8 @@ namespace pink {
   const double epsilon=0.00001;  
   
   template <class image_type>
-  image_type lmeasure( const image_type & image )
+  image_type
+  lmeasure( const image_type & image )
   {
 
     image_type result;
@@ -45,10 +46,8 @@ namespace pink {
 
     result = uiGradientAbs(result);
 
-    FOR(q, result.get_size().prod())
-    {
-      result(q) =  1. / ( epsilon + result(q) );
-    } /* FOR */
+    for ( auto & pixel : result )
+      pixel =  1. / ( epsilon + pixel );
 
     result = normalize<image_type, 0, 1>(result);
 
@@ -58,16 +57,15 @@ namespace pink {
 
 
   template <class image_type>
-  image_type analytical_inverse( const image_type & image, typename image_type::pixel_type epsilon )
+  image_type
+  analytical_inverse( const image_type & image, typename image_type::pixel_type epsilon )
   {
     image_type result;
     result.copy(image);
 
-    FOR(q, result.get_size().prod())
-    {
-      result[q] =  1. / ( epsilon + result[q] );
-    } /* FOR */
-    
+    for ( auto & pixel : result )
+      pixel = 1. / ( epsilon + pixel );
+        
     return result;    
   }
   

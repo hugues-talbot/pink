@@ -30,80 +30,63 @@ namespace pink {
 
     // the content of this functon is copycat from
     // skeleton.c
-    pink::int_image skeleton_distance(
-      pink::char_image & image,
+    pink::int_image
+    skeleton_distance (
+      const pink::char_image & image,
       int priocode
       )
     {
-      pink::int_image prio(image.get_size());
-
+      pink::int_image prio(image.size());
+      pink::char_image inverse = image.clone();
+      
       int32_t i, N;
       uint8_t *F;
-      N = rowsize(image.get_output()) * colsize(image.get_output()) * depth(image.get_output());
-      F = UCHARDATA(image.get_output());
+      N = inverse.rows() * inverse.cols() * inverse.depth();
+      F = inverse.get(); 
       for (i = 0; i < N; i++) // inverse l'image
         if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
   
       if (priocode == 0)
       {
-        if (depth(image.get_output()) == 1)
+        if (inverse.depth() == 1)
         {
-          if (! ldisteuc(image.get_output(), prio))
-          {
-            pink_error("ldisteuc failed");
-          }
+          if (! ldisteuc(inverse, prio)) pink_error("ldisteuc failed");
         }
         else
         {
-          if (! ldisteuc3d(image.get_output(), prio))
-          {
-            pink_error("ldisteuc3d failed");
-          }
+          if (! ldisteuc3d(inverse, prio)) pink_error("ldisteuc3d failed");
         }
       }
       else
         if (priocode == 1)
         {
-          if (depth(image.get_output()) == 1)
+          if (inverse.depth() == 1)
           {
-            if (! ldistquad(image.get_output(), prio))
-            {
-              pink_error("ldistquad failed");
-            }
+            if (! ldistquad(inverse, prio)) pink_error("ldistquad failed");
           }
           else
           {
-            if (! ldistquad3d(image.get_output(), prio))
-            {
-              pink_error("ldistquad3d failed");
-            }
+            if (! ldistquad3d(inverse, prio)) pink_error("ldistquad3d failed");
           }
         }
         else
           if (priocode == 2)
           {
-            if (! lchamfrein(image.get_output(), prio))
-            {
-              pink_error("lchamfrein failed");
-            }
+            if (! lchamfrein(inverse, prio)) pink_error("lchamfrein failed");
           }
           else
             if (priocode == 3)
             {
-              if (! lsedt_meijster(image.get_output(), prio))
-              {
-                pink_error("lsedt_meijster failed");
-              }
+              if (! lsedt_meijster(inverse, prio)) pink_error("lsedt_meijster failed");
             }
             else
             {
-              if (! ldist(image.get_output(), priocode, prio))
-              {
-                pink_error("ldist failed");
-              }
+              if (! ldist(inverse, priocode, prio)) pink_error("ldist failed");
             }
-      for (i = 0; i < N; i++) // re-inverse l'image
-        if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
+
+      // no longer necessary
+      // for (i = 0; i < N; i++) // re-inverse l'image
+      //   if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
       
       return prio;
     } /* skeleton_distance */
@@ -124,13 +107,13 @@ namespace pink {
       pink::int_image prio;
       prio = skeleton_distance(result, priocode);
 
-      if (depth(result.get_output()) == 1) // the image is 2D
+      if (result.depth() == 1) // the image is 2D
       {
-        if (! lskelubp2(result.get_output(), prio, connex, can_be_null(inhibimage))) { pink_error("lskelubp2 failed"); }
+        if (! lskelubp2(result, prio, connex, can_be_null(inhibimage))) { pink_error("lskelubp2 failed"); }
       }
       else // the image is 3D
       {
-        if (! lskelubp3d2(result.get_output(), prio, connex, can_be_null(inhibimage))) { pink_error("lskelubp3d2 failed"); }
+        if (! lskelubp3d2(result, prio, connex, can_be_null(inhibimage))) { pink_error("lskelubp3d2 failed"); }
       } // the image is 3D
 
       return result;
@@ -150,7 +133,7 @@ namespace pink {
       pink::char_image result;
       result = image.clone();
       
-      if (depth(result.get_output()) == 1) // the image is 2D
+      if (result.depth() == 1) // the image is 2D
       {
         if (! lskelubp2(result, prioimage, connex, can_be_null(inhibimage))) { pink_error("lskelubp2 failed"); }
       }
@@ -183,16 +166,16 @@ namespace pink {
       pink::char_image result;
       result = image.clone();
       
-      if (depth(result.get_output()) == 1)  // the image is 2D
+      if (result.depth() == 1)  // the image is 2D
 	{
-	  if (! lskelubp(result.get_output(), prioimage, connex, inhibval))
+	  if (! lskelubp(result, prioimage, connex, inhibval))
 	    {
 	      pink_error("lskelubp failed");
 	    }
 	}
       else  // the image is 3D
 	{
-	  if (! lskelubp3d(result.get_output(), prioimage, connex, inhibval))
+	  if (! lskelubp3d(result, prioimage, connex, inhibval))
 	    {
 	      pink_error("lskelubp3d failed");
 	    }
@@ -233,7 +216,7 @@ namespace pink {
       ::xvimage *xvinput;
       res = input_image.clone();
       
-      xvinput = res.get_output();
+      xvinput = res;
       
       if (depth(xvinput) == 1) {
 	if (! lsquelbin(xvinput, connex, seuil)) {
@@ -291,43 +274,43 @@ namespace pink {
 
 void skeleton2_export()
 {
-  boost::python::def( "skeleton",
-       &pink::python::skeleton_im_prioint_connex_inhibimage,
-       ( boost::python::arg("image"), boost::python::arg("prio"), boost::python::arg("connexity"), boost::python::arg("inhibit") ),
-       doc__skeleton__c__
-    );
+  // boost::python::def( "skeleton",
+  //      &pink::python::skeleton_im_prioint_connex_inhibimage,
+  //      ( boost::python::arg("image"), boost::python::arg("prio"), boost::python::arg("connexity"), boost::python::arg("inhibit") ),
+  //      doc__skeleton__c__
+  //   );
 
-  boost::python::def( "skeleton",
-       &pink::python::skeleton_im_prioint_connex_inhibval,
-       ( boost::python::arg("image"), boost::python::arg("prio"), boost::python::arg("connexity"), boost::python::arg("inhibit")=-1 ),
-       doc__skeleton__c__
-    );
+  // boost::python::def( "skeleton",
+  //      &pink::python::skeleton_im_prioint_connex_inhibval,
+  //      ( boost::python::arg("image"), boost::python::arg("prio"), boost::python::arg("connexity"), boost::python::arg("inhibit")=-1 ),
+  //      doc__skeleton__c__
+  //   );
   
-  UI_DEFINE_FUNCTION(
-    "skeleton",
-    pink::python::skeleton_im_prioim_connex_inhibimage,
-    ( boost::python::arg("image"), boost::python::arg("prio"), boost::python::arg("connexity"), boost::python::arg("inhibit") ),
-    doc__skeleton__c__
-    );
+  // UI_DEFINE_FUNCTION(
+  //   "skeleton",
+  //   pink::python::skeleton_im_prioim_connex_inhibimage,
+  //   ( boost::python::arg("image"), boost::python::arg("prio"), boost::python::arg("connexity"), boost::python::arg("inhibit") ),
+  //   doc__skeleton__c__
+  //   );
 
-  UI_DEFINE_FUNCTION(
-    "skeleton",
-    pink::python::skeleton_im_prioim_connex_inhibval,
-    ( boost::python::arg("image"), boost::python::arg("prio"), boost::python::arg("connexity"), boost::python::arg("inhibit")=-1 ),
-    doc__skeleton__c__
-    );
+  // UI_DEFINE_FUNCTION(
+  //   "skeleton",
+  //   pink::python::skeleton_im_prioim_connex_inhibval,
+  //   ( boost::python::arg("image"), boost::python::arg("prio"), boost::python::arg("connexity"), boost::python::arg("inhibit")=-1 ),
+  //   doc__skeleton__c__
+  //   );
 
-  boost::python::def( "skeleton_end_char", &pink::python::skeleton_end_char,
-       boost::python::args("image", "connexity", "threshold"),
-       "Description: \n"
-       "Homotopic skeletonization by iterative removal of simple,\n"
-       "non-end points. Breadth-first strategy.\n"
-       "During the first  n iterations (default 0), the end points\n"
-       "are removed as well.\n"
-       "If  n = -1, the end points are always removed.\n"
-       "\n"
-       "Types supported: byte 2d, byte 3d"
-       );
+  // boost::python::def( "skeleton_end_char", &pink::python::skeleton_end_char,
+  //      boost::python::args("image", "connexity", "threshold"),
+  //      "Description: \n"
+  //      "Homotopic skeletonization by iterative removal of simple,\n"
+  //      "non-end points. Breadth-first strategy.\n"
+  //      "During the first  n iterations (default 0), the end points\n"
+  //      "are removed as well.\n"
+  //      "If  n = -1, the end points are always removed.\n"
+  //      "\n"
+  //      "Types supported: byte 2d, byte 3d"
+  //      );
   
 } /* skeleton_export */
 

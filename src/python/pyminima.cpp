@@ -21,24 +21,16 @@ namespace pink {
 
 
     template<class image_type>
-    char_image minima(
-      image_type image,
-      std::string mode
+    image_type
+    minima(
+      const image_type & image,
+      const std::string & mode
       )
     {
-      char_image result(image.get_size());
-
-      lminima( image.get_output(), const_cast<char*>(mode.c_str()));
-
-      // copying the values back to the result
-      // note the values never depass 255 so copying is fine
-      std::copy(
-        &image(0),
-        &image(image.get_size().prod()),
-        &result(0)
-        );
+      image_type result = image.clone();
       
-      
+      lminima( result, mode.c_str());
+
       return result;      
     } /* minima */
 

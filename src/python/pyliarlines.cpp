@@ -94,26 +94,26 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_FUNCTION(
-    openbun,
-    pink::python::liaropenbun,
-    ( arg("src"), arg("radius"), arg("nblines"),arg("angle")=0.0, arg("anglerange")=180.0,arg("rank")=0.0),
-    "Opening by a union of <nblines> lines, of radius <radius>. An angle range can be specified with"
-    "the angle and anglerange parameters. A rank can be given, between 0 and 1. If > 0, this"
-    "corresponds to a proportion of noisy pixels that are ignored"
-    // end of the documentation
-    );
+// UI_EXPORT_FUNCTION(
+//     openbun,
+//     pink::python::liaropenbun,
+//     ( arg("src"), arg("radius"), arg("nblines"),arg("angle")=0.0, arg("anglerange")=180.0,arg("rank")=0.0),
+//     "Opening by a union of <nblines> lines, of radius <radius>. An angle range can be specified with"
+//     "the angle and anglerange parameters. A rank can be given, between 0 and 1. If > 0, this"
+//     "corresponds to a proportion of noisy pixels that are ignored"
+//     // end of the documentation
+//     );
 
 
-UI_EXPORT_FUNCTION(
-    closebin, 
-    pink::python::liarclosebin,
-    ( arg("src"), arg("radius"), arg("nblines"),arg("angle")=0.0, arg("anglerange")=180.0,arg("rank")=0.0),
-    "Closing by intersection of <nblines> lines, of radius <radius>. An angle range can be specified with"
-    "the angle and anglerange parameters. A rank can be given, between 0 and 1. If > 0, this"
-    "corresponds to a proportion of noisy pixels that are ignored"
-    // end of the documentation
-    );
+// UI_EXPORT_FUNCTION(
+//     closebin, 
+//     pink::python::liarclosebin,
+//     ( arg("src"), arg("radius"), arg("nblines"),arg("angle")=0.0, arg("anglerange")=180.0,arg("rank")=0.0),
+//     "Closing by intersection of <nblines> lines, of radius <radius>. An angle range can be specified with"
+//     "the angle and anglerange parameters. A rank can be given, between 0 and 1. If > 0, this"
+//     "corresponds to a proportion of noisy pixels that are ignored"
+//     // end of the documentation
+//     );
 
 
 

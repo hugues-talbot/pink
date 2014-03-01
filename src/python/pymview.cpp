@@ -263,12 +263,12 @@ void Pimviewlogin_export()
         "Logs onto a running imview");
 }
 
-UI_EXPORT_FUNCTION(
-    Pimviewputimage,
-    pink::python::Pimviewputimage,
-    (arg("image"),arg("name"),arg("connid")),
-    "Upload an image to an imview server via TCP or shared memory"
-    );
+// UI_EXPORT_FUNCTION(
+//     Pimviewputimage,
+//     pink::python::Pimviewputimage,
+//     (arg("image"),arg("name"),arg("connid")),
+//     "Upload an image to an imview server via TCP or shared memory"
+//     );
 
 void PLiarEnableDebug_export()
 {

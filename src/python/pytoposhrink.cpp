@@ -24,13 +24,13 @@ namespace pink {
 
     char_image toposhrink(
       const char_image & image,
-      int_image priority_image,
+      const int_image & priority_image,
       int connexity,
       int tmin,
       int tmax,
       int tbmin,
       int tbmax,
-      char_image inhibit
+      const char_image & inhibit
       )
     {
       char_image result;
@@ -44,19 +44,15 @@ namespace pink {
       // }
       
       
-      if (image.get_size().size()==2)
+      if (image.size().size()==2)
       {
         if (! ltoposhrink(result, priority_image, connexity, tmin, tmax, tbmin, tbmax, can_be_null(inhibit)))
-        {
           pink_error("ltoposhrink failed");
-        }
       }
       else /* NOT image.get_size().size()==2 */
       {
         if (! ltoposhrink3d(result, priority_image, connexity, tmin, tmax, tbmin, tbmax, can_be_null(inhibit)))
-        {
           pink_error("ltoposhrink3d failed");
-        }
       }  /* NOT image.get_size().size()==2 */
 
       return result;      
@@ -86,36 +82,36 @@ namespace pink {
 void toposhrink_export()
 {
 
-  UI_DEFINE_ONE_FUNCTION(
-    toposhrink,
-    pink::python::toposhrink,
-    ( arg("image"),
-      arg("priority_image"),
-      arg("connexity"),
-      arg("tmin"),
-      arg("tmax"),
-      arg("tbmin"),
-      arg("tbmax"),
-      arg("inhibit")
-      ),
-    doc__toposhrink__c__
-    //end of documentation
-    );
+  // UI_DEFINE_ONE_FUNCTION(
+  //   toposhrink,
+  //   pink::python::toposhrink,
+  //   ( arg("image"),
+  //     arg("priority_image"),
+  //     arg("connexity"),
+  //     arg("tmin"),
+  //     arg("tmax"),
+  //     arg("tbmin"),
+  //     arg("tbmax"),
+  //     arg("inhibit")
+  //     ),
+  //   doc__toposhrink__c__
+  //   //end of documentation
+  //   );
 
-  UI_DEFINE_ONE_FUNCTION(
-    toposhrink,
-    pink::python::toposhrink_small,
-    ( arg("image"),
-      arg("priority_image"),
-      arg("connexity"),
-      arg("tmin"),
-      arg("tmax"),
-      arg("tbmin"),
-      arg("tbmax")
-      ),
-    doc__toposhrink__c__
-    // end of documentation
-    );
+  // UI_DEFINE_ONE_FUNCTION(
+  //   toposhrink,
+  //   pink::python::toposhrink_small,
+  //   ( arg("image"),
+  //     arg("priority_image"),
+  //     arg("connexity"),
+  //     arg("tmin"),
+  //     arg("tmax"),
+  //     arg("tbmin"),
+  //     arg("tbmax")
+  //     ),
+  //   doc__toposhrink__c__
+  //   // end of documentation
+  //   );
   
 
 }

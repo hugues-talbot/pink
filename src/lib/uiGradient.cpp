@@ -30,125 +30,127 @@
 namespace pink
 { 
 
-// this function is used to iterate over a fields sides. That is to say you give it the "step" and the "coord"inate 
-// to ignore, and the result is point by point a variation of the remaining coordinates. there are prodExcept(coord) 
-// coordinates on the lower side.
-  boost::shared_ptr<pink::types::vint> uiStep( const pink::types::vint & dim, int step, int coord )
-  {
-    int d = dim.size();
+  // LATERR !!!!!!!!!!!
   
-    boost::shared_ptr<pink::types::vint> result (new pink::types::vint(d,0));
-    pink::types::vint slist  (d-1,0);
-    pink::types::vint partres(d-1,0);
+// // this function is used to iterate over a fields sides. That is to say you give it the "step" and the "coord"inate 
+// // to ignore, and the result is point by point a variation of the remaining coordinates. there are prodExcept(coord) 
+// // coordinates on the lower side.
+//   boost::shared_ptr<std::vector<index_t> > uiStep( const std::vector<index_t> & dim, int step, int coord )
+//   {
+//     int d = dim.size();
+  
+//     boost::shared_ptr<std::vector<index_t>> result (new std::vector<index_t>(d,0));
+//     std::vector<index_t> slist  (d-1,0);
+//     std::vector<index_t> partres(d-1,0);
 
-    FOR( q, coord )
-    { 
-      slist[q]=dim[q];
-    } /* FOR */
+//     FOR( q, coord )
+//     { 
+//       slist[q]=dim[q];
+//     } /* FOR */
 
-    for ( int q = coord + 1; q <= d - 1; q++ )
-    {
-      slist[q-1] = dim[q];
-    } /* for */
+//     for ( int q = coord + 1; q <= d - 1; q++ )
+//     {
+//       slist[q-1] = dim[q];
+//     } /* for */
   
-    slist.next_step( step, partres ) ;
+//     slist.next_step( step, partres ) ;
   
-    FOR(q, coord)
-    {
-      (*result)[q]=partres[q];
-    } /* FOR */
+//     FOR(q, coord)
+//     {
+//       (*result)[q]=partres[q];
+//     } /* FOR */
 
-    (*result)[coord]=0;
+//     (*result)[coord]=0;
 
-    for ( int q = coord + 1; q <= d - 1; q++ )
-    {
-      (*result)[q] = partres[q - 1];
-    } /* FOR */
+//     for ( int q = coord + 1; q <= d - 1; q++ )
+//     {
+//       (*result)[q] = partres[q - 1];
+//     } /* FOR */
   
-    return result;
-  } /* uiStep */
+//     return result;
+//   } /* uiStep */
 
 
-/**
- * Calculates the derivate square of the image. It takes the vector and replaces the values with the derivate of an interpolating spline.
- * @param values input vector
- * @param result result vector
- */
-  boost::shared_ptr<std::vector<double> > uiDerivateVect( std::vector<double> & values )
-  {
-//solved
-// if the size of the vector is odd for some strange reason I don't know
-// gnu gsl does not want to derivate it, so if odd lenght is detected, one additional
-// 	element is adjusted, with a value of the original last element, 
-// 	afterward the last derivate result is just ignored.
-// 	for large images it should not cause any algorithmical (formal) problems.
+// /**
+//  * Calculates the derivate square of the image. It takes the vector and replaces the values with the derivate of an interpolating spline.
+//  * @param values input vector
+//  * @param result result vector
+//  */
+//   boost::shared_ptr<std::vector<double> > uiDerivateVect( std::vector<double> & values )
+//   {
+// //solved
+// // if the size of the vector is odd for some strange reason I don't know
+// // gnu gsl does not want to derivate it, so if odd lenght is detected, one additional
+// // 	element is adjusted, with a value of the original last element, 
+// // 	afterward the last derivate result is just ignored.
+// // 	for large images it should not cause any algorithmical (formal) problems.
 
   
-    int d = values.size();
-    boost::shared_ptr<std::vector<double> > result(new std::vector<double>(d));
+//     int d = values.size();
+//     boost::shared_ptr<std::vector<double> > result(new std::vector<double>(d));
   
-    boost::shared_array<double> x(new double[ d ]);
-    boost::shared_array<double> y(new double[ d ]);
-    FOR(q, d){
-      x[q] = q;
-      y[q] = values[q];
-    }
+//     boost::shared_array<double> x(new double[ d ]);
+//     boost::shared_array<double> y(new double[ d ]);
+//     FOR(q, d){
+//       x[q] = q;
+//       y[q] = values[q];
+//     }
   
-    gsl_interp * interp = gsl_interp_alloc( gsl_interp_cspline, d );//gsl_interp_akima, d );//gsl_interp_cspline, d );
-    gsl_interp_init( interp, x.get(), y.get(), d );
-    gsl_interp_accel * accel = gsl_interp_accel_alloc();
-    result->clear();
-    FOR(q,d) {
-      (*result)[q]=/*pow(*/ gsl_interp_eval_deriv(interp, x.get(), y.get(), q, accel /* ),2));*/);
-    } /* FOR */
-    gsl_interp_free( interp );
-    gsl_interp_accel_free( accel );
-    return result;
-  } /* uiDerivateVect */
+//     gsl_interp * interp = gsl_interp_alloc( gsl_interp_cspline, d );//gsl_interp_akima, d );//gsl_interp_cspline, d );
+//     gsl_interp_init( interp, x.get(), y.get(), d );
+//     gsl_interp_accel * accel = gsl_interp_accel_alloc();
+//     result->clear();
+//     FOR(q,d) {
+//       (*result)[q]=/*pow(*/ gsl_interp_eval_deriv(interp, x.get(), y.get(), q, accel /* ),2));*/);
+//     } /* FOR */
+//     gsl_interp_free( interp );
+//     gsl_interp_accel_free( accel );
+//     return result;
+//   } /* uiDerivateVect */
 
-/**
- * Calculates the absolute value of the directional derivates.
- * @param f input image
- * @return a new scalar field with the derivates.
- */
-  float_image uiGradientAbs( float_image f )
-  {
-#ifdef UJIMAGE_DEBUG
-    std::cout << "Calculating general gradient\n";
-#endif /* UJIMAGE_DEBUG */
-    int d = f.get_size().size();
+// /**
+//  * Calculates the absolute value of the directional derivates.
+//  * @param f input image
+//  * @return a new scalar field with the derivates.
+//  */
+//   float_image uiGradientAbs( float_image f )
+//   {
+// #ifdef UJIMAGE_DEBUG
+//     std::cout << "Calculating general gradient\n";
+// #endif /* UJIMAGE_DEBUG */
+//     int d = f.get_size().size();
   
-    float_image result(f.get_size());
+//     float_image result(f.get_size());
   
-    FOR( q, d )
-    {
-      FOR(w, f.get_size().prod_except(q) )
-      {      
-        boost::shared_ptr<pink::types::vint> coord( uiStep( f.get_size(), w, q ) );
+//     FOR( q, d )
+//     {
+//       FOR(w, f.get_size().prod_except(q) )
+//       {      
+//         boost::shared_ptr<std::vector<index_t>> coord( uiStep( f.get_size(), w, q ) );
       
-        boost::shared_ptr<std::vector<double> > vect( new std::vector<double>( f.get_size()[q] ) );
+//         boost::shared_ptr<std::vector<double> > vect( new std::vector<double>( f.get_size()[q] ) );
       
-        FOR( e, f.get_size()[q] )
-        {
-          (*coord)[q] = e;
-          (*vect)[e]  = f[*coord];
-        }
+//         FOR( e, f.get_size()[q] )
+//         {
+//           (*coord)[q] = e;
+//           (*vect)[e]  = f[*coord];
+//         }
         
-        //	printf("q=%d\n",q);
-        boost::shared_ptr<std::vector<double> > der = uiDerivateVect( *vect );
-        //		der=vect; // just for testing
-        //vect->clear(); //deleted later
-        FOR( e, f.get_size()[q] )
-        {
-          (*coord)[q]=e;
-          result[*coord] += ((*der)[e]) * ((*der)[e]); // needed to be added because square is not square any more
-        } /* FOR( e, f.get_size()[q] ) */;
+//         //	printf("q=%d\n",q);
+//         boost::shared_ptr<std::vector<double> > der = uiDerivateVect( *vect );
+//         //		der=vect; // just for testing
+//         //vect->clear(); //deleted later
+//         FOR( e, f.get_size()[q] )
+//         {
+//           (*coord)[q]=e;
+//           result[*coord] += ((*der)[e]) * ((*der)[e]); // needed to be added because square is not square any more
+//         } /* FOR( e, f.get_size()[q] ) */;
         
-      } /* FOR(w, f.get_size().prodExcept(q) ) */;
-    } /*   FOR( q, d ) */
-//  result->_sqrt();
-    return result;
-  } /* uiGradientAbs */
+//       } /* FOR(w, f.get_size().prodExcept(q) ) */;
+//     } /*   FOR( q, d ) */
+// //  result->_sqrt();
+//     return result;
+//   } /* uiGradientAbs */
 
 // // directional gradient ------------------------------------------------------------------------------------------------
 
