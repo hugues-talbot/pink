@@ -742,7 +742,7 @@ int32_t ldistvect(uint8_t *F, vect2Dint *L, index_t rs, index_t cs)
 } //ldistvect
 
 /* ======================================================== */
-int32_t ldisteuc(struct xvimage* ob, struct xvimage* res)
+int32_t ldisteuc( struct xvimage* ob, const struct xvimage* res)
 /* ======================================================== */
 // Computes the external distance (distance to nearest object point) 
 #undef F_NAME

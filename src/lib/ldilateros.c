@@ -50,7 +50,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 /* ==================================== */
 int32_t ldilatnum( struct xvimage *f,
-            struct xvimage *m,
+            const struct xvimage *m,
             int32_t xc,
             int32_t yc)
 /* dilatation numerique par un element structurant de taille quelconque */
@@ -149,7 +149,7 @@ printf("rsm=%d csm=%d\n", rsm, csm);
 
 /* ==================================== */
 int32_t lerosnum( struct xvimage *f,
-           struct xvimage *m,
+           const struct xvimage *m,
            int32_t xc,
            int32_t yc)
 /* operateur d'erosion numerique par un element structurant de taille quelconque */
@@ -209,7 +209,7 @@ int32_t lerosnum( struct xvimage *f,
 } /* lerosnum() */
 
 /* ==================================== */
-int32_t ldilateros_ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
+int32_t ldilateros_ldilatbin( struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc)
 /* operateur de dilatation binaire par un element structurant de taille quelconque */
 /* ATTENTION: l'element structurant doit etre CONNEXE et REFLEXIF */
 /* Michel Couprie - avril 1998 */
@@ -314,7 +314,7 @@ int32_t ldilateros_ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, i
 } /* ldilateros_ldilatbin() */
 
 /* ==================================== */
-int32_t ldilateros_lerosbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
+int32_t ldilateros_lerosbin(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc)
 /* operateur d'erosion binaire par un element structurant de taille quelconque */
 /* ATTENTION: l'element structurant doit etre CONNEXE et REFLEXIF */
 /* Michel Couprie - avril 1998 */
@@ -419,7 +419,7 @@ int32_t ldilateros_lerosbin(struct xvimage *f, struct xvimage *m, int32_t xc, in
 } /* ldilateros_lerosbin() */
 
 /* ==================================== */
-int32_t ldilateros_ldilatfast(struct xvimage *f, uint8_t *mask)
+int32_t ldilateros_ldilatfast(struct xvimage *f, const uint8_t *mask)
 /* operateur de dilatation numerique par un element structurant de taille inferieure a 3x3 */
 /* UNIQUEMENT POUR DES ELEMENTS STRUCTURANTS REFLEXIFS */
 /* Michel Couprie - juillet 1996 */
@@ -470,7 +470,7 @@ int32_t ldilateros_ldilatfast(struct xvimage *f, uint8_t *mask)
 #define BORDZERO
 
 /* ==================================== */
-int32_t ldilateros_lerosfast(struct xvimage *f, uint8_t *mask)
+int32_t ldilateros_lerosfast(struct xvimage *f, const uint8_t *mask)
 /* operateur d'erosion numerique  par un element structurant de taille inferieure a 3x3 */
 /* UNIQUEMENT POUR DES ELEMENTS STRUCTURANTS REFLEXIFS */
 /* Michel Couprie - juillet 1996 */
@@ -522,7 +522,7 @@ int32_t ldilateros_lerosfast(struct xvimage *f, uint8_t *mask)
 } /* ldilateros_lerosfast() */
 
 /* ==================================== */
-int32_t ldilatbyte(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
+int32_t ldilatbyte(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc)
 /* operateur de dilatation numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - juillet 1997 */
 /* m : masque representant l'element structurant */
@@ -608,7 +608,7 @@ int32_t ldilatbyte(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 } /* ldilatbyte() */
 
 /* ==================================== */
-int32_t ldilatlong(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
+int32_t ldilatlong(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc)
 /* operateur de dilatation numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - juillet 1997 */
 /* m : masque representant l'element structurant */
@@ -694,7 +694,7 @@ int32_t ldilatlong(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 } /* ldilatlong() */
 
 /* ==================================== */
-int32_t ldilatfloat(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
+int32_t ldilatfloat(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc)
 /* operateur de dilatation numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - juillet 1997 */
 /* m : masque representant l'element structurant */
@@ -890,7 +890,7 @@ int32_t ldilat3(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab
 /* ==================================== */
 int32_t lerosbyte(
         struct xvimage *f,
-        struct xvimage *m,
+        const struct xvimage *m,
         int32_t xc,
         int32_t yc)
 /* operateur d'erosion numerique par un element structurant plan de taille quelconque */
@@ -980,7 +980,7 @@ int32_t lerosbyte(
 /* ==================================== */
 int32_t leroslong(
         struct xvimage *f,
-        struct xvimage *m,
+        const struct xvimage *m,
         int32_t xc,
         int32_t yc)
 /* operateur d'erosion numerique par un element structurant plan de taille quelconque */
@@ -1266,7 +1266,7 @@ int32_t leros3(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_
 } /* leros3() */
 
 /* ==================================== */
-int32_t ldilateros_ldilat(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
+int32_t ldilateros_ldilat(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc)
 /* operateur de dilatation numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - juillet 1997 */
 /* m : masque representant l'element structurant */
@@ -1289,7 +1289,7 @@ int32_t ldilateros_ldilat(struct xvimage *f, struct xvimage *m, int32_t xc, int3
 } // ldilateros_ldilat()
 
 /* ==================================== */
-int32_t ldilateros_leros(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
+int32_t ldilateros_leros(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc)
 /* operateur d'erosion numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - juillet 1997 */
 /* m : masque representant l'element structurant */

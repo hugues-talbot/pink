@@ -106,7 +106,7 @@ uint8_t lfiltreordre_SelectionStochastique (uint8_t * A, int32_t p, int32_t r, i
 } /* lfiltreordre_SelectionStochastique() */
 
 /* ==================================== */
-int32_t lfiltreordre(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, double r)
+int32_t lfiltreordre(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc, double r)
 /* r : rang ramene a une echelle 0..1 (ex: 0.5 -> filtre median) */
 /* m : masque representant l'element structurant */
 /* xc, yc : coordonnees du "centre" de l'element structurant */
@@ -197,7 +197,7 @@ int32_t lfiltreordre(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t y
 } /* lfiltreordre() */
 
 /* ==================================== */
-int32_t lfiltreordre3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc, double r)
+int32_t lfiltreordre3d(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc, int32_t zc, double r)
 /* r : rang ramene a une echelle 0..1 (ex: 0.5 -> filtre median) */
 /* m : masque representant l'element structurant */
 /* xc, yc, zc : coordonnees du "centre" de l'element structurant */

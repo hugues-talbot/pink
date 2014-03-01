@@ -324,7 +324,7 @@ int32_t testeleve26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 } /* testeleve26() */
 
 /* ==================================== */
-int32_t mctopo3d_lhtkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t connexmin)
+int32_t mctopo3d_lhtkern3d(struct xvimage *image, const struct xvimage *imagecond, int32_t connexmin)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "mctopo3d_lhtkern3d"
@@ -477,7 +477,7 @@ int32_t mctopo3d_lhtkern3d(struct xvimage *image, struct xvimage *imagecond, int
 } /* mctopo3d_lhtkern3d() */
 
 /* ==================================== */
-int32_t lhtkernu3d(struct xvimage *image, struct xvimage *imagecond, int32_t connexmin)
+int32_t lhtkernu3d(struct xvimage *image, const struct xvimage *imagecond, int32_t connexmin)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lhtkernu3d"
@@ -656,7 +656,7 @@ int32_t lhtkernu3d(struct xvimage *image, struct xvimage *imagecond, int32_t con
 /* ******************************************************************************* */
 
 /* ==================================== */
-int32_t lhthindelta3d(struct xvimage *image, struct xvimage *imagecond, int32_t nitermax, int32_t connexmin)
+int32_t lhthindelta3d(struct xvimage *image, const struct xvimage *imagecond, int32_t nitermax, int32_t connexmin)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lhthindelta3d"
@@ -931,7 +931,7 @@ int32_t lhthindelta3d(struct xvimage *image, struct xvimage *imagecond, int32_t 
 /* ******************************************************************************* */
 
 /* ==================================== */
-int32_t lhthickdelta3d(struct xvimage *image, struct xvimage *imagecond, int32_t nitermax, int32_t connexmin)
+int32_t lhthickdelta3d(struct xvimage *image, const struct xvimage *imagecond, int32_t nitermax, int32_t connexmin)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lhthickdelta3d"
@@ -1237,7 +1237,7 @@ int32_t testleveleve26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 } /* testleveleve26() */
 
 /* ==================================== */
-int32_t llvkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t connexmin)
+int32_t llvkern3d(struct xvimage *image, const struct xvimage *imagecond, int32_t connexmin)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "llvkern3d"
@@ -1390,7 +1390,7 @@ int32_t llvkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t conn
 } /* llvkern3d() */
 
 /* ==================================== */
-int32_t llvkernu3d(struct xvimage *image, struct xvimage *imagecond, int32_t connexmin)
+int32_t llvkernu3d(struct xvimage *image, const struct xvimage *imagecond, int32_t connexmin)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "llvkernu3d"
@@ -1543,7 +1543,7 @@ int32_t llvkernu3d(struct xvimage *image, struct xvimage *imagecond, int32_t con
 } /* llvkernu3d() */
 
 /* ==================================== */
-int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t nitermax, int32_t connexmin)
+int32_t llthin3d(struct xvimage *image, const struct xvimage *imagecond, int32_t nitermax, int32_t connexmin)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "llthin3d"
@@ -1818,7 +1818,7 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
 /* ******************************************************************************* */
 
 /* ==================================== */
-int32_t llthick3d(struct xvimage *image, struct xvimage *imagecond, int32_t nitermax, int32_t connexmin)
+int32_t llthick3d(struct xvimage *image, const struct xvimage *imagecond, int32_t nitermax, int32_t connexmin)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "llthick3d"

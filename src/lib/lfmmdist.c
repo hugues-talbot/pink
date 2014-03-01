@@ -69,10 +69,10 @@ knowledge of the CeCILL license and that you accept its terms.
 
 int lfmmdist(
 	/* Input image */
-	INT4_TYPE  * seed_in_buf,			/* Seeds from which to grow distance function */
+	INT4_TYPE  * seed_in_buf,		/* Seeds from which to grow distance function */
 	INT4_TYPE  * seed_out_buf,		/* Result of growing seeds - may point to seed_in_buf */
-	int32_t * dim_buf,					/* The image dimensions */
-	int32_t   dim_length,					/* The number of image dimesions */
+	int32_t * dim_buf,	                /* The image dimensions */
+	int32_t   dim_length,			/* The number of image dimesions */
 	/* Metric image */
 	DBL_TYPE    * g_buf,
 	/* Halting criteria */

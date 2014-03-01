@@ -209,7 +209,7 @@ if (modifie) printf("========> ELEVE : %d\n", F[x]);
 /* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ */
 
 /* ==================================== */
-int32_t lhtkern(struct xvimage *image, struct xvimage *imagecond, int32_t connex)
+int32_t lhtkern( struct xvimage *image, const struct xvimage *imagecond, int32_t connex )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lhtkern"
