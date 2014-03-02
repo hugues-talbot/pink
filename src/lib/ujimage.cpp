@@ -48,59 +48,81 @@ namespace pink{
     return -1;
   } // typesize 
 
+  int32_t numpy2pink_type ( const int32_t & pink_type ) {
+
+    switch (pink_type) {
+    case NPY_UINT8:
+      return VFF_TYP_1_BYTE;
+      break;      
+    case NPY_INT16:
+      return VFF_TYP_2_BYTE ;
+      break;
+    case  NPY_INT32:
+      return VFF_TYP_4_BYTE ;
+      break;
+    case   NPY_FLOAT:
+      return VFF_TYP_FLOAT ;
+      break;
+    case  NPY_DOUBLE:
+      return VFF_TYP_DOUBLE ;
+      break;
+    case      NPY_CFLOAT:
+      return VFF_TYP_COMPLEX ;
+      break;
+    case  NPY_CDOUBLE:
+      return VFF_TYP_DCOMPLEX;
+    default:
+      pink_error("Wrong image type 117.");    
+    } // switch pink_type
+
+    return -1;
+  }; // numpy2pink_type
   
+  int32_t pink2numpy_type ( const int32_t & numpy_type ) {
+    switch (numpy_type) {
+      
+    case VFF_TYP_1_BYTE:
+      return   NPY_UINT8   ;
+      break;
+    case VFF_TYP_2_BYTE:
+      return   NPY_INT16   ;
+      break;
+    case VFF_TYP_4_BYTE:
+      return   NPY_INT32   ;
+      break;
+    case VFF_TYP_FLOAT:
+      return    NPY_FLOAT   ;
+      break;
+    case VFF_TYP_DOUBLE:
+      return   NPY_DOUBLE  ;
+      break;
+    case VFF_TYP_COMPLEX:
+      return  NPY_CFLOAT  ;
+      break;
+    case VFF_TYP_DCOMPLEX:
+      return NPY_CDOUBLE ;
+      break;
+    default:
+      pink_error("Wrong image type 118");
+    }
+    
+    return -1;
+  }; // pink2numpy_type
+
+  void cstylefree( void * ptr ) {
+    std::cout << "cstylefree freeing (" << ptr << ")" << std::endl;
+    free(ptr);
+    return;
+  }
+  
+  
+    
  //  pink_image::operator xvimage*()
 //   {
 //     pink_error("You can only cast complete image objects. This is just the base class");    
 //     return NULL;
 //   } /* pink_image cast xvimage* */
   
-
-//   boost::shared_ptr<pink::types::vint> getDimensions( const index_t x, const index_t y, const index_t z, const index_t t )
-//   {
-
-//     boost::shared_ptr<pink::types::vint> presult;
-//     if (t>1) {
-//       /////!!!!!!! cout<< "I've desided for 4D." << std::endl;
-//       presult.reset(new pink::types::vint(4,-1));
-//       (*presult)[0]=x;
-//       (*presult)[1]=y;
-//       (*presult)[2]=z;
-//       (*presult)[3]=t;
-//     }
-//     else if (z>1)
-//     {
-//       /////!!!!!!! cout<< "I've desided for 3D." << std::endl;
-//       presult.reset(new pink::types::vint(3,-1));
-//       (*presult)[0]=x;
-//       (*presult)[1]=y;
-//       (*presult)[2]=z;
-//     }
-//     else if (y>1)
-//     {
-//       /////!!!!!!! cout<< "I've desided for 2D." << std::endl;
-//       presult.reset(new pink::types::vint(2,-1));
-//       (*presult)[0]=x;
-//       (*presult)[1]=y;
-//     }
-//     else if (x>1)
-//     {
-//       /////!!!!!!! cout<< "I've desided for 1D or less." << std::endl;
-// #     ifdef UJIMAGE_DEBUG
-//       std::cout << "x>1 and y==1; Here I assume 2D image of size [" << x << ", 1]" << std::endl;
-// #     endif /* UJIMAGE_DEBUG */
-//       presult.reset(new pink::types::vint(2,-1));
-//       (*presult)[0]=x;
-//       (*presult)[1]=1;      
-//     }
-	
-//     if ((t>1) && (z==1))
-//     {
-//       pink_error("two dimensional time series are probably not handled well");
-//     };
-//     return presult;
-//   } /* getDimensions */
-
 
 //   void setDimensions(const pink::types::vint & dim, index_t & x, index_t & y, index_t & z, index_t & t)
 //   {

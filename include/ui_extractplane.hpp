@@ -19,7 +19,8 @@
 namespace pink {
 
   template<class image_type>
-  image_type extractplane(
+  image_type
+  extractplane(
     const image_type & image,
     const index_t & n, /*the number of the plane*/
     const std::string & mode

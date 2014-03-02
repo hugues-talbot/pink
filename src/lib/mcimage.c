@@ -179,6 +179,7 @@ struct xvimage *allocimage(
   }
 
   g->image_data = (void *)calloc(1, N * es);
+  printf("image data %p\n", g->image_data);
   if (g->image_data == NULL)
   {   
 #ifdef MC_64_BITS

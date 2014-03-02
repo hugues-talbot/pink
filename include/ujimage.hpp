@@ -27,6 +27,7 @@
 #ifndef __UJIMAGE_HPP
 #define __UJIMAGE_HPP
 
+#include <map>
 #include <string>
 #include <cstdint>
 #include <fstream>
@@ -39,6 +40,18 @@
 # endif /* _WINDOWS */
 # include <boost/python.hpp>
 #endif /* PINK_HAVE_PYTHON */
+
+#ifdef PINK_HAVE_NUMPY
+// # define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+# include <Python.h>
+# include <boost/python.hpp>
+# include <boost/cstdint.hpp>
+# include <numpy/arrayobject.h>
+# include <boost/smart_ptr.hpp>
+
+# include "pink_python.h"
+#endif /* PINK_HAVE_NUMPY */
+
 #include <boost/smart_ptr.hpp>
 
 #include "mcimage.h"
@@ -108,6 +121,13 @@ std::string repr_dcomplex(const dcomplex & x);
 
 namespace pink
 {
+
+  template <class T0>
+  void
+  do_not_delete( T0 * t0 ) {
+    // intentionally left empty
+  }
+
   template <class T0>
   struct type {
     operator int32_t () { return -1; }
@@ -150,7 +170,49 @@ namespace pink
 
   size_t
   typesize( const index_t & type );
+  
+  int32_t numpy2pink_type ( const int32_t & pink_type );
+  
+  int32_t pink2numpy_type ( const int32_t & numpy_type ); 
+
+  template <class T0>
+  void arraydelete( void * array ) {
+    delete [] reinterpret_cast<T0*>(array);
+  }
+
+  void cstylefree( void * ptr );
     
+  class deleter_t {
+  private:
+    boost::shared_ptr<bool> m_enabled;
+    typedef void (*m_deleter_t) (void*);
+    m_deleter_t m_deleter;
+            
+  public:
+    deleter_t( boost::shared_ptr<bool> & enabled,
+               void (*deleter) (void*) )
+      : m_enabled(enabled),
+        m_deleter(deleter) { }
+
+    void
+    operator() ( void * ptr ) {
+      if (*m_enabled) {
+        std::cout << "deleter enabled for (" << ptr << "); deleting" << std::endl;
+        m_deleter(ptr);
+      }
+      else
+        std::cout << "deleter disabled for (" << ptr << "); NOT deleting" << std::endl;
+      
+      return;
+    }
+
+    m_deleter_t
+    get_deleter() {
+      return m_deleter;
+    }
+    
+  }; // deleter_t
+      
   class cxvimage {
   public:
     typedef std::vector<index_t> vint_t;
@@ -158,63 +220,209 @@ namespace pink
   protected:
 
     boost::shared_ptr<xvimage> m_xvimage; // the xvimage header
-    boost::shared_ptr<void>    m_data;    // the image data
-    boost::shared_ptr<vint_t>  m_center;  // the center of the image
-    boost::shared_ptr<vint_t>  m_size;    // the size of the image
+    boost::shared_ptr<char>    m_data;    // the image data
+    vint_t                     m_center;  // the center of the image
+    vint_t                     m_size;    // the size of the image
+    boost::shared_ptr<bool>    m_garbage_collection; // enable or disable garbage collection
 
+    void disable_garbage_collection() {
+      *m_garbage_collection = false;
+      return;
+    }
+    
+    void enable_garbage_collection() {
+      *m_garbage_collection = true;
+      return;
+    }
+    
   public:
 
     template <class pixel_t>
-    pixel_t * pdata() { pink_error("IMPLEMENT ME!!!"); }
+    pixel_t * pdata() {
+      assert(!this->isnull());      
+      return reinterpret_cast<pixel_t*>(m_data.get());
+    }
 
     template <class pixel_t>
-    const pixel_t * pdata() const { pink_error("IMPLEMENT ME!!!"); }
+    const pixel_t * pdata() const {
+      assert(!this->isnull());      
+      return reinterpret_cast<const pixel_t*>(m_data.get());
+    }
 
-    index_t rows() const { pink_error("IMPLEMENT ME!!!"); }
+    const index_t & rows() const {
+      assert(!this->isnull());
+      return m_xvimage->row_size;
+    }
 
-    index_t cols() const { pink_error("IMPLEMENT ME!!!"); }
+    const index_t & cols() const {
+      assert(!this->isnull());
+      return m_xvimage->col_size;
+    }
 
-    index_t depth() const { pink_error("IMPLEMENT ME!!!"); }
+    const index_t & depth() const {
+      assert(!this->isnull());
+      return m_xvimage->depth_size;
+    }
 
-    index_t imtype() const { pink_error("IMPLEMENT ME!!!"); }
+    int32_t imtype() const {
+      assert(!this->isnull());
+      return m_xvimage->data_storage_type;
+    }
 
-    index_t nbands() const { pink_error("IMPLEMENT ME!!!"); }
+    const index_t & nbands() const {
+      assert(!this->isnull());
+      return m_xvimage->num_data_bands;
+    }
 
-    const double & xdim () const { pink_error("IMPLEMENT ME!!!"); }
+    const double & xdim () const {
+      assert(!this->isnull());
+      return m_xvimage->xdim;
+    }
 
-    double & xdim () { pink_error("IMPLEMENT ME!!!"); }
+    double & xdim () {
+      assert(!this->isnull());
+      return m_xvimage->xdim;
+    }
 
-    const double & ydim () const { pink_error("IMPLEMENT ME!!!"); }
+    const double & ydim () const {
+      assert(!this->isnull());
+      return m_xvimage->ydim;
+    }
 
-    double & ydim () { pink_error("IMPLEMENT ME!!!"); }
+    double & ydim () {
+      assert(!this->isnull());
+      return m_xvimage->ydim;
+    }
 
-    const double & zdim () const { pink_error("IMPLEMENT ME!!!"); }
 
-    double & zdim () { pink_error("IMPLEMENT ME!!!"); }
+    const double & zdim () const {
+      assert(!this->isnull());
+      return m_xvimage->zdim;
+    }
 
-    const vint_t & size() const { return *m_size; }
 
-    cxvimage( const int32_t & type, const index_t & rs, const index_t & cs = 0, const index_t & ds = 0 ) { pink_error("IMPLEMENT ME!!!"); }
+    double & zdim () {
+      assert(!this->isnull());
+      return m_xvimage->zdim;
+    }
 
-    cxvimage( const int32_t & type, boost::shared_ptr<void> data ) { pink_error("IMPLEMENT ME!!!"); }
 
-    cxvimage( const int32_t & type, const void * data ) { pink_error("IMPLEMENT ME!!!"); }
+    const vint_t & size() const {
+      assert(!this->isnull());      
+      return m_size;
+    }
 
-    cxvimage( const int32_t & type, const vint_t & size ) { pink_error("IMPLEMENT ME!!!"); }
+    cxvimage( const int32_t & type, const index_t & rs, const index_t & cs = 0, const index_t & ds = 0 )
+      : m_garbage_collection( new bool(true) )  {
+      std::cout << "cxvimage (" << this << ") created (type, rs, cs, ds)" << std::endl;
+      assert(rs>0);
+      xvimage * tmp = allocimage( NULL, rs, cs, ds, type );
+      if (!tmp) pink_error("Couldn't allocate the image 012");
+      m_xvimage.reset( tmp, freeheader );
+      m_data.reset( reinterpret_cast<char*>(tmp->image_data), deleter_t( m_garbage_collection, cstylefree ));
 
-    cxvimage( ) {
-      // intentionally left empty
+      m_size = { rs, cs, ds };
+      if (m_size[2]==0) m_size.pop_back();
+      if (m_size[1]==0) m_size.pop_back();
+
+      _DEBUG(m_size.size());
+      
+      assert(m_size[0]>0);
+      m_center.resize(m_size.size(), -1);
+      
+      return;
+    }
+
+    cxvimage( const int32_t & type, vint_t size, boost::shared_ptr<char> data )
+      : m_garbage_collection( new bool(false) )  {
+      std::cout << "cxvimage (" << this << ") created (type, size, data)" << std::endl;
+
+      assert(size[0]>0);
+      
+      m_size = size;
+      
+      while (size.size()<3) size.push_back(0);
+      xvimage * tmp = allocheader( NULL, size[0], size[1], size[2], type );
+
+      if (!tmp) pink_error("Couldn't allocate the image 014");
+      m_xvimage.reset( tmp, freeheader );
+      m_data = data;
+      m_xvimage->image_data = m_data.get();
+      
+      m_center.resize(m_size.size(), -1);
+      return;
+    }
+
+    cxvimage( const int32_t & type, vint_t size, const char * data )
+      : m_garbage_collection( new bool(false) ) {
+      std::cout << "cxvimage (" << this << ") created (type, size, data*)" << std::endl;
+            
+      assert(size[0]>0);
+      
+      m_size = size;
+      
+      while (size.size()<3) size.push_back(0);
+      xvimage * tmp = allocheader( NULL, size[0], size[1], size[2], type );
+
+      if (!tmp) pink_error("Couldn't allocate the image 014");
+      m_xvimage.reset( tmp, freeheader );
+      m_data.reset( const_cast<char*>(data), do_not_delete<char> );
+      *m_garbage_collection = false;
+      m_xvimage->image_data = m_data.get();
+      
+      m_center.resize(m_size.size(), -1);
+      return;      
+    }
+
+    cxvimage( const int32_t & type, vint_t size )
+      : m_garbage_collection( new bool(true) )  {
+      std::cout << "cxvimage (" << this << ") created (type, size)" << std::endl;
+      
+      assert(size[0]>0);
+      
+      m_size = size;
+      
+      while (size.size()<3) size.push_back(0);
+      xvimage * tmp = allocheader( NULL, size[0], size[1], size[2], type );
+      
+      if (!tmp) pink_error("Couldn't allocate the image 016");
+      m_xvimage.reset( tmp, freeheader );
+      m_data.reset(new char[ pink::typesize(type) * pink::prod(m_size) ], deleter_t(m_garbage_collection, arraydelete<char> ) );
+      m_xvimage->image_data = m_data.get();
+      
+      m_center.resize(m_size.size(), -1);
+      return;
+    }
+
+    cxvimage( )
+      : m_garbage_collection( new bool(false) )  {
+      std::cout << "cxvimage (" << this << ") created (empty)" << std::endl;
     }
 
     cxvimage & 
     operator = ( const cxvimage & other ) {
-      m_data   = other.m_data;
-      m_center = other.m_center;
-      m_size   = other.m_size;
-
+      m_data               = other.m_data;
+      m_center             = other.m_center;
+      m_size               = other.m_size;
+      m_garbage_collection = other.m_garbage_collection;
+      
       return *this;      
     } // operator = 
-        
+
+    cxvimage( const cxvimage & other )
+      : m_xvimage(other.m_xvimage), m_data(other.m_data), m_center(other.m_center), m_size(other.m_size), m_garbage_collection(other.m_garbage_collection)  {
+      std::cout << "cxvimage (" << this << ") copied ( const xvimage& )" << std::endl;
+
+      return;      
+    } // cxvimage &
+
+    cxvimage( cxvimage && other )
+      : m_xvimage(other.m_xvimage), m_data(other.m_data), m_center(other.m_center), m_size(other.m_size), m_garbage_collection(other.m_garbage_collection)  {
+      std::cout << "cxvimage (" << this << ") moved ( xvimage&& )" << std::endl;
+
+      return;      
+    } // cxvimage && 
+
     void
     reset(
       const int32_t & type,
@@ -237,32 +445,87 @@ namespace pink
     } // reset
 
     cxvimage
-    clone () const;
+    clone () const {
+      cxvimage result( imtype(), size() );
+      result.center() = this->center();
+      std::copy( this->m_data.get(),
+                 this->m_data.get() + typesize(imtype()) * pink::prod(size()),
+                 result.m_data.get()
+        );
+      result.m_xvimage->row_size          = this->m_xvimage->row_size;
+      result.m_xvimage->col_size          = this->m_xvimage->col_size;
+      result.m_xvimage->depth_size        = this->m_xvimage->depth_size;
+      result.m_xvimage->time_size         = this->m_xvimage->time_size;
+      result.m_xvimage->num_data_bands    = this->m_xvimage->num_data_bands;
+      result.m_xvimage->data_storage_type = this->m_xvimage->data_storage_type;
+      result.m_xvimage->xdim = this->m_xvimage->xdim;
+      result.m_xvimage->ydim = this->m_xvimage->ydim;
+      result.m_xvimage->zdim = this->m_xvimage->zdim;
+      result.m_xvimage->xmin = this->m_xvimage->xmin;
+      result.m_xvimage->xmax = this->m_xvimage->xmax;
+      result.m_xvimage->ymin = this->m_xvimage->ymin;
+      result.m_xvimage->ymax = this->m_xvimage->ymax;
+      result.m_xvimage->zmin = this->m_xvimage->zmin;
+      result.m_xvimage->zmax = this->m_xvimage->zmax;
+
+      return result;
+    };
 
     bool operator == ( const cxvimage & other ) const;
     
     vint_t & center () {
-      return *m_center;      
+      return m_center;      
     }
 
     const vint_t & center () const {
-      return *m_center;      
+      return m_center;      
     }
 
-    virtual ~cxvimage () { }
+    virtual ~cxvimage () {
+      std::cout << "~cxvimage (" << this << ") called" << std::endl;
+    }
 
     virtual operator xvimage* () {
       return m_xvimage.get();      
     }
 
     virtual operator const xvimage* () const {
+      if (isnull()) pink_error("The image is uninitialized! (839)");
       return m_xvimage.get();      
     }
     
     bool isnull() const {
       return (!m_data);      
     }
+
+    boost::python::object
+    steel() {
+      if (! *m_garbage_collection) pink_error("The image cannot be used in Python, because it is already exported! 399");
+      disable_garbage_collection();
+      index_t nd = size().size();
+      boost::scoped_array<npy_intp> dims( new npy_intp[nd] );
+      for ( index_t q=0; q<nd; ++q ) dims[q] = size()[q];
+      PyObject * numpy_array =
+        PyArray_SimpleNewFromData (
+          nd,
+          dims.get(),
+          pink2numpy_type(imtype()),
+          pdata<void>()
+          );
+      deleter_t * deleter = boost::get_deleter<deleter_t, char>(m_data);
+      assert(deleter);
+      PyObject * data = PyCObject_FromVoidPtr( m_data.get(), deleter->get_deleter() );
+      assert(data);
+      
+      reinterpret_cast<PyArrayObject*>(numpy_array)->base = data;
+
+      // making boost handle the array as a smart pointer
+      boost::python::handle<> handle(numpy_array);
+      boost::python::object result(handle);
     
+      return result;
+    } // steel
+        
   }; // class cxvimage
   
   template <class pixel_t>  class image_iterator;
@@ -323,10 +586,12 @@ namespace pink
     const pixel_t * get() const { return this->pdata<pixel_t>(); }
 
     operator xvimage* () override {
+      if (isnull()) pink_error("The image is uninitialized! (840)");
       return m_xvimage.get();      
     }
 
     operator const xvimage* () const override {
+      if (isnull()) pink_error("The image is uninitialized! (841)");
       return m_xvimage.get();      
     }
 

@@ -28,12 +28,20 @@
 #define PYEXPORT_HPP
 
 #include "ujimage.hpp"
+#include "mccodimage.h"
 
 namespace pink {
   
 
+  template <class T0>
   const xvimage *
-  can_be_null( const pink::cxvimage & image );
+  can_be_null( const T0 & image ) {
+    if (image.isnull())
+      return NULL;        
+    else /* NOT image.isnull() */
+      return image;        
+  } // can be null
+  
 
 
 } // namespace pink

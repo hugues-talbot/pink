@@ -352,7 +352,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   // pymorpho();
   // pypoints();
   // pymemtest();
-  // pyconnect();
+  pyconnect();
   // pymaxflow();
   // pycomplex();
   // pyskeleton();

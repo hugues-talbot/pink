@@ -306,10 +306,28 @@ namespace connect
 
 } /* namespace points */
 
+
+pink::char_image
+create_image( const index_t & rows, const index_t & cols ) {
+  return pink::char_image(rows, cols);
+}
+
+boost::python::object
+wrap_create_image( const index_t & rows, const index_t & cols ) {
+  pink::cxvimage && ref(create_image(rows, cols));
+  
+  return ref.steel();
+}
+
 using namespace connect;
 
 void pyconnect()
 {
+
+  boost::python::class_<pink::cxvimage>("xvimage");
+//  boost::python::class_<pink::char_image>("xvimage");
+
+  
   def (
     "extractplane",
     pink::extractplane< pink::image<uint8_t> >,
@@ -317,7 +335,15 @@ void pyconnect()
     doc__extractplane__c__
     );
 
+
+  def( "create_image",
+       wrap_create_image,
+       ( arg("rows"), arg("cols") )
+    );
+  
   // CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
+  import_array();  // numpy initialization
+
 }
 
 

@@ -30,16 +30,7 @@
 #include "ujimage.hpp"
 
 namespace pink {
-  
-  const xvimage *
-  can_be_null( const pink::cxvimage & image )
-  {
-    if (image.isnull())
-      return NULL;        
-    else /* NOT image.isnull() */
-      return image;        
-  } /* can_be_null */
-  
+    
 } // namespace pink
 
 
