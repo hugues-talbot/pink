@@ -17,7 +17,6 @@
 #ifndef PYUJIMAGE_HPP
 #define PYUJIMAGE_HPP
 
-#include <boost/python.hpp>
 #include "ujimage.hpp"
 
 namespace pink
