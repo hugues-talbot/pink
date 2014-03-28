@@ -13,11 +13,9 @@
 // boost python wrapper
 // this file opens a file with raw image data as an image of given type
 
-#include "pink_python.h"
+#include "ujimage.hpp"
 #include "l3dkhalimsky.h"
 
-using namespace boost::python;
-//using namespace pink;
 
 namespace pink {
   namespace python {
