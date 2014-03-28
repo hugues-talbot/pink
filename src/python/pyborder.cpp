@@ -14,7 +14,8 @@
 // this file opens a file with raw image data as an image of given type
 
 
-#include "pink_python.h"
+#include "pyexport.hpp"
+
 #include "lborder.h"
 #include "mctopo3d.h"
 
