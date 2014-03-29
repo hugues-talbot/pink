@@ -11,8 +11,6 @@
 */
 // boost python wrapper
 
-#include <pink_python.h>
-
 // ERROR N is not supposed to be used as a define macro
 #undef N
 
