@@ -11,11 +11,6 @@
 */
 
 
-#include <pink_python.h>
-
-using namespace boost::python;
-using namespace pink;
-
 namespace pink {
   namespace python {
 
