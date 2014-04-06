@@ -32,27 +32,20 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file medialaxis.c
+/*! \file scaleaxis.c
 
-\brief medial axis transform
+\brief discrete scale axis transform
 
-<B>Usage:</B> medialaxis in.pgm distance out.pgm
+<B>Usage:</B> scaleaxis in.pgm s out.pgm
 
 <B>Description:</B>
-Medial axis of the binary image \b X. If x is the center of a maximal ball
-included in X, then the result R(x) is equal to the smallest distance between x 
-and a point outside X, otherwise it is equal to 0 .
-The distance is indicated by the parameter <B>distance</B> :
-\li 0: approximate euclidean distance (Meyer's algorithm)
-\li 1: exact quadratic Euclidean distance (Saito-Toriwaki's skeleton)
-\li 2: exact quadratic Euclidean distance (Coeurjolly's reduced axis)
-\li 3: exact quadratic Euclidean distance (Rémy-Thiel)
-\li 4: 4-distance in 2d
-\li 6: 6-distance in 3d
-\li 8: 8-distance in 2d
-\li 26: 26-distance in 3d
+Discrete scale axis, as defined in [MGP10], 
+of the binary image \b X contained in \b in.pgm.
 
-<B>Types supported:</B> byte 2d, byte 3d
+References:<BR> 
+[MGP10] "Discrete scale axis representations for 3D geometry", Balint Miklos, Joachim Giesen, Mark Pauly, SIGGRAPH 2010
+
+<B>Types supported:</B> byte 2d
 
 <B>Category:</B> morpho
 \ingroup  morpho
@@ -61,14 +54,8 @@ The distance is indicated by the parameter <B>distance</B> :
 */
 
 /*
-%TEST medialaxis %IMAGES/2dbyte/binary/b2hebreu.pgm 0 %RESULTS/medialaxis_b2hebreu_0.pgm
-%TEST medialaxis %IMAGES/2dbyte/binary/b2hebreu.pgm 3 %RESULTS/medialaxis_b2hebreu_3.pgm
-%TEST medialaxis %IMAGES/2dbyte/binary/b2hebreu.pgm 4 %RESULTS/medialaxis_b2hebreu_4.pgm
-%TEST medialaxis %IMAGES/2dbyte/binary/b2hebreu.pgm 8 %RESULTS/medialaxis_b2hebreu_8.pgm
-%TEST medialaxis %IMAGES/3dbyte/binary/b3a.pgm 0 %RESULTS/medialaxis_b3a_0.pgm
-%TEST medialaxis %IMAGES/3dbyte/binary/b3a.pgm 3 %RESULTS/medialaxis_b3a_3.pgm
-%TEST medialaxis %IMAGES/3dbyte/binary/b3a.pgm 6 %RESULTS/medialaxis_b3a_6.pgm
-%TEST medialaxis %IMAGES/3dbyte/binary/b3a.pgm 26 %RESULTS/medialaxis_b3a_26.pgm
+%TEST scaleaxis %IMAGES/2dbyte/binary/b2hebreu.pgm %RESULTS/scaleaxis_b2hebreu.pgm
+%TEST scaleaxis %IMAGES/3dbyte/binary/b3a.pgm %RESULTS/scaleaxis_b3a.pgm
 */
 
 #include <stdio.h>
@@ -85,11 +72,12 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * res;
-  int32_t distance;
+  double scale;
+  uint32_t rs, cs, ds, N;
 
   if (argc != 4)
   {
-    fprintf(stderr, "usage: %s filein.pgm distance fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm scale fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -99,25 +87,32 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
+  rs = rowsize(image);
+  cs = colsize(image);
+  ds = depth(image);
+  N = rs * cs * ds;
 
-  distance = atoi(argv[2]);
-
-  res = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
+  res = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
   if (res == NULL)
   {   
     fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
 
-  if (!lmedialaxis_lmedialaxis(image, distance, res))
+  scale = atof(argv[2]);
+
+  if (!lmedialaxis_scaleaxis(image, scale, res))
   {
-    fprintf(stderr, "%s: lmedialaxis_lmedialaxis failed\n", argv[0]);
+    fprintf(stderr, "%s: lmedialaxis_scaleaxis failed\n", argv[0]);
     exit(1);
   }
-
+  
   writeimage(res, argv[argc - 1]);
-  freeimage(image);
+
   freeimage(res);
+  freeimage(image);
 
   return 0;
 } /* main */
+
+

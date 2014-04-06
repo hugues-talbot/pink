@@ -44,6 +44,8 @@ Laurent Najman - lmedialaxis_lbisector_talbot
 Michel Couprie - juillet 2004 - révision lmedialaxis_lbisector_talbot
 Michel Couprie - août 2005 - variante lmedialaxis_lbisector Coeurjolly 
 Michel Couprie - novembre 2008 - lambda medial axis
+Michel Couprie - avril 2014 - scale medial axis
+Michel Couprie - avril 2014 - scale-filtered medial axis
 */
 
 //#define OLD
@@ -2939,7 +2941,6 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
   free(ListDecs);
   return 1;
 } // llambdamedialaxis()
-
  
 /* ==================================== */
 int32_t lmedialaxis_lambdamedialaxis(struct xvimage *image, struct xvimage *lambdaimage)
@@ -3351,11 +3352,129 @@ int32_t lmedialaxis_openingfunction(struct xvimage *image, int32_t mode, struct 
     return 0;
   }
 
-
-
   freeimage(radius);
   free(X);
   free(Y);
   free(Z);
   return(1);
 } // lmedialaxis_openingfunction()
+ 
+/* ==================================== */
+int32_t lmedialaxis_scaleaxis(struct xvimage *image, double s, struct xvimage * res)
+/* ==================================== */
+/*
+   Calcule le scale-axis de l'objet dans l'image 'image'.
+   D'après "Discrete scale axis representations for 3D geometry"
+   Balint Miklos, Joachim Giesen, Mark Pauly
+   SIGGRAPH 2010
+*/
+{
+#undef F_NAME
+#define F_NAME "lmedialaxis_scaleaxis"
+
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t N = rs * cs;
+  index_t i;
+  uint32_t *R;
+  double t;
+
+  assert(res != NULL);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_4_BYTE);
+  COMPARE_SIZE(image, res);
+  ONLY_2D(image);
+  R = ULONGDATA(res);
+
+  if (!lmedialaxis_lmedialaxis(image, 3, res))
+  {
+    fprintf(stderr, "%s: lmedialaxis_lmedialaxis failed\n", F_NAME);
+    exit(1);
+  }
+
+  for (i = 0; i < N; i++)
+  {
+    t = sqrt((double)(R[i])) * s;
+    R[i] = (uint32_t)floor(t * t);
+  }
+  
+  if (!lredt2d(res, image))
+  {
+    fprintf(stderr, "%s: function lredt2d failed\n", F_NAME);
+    exit(1);
+  }
+
+  if (!lmedialaxis_lmedialaxis(image, 3, res))
+  {
+    fprintf(stderr, "%s: lmedialaxis_lmedialaxis failed\n", F_NAME);
+    exit(1);
+  }
+
+  for (i = 0; i < N; i++)
+  {
+    t = sqrt((double)(R[i])) / s;
+    R[i] = (uint32_t)floor(t * t);
+  }
+  
+  return 1;
+} //lmedialaxis_scaleaxis()
+ 
+/* ==================================== */
+int32_t lmedialaxis_scalefilteredmedialaxis(struct xvimage *image, double s, struct xvimage * res)
+/* ==================================== */
+/*
+   Calcule le scale-filtered medial axis de l'objet dans l'image 'image'.
+   D'après "Scale Filtered Euclidean Medial Axis"
+   Michal Postolski, Michel Couprie, Marcin Janaszewski
+   DGCI 2013
+*/
+{
+#undef F_NAME
+#define F_NAME "lmedialaxis_scalefilteredmedialaxis"
+
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t N = rs * cs;
+  index_t i;
+  uint32_t *R;
+  double t;
+
+  assert(res != NULL);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_4_BYTE);
+  COMPARE_SIZE(image, res);
+  ONLY_2D(image);
+  R = ULONGDATA(res);
+
+  if (!lmedialaxis_lmedialaxis(image, 3, res))
+  {
+    fprintf(stderr, "%s: lmedialaxis_lmedialaxis failed\n", F_NAME);
+    exit(1);
+  }
+
+  for (i = 0; i < N; i++)
+  {
+    t = sqrt((double)(R[i])) * s;
+    R[i] = (uint32_t)floor(t * t);
+  }
+  
+  if (!lredt2d(res, image))
+  {
+    fprintf(stderr, "%s: function lredt2d failed\n", F_NAME);
+    exit(1);
+  }
+
+  if (!lmedialaxis_lmedialaxis(image, 3, res))
+  {
+    fprintf(stderr, "%s: lmedialaxis_lmedialaxis failed\n", F_NAME);
+    exit(1);
+  }
+
+  for (i = 0; i < N; i++)
+  {
+    t = sqrt((double)(R[i])) / s;
+    R[i] = (uint32_t)floor(t * t);
+  }
+
+  return 1;
+} //lmedialaxis_scalefilteredmedialaxis()

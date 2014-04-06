@@ -41,10 +41,10 @@ knowledge of the CeCILL license and that you accept its terms.
 \li 1: curvilinear, symmetric, based on 1D isthmus (CK3a)
 \li 2: medial axis preservation (AK3) - parameter inhibit represents the minimal radius of medial axis balls which are considered
 \li 3: ultimate, symmetric (MK3) - if nsteps = -2, returns the topological distance
-\li 4: curvilinear based on ends (EK3)
-\li 5: curvilinear based on ends, with end reconstruction (CK3b)
+\li 4: curvilinear, symmetric, based on ends (EK3)
+\li 5: curvilinear, symmetric, based on ends, with end reconstruction (CK3b)
 \li 6: topological axis (not homotopic)
-\li 7: curvilinear, based on residual points and 2D isthmus (CK3)
+\li 7: curvilinear, symmetric, based on residual points and 2D isthmus (CK3)
 \li 8: ultimate, asymmetric (AMK3)
 \li 9: curvilinear, asymmetric, based on thin 1D isthmus (ACK3a)
 \li 10: curvilinear, asymmetric, based on 3D and 2D residuals (ACK3)
@@ -60,6 +60,7 @@ knowledge of the CeCILL license and that you accept its terms.
 \li 20: surface and curvilinear, symmetric, based on 1D and 2D isthmus with persistence (SCK3p)
 \li 21: surface, symmetric, based on residual points (RK3), variant (uses 26-connectivity to define residual points)
 \li 22: surface and curvilinear, asymmetric, based on 1D and 2D isthmus with persistence (ASCK3p)
+\li 23: curvilinear, asymmetric, based on ends (AEK3)
 
    Update MC 19/12/2011 : introduction des cliques D-cruciales
    Update MC 03/08/2012 : fix bug asym_match_vois0
@@ -124,8 +125,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #define MAXFLOAT	3.40282347e+38F
 
 #define VERBOSE
-#define DEBUG_SKEL_CK3P
-#define DEBUG
+//#define DEBUG_SKEL_CK3P
+//#define DEBUG
 #ifdef DEBUG
 int32_t trace = 1;
 #endif
@@ -2403,6 +2404,153 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   mctopo3d_termine_topo3d();
   return(1);
 } /* lskelAMK3() */
+
+static int32_t is_end(uint8_t *S, index_t p, index_t rs, index_t ps, index_t N)
+{
+  int32_t k, n;
+  index_t y;
+  for (n = k = 0; k < 26; k += 1)
+  {
+    y = voisin26(p, k, rs, ps, N);
+    if ((y != -1) && S[y]) n++;
+  } // for k
+  if (n == 1) return 1;
+  return 0;
+} //is_end()
+
+/* ==================================== */
+int32_t lskelAEK3(struct xvimage *image, 
+	     int32_t n_steps,
+	     struct xvimage *inhibit)
+/* ==================================== */
+/*
+Squelette asymétrique curviligne basé sur les points extrémités
+Algo AEK3 données: S
+Répéter jusqu'à stabilité
+  C := points extrémités de S
+  I := I \cup C
+  P := voxels simples pour S et pas dans I
+  C2 := voxels 2-D-cruciaux (asym_match2)
+  C1 := voxels 1-D-cruciaux (asym_match1)
+  C0 := voxels 0-D-cruciaux (asym_match0)
+  P := P  \  [C2 \cup C1 \cup C0]
+  S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+*/
+#undef F_NAME
+#define F_NAME "lskelAEK3"
+{ 
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  struct xvimage *t = copyimage(image); 
+  uint8_t *T = UCHARDATA(t);
+  uint8_t *I;
+  int32_t step, nonstab;
+  int32_t top, topb;
+  uint8_t v[27];
+
+#ifdef VERBOSE
+  printf("%s: n_steps = %d\n", F_NAME, n_steps);
+#endif
+
+  if (inhibit == NULL) 
+  {
+    inhibit = copyimage(image); 
+    razimage(inhibit);
+    I = UCHARDATA(inhibit);
+  }
+  else
+  {
+    I = UCHARDATA(inhibit);
+    for (i = 0; i < N; i++) if (I[i]) I[i] = I_INHIBIT;
+  }
+
+  if (n_steps == -1) n_steps = 1000000000;
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+
+  mctopo3d_init_topo3d();
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    // MARQUE LES POINTS EXTREMITES
+    for (i = 0; i < N; i++)
+    {
+      if (IS_OBJECT(S[i]))
+	if (is_end(S, i, rs, ps, N)) 
+	  SET_INHIBIT(I[i]);
+    }
+
+    // MARQUE LES POINTS SIMPLES NON DANS I
+    for (i = 0; i < N; i++) 
+      if (IS_OBJECT(S[i]) && !IS_INHIBIT(I[i]) && mctopo3d_simple26(S, i, rs, ps, N))
+	SET_SIMPLE(S[i]);
+
+    // MARQUE LES POINTS 2-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match2(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    // MARQUE LES POINTS 1-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match1(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    // MARQUE LES POINTS 0-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match0(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+
+    memset(T, 0, N);
+    for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_SELECTED(S[i]))
+	T[i] = 1;
+
+    for (i = 0; i < N; i++)
+      if (S[i] && !T[i]) 
+      {
+	S[i] = 0; 
+	nonstab = 1; 
+      }
+    for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+  }
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  freeimage(t);
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* lskelAEK3() */
 
 //#define NEW_lskelACK3a
 #ifndef NEW_lskelACK3a

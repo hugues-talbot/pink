@@ -95,6 +95,8 @@ extern int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor,
 extern int32_t lmedialaxis_openingfunction(struct xvimage *image, int32_t mode, struct xvimage *result);
 extern int32_t lmedialaxis_ExtendedDownstream(int32_t x, int32_t y, uint32_t *image, index_t rs, index_t cs, int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs, ListDPoint2D Aval);
 extern int32_t lmedialaxis_ExtendedDownstream3d (int32_t x, int32_t y, int32_t z, uint32_t *image, index_t rs, index_t cs, index_t ds, int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs, ListDPoint3D Aval);
+extern int32_t lmedialaxis_scaleaxis(struct xvimage *image, double s, struct xvimage * res);
+extern int32_t lmedialaxis_scalefilteredmedialaxis(struct xvimage *image, double s, struct xvimage * res);
 #ifdef __cplusplus
 }
 #endif
