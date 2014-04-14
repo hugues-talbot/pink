@@ -137,11 +137,11 @@ __pink__inline FILE* pink_fopen_write( char * filename )
 
 /* ==================================== */
 struct xvimage *allocimage(
-  char * name,
-  index_t rs,   /* row size */
-  index_t cs,   /* col size */
-  index_t ds,   /* depth */
-  int32_t dt)   /* data type */
+  const char * name,
+  const index_t rs,   /* row size */
+  const index_t cs,   /* col size */
+  const index_t ds,   /* depth */
+  const int32_t dt)   /* data type */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "allocimage"
@@ -171,7 +171,7 @@ struct xvimage *allocimage(
              return NULL;
   } /* switch (t) */
 
-  g = (struct xvimage *)malloc(sizeof(struct xvimage));
+  g = (struct xvimage *)calloc(1, sizeof(struct xvimage));
   if (g == NULL)
   {   
     fprintf(stderr,"%s: malloc failed (%d bytes)\n", F_NAME, (int)sizeof(struct xvimage));
@@ -179,7 +179,6 @@ struct xvimage *allocimage(
   }
 
   g->image_data = (void *)calloc(1, N * es);
-  printf("image data %p\n", g->image_data);
   if (g->image_data == NULL)
   {   
 #ifdef MC_64_BITS
@@ -202,12 +201,12 @@ struct xvimage *allocimage(
   else
     g->name = NULL;
 
-  rowsize(g) = rs;
-  colsize(g) = cs;
-  depth(g) = ds;
+  rowsize(g)  = rs;
+  colsize(g)  = cs;
+  depth(g)    = ds;
   datatype(g) = dt;
-  tsize(g) = 1;
-  nbands(g) = 1;
+  tsize(g)    = 1;
+  nbands(g)   = 1;
   g->xdim = g->ydim = g->zdim = 0.0;
   g->xmin = g->ymin = g->zmin = 0;
   g->xmax = g->ymax = g->zmax = 0;
@@ -217,13 +216,13 @@ struct xvimage *allocimage(
 
 /* ==================================== */
 struct xvimage *allocmultimage(
-  char * name,
-  index_t rs,   /* row size */
-  index_t cs,   /* col size */
-  index_t ds,   /* depth */
-  index_t ts,   /* time size */
-  index_t nb,   /* nb of bands */
-  int32_t dt)   /* data type */
+  const char * name,
+  const index_t rs,   /* row size */
+  const index_t cs,   /* col size */
+  const index_t ds,   /* depth */
+  const index_t ts,   /* time size */
+  const index_t nb,   /* nb of bands */
+  const int32_t dt )   /* data type */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "allocmultimage"
@@ -329,18 +328,18 @@ void razimage(struct xvimage *f)
 
 /* ==================================== */
 struct xvimage *allocheader(
-  char * name,
-  index_t rs,   /* row size */
-  index_t cs,   /* col size */
-  index_t d,    /* depth */
-  int32_t t)    /* data type */
+  const char * name,
+  const index_t rs,   /* row size */
+  const index_t cs,   /* col size */
+  const index_t d,    /* depth */
+  const int32_t t)    /* data type */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "allocheader"
 {
   struct xvimage *g;
 
-  g = (struct xvimage *)malloc(sizeof(struct xvimage));
+  g = (struct xvimage *)calloc(1, sizeof(struct xvimage));
   if (g == NULL)
   {   fprintf(stderr,"%s: malloc failed\n", F_NAME);
       return NULL;
@@ -358,17 +357,19 @@ struct xvimage *allocheader(
     g->name = NULL;
 
   g->image_data = NULL;
-  rowsize(g) = rs;
-  colsize(g) = cs;
-  depth(g) = d;
+  rowsize(g)  = rs;
+  colsize(g)  = cs;
+  depth(g)    = d;
   datatype(g) = t;
+  tsize(g)    = 1;
+  nbands(g)   = 1;
   g->xdim = g->ydim = g->zdim = 0.0;
 
   return g;
 } /* allocheader() */
 
 /* ==================================== */
-int32_t showheader(char * name)
+int32_t showheader( const char * name )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "showheader"
@@ -479,7 +480,7 @@ int32_t showheader(char * name)
 } // showheader() 
 
 /* ==================================== */
-void freeimage(struct xvimage *image)
+void freeimage( struct xvimage *image )
 /* ==================================== */
 {
   assert(image);
@@ -498,7 +499,7 @@ void freeheader(struct xvimage *image)
 }
 
 /* ==================================== */
-struct xvimage *copyimage(struct xvimage *f)
+struct xvimage *copyimage( const struct xvimage *f )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "copyimage"
@@ -546,7 +547,7 @@ struct xvimage *copyimage(struct xvimage *f)
 } // copyimage()
 
 /* ==================================== */
-int32_t copy2image(struct xvimage *dest, struct xvimage *source)
+int32_t copy2image( struct xvimage *dest, const struct xvimage *source )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "copy2image"
@@ -619,7 +620,7 @@ int32_t copy2image(struct xvimage *dest, struct xvimage *source)
 } // copy2image()
 
 /* ==================================== */
-int32_t equalimages(struct xvimage *im1, struct xvimage *im2)
+int32_t equalimages( const struct xvimage *im1, const struct xvimage *im2)
 /* ==================================== */
 // checks whether the two images are equal
 #undef F_NAME
@@ -989,7 +990,7 @@ double * image2list(struct xvimage * image, index_t *n)
 } // image2list()
 
 /* ==================================== */
-void writeimage(struct xvimage * image, char *filename)
+void writeimage( const struct xvimage * image, const char *filename )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writeimage"
@@ -1013,7 +1014,7 @@ void writeimage(struct xvimage * image, char *filename)
 } /* writeimage() */
 
 /* ==================================== */
-void writerawimage(struct xvimage * image, char *filename)
+void writerawimage( const struct xvimage * image, const char * filename )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writerawimage"
@@ -1301,7 +1302,7 @@ void writerawimage(struct xvimage * image, char *filename)
 } /* writerawimage() */
 
 /* ==================================== */
-void writese(struct xvimage * image, char *filename, index_t x, index_t y, index_t z)
+void writese( const struct xvimage * image, const char * filename, index_t x, index_t y, index_t z)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writese"
@@ -1392,7 +1393,7 @@ void writese(struct xvimage * image, char *filename, index_t x, index_t y, index
 } /* writese() */
 
 /* ==================================== */
-void writeascimage(struct xvimage * image, char *filename)
+void writeascimage( const struct xvimage * image, const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writeascimage"
@@ -1656,7 +1657,7 @@ void writeascimage(struct xvimage * image, char *filename)
 }
 
 /* ==================================== */
-void printimage(struct xvimage * image)
+void printimage( const struct xvimage * image)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "printimage"
@@ -1688,10 +1689,10 @@ void printimage(struct xvimage * image)
 
 /* ==================================== */
 void writergbimage(
-  struct xvimage * redimage,
-  struct xvimage * greenimage,
-  struct xvimage * blueimage,
-  char *filename)
+  const struct xvimage * redimage,
+  const struct xvimage * greenimage,
+  const struct xvimage * blueimage,
+  const char *filename )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writergbimage"
@@ -1743,10 +1744,10 @@ void writergbimage(
 
 /* ==================================== */
 void writergbascimage(
-  struct xvimage * redimage,
-  struct xvimage * greenimage,
-  struct xvimage * blueimage,
-  char *filename)
+  const struct xvimage * redimage,
+  const struct xvimage * greenimage,
+  const struct xvimage * blueimage,
+  const char *filename )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writergbascimage"
@@ -1800,7 +1801,7 @@ void writergbascimage(
 } // writergbascimage()
 
 /* ==================================== */
-void writelongimage(struct xvimage * image,  char *filename)
+void writelongimage( const struct xvimage * image,  const char * filename )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writelongimage"
@@ -1943,7 +1944,7 @@ struct xvimage *readtiffimage(char *filename)
 
 
 /* ==================================== */
-void writetiffimage(struct xvimage * image, const char *filename)
+void writetiffimage( const struct xvimage * image, const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writetiffimage"
@@ -2425,7 +2426,7 @@ struct xvimage * readimage( const char *filename )
 } /* readimage() */
 
 /* ==================================== */
-struct xvimage * readheader(char *filename)
+struct xvimage * readheader( const char *filename )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "readheader"
@@ -2528,7 +2529,7 @@ struct xvimage * readheader(char *filename)
 } /* readheader() */
 
 /* ==================================== */
-struct xvimage * readse(char *filename, index_t *x, index_t *y, index_t*z)
+struct xvimage * readse( const char *filename, index_t *x, index_t *y, index_t*z)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "readse"
@@ -2704,7 +2705,7 @@ de la forme :
 
 /* ==================================== */
 int32_t readrgbimage(
-  char *filename,
+  const char * filename,
   struct xvimage ** r,
   struct xvimage ** g,
   struct xvimage ** b)
@@ -2825,7 +2826,7 @@ int32_t readrgbimage(
 } /* readrgbimage() */
 
 /* ==================================== */
-struct xvimage * readlongimage(char *filename)
+struct xvimage * readlongimage( const char * filename )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "readlongimage"
@@ -3184,7 +3185,7 @@ void freadulong(uint32_t *ptr, FILE* fd)
 }
 
 /* =============================================================== */
-int32_t readbmp(char *filename, struct xvimage ** r, struct xvimage ** g, struct xvimage ** b)
+int32_t readbmp( const char *filename, struct xvimage ** r, struct xvimage ** g, struct xvimage ** b)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "readbmp"
@@ -3286,10 +3287,10 @@ void fwriteulong(uint32_t ul, FILE* fd)
 
 /* =============================================================== */
 void writebmp(
-  struct xvimage * redimage,
-  struct xvimage * greenimage,
-  struct xvimage * blueimage,
-  char *filename)
+  const struct xvimage * redimage,
+  const struct xvimage * greenimage,
+  const struct xvimage * blueimage,
+  const char * filename )
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "writebmp"
@@ -3376,7 +3377,7 @@ struct RGBFILEHEADER {       /* size 108 bytes */
 }; /** plus 404 bytes dummy padding to make header 512 bytes **/
 
 /* =============================================================== */
-int32_t readrgb(char *filename, struct xvimage ** r, struct xvimage ** g, struct xvimage ** b)
+int32_t readrgb( const char *filename, struct xvimage ** r, struct xvimage ** g, struct xvimage ** b)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "readrgb"
@@ -3447,7 +3448,7 @@ int32_t readrgb(char *filename, struct xvimage ** r, struct xvimage ** g, struct
 } /* readrgb() */
 
 /* =============================================================== */
-void writelist2(char *filename, int32_t *x, int32_t *y, int32_t npoints)
+void writelist2( const char *filename, int32_t *x, int32_t *y, int32_t npoints)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "writelist2"
@@ -3470,7 +3471,7 @@ void writelist2(char *filename, int32_t *x, int32_t *y, int32_t npoints)
 } // writelist2()
 
 /* =============================================================== */
-void writelist3(char *filename, int32_t *x, int32_t *y, int32_t *z, int32_t npoints)
+void writelist3( const char *filename, int32_t *x, int32_t *y, int32_t *z, int32_t npoints)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "writelist3"
