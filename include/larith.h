@@ -80,8 +80,8 @@ extern int32_t ldivide(
 );
 
 extern int32_t lequal(
-	struct xvimage * image1,
-        struct xvimage * image2
+  const struct xvimage * image1,
+  const struct xvimage * image2
 );
 
 extern int32_t lgammacor(
