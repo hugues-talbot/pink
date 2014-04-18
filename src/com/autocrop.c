@@ -69,6 +69,7 @@ int main(int argc, char **argv)
   struct xvimage * in;
   struct xvimage * out;
   double seuil;
+  index_t w, h, p, xmin, ymin, zmin;
 
   if ((argc != 2) && (argc != 3) && (argc != 4))
   {
@@ -88,7 +89,15 @@ int main(int argc, char **argv)
   else 
     seuil = 0;
 
+#ifdef VERBOSE
+  lautocrop2(in, seuil, &xmin, &ymin, &zmin, &w, &h, &p);
+  printf("Crop: xmin=%d, ymin=%d, zmin=%d, w=%d, h=%d, p=%d\n",
+	 xmin, ymin, zmin, w, h, p);
+  if (p == 1) out = lcrop(in, xmin, ymin, w, h);
+  else        out = lcrop3d(in, xmin, ymin, zmin, w, h, p);
+#else
   out = lautocrop(in, seuil);
+#endif
   if (out == NULL)
   {
     fprintf(stderr, "%s: lautocrop failed\n", argv[0]);

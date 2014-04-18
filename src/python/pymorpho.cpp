@@ -455,7 +455,7 @@ namespace morpho
 
   UI_WRAP_FUNCTION(
     "dilatbin",
-    ldilatbin3d_ldilatbin3d,
+    ldilateros3d_ldilatbin3d,
     (arg("image"), arg("elem"), arg("x"), arg("y"), arg("z")),
     doc__dilatbin__c__
     );

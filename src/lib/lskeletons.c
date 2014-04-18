@@ -5226,6 +5226,7 @@ int32_t lskelCKG3map(struct xvimage *imageprio,
 /* ==================================== */
 // EXPERIMENTAL - Ne pas utiliser dans des applications
 // the result is in imageprio : a "topological map"
+// A FAIRE: TRAITER LES POINTS NON DETRUITS - VOIR lskelCKG2map
 #undef F_NAME
 #define F_NAME "lskelCKG3map"
 { 

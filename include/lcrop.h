@@ -29,22 +29,17 @@ requirements in conditions enabling the security of their systems and/or
 data to be ensured and,  more generally, to use and operate it in the 
 same conditions as regards security. 
 
-The fact that y#ifdef NOT_USED_TO_BE_REMOVED
-ou are presently reading this means that you have had
+The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef NOT_USED_TO_BE_REMOVED
-    /* same for python */
-    int lpycrop(struct xvimage *in, struct xvimage *out, int32_t x, int32_t y,int32_t w, int32_t h);
-#endif
-
 extern struct xvimage * lcrop(struct xvimage *in, int32_t x, int32_t y, int32_t w, int32_t h);
 extern struct xvimage * lcrop3d(struct xvimage *in, int32_t x, int32_t y, int32_t z, int32_t w, int32_t h, int32_t d);
 extern struct xvimage * lautocrop(struct xvimage *in, double seuil);
+extern void lautocrop2(struct xvimage *in, double seuil, index_t *Xmin, index_t *Ymin, index_t *Zmin, index_t *w, index_t *h, index_t *p);
 extern void lsetframe(struct xvimage *image, int32_t grayval);
 extern void lsetthickframe(struct xvimage *image, int32_t width, int32_t grayval);
 extern struct xvimage * lenframe(struct xvimage *image, int32_t grayval, int32_t width);

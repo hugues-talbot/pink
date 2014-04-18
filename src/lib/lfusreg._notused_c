@@ -93,8 +93,8 @@ int32_t lfusreg(
 /* ==================================== */
 {
   uint8_t *F = UCHARDATA(img);
-  uint32_t *ML = ULONGDATA(mrq);
-  uint32_t *R = ULONGDATA(result);
+  uint32_t *ML = SLONGDATA(mrq);
+  uint32_t *R = SLONGDATA(result);
   uint32_t rs, cs, N;
   Fahd * FAHD;
   Fus * FUS;

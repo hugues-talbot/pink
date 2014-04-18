@@ -32,7 +32,7 @@ SET( EIGEN_INCLUDE "C:/Pink/Build/eigen2/eigen-eigen-b23437e61a07" CACHE PATH "d
 SET( NUMPY OFF CACHE BOOL "desc." )
 SET( CMAKE_INSTALL_PREFIX "install" CACHE PATH "desc." )
 SET( PINK_PACKAGE_TYPE "NSIS-WINDOWS" CACHE STRING "Generate a Windows(tm) installer." )
-SET( CPACK_MODULE_PATH "C:/Pink/Source/Pink-hg" CACHE PATH "The path for the NSIS installer templates" )
+#SET( CPACK_MODULE_PATH "C:/Pink/Jenkins/pink-hg" CACHE PATH "The path for the NSIS installer templates" )
 
 ###########################################################################
 ### Python 2.7
@@ -40,17 +40,6 @@ SET( CPACK_MODULE_PATH "C:/Pink/Source/Pink-hg" CACHE PATH "The path for the NSI
 SET( Boost_DIR "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64" CACHE PATH "desc." )
 SET( Boost_LIBRARY_DIRS "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib" CACHE PATH "desc." )
 SET( Boost_INCLUDE_DIR "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64" CACHE PATH "desc." )
-#SET( Boost_PYTHON "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_python-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
-#SET( Boost_PYTHON_LIBRARY "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_python-vc100-mt-s-1_52.lib" CACHE FILEPATH "The Boost PYTHON library." )
-#SET( Boost_PYTHON_LIBRARY_DEBUG "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_python-vc100-mt-sgd-1_52.lib" CACHE FILEPATH "Boost python library (debug)" )
-##Boost_PYTHON_LIBRARY_DEBUG:FILEPATH=Boost_PYTHON_LIBRARY_DEBUG-NOTFOUND
-#SET( Boost_PYTHON_LIBRARY_RELEASE "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_python-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
-#SET( Boost_THREAD "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_thread-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
-##Boost_THREAD_LIBRARY_DEBUG:FILEPATH=Boost_THREAD_LIBRARY_DEBUG-NOTFOUND
-#SET( Boost_THREAD_LIBRARY_RELEASE "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_thread-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
-#SET( Boost_SYSTEM_LIBRARY "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_system-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
-#SET( Boost_SYSTEM_LIBRARY_DEBUG "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_system-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
-#SET( Boost_SYSTEM_LIBRARY_RELEASE "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_system-vc100-mt-sgd-1_52.lib" CACHE FILEPATH "desc." )
 SET( Boost_USE_STATIC_LIBS ON CACHE BOOST "desc." )
 #PYTHON_DEBUG_LIBRARY:FILEPATH=PYTHON_DEBUG_LIBRARY-NOTFOUND
 SET( PYTHON_DOCUMENTATION_EXE "C:/Program Files/Python/Python 2.7/x86_64/python.exe" CACHE FILEPATH "desc." )

@@ -158,14 +158,14 @@ int32_t omegaRec(JCctree *CT, int32_t *omegaCompo, int32_t root)
 }
 
 /* calcule la dynamique des composantes de l'arbre de fusion */
-/* fonction inspirée par l'article de F. Meyer, ISMM 96 :    */
+/* fonction inspirï¿½e par l'article de F. Meyer, ISMM 96 :    */
 /* "The dynamics of minima and contours"                     */
 void dynaRecCompTree(JCctree *CT,  /* arbre des coupes    */
 	      int32_t root,       /* racine de l'arbre   */
 	      int32_t *minSon,    /* cf ordonneMergeTree */
 	      int32_t *dynamic    /* dynamique des feuilles de CT */
 	     )
-     /* dynamic est supposé alloué */
+     /* dynamic est supposï¿½ allouï¿½ */
 {
   JCsoncell *s;
   int32_t father = CT->tabnodes[root].father;
@@ -177,7 +177,7 @@ void dynaRecCompTree(JCctree *CT,  /* arbre des coupes    */
   {
     if(minSon[root] == minSon[father]) 
       if(dynamic[father] == 256){ 
-	/* l'infini est un cas à part */
+	/* l'infini est un cas ï¿½ part */
 	dynamic[root] = 256; 
       }
       else dynamic[root] = (CT->tabnodes[father].data - CT->tabnodes[root].data) + dynamic[father];
@@ -216,9 +216,9 @@ void volumeRec(JCctree *CT, int32_t *SurfaceCompo, int32_t *fuzzyAreaCompo, int3
 	  (int32_t)fuzzyAreaCompo[root];
 }
 
-// NB: cette fonction devrait etre utilisé de maniere générique quel
-//que soit le critère (pas seulement pour le volume). Je prefère
-//cependant attendre l'écriture définitive du papier sur la saillence
+// NB: cette fonction devrait etre utilisï¿½ de maniere gï¿½nï¿½rique quel
+//que soit le critï¿½re (pas seulement pour le volume). Je prefï¿½re
+//cependant attendre l'ï¿½criture dï¿½finitive du papier sur la saillence
 //avant de faire des modifications
 int32_t attributOpenningRec(JCctree *CT, int32_t *attributCompo, int32_t *attributMerge, int32_t root)
 {
@@ -389,7 +389,7 @@ int32_t ordonneCompTree(int32_t *clefs,  /* tableau ordonnant les
 					     clefs) des descendants de
 					     x est minSon(x)  */
 		) 
-     /* minSon est supposé alloué */
+     /* minSon est supposï¿½ allouï¿½ */
 {
   int32_t r,x;
   int32_t m = INT32_MAX;
@@ -517,7 +517,7 @@ int32_t *volumeMergeTree(JCctree *CT, RAG *rag)
 // extraction du MST contenu dans un merge tree, vers un tableau d'arete
 // et revaluation des arets en fonction de Attribut
 static void mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attribut) 
-     /* MST et Valeur sont supposés alloués */
+     /* MST et Valeur sont supposï¿½s allouï¿½s */
 {
 
   int32_t i;
@@ -525,7 +525,7 @@ static void mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attrib
   JCctree *CT = MT->CT;
   k = 0;
 
-  // les aretes du mst sont stokées ds MT. A chaque noeud de merge
+  // les aretes du mst sont stokï¿½es ds MT. A chaque noeud de merge
   // (i.e., les noeuds qui ne sont pas des feuilles) correspond une
   // arete du MST
   for(i = CT->nbnodes - (CT->nbnodes/2); i < CT->nbnodes; i++){
@@ -556,7 +556,7 @@ static __pink__inline uint8_t salScale(int32_t input, int32_t maxim, int32_t par
 }
 
 #define LCAFAST
-/* Calcul la carte de saillance à partir du CT de saillance du ga
+/* Calcul la carte de saillance ï¿½ partir du CT de saillance du ga
    d'origine et du flow mapping (label) du ga */
 int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int32_t *attribut, int32_t param)
 {
@@ -569,13 +569,13 @@ int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int3
   int32_t N = rs * cs;           /* taille image */
   uint8_t *F = UCHARDATA(ga);   /* l'image de depart */
   int32_t u,x,y,i,j,c1;
-  /* la valeur maximum de l'attribut est à la racine */
+  /* la valeur maximum de l'attribut est ï¿½ la racine */
   //double facteur = mcmax(255/(double)attribut[CT->root], 0.05); 
   //facteur = 1;
   //printf("Attribut[racine] = %d et facteur %lf \n", attribut[CT->root],facteur);
   printf("Attribut[racine] = %d\n", attribut[CT->root]);
 #ifdef LCAFAST 
-  /* Structure de donnée pour lca fast */
+  /* Structure de donnï¿½e pour lca fast */
   Euler = (int32_t *)calloc(2*CT->nbnodes-1, sizeof(int32_t));
   Represent = (int32_t *)calloc(2*CT->nbnodes-1, sizeof(int32_t));
   Depth = (int32_t *)calloc(CT->nbnodes, sizeof(int32_t));
@@ -736,7 +736,7 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param, struct xvimage *annexe)
   int32_t *LABEL;
   int32_t *Attribut;                      /* Attribut de surface du merge tree */
   RAG *rag;                               /* Graph d'adjacence de
-					     régions */
+					     rï¿½gions */
   mtree *MT;                              /* arbre de fusion pour la
 					     saillence */
   int32_t *MST, *Valeur,*STaltitude;      /* Arete du MST et Valuation
@@ -752,8 +752,8 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param, struct xvimage *annexe)
   
   printf("nbre de regions: %d \n",rag->g->nsom);
   
-  // Calcul de l'arbre de fusion et précalcul (stoké directement dans
-  // MT) de l'arbre de poids min du graphe d'ajacence des régions
+  // Calcul de l'arbre de fusion et prï¿½calcul (stokï¿½ directement dans
+  // MT) de l'arbre de poids min du graphe d'ajacence des rï¿½gions
   mergeTree(rag, &MT);
   // calcul des valeurs de fusion des aretes du MST du graphe
   //d'adjacence

@@ -24,10 +24,19 @@ INCLUDE (UJ_CheckIncludeFile.cmake)
 INCLUDE (UJ_CheckIncludeFileCXX.cmake)
 #INCLUDE (FindCFITSIO.cmake)
 
-set( POTENTIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library )
-set( INCLUDES include src/python /usr/include /usr/local/include )
+set( POTENTIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library /usr/X11/include)
+set( INCLUDES include src/python /usr/include /opt/local/include)
 
 include_directories( ${INCLUDES} )
+
+## This does not work
+### I didn't think of this myself (HT)
+##set(CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules")
+###message("1- CMAKE module path = " ${CMAKE_MODULE_PATH})
+##set(EXTRA_MODULES "${pink_SOURCE_DIR}")
+###message("2- EXTRA_MODULES = " ${EXTRA_MODULES})
+##set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}  "${EXTRA_MODULES}" )
+##message("3- new CMAKE module path = " ${CMAKE_MODULE_PATH})
 
 set(CFITSIO_DIR "${pink_SOURCE_DIR}")
 
@@ -77,7 +86,11 @@ else (CMAKE_HOST_UNIX) ## We build with MSVC
     SET( CMAKE_CXX_FLAGS_RELEASE " /O2 -DNDEBUG /MT " CACHE STRING "Optimization flags for the C++ compiler in Release mode" FORCE )
     SET( CMAKE_C_FLAGS_RELEASE   " /O2 -DNDEBUG /MT " CACHE STRING "Optimization flags for the C   compiler in Release mode" FORCE )
 #    SET( PINK_LINKING_FLAGS "/DBOOST_PYTHON_STATIC_LIB /STACK:10000000 /machine:x64 /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libc.lib, /NODEFAULTLIB:msvcrt.lib, /NODEFAULTLIB:libcd.lib, /NODEFAULTLIB:libcmtd.lib, /NODEFAULTLIB:msvcrtd.lib /NODEFAULTLIB:msvcprt.lib /VERBOSE:LIB " )
-    SET( PINK_LINKING_FLAGS "/STACK:10000000 /machine:x64 /VERBOSE:LIB /NODEFAULTLIB:libcmt.lib" )
+    if (64BIT)
+	SET( PINK_LINKING_FLAGS "/STACK:10000000 /machine:x64 /VERBOSE:LIB /NODEFAULTLIB:libcmt.lib" )
+    else (64BIT)
+	SET( PINK_LINKING_FLAGS "/STACK:10000000 /machine:x86 /VERBOSE:LIB /NODEFAULTLIB:libcmt.lib" )
+    endif (64BIt)
     SET( CMAKE_LINKER_FLAGS ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
     SET( CMAKE_LINKER_FLAGS_RELEASE ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
     SET( CMAKE_MODULE_LINKER_FLAGS ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
@@ -131,10 +144,10 @@ if (CMAKE_HOST_UNIX)
 	message( FATAL_ERROR "error X11 header file X11/Xlib.h not found") 
     endif(NOT HTEST1)
 
-    CHECK_INCLUDE_FILE( curses.h  HTEST101 ) 
-    if (NOT HTEST101) 
-	message( FATAL_ERROR "error ncurses header file curses.h not found") 
-    endif(NOT HTEST101)
+    # CHECK_INCLUDE_FILE( curses.h  HTEST101 ) 
+    # if (NOT HTEST101) 
+    # 	message( FATAL_ERROR "error ncurses header file curses.h not found") 
+    # endif(NOT HTEST101)
 	
     CHECK_INCLUDE_FILE( X11/Xutil.h  HTEST2 )
     if (NOT HTEST2)
@@ -398,18 +411,13 @@ if ( PYTHON_FRONT_END )
     
     include_directories( ${CMAKE_REQUIRED_INCLUDES} )
     
-    ###message( "Before UJ stuff CMAKE_REQUIRED_FLAGS=" ${CMAKE_REQUIRED_FLAGS} )
+    message( "Before UJ stuff CMAKE_REQUIRED_FLAGS=" ${CMAKE_REQUIRED_FLAGS} )
 
-    CHECK_INCLUDE_FILE( ${PYTHON_INCLUDE}/pyconfig.h HTEST )
-    if (NOT HTEST)
-	message( ${PYTHON_INCLUDE}/pyconfig.h )
-	message( FATAL_ERROR " pyconfig.h header file failed to compile. If it is installed, than check the python flags and directories") 
-    endif(NOT HTEST)
-
-    CHECK_INCLUDE_FILE( curses.h HTEST )
-    if (NOT HTEST)
-	message( FATAL_ERROR " curses.h header file failed to compile. If it is installed, than check the include directories") 
-    endif(NOT HTEST)
+    # CHECK_INCLUDE_FILE( ${PYTHON_INCLUDE}/pyconfig.h HTEST )
+    # if (NOT HTEST)
+    # 	message( ${PYTHON_INCLUDE}/pyconfig.h )
+    # 	message( FATAL_ERROR " pyconfig.h header file failed to compile. If it is installed, than check the python flags and directories") 
+    # endif(NOT HTEST)
 
     CHECK_INCLUDE_FILE_CXX( boost/shared_ptr.hpp  HTEST3 )
     if (NOT HTEST3)
@@ -421,7 +429,11 @@ if ( PYTHON_FRONT_END )
 	message( FATAL_ERROR "error boost/shared_array.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST4)
 
-	# The following should be taken as a hint that these tests are useless.    
+#
+# HT: I think at the moment these tests are not serving any purpose at all
+#     furthermore they are detrimental
+#
+	# The following should be taken as a hint that these tests are useless.
     if (THIS_IS_MSVC)
 	message( STATUS "Not tested for boost/python/list.hpp and boost/python/extract.hpp due to a bug in cmake 2.8 try_compile. try_compile ignores additional library directories, which would be needed for the boost.python libraries." )
 #    else(THIS_IS_MSVC)
@@ -434,6 +446,9 @@ if ( PYTHON_FRONT_END )
 #	    "PYTHON_LIBRARY='" ${PYTHON_LIBRARY} "' does not point to the correct location of python's libraries, please specify them manually"
 #	    " or delete the file in question. (seen on OpenSuSE 11.2)" )
 #	endif(NOT HTEST5)
+#	    "PYTHON_LIBRARY='" ${PYTHON_LIBRARY} "' does not point to the correct location of python's libraries, please specify them manually"
+#	    " or delete the file in question. (seen on OpenSuSE 11.2)" )
+#	endif(NOT HTEST5)
 
 #	if (NOT HTEST6)
 #	    CHECK_INCLUDE_FILE_CXX( boost/python/extract.hpp  HTEST6 )
@@ -441,6 +456,10 @@ if ( PYTHON_FRONT_END )
 #	    " or delete the file in question. (seen on OpenSuSE 11.2)" )
 #    endif(NOT HTEST5)
 
+#	if (NOT HTEST6)
+#	    message( FATAL_ERROR "error boost/python/extract.hpp does not compile. Check if its correctly installed. You may need a newer version or set up python paths correctly.")
+#	endif(NOT HTEST6)
+#    endif(NOT HTEST6)
 #	if (NOT HTEST6)
 #	    message( FATAL_ERROR "error boost/python/extract.hpp does not compile. Check if its correctly installed. You may need a newer version or set up python paths correctly.")
 #	endif(NOT HTEST6)
@@ -545,7 +564,7 @@ endif(BASH_FRONT_END)
 ### **********************************************************************************************
 
 if( NOT PINK_PACKAGE_TYPE )
-    SET( PINK_PACKAGE_TYPE "TBZ2" CACHE STRING "The binary package to create after the compilation with the 'make package' commang." )
+    SET( PINK_PACKAGE_TYPE "TBZ2" CACHE STRING "The binary package to create after the compilation with the 'make package' command." )
 endif( NOT PINK_PACKAGE_TYPE )
 
 if (CMAKE_MINOR_VERSION>=8) # cmake 2.6 required; cmake 2.8 or newer desirable

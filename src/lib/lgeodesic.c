@@ -657,9 +657,9 @@ int32_t lgeoeros(
 int32_t ldeletecomp(
         struct xvimage *f,
         int32_t connex,
-        int32_t x, 
-        int32_t y, 
-        int32_t z) 
+        index_t x, 
+        index_t y, 
+        index_t z) 
 /* supprime la composante connexe de f (image binaire) 
    qui contient le point (x,y,z) */
 /* connex : 4, 8 (en 2D), 6, 18, 26 (en 3D) */
@@ -800,9 +800,9 @@ int32_t ldeletecomp(
 int32_t lselectcomp(
         struct xvimage *f,
         int32_t connex,
-        int32_t x, 
-        int32_t y, 
-        int32_t z) 
+        index_t x, 
+        index_t y, 
+        index_t z) 
 /* extrait la composante connexe de f (image binaire) 
    qui contient le point (x,y,z) */
 /* connex : 4, 8 (en 2D), 6, 18, 26 (en 3D) */
