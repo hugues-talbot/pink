@@ -1,7 +1,7 @@
 /*
   This software is licensed under
   CeCILL FREE SOFTWARE LICENSE AGREEMENT
-
+Path_Opening
   This software comes in hope that it will be useful but
   without any warranty to the extent permitted by applicable law.
 
@@ -28,6 +28,7 @@
 #include "NonLocalFilterSioux.h"
 
 #include "Path_Opening.hpp"
+#include "RPO_dilat3D.hpp"
 
 #include "liarp.h"
 
@@ -484,6 +485,40 @@ namespace pink {
 
     } /* liarPathOpening */
     
+   
+    template   <class image_t>
+    image_t liarRPO_dilat3D
+    (
+      image_t & input_image,
+      const int L
+    )
+    {
+        int errorcode = 0;
+        image_t result_image = input_image.clone();
+
+	// image structure
+	struct xvimage *inputxvimage = input_image.get_output();
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = outputxvimage->row_size;
+    int ny = outputxvimage->col_size;
+    int nz = outputxvimage->depth_size;
+
+
+    // buffers
+    PixelType *input_buffer = (PixelType*) (inputxvimage->image_data);
+	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
+
+    // Execute PO3D
+    RPO_dilat3D<PixelType>(input_buffer, output_buffer, L, nx, ny, nz);
+
+	// get result
+	return (result_image);
+
+    } /* liarRPO_dilat3D */
+    
+    
     
     
     template   <class image_t>
@@ -721,6 +756,16 @@ UI_EXPORT_FUNCTION(
   "\n 3D Path Opening with a path length L. \n"
   " Only works with long images \n"
   "This function used the algorithm of Hendriks ""Constrained and Dimensionality-Independant Path Openings"" (2010) \n"
+  );
+  
+  UI_EXPORT_FUNCTION(
+  RPO_dilat3D,
+  pink::python::liarRPO_dilat3D,
+  ( arg("input_image"), arg("L")),
+  "\n 3D Robust Path Opening with a path length L. \n"
+  " Only works with long images \n"
+  "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
+  " The robustness is performed by a dilation / erosion process. \n"
   );
 
 UI_EXPORT_FUNCTION(

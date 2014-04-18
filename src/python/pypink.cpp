@@ -150,6 +150,7 @@ void NonLocalFilterSioux_export();
 void Rotation3D_export();
 void fopenline3d_export();
 void PathOpening_export();
+void RPO_dilat3D_export();
 
 // opening by unions of lines
 void openbun_export();
@@ -413,6 +414,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   Rotation3D_export();
   fopenline3d_export();
   PathOpening_export();
+  RPO_dilat3D_export();
   
   openbun_export();
   closebin_export();
