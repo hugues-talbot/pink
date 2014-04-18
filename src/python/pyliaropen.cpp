@@ -10,10 +10,11 @@
   ujoimro@gmail.com
 */
 
+
 #include <cmath>
 #include <cassert>
 #include <iostream>
-
+#include <algorithm>
 #include "liar_fseries.h"
 #include "pink_python.h"
 #include "RPO_new_orientations.hpp"
@@ -25,6 +26,8 @@
 #include "NonLocalFilter.hpp"
 
 #include "NonLocalFilterSioux.h"
+
+#include "Path_Opening.hpp"
 
 #include "liarp.h"
 
@@ -445,8 +448,44 @@ namespace pink {
 	return (result_image);
 
     } /* liarNonLocalFilterSioux */
+    
+    
+    
+    
+    template   <class image_t>
+    image_t liarPathOpening
+    (
+      image_t & input_image,
+      const int L
+    )
+    {
+        int errorcode = 0;
+        image_t result_image = input_image.clone();
+
+	// image structure
+	struct xvimage *inputxvimage = input_image.get_output();
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = outputxvimage->row_size;
+    int ny = outputxvimage->col_size;
+    int nz = outputxvimage->depth_size;
 
 
+    // buffers
+    PixelType *input_buffer = (PixelType*) (inputxvimage->image_data);
+	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
+
+    // Execute PO3D
+    Union_PO3D<PixelType>(input_buffer, output_buffer, L, nx, ny, nz);
+
+	// get result
+	return (result_image);
+
+    } /* liarPathOpening */
+    
+    
+    
     template   <class image_t>
     image_t liarRotation3D
     (
@@ -674,7 +713,15 @@ UI_EXPORT_FUNCTION(
   " Works in 2 and 3 dimensions \n" 
   " This function uses the algorithm of Darbon &al in ""Fast NonLocal Filtering Applied to Electron Cryomicroscopy"" (2008) \n"
   );
-
+  
+UI_EXPORT_FUNCTION(
+  PathOpening,
+  pink::python::liarPathOpening,
+  ( arg("input_image"), arg("L")),
+  "\n 3D Path Opening with a path length L. \n"
+  " Only works with long images \n"
+  "This function used the algorithm of Hendriks ""Constrained and Dimensionality-Independant Path Openings"" (2010) \n"
+  );
 
 UI_EXPORT_FUNCTION(
     Rotation3D,
