@@ -1,5 +1,6 @@
 #ifndef _CS_H
 #define _CS_H
+
 #include <stdlib.h>
 #include <limits.h>
 #include <math.h>
@@ -146,9 +147,10 @@ csn *cs_ndone (csn *N, cs *C, void *w, void *x, int ok) ;
 #define CS_MARK(w,j) { w [j] = CS_FLIP (w [j]) ; }
 #define CS_CSC(A) (A && (A->nz == -1))
 #define CS_TRIPLET(A) (A && (A->nz >= 0))
-#endif
+//#endif
 
 #ifdef __cplusplus
+}
 #endif
 
 
