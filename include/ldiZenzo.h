@@ -36,13 +36,21 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-extern int32_t ldiZenzoGradient(
-	struct xvimage *imageR, struct xvimage *imageV, struct xvimage *imageB,
-	double alpha);
-
-int32_t ldiZenzoDirection(struct xvimage *imageR, struct xvimage *imageV, struct xvimage *imageB,
-		      struct xvimage *result,
-		      double alpha);
+  extern int32_t ldiZenzoGradient(
+    const struct xvimage * imageR,
+    const struct xvimage * imageV,
+    const struct xvimage * imageB,
+    double alpha,
+    struct xvimage * result
+    );
+  
+  int32_t ldiZenzoDirection(
+    const struct xvimage * imageR,
+    const struct xvimage * imageV,
+    const struct xvimage * imageB,
+    double alpha,
+    struct xvimage * result
+    );
 #ifdef __cplusplus
 }
 #endif

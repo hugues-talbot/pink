@@ -1,36 +1,36 @@
 /*
-Copyright ESIEE (2009) 
+  Copyright ESIEE (2009) 
 
-m.couprie@esiee.fr
+  m.couprie@esiee.fr
 
-This software is an image processing library whose purpose is to be
-used primarily for research and teaching.
+  This software is an image processing library whose purpose is to be
+  used primarily for research and teaching.
 
-This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software. You can  use, 
-modify and/ or redistribute the software under the terms of the CeCILL
-license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+  This software is governed by the CeCILL  license under French law and
+  abiding by the rules of distribution of free software. You can  use, 
+  modify and/ or redistribute the software under the terms of the CeCILL
+  license as circulated by CEA, CNRS and INRIA at the following URL
+  "http://www.cecill.info". 
 
-As a counterpart to the access to the source code and  rights to copy,
-modify and redistribute granted by the license, users are provided only
-with a limited warranty  and the software's author,  the holder of the
-economic rights,  and the successive licensors  have only  limited
-liability. 
+  As a counterpart to the access to the source code and  rights to copy,
+  modify and redistribute granted by the license, users are provided only
+  with a limited warranty  and the software's author,  the holder of the
+  economic rights,  and the successive licensors  have only  limited
+  liability. 
 
-In this respect, the user's attention is drawn to the risks associated
-with loading,  using,  modifying and/or developing or reproducing the
-software by the user in light of its specific status of free software,
-that may mean  that it is complicated to manipulate,  and  that  also
-therefore means  that it is reserved for developers  and  experienced
-professionals having in-depth computer knowledge. Users are therefore
-encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+  In this respect, the user's attention is drawn to the risks associated
+  with loading,  using,  modifying and/or developing or reproducing the
+  software by the user in light of its specific status of free software,
+  that may mean  that it is complicated to manipulate,  and  that  also
+  therefore means  that it is reserved for developers  and  experienced
+  professionals having in-depth computer knowledge. Users are therefore
+  encouraged to load and test the software's suitability as regards their
+  requirements in conditions enabling the security of their systems and/or 
+  data to be ensured and,  more generally, to use and operate it in the 
+  same conditions as regards security. 
 
-The fact that you are presently reading this means that you have had
-knowledge of the CeCILL license and that you accept its terms.
+  The fact that you are presently reading this means that you have had
+  knowledge of the CeCILL license and that you accept its terms.
 */
 /* diZenzo gradient based on Deriche filter: Laurent Najman juin 2004 */
 #include <sys/types.h>
@@ -44,16 +44,32 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mccodimage.h>
 #include <mcutil.h>
 #include <lderiche.h>
-
+#include <limits.h>
 
 /* Result is in ImageR */
-int32_t ldiZenzoGradient(struct xvimage *imageR, struct xvimage *imageV, struct xvimage *imageB,
-	      double alpha)
+int32_t ldiZenzoGradient(
+  const struct xvimage *imageR, 
+  const struct xvimage *imageV, 
+  const struct xvimage *imageB,
+  double alpha,
+  struct xvimage * result
+  )
 {
+# define F_NAME "ldiZenzoGradient"
+
+  ACCEPTED_TYPES1( imageR, VFF_TYP_1_BYTE );
+  ACCEPTED_TYPES1( imageV, VFF_TYP_1_BYTE );
+  ACCEPTED_TYPES1( imageB, VFF_TYP_1_BYTE );
+  ACCEPTED_TYPES1( result, VFF_TYP_4_BYTE );
+  COMPARE_SIZE(imageR, imageV);
+  COMPARE_SIZE(imageR, imageB);
+  COMPARE_SIZE(imageR, result);
+
   int32_t i;
   uint8_t *imaR = UCHARDATA(imageR);
   uint8_t *imaV = UCHARDATA(imageV);
   uint8_t *imaB = UCHARDATA(imageB);
+  int32_t *res  = SLONGDATA(result);
   int32_t rs = imageR->row_size;
   int32_t cs = imageR->col_size;
   int32_t N = rs * cs;
@@ -78,15 +94,15 @@ int32_t ldiZenzoGradient(struct xvimage *imageR, struct xvimage *imageV, struct 
 
   if ((depth(imageR) != 1) || (depth(imageB) != 1) || (depth(imageB) != 1))
   {
-    fprintf(stderr, "ldiZenzo: cette version ne traite pas les images volumiques\n");
+    fprintf(stderr, "ldiZenzo: this version does not work with 3D images\n");
     exit(0);
   }
   if ((rs != imageB->row_size) || (rs != imageV->row_size)
       || (cs != imageB->col_size) || (cs != imageV->col_size))
-    {
-      fprintf(stderr, "ldiZenzo: Image not of same size\n");
-      exit(0);
-    }
+  {
+    fprintf(stderr, "ldiZenzo: Image not of same size\n");
+    exit(0);
+  }
 
   ImRx = (double *)calloc(1,N * sizeof(double));
   ImRy = (double *)calloc(1,N * sizeof(double));
@@ -106,7 +122,7 @@ int32_t ldiZenzoGradient(struct xvimage *imageR, struct xvimage *imageV, struct 
       ||(ImBx==NULL) || (ImBx==NULL) || (ImB==NULL) 
       || (buf1==NULL) || (buf2==NULL))
   {   fprintf(stderr,"lderiche() : malloc failed\n");
-      return(0);
+    return(0);
   }
 
   for (i = 0; i < N; i++) {
@@ -123,53 +139,61 @@ int32_t ldiZenzoGradient(struct xvimage *imageR, struct xvimage *imageV, struct 
   kp = - kp * kp / e_a;
   kpp = (1.0 - e_2a) / (2 * alpha * e_a);
 
-#ifdef DEBUG
-printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
-#endif
+# ifdef DEBUG
+  printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
+# endif
 
-      /* valeurs de parametres pour filtre lisseur-derivateur */
-      a1 = k;
-      a2 = k * e_a * (alpha - 1.0);
-      a3 = k * e_a * (alpha + 1.0);
-      a4 = - k * e_2a;
+  /* valeurs de parametres pour filtre lisseur-derivateur */
+  a1 = k;
+  a2 = k * e_a * (alpha - 1.0);
+  a3 = k * e_a * (alpha + 1.0);
+  a4 = - k * e_2a;
 
-      a5 = 0.0;
-      a6 = kp * e_a;
-      a7 = - kp * e_a;
-      a8 = 0.0;
+  a5 = 0.0;
+  a6 = kp * e_a;
+  a7 = - kp * e_a;
+  a8 = 0.0;
 
-      b1 = b3 = 2 * e_a;
-      b2 = b4 = - e_2a;
+  b1 = b3 = 2 * e_a;
+  b2 = b4 = - e_2a;
 
-      lderiche_derichegen(ImR, rs, cs, buf1, buf2, ImRx,
-                 a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      lderiche_derichegen(ImR, rs, cs, buf1, buf2, ImRy,
-                 a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
+  lderiche_derichegen(ImR, rs, cs, buf1, buf2, ImRx,
+		      a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
+  lderiche_derichegen(ImR, rs, cs, buf1, buf2, ImRy,
+		      a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
-      lderiche_derichegen(ImV, rs, cs, buf1, buf2, ImVx,
-                 a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      lderiche_derichegen(ImV, rs, cs, buf1, buf2, ImVy,
-                 a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
+  lderiche_derichegen(ImV, rs, cs, buf1, buf2, ImVx,
+		      a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
+  lderiche_derichegen(ImV, rs, cs, buf1, buf2, ImVy,
+		      a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
-      lderiche_derichegen(ImB, rs, cs, buf1, buf2, ImBx,
-                 a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      lderiche_derichegen(ImB, rs, cs, buf1, buf2, ImBy,
-                 a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
+  lderiche_derichegen(ImB, rs, cs, buf1, buf2, ImBx,
+		      a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
+  lderiche_derichegen(ImB, rs, cs, buf1, buf2, ImBy,
+		      a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
-      for (i = 0; i < N; i++)
-      {
-        p = ImRx[i]*ImRx[i] + ImVx[i]*ImVx[i] + ImBx[i]*ImBx[i];
-        q = ImRy[i]*ImRy[i] + ImVy[i]*ImVy[i] + ImBy[i]*ImBy[i];
-	t = ImRx[i]*ImRy[i] + ImVx[i]*ImVy[i] + ImBx[i]*ImBy[i];
-	
-	g = sqrt(0.5*(p+q+sqrt((p+q)*(p+q)-4.0*(p*q-t*t))));
-	if (g<256.0)
-	  imaR[i] = (uint8_t)g;
-	else {
-	  fprintf(stderr, "ldiZenzo: Gradient greater than 255 (= %lg)\n", g);
-	  imaR[i] = g;
-	}
-      }
+  int64_t max = 0;
+  for (i = 0; i < N; i++)
+  {
+    p = ImRx[i]*ImRx[i] + ImVx[i]*ImVx[i] + ImBx[i]*ImBx[i];
+    q = ImRy[i]*ImRy[i] + ImVy[i]*ImVy[i] + ImBy[i]*ImBy[i];
+    t = ImRx[i]*ImRy[i] + ImVx[i]*ImVy[i] + ImBx[i]*ImBy[i];
+
+    double residuum = (p+q)*(p+q)-4.0*(p*q-t*t);
+    if (residuum < 0) residuum = 0;
+    g = sqrt(0.5*(p+q+sqrt(residuum)));	
+    if (g<INT_MAX) {
+      res[i] = (int32_t)g;
+    }
+    else {
+#     ifdef DEBUG
+      fprintf(stderr, "alpha = %g\n", alpha);
+      fprintf(stderr, "ldiZenzo: Gradient greater than %d (= %lg)\n", INT_MAX, g);
+#     endif // DEBUG
+      res[i] = INT_MAX;
+    }
+  }
+
 
   free(ImRx);
   free(ImRy);
@@ -183,14 +207,17 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
   free(buf1);
   free(buf2);
   return 1;
+# undef F_NAME
 }
 
-int32_t ldiZenzoDirection(struct xvimage *imageR, struct xvimage *imageV, struct xvimage *imageB,
-		      struct xvimage *result,
-		      double alpha)
-#undef F_NAME
-#define F_NAME "ldiZenzoDirection"
+int32_t ldiZenzoDirection( const struct xvimage *imageR, 
+			   const struct xvimage *imageV, 
+			   const struct xvimage *imageB,
+			   double alpha,
+			   struct xvimage *result )
 {
+# undef F_NAME
+# define F_NAME "ldiZenzoDirection"
   int32_t i;
   uint8_t *imaR = UCHARDATA(imageR);
   uint8_t *imaV = UCHARDATA(imageV);
@@ -226,10 +253,10 @@ int32_t ldiZenzoDirection(struct xvimage *imageR, struct xvimage *imageV, struct
   }
   if ((rs != imageB->row_size) || (rs != imageV->row_size)
       || (cs != imageB->col_size) || (cs != imageV->col_size))
-    {
-      fprintf(stderr, "%s: Image not of same size\n", F_NAME);
-      exit(0);
-    }
+  {
+    fprintf(stderr, "%s: Image not of same size\n", F_NAME);
+    exit(0);
+  }
   if (datatype(result) != VFF_TYP_4_BYTE) 
   {
     fprintf(stderr, "%s: le resultat doit etre de type VFF_TYP_4_BYTE\n", F_NAME);
@@ -254,7 +281,7 @@ int32_t ldiZenzoDirection(struct xvimage *imageR, struct xvimage *imageV, struct
       ||(ImBx==NULL) || (ImBx==NULL) || (ImB==NULL) 
       || (buf1==NULL) || (buf2==NULL))
   {   fprintf(stderr,"lderiche() : malloc failed\n");
-      return(0);
+    return(0);
   }
 
   for (i = 0; i < N; i++) {
@@ -272,50 +299,50 @@ int32_t ldiZenzoDirection(struct xvimage *imageR, struct xvimage *imageV, struct
   kpp = (1.0 - e_2a) / (2 * alpha * e_a);
 
 #ifdef DEBUG
-printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
+  printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
 #endif
 
-      /* valeurs de parametres pour filtre lisseur-derivateur */
-      a1 = k;
-      a2 = k * e_a * (alpha - 1.0);
-      a3 = k * e_a * (alpha + 1.0);
-      a4 = - k * e_2a;
+  /* valeurs de parametres pour filtre lisseur-derivateur */
+  a1 = k;
+  a2 = k * e_a * (alpha - 1.0);
+  a3 = k * e_a * (alpha + 1.0);
+  a4 = - k * e_2a;
 
-      a5 = 0.0;
-      a6 = kp * e_a;
-      a7 = - kp * e_a;
-      a8 = 0.0;
+  a5 = 0.0;
+  a6 = kp * e_a;
+  a7 = - kp * e_a;
+  a8 = 0.0;
 
-      b1 = b3 = 2 * e_a;
-      b2 = b4 = - e_2a;
+  b1 = b3 = 2 * e_a;
+  b2 = b4 = - e_2a;
 
-      lderiche_derichegen(ImR, rs, cs, buf1, buf2, ImRx,
-                 a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      lderiche_derichegen(ImR, rs, cs, buf1, buf2, ImRy,
-                 a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
+  lderiche_derichegen(ImR, rs, cs, buf1, buf2, ImRx,
+		      a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
+  lderiche_derichegen(ImR, rs, cs, buf1, buf2, ImRy,
+		      a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
-      lderiche_derichegen(ImV, rs, cs, buf1, buf2, ImVx,
-                 a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      lderiche_derichegen(ImV, rs, cs, buf1, buf2, ImVy,
-                 a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
+  lderiche_derichegen(ImV, rs, cs, buf1, buf2, ImVx,
+		      a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
+  lderiche_derichegen(ImV, rs, cs, buf1, buf2, ImVy,
+		      a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
-      lderiche_derichegen(ImB, rs, cs, buf1, buf2, ImBx,
-                 a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      lderiche_derichegen(ImB, rs, cs, buf1, buf2, ImBy,
-                 a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
+  lderiche_derichegen(ImB, rs, cs, buf1, buf2, ImBx,
+		      a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
+  lderiche_derichegen(ImB, rs, cs, buf1, buf2, ImBy,
+		      a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
-      for (i = 0; i < N; i++)
-      {
-        p = ImRx[i]*ImRx[i] + ImVx[i]*ImVx[i] + ImBx[i]*ImBx[i];
-        q = ImRy[i]*ImRy[i] + ImVy[i]*ImVy[i] + ImBy[i]*ImBy[i];
-	t = ImRx[i]*ImRy[i] + ImVx[i]*ImVy[i] + ImBx[i]*ImBy[i];
+  for (i = 0; i < N; i++)
+  {
+    p = ImRx[i]*ImRx[i] + ImVx[i]*ImVx[i] + ImBx[i]*ImBx[i];
+    q = ImRy[i]*ImRy[i] + ImVy[i]*ImVy[i] + ImBy[i]*ImBy[i];
+    t = ImRx[i]*ImRy[i] + ImVx[i]*ImVy[i] + ImBx[i]*ImBy[i];
 	
-	if (p!=q) {
-	  dir[i] = (int32_t) (180.0/3.1415927*(.5*atan2(2.0*t, (p-q)))+180.);
-	  //printf("%d\n", dir[i]);
-	}
-	else dir[i] = 361;
-      }
+    if (p!=q) {
+      dir[i] = (int32_t) (180.0/3.1415927*(.5*atan2(2.0*t, (p-q)))+180.);
+      //printf("%d\n", dir[i]);
+    }
+    else dir[i] = 361;
+  }
 
   free(ImRx);
   free(ImRy);
@@ -329,4 +356,5 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
   free(buf1);
   free(buf2);
   return 1;
+# undef F_NAME
 }

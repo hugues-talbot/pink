@@ -34,31 +34,41 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file diZenzo.c
 
-\brief diZenzo gradient pour les images couleurs
+\brief diZenzo gradient for color images
 
 <B>Usage:</B> diZenzo imageRVB.ppm alpha [mode] out.pgm
+<B>Python Usage:</B> pink.cpp.signal.diZenzo( red_image, green_image, blue_image, alpha )
+<B>Python Usage:</B> pink.cpp.signal.diZenzodirection( red_image, green_image, blue_image, alpha )
 
 <B>Description:</B>
-Le gradient de diZenzo est défini par la donnée de p, q, et t:
+The diZenzo gradient is defined by p, q, and t:
 
-p = Rx*Rx + Vx*Vx + Bx*Bx
+p = Rx*Rx + Gx*Gx + Bx*Bx
 
-q = Ry*Ry + Vy*Vy + By*By
+q = Ry*Ry + Gy*Gy + By*By
 
-t = Rx*Ry + Vx*Vy + Bx*By
+t = Rx*Ry + Gx*Gy + Bx*By
 
-(ou Rx = dérivée en x de la bande rouge, Ry est la dérivée en y de la bande rouge, etc.)
+(where Rx = is the derivative of the red band of the image in the x
+direction, Ry is the derivative in the y direction, etc.)
 
-et le module est donnée par
+The magnitude is given by:
 
 G = sqrt(1/2*(p+q+sqrt((p+q)*(p+q) -4(pq-t*t))))
 
-La direction est donnée par 1/2*atan(2*t/(p-q))
+And the direction is given by:
 
-Si le mode est égale à 0 (valeur défaut) alors l'image de sortie est le gradient, 
-sinon l'image de sortie est une int32_t entre 0 et 360.
+1/2*atan(2*t/(p-q))
 
-Les gradients sont calculés par les filtres de Deriche, de paramètre alpha
+If [mode] is 0 (default) then the operator returns the image of the
+magnitude, if [mode] is 1 then the image returns the gradient
+orientation (a value between 0 and 360).
+
+<B>NOTE:</B> In Python the two operators are separated. For the
+direction use the <B>diZenzodirection</B>.
+
+The gradients are calculated by the Deriche filter using the [alpha]
+as parameter.
 
 <B>Types supported:</B> byte 2D
 
@@ -67,7 +77,8 @@ Les gradients sont calculés par les filtres de Deriche, de paramètre alpha
 
 \author Laurent Najman
 */
-/* Gradient couleur de diZenzo basé sur le filtre lineaire general recursif de Deriche */
+
+/* The diZenzo color gradient is recursively based on the Deriche filter. */
 
 #include <stdio.h>
 #include <stdint.h>
@@ -105,27 +116,29 @@ int main(int argc, char **argv)
   if (argc == 5) {
     mode = atoi(argv[3]);
   } else mode = 0;
-  
-  if (mode == 0) {
-    if (! ldiZenzoGradient(imageR, imageV, imageB, alpha))
-      {
-	fprintf(stderr, "deriche: function lderiche failed\n");
-	exit(1);
-      }
-    writeimage(imageR, argv[argc-1]);
-  } else {
-    result = allocimage(NULL, rowsize(imageR), colsize(imageR), depth(imageR), VFF_TYP_4_BYTE);
-    if (result == NULL)
-    {   
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    ldiZenzoDirection(imageR, imageV, imageB, result, alpha);
-    writeimage(result, argv[argc-1]);
-    freeimage(result);
+
+  result = allocimage(NULL, rowsize(imageR), colsize(imageR), depth(imageR), VFF_TYP_4_BYTE);
+  if (result == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+    exit(1);
   }
 
-
+  
+  if (mode == 0) {
+    
+    if (! ldiZenzoGradient(imageR, imageV, imageB, alpha, result))
+    {
+      fprintf(stderr, "deriche: function lderiche failed\n");
+      exit(1);
+    }
+    writeimage(result, argv[argc-1]);
+  } else {
+    ldiZenzoDirection(imageR, imageV, imageB, alpha, result );
+    writeimage(result, argv[argc-1]);
+  }
+  
+  freeimage(result);
   freeimage(imageR);
   freeimage(imageV);
   freeimage(imageB);
