@@ -84,13 +84,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #  include <boost/thread.hpp>
 #  include <boost/operators.hpp>
 #  include <boost/smart_ptr.hpp>
-#  ifdef PINK_HAVE_PYTHON
-#    ifdef _WINDOWS
-#      define BOOST_PYTHON_STATIC_LIB
-#    endif /* _WINDOWS */
-#    include <boost/python.hpp>
-#    include <boost/smart_ptr.hpp>
-#  endif /* PINK_HAVE_PYTHON */
 #  include <boost/preprocessor.hpp>
 #  include <boost/shared_array.hpp>
 #  include <boost/lexical_cast.hpp>
