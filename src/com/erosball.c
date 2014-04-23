@@ -112,6 +112,7 @@ int main(int argc, char **argv)
   if ((argc != 4) && (argc != 5))
   {
     fprintf(stderr, "usage: %s f.pgm r [dist] out.pgm \n", argv[0]);
+    fprintf(stderr, "dist = [0|2|3|4|8|6|18|26]\n");
     exit(1);
   }
 

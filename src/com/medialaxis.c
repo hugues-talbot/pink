@@ -44,9 +44,9 @@ included in X, then the result R(x) is equal to the smallest distance between x
 and a point outside X, otherwise it is equal to 0 .
 The distance is indicated by the parameter <B>distance</B> :
 \li 0: approximate euclidean distance (Meyer's algorithm)
-\li 1: exact quadratic euclidean distance (Saito-Toriwaki's skeleton)
-\li 2: exact quadratic euclidean distance (Coeurjolly's reduced axis)
-\li 3: exact quadratic euclidean distance (Rémy-Thiel)
+\li 1: exact quadratic Euclidean distance (Saito-Toriwaki's skeleton)
+\li 2: exact quadratic Euclidean distance (Coeurjolly's reduced axis)
+\li 3: exact quadratic Euclidean distance (Rémy-Thiel)
 \li 4: 4-distance in 2d
 \li 6: 6-distance in 3d
 \li 8: 8-distance in 2d
