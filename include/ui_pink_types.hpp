@@ -33,13 +33,6 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#ifdef PINK_HAVE_PYTHON
-# ifdef _WINDOWS
-#   define BOOST_PYTHON_STATIC_LIB
-# endif /* _WINDOWS */
-# include <boost/python.hpp>
-# include <boost/smart_ptr.hpp>
-#endif /* PINK_HAVE_PYTHON */
 
 #include "mcimage.h"
 #include "sqlite3.h"
@@ -204,6 +197,61 @@ namespace pink
     return ss.str();    
   } // repr
   
+
+  /**
+     \note tested in harmony with uiNextStep_it, uiNextStep_fast and Positions
+     
+     \warning  New version, now the X is the fastest also note, that the size should be the parameter and the object should change to comply with the no parameter change paradigm
+   */
+  template <class T0>
+  void
+  next_step( const T0 & dim, const index_t & step, T0 & result ) {
+
+    index_t d    = dim.size();
+    index_t prod = step;
+    index_t q    = 0;
+    
+    while ( q <= d - 1 ) {      
+      if ( dim[q] > 0 ) result[q] = prod % dim[q];
+      
+      if ( prod > 0 ) prod = prod / dim[q];
+
+      q++;
+    }
+
+    return;
+  } // next_step
+
+
+  template <class T0>
+  inline T0
+  sqr( const T0 & t0 ) {
+    return t0 * t0;
+  } // sqr
+
+  template <class T0>
+  inline T0
+  prod_except( const std::vector<T0> & input, const index_t & skip ) {
+    T0 prod = 1;
+
+    index_t q = 0;
+    for ( auto & val : input ) if (q++!=skip) prod *= val;
+    
+    return prod;
+  } // prod_except
+
+  template <class Fn1, class Fn2, class...ARGS>
+  void
+  pick( char * message, bool cond, Fn1 fn1, Fn2 fn2, ARGS...args ) {
+    if (cond)
+    {
+      if (!fn1(args...)) pink_error( message + std::string(" function failed (001).") );
+    }
+    else
+    { if (!fn2(args...)) pink_error( message + std::string(" function failed (002).") ); }
+    
+    return;  
+  } // pick
 
   
   namespace types
