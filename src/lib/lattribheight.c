@@ -80,6 +80,9 @@ knowledge of the CeCILL license and that you accept its terms.
 int32_t lsegmentheight(struct xvimage *image, int32_t connex, int32_t param, int32_t maximise)
 /* ==================================== */
 {
+# define F_NAME "lsegmentheight"
+  ACCEPTED_TYPES1( image, VFF_TYP_1_BYTE );
+
   register index_t i, k;         /* index muet */
   index_t rs = rowsize(image);      /* taille ligne */
   index_t cs = colsize(image);      /* taille colonne */
@@ -212,6 +215,7 @@ int32_t lsegmentheight(struct xvimage *image, int32_t connex, int32_t param, int
   free(number_nodes);
   free(node_at_level);
   return(1);
+# undef F_NAME /*lsegmentheight*/
 } /* lsegmentheight() */
 
 #ifdef __GNUC__
