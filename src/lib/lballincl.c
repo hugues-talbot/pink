@@ -392,6 +392,8 @@ int32_t build_sphere(double *tab_coord, uint32_t num_points, double* c_x, double
 	return(1);
 }
 
+int32_t circleincl () {}
+
 #ifdef TEST
 #include <time.h>
 #include <mcimage.h>
@@ -433,4 +435,5 @@ int main()
 	return(0);
 }
 
-#endif
+#endif // TEST
+
