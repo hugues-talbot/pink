@@ -10,12 +10,10 @@
   ujoimro@gmail.com
 */
 
+#include "pyexport.hpp"
+
 #include "lzoom.h"
-#include "pink_python.h"
-
-
-using namespace boost::python;
-using namespace pink;
+#include "ujimage.hpp"
 
 
 // note this function is too rigid (you can't choose the zoom algorithm)
