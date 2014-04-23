@@ -13,7 +13,6 @@
 #include "pyexport.hpp"
 
 #include "lgeodesic.h"
-#include "pink_python.h"
 
 
 
