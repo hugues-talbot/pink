@@ -12,14 +12,8 @@
 
 // boost python wrapper
 
+#include "ujimage.hpp"
 #include "lwshedtopo.h"
-#include "pink_python.h"
-
-using namespace boost::python;
-using namespace pink;
-
-
-
 
 // int32_t lwshedtopo_lwshedtopo( struct xvimage *image, int32_t connex );
 
