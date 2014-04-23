@@ -108,51 +108,7 @@ int main(int argc, char **argv)
       }
   }
 
-  if (datatype(image) != VFF_TYP_1_BYTE)
-  {
-    index_t rs, cs, ds, N, x;
-    uint8_t *F;
-    rs = rowsize(image); cs = colsize(image); ds = depth(image); N = rs * cs * ds; 
-    imagebin = allocimage(image->name, rs, cs, ds, VFF_TYP_1_BYTE);
-    if (imagebin == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    F = UCHARDATA(imagebin); 
-
-    if (datatype(image) == VFF_TYP_4_BYTE)
-    {
-      int32_t *FL = SLONGDATA(image);
-      for (x = 0; x < N; x++) F[x] = (uint8_t)FL[x];
-    }
-    else if (datatype(image) == VFF_TYP_2_BYTE)
-    {
-      int16_t *FL = SSHORTDATA(image);
-      for (x = 0; x < N; x++) F[x] = (uint8_t)FL[x];
-    }
-    else if (datatype(image) == VFF_TYP_FLOAT)
-    {
-      float *FL = FLOATDATA(image);
-      for (x = 0; x < N; x++) if (FL[x] == 0.0) F[x] = NDG_MIN; else F[x] = NDG_MAX;
-    }
-    else if (datatype(image) == VFF_TYP_DOUBLE)
-    {
-      double *FL = DOUBLEDATA(image);
-      for (x = 0; x < N; x++) if (FL[x] == 0.0) F[x] = NDG_MIN; else F[x] = NDG_MAX;
-    }
-    else
-    {
-      fprintf(stderr, "%s: bad data type %d\n", argv[0], datatype(image));
-      exit(1);
-    }
-    writeimage(imagebin, argv[argc-1]);
-    freeimage(imagebin);
-  }
-  else
-  {
-    writeimage(image, argv[argc-1]);
-  }
+  writeimage(image, argv[argc-1]);
 
   freeimage(image);
   return 0;
