@@ -76,13 +76,13 @@ struct xvimage * lzoomoutbyte(
       (zoomz <= 0.0) || (zoomz > 1.0))
   {  
     fprintf(stderr,"%s : bad zoom factor\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   if (datatype(in) != VFF_TYP_1_BYTE)
   {  
     fprintf(stderr,"%s : bad data type\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   rs2 = (index_t)(rs * zoomx); if (rs2 < 1) rs2 = 1;
@@ -96,14 +96,14 @@ struct xvimage * lzoomoutbyte(
   /* ---------------------------------------------------------- */
   /* alloue l'image resultat */
   /* ---------------------------------------------------------- */
-  *out = allocimage(NULL, rs2, cs2, ds2, VFF_TYP_1_BYTE);
+  struct xvimage * out = allocimage(NULL, rs2, cs2, ds2, VFF_TYP_1_BYTE);
 
-  if (*out == NULL)
+  if (out == NULL)
   {   
     fprintf(stderr,"%s : allocimage failed\n", F_NAME);
-    return 0;
+    return NULL;
   }
-  ptout = (UCHARDATA(*out));
+  ptout = (UCHARDATA(out));
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -182,7 +182,7 @@ struct xvimage * lzoomoutbyte(
     }
   } /* if (ds != 1) */
 
-  return 1;
+  return out;
 } /* lzoomoutbyte() */
 
 /* ==================================== */
@@ -214,13 +214,13 @@ lzoomoutlong(
       (zoomz <= 0.0) || (zoomz > 1.0))
   {  
     fprintf(stderr,"%s : bad zoom factor\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   if (datatype(in) != VFF_TYP_4_BYTE)
   {  
     fprintf(stderr,"%s : bad data type\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   rs2 = (index_t)(rs * zoomx); if (rs2 < 1) rs2 = 1;
@@ -234,14 +234,14 @@ lzoomoutlong(
   /* ---------------------------------------------------------- */
   /* alloue l'image resultat */
   /* ---------------------------------------------------------- */
-  *out = allocimage(NULL, rs2, cs2, ds2, VFF_TYP_4_BYTE);
+  struct xvimage * out = allocimage(NULL, rs2, cs2, ds2, VFF_TYP_4_BYTE);
 
-  if (*out == NULL)
+  if (out == NULL)
   {   
     fprintf(stderr,"%s : allocimage failed\n", F_NAME);
-    return 0;
+    return NULL;
   }
-  ptout = SLONGDATA(*out);
+  ptout = SLONGDATA(out);
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -301,7 +301,7 @@ lzoomoutlong(
     }
   } /* if (ds != 1) */
 
-  return 1;
+  return out;
 } /* lzoomoutlong() */
 
 /* ==================================== */
@@ -333,13 +333,13 @@ lzoomoutfloat(
       (zoomz <= 0.0) || (zoomz > 1.0))
   {  
     fprintf(stderr,"%s : bad zoom factor\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   if (datatype(in) != VFF_TYP_FLOAT)
   {  
     fprintf(stderr,"%s : bad data type\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   rs2 = (index_t)(rs * zoomx); if (rs2 < 1) rs2 = 1;
@@ -353,14 +353,14 @@ lzoomoutfloat(
   /* ---------------------------------------------------------- */
   /* alloue l'image resultat */
   /* ---------------------------------------------------------- */
-  *out = allocimage(NULL, rs2, cs2, ds2, VFF_TYP_FLOAT);
+  struct xvimage * out = allocimage(NULL, rs2, cs2, ds2, VFF_TYP_FLOAT);
 
-  if (*out == NULL)
+  if (out == NULL)
   {   
     fprintf(stderr,"%s : allocimage failed\n", F_NAME);
-    return 0;
+    return NULL;
   }
-  ptout = FLOATDATA(*out);
+  ptout = FLOATDATA(out);
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -420,7 +420,7 @@ lzoomoutfloat(
     }
   } /* if (ds != 1) */
 
-  return 1;
+  return out;
 } /* lzoomoutfloat() */
 
 /* ==================================== */
@@ -450,13 +450,13 @@ lzoominbyte(
   if ((zoomx < 1.0) || (zoomy < 1.0) || (zoomz < 1.0))
   {   
     fprintf(stderr,"%s : bad zoom factor - must be >= 1\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   if (datatype(in) != VFF_TYP_1_BYTE)
   {  
     fprintf(stderr,"%s : bad data type\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   rs2 = (index_t)(rs * zoomx);
@@ -468,13 +468,13 @@ lzoominbyte(
   /* ---------------------------------------------------------- */
   /* alloue l'image resultat */
   /* ---------------------------------------------------------- */
-  *out = allocimage(NULL, rs2, cs2, ds2, VFF_TYP_1_BYTE);
+  struct xvimage * out = allocimage(NULL, rs2, cs2, ds2, VFF_TYP_1_BYTE);
 
-  if (*out == NULL)
+  if (out == NULL)
   {   fprintf(stderr,"%s : allocimage failed\n", F_NAME);
-      return 0;
+      return NULL;
   }
-  ptout = UCHARDATA(*out);
+  ptout = UCHARDATA(out);
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -547,7 +547,7 @@ lzoominbyte(
     } // for z2
   } /* if (ds != 1) */
 
-  return 1;
+  return out;
 } /* lzoominbyte() */
 
 /* ==================================== */
@@ -577,13 +577,13 @@ lzoominlong(
   if ((zoomx < 1.0) || (zoomy < 1.0) || (zoomz < 1.0))
   {   
     fprintf(stderr,"%s : bad zoom factor - must be >= 1\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   if (datatype(in) != VFF_TYP_4_BYTE)
   {  
     fprintf(stderr,"%s : bad data type\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   rs2 = (index_t)(rs * zoomx);
@@ -595,13 +595,13 @@ lzoominlong(
   /* ---------------------------------------------------------- */
   /* alloue l'image resultat */
   /* ---------------------------------------------------------- */
-  *out = allocimage(NULL, rs2, cs2, ds2, VFF_TYP_4_BYTE);
+  struct xvimage * out = allocimage(NULL, rs2, cs2, ds2, VFF_TYP_4_BYTE);
 
-  if (*out == NULL)
+  if (out == NULL)
   {   fprintf(stderr,"%s : allocimage failed\n", F_NAME);
-      return 0;
+      return NULL;
   }
-  ptout = SLONGDATA(*out);
+  ptout = SLONGDATA(out);
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -661,7 +661,7 @@ lzoominlong(
     } // for z2
   } /* if (ds != 1) */
 
-  return 1;
+  return out;
 } /* lzoominlong() */
 
 /* ==================================== */
@@ -691,13 +691,13 @@ lzoominfloat(
   if ((zoomx < 1.0) || (zoomy < 1.0) || (zoomz < 1.0))
   {   
     fprintf(stderr,"%s : bad zoom factor - must be >= 1\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   if (datatype(in) != VFF_TYP_FLOAT)
   {  
     fprintf(stderr,"%s : bad data type\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   rs2 = (index_t)(rs * zoomx);
@@ -709,13 +709,13 @@ lzoominfloat(
   /* ---------------------------------------------------------- */
   /* alloue l'image resultat */
   /* ---------------------------------------------------------- */
-  *out = allocimage(NULL, rs2, cs2, ds2, VFF_TYP_FLOAT);
+  struct xvimage * out = allocimage(NULL, rs2, cs2, ds2, VFF_TYP_FLOAT);
 
-  if (*out == NULL)
+  if (out == NULL)
   {   fprintf(stderr,"%s : allocimage failed\n", F_NAME);
-      return 0;
+      return NULL;
   }
-  ptout = FLOATDATA(*out);
+  ptout = FLOATDATA(out);
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -775,7 +775,7 @@ lzoominfloat(
     } // for z2
   } /* if (ds != 1) */
 
-  return 1;
+  return out;
 } /* lzoominfloat() */
 
 /* ==================================== */
@@ -792,40 +792,40 @@ lzoom(
   if ((zoomx <= 0.0) || (zoomy <= 0.0) || (zoomz <= 0.0))
   {  
     fprintf(stderr,"%s: bad zoom factor: must be > 0\n", F_NAME);
-    return 0;
+    return NULL;
   }
   else if ((zoomx >= 1.0) && (zoomy >= 1.0) && (zoomz >= 1.0)) 
   {
     if (datatype(in) == VFF_TYP_1_BYTE)
-      return lzoominbyte(in, out, zoomx, zoomy, zoomz);
+      return lzoominbyte(in, zoomx, zoomy, zoomz);
     else if (datatype(in) == VFF_TYP_4_BYTE)
-      return lzoominlong(in, out, zoomx, zoomy, zoomz);
+      return lzoominlong(in, zoomx, zoomy, zoomz);
     else if (datatype(in) == VFF_TYP_FLOAT)
-      return lzoominfloat(in, out, zoomx, zoomy, zoomz);
+      return lzoominfloat(in, zoomx, zoomy, zoomz);
     else
     {  
       fprintf(stderr,"%s : bad data type\n", F_NAME);
-      return 0;
+      return NULL;
     }
   }
   else if ((zoomx <= 1.0) && (zoomy <= 1.0) && (zoomz <= 1.0)) 
   {
     if (datatype(in) == VFF_TYP_1_BYTE)
-      return lzoomoutbyte(in, out, zoomx, zoomy, zoomz);
+      return lzoomoutbyte(in, zoomx, zoomy, zoomz);
     else if (datatype(in) == VFF_TYP_4_BYTE)
-      return lzoomoutlong(in, out, zoomx, zoomy, zoomz);
+      return lzoomoutlong(in, zoomx, zoomy, zoomz);
     else if (datatype(in) == VFF_TYP_FLOAT)
-      return lzoomoutfloat(in, out, zoomx, zoomy, zoomz);
+      return lzoomoutfloat(in, zoomx, zoomy, zoomz);
     else
     {  
       fprintf(stderr,"%s : bad data type\n", F_NAME);
-      return 0;
+      return NULL;
     }
   }
   else
   {  
     fprintf(stderr,"%s : bad zoom factor : they must be all >= 1 or all <= 1\n", F_NAME);
-    return 0;
+    return NULL;
   }
 } /* lzoom() */
 
@@ -845,5 +845,5 @@ lzoom2(
   else if (dim == 'y') zoom = (double)newdim / (double)colsize(in);
   else if (dim == 'z') zoom = (double)newdim / (double)depth(in);
 
-  return lzoom(in, out, zoom, zoom, zoom);
+  return lzoom(in, zoom, zoom, zoom);
 } // lzoom2()
