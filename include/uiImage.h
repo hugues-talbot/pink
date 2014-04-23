@@ -27,37 +27,6 @@ namespace pink
 //// in fact next two functions should not be exported
   void uiWriteImage2D ( const pink::image<float> & image, const std::string & filename );
   void uiWriteImage3D ( const pink::image<float> & image, const std::string & filename );
-
-
-  // template <class image_type>
-  // void print_image( const image_type & image )
-  // {
-  //   std::stringstream result;
-        
-    
-  //   if ((image.get_size().prod()>1000) || (image.get_size().size()>2))
-  //   {
-  //     pink_error("the image is too big\n");
-  //   }
-  //   else /* NOT (image.get_size().prod()>1000) or (image.get_size().size()>2) */
-  //   {
-  //     pink::types::vint curr;
-  //     int tmp; // for converting the references. Apparently std::cout does not like them.      
-  //     result << "[\n";      
-  //     FOR(q, image.get_size()[0])
-  //     {        
-  //       FOR(w, image.get_size()[1])
-  //       {
-  //         tmp = image[curr << q,w];          
-  //         std::cout << tmp << ", ";          
-  //       } /* FOR w */
-  //       std::cout << "\n";        
-  //     } /* FOR q */
-  //     std::cout << "]\n";      
-  //   } /* NOT (image.get_size().prod()>1000) or (image.get_size().size()>2) */
-
-  // } /* print_image */
-  
   
 } /* namespace pink*/
 
