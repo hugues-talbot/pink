@@ -17,7 +17,6 @@
 
 #   include <vector>
 #   include <utility>
-#   include <boost/python.hpp>
 #   include <boost/preprocessor.hpp>
 #   include <boost/typeof/typeof.hpp>
 
