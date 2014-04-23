@@ -14,11 +14,10 @@
 #ifndef UICUTPLANE_HPP_
 #define UICUTPLANE_HPP_
 
-#ifdef PINK_HAVE_PYTHON
-# include <boost/python.hpp>
-#endif /* PINK_HAVE_PYTHON */
+#include <boost/python/list.hpp>
 
 #include "ujimage.hpp"
+
 
 namespace pink {
 
