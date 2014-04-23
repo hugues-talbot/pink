@@ -754,13 +754,12 @@ int32_t ldisteuc( struct xvimage* ob, const struct xvimage* res)
  double d;
 
  if (!ldistquad(ob, res)) return 0;
- 
  for (i=0; i<N; i++)
  {
    d = sqrt((double)(R[i]));
    R[i] = (uint32_t)arrondi(d);
  }
-    
+
  return 1;
 } // ldisteuc()
 
