@@ -36,12 +36,12 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 extern int32_t lquasishear(struct xvimage * image, double theta, double xc, double yc);
-extern struct xvimage * lquasishear2(struct xvimage * image, double theta);
-extern struct xvimage * lrotationRT(struct xvimage * image, double theta, double xc, double yc, uint8_t resize);
-extern struct xvimage * lrotationRT3Dx(struct xvimage * image, double theta, double yc, double zc, double *newyc, double *newzc, uint8_t resize);
-extern struct xvimage * lrotationRT3Dy(struct xvimage * image, double theta, double xc, double zc, double *newxc, double *newzc, uint8_t resize);
-extern struct xvimage * lrotationRT3Dz(struct xvimage * image, double theta, double xc, double yc, double *newxc, double *newyc, uint8_t resize);
-extern struct xvimage * lrotationInter(struct xvimage * image, double theta, double xc, double yc, uint8_t resize);
+extern struct xvimage * lquasishear2(const struct xvimage * image, double theta);
+extern struct xvimage * lrotationRT(const struct xvimage * image, double theta, double xc, double yc, uint8_t resize);
+extern struct xvimage * lrotationRT3Dx(const struct xvimage * image, double theta, double yc, double zc, double *newyc, double *newzc, uint8_t resize);
+extern struct xvimage * lrotationRT3Dy(const struct xvimage * image, double theta, double xc, double zc, double *newxc, double *newzc, uint8_t resize);
+extern struct xvimage * lrotationRT3Dz(const struct xvimage * image, double theta, double xc, double yc, double *newxc, double *newyc, uint8_t resize);
+extern struct xvimage * lrotationInter(const struct xvimage * image, double theta, double xc, double yc, uint8_t resize);
 extern int32_t laffinetransformation(struct xvimage * image, double hx, double hy, double theta, double tx, double ty, struct xvimage * image2);
 #ifdef __cplusplus
 }
