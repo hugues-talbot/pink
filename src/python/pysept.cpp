@@ -11,7 +11,7 @@
 */
 // The pink python wrapper core file
 
-#include "pink_python.h"
+#include "pyexport.hpp"
 
 #include "ldist.h"
 #include "lcrop.h"
@@ -25,8 +25,6 @@
 #include "l3dkhalimsky.h"
 #include "lfiltrestopo.h"
 #include "ldetectcercles.h"
-
-#include <boost/preprocessor/slot/counter.hpp>
 
 using boost::python::arg;
 using boost::python::def;

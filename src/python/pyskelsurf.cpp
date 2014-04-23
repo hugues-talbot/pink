@@ -10,8 +10,8 @@
   ujoimro@gmail.com
 */
 
+#include "ujimage.hpp"
 #include "lskeletons.h"
-#include "pink_python.h"
 
 // you should not use one-letter macro names!
 #undef N

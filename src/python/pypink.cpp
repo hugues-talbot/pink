@@ -11,23 +11,11 @@
 */
 // The pink python wrapper core file
 
-#ifndef PINK_DEVELOPMENT
-#  include "pink_python.h"
-#else /* PINK_DEVELOPMENT */
-#  include "pink_development.h"
-#endif /* PINK_DEVELOPMENT */
+#include "pyexport.hpp"
 
-#include "lsym.h"
-#include "lskew.h"
 #include "lhello.h"
-#include "lsquel.h"
-#include "loffset.h"
-#include "lstretch.h"
 #include "lseltopo.h"
-#include "lsquelbin.h"
-#include "ltopotypes.h"
-#include "lfiltrestopo.h"
-
+#include "python_doc.h"
 
 /*! \file pypink.c
   For exporting functions from pink you should make them into the following

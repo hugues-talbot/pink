@@ -10,14 +10,11 @@
   ujoimro@gmail.com
 */
 
-// boost python wrapper
+#include "pyexport.hpp"
 
-
+#include "ujimage.hpp"
 #include "lskeletons.h"
-#include "pink_python.h"
 
-using namespace boost::python;
-using namespace pink;
 
 namespace pink {
   namespace python {

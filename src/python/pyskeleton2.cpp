@@ -10,6 +10,8 @@
   ujoimro@gmail.com
 */
 
+#include "pyexport.hpp"
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -17,8 +19,10 @@
 
 #include "ldist.h"
 #include "lsquelbin.h"
+#include "ujimage.hpp"
 #include "lskeletons.h"
-#include "pink_python.h"
+
+
 
 // based on skeleton.c
 

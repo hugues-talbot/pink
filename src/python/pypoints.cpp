@@ -11,16 +11,10 @@
 */
 // The pink python wrapper core file
 
-#include "pink_python.h"
 #include "lseltopo.h"
 #include "lgeodesic.h"
 #include "lfermetrous3d.h"
 
-#include <boost/preprocessor/slot/counter.hpp>
-
-using namespace pink;
-using boost::python::arg;
-using boost::python::def;
 
 namespace points
 {

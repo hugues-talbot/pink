@@ -20,10 +20,10 @@
 #include <math.h>
 #include <assert.h>
 
-#include "pink_python.h"
-
+#include "ujimage.hpp"
+#include "pyexport.hpp"
 #include "lskeletons.h"
-
+#include "python_doc.h"
 
 // you should not define N as a macro
 #undef N

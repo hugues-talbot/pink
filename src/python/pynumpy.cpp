@@ -13,13 +13,17 @@
 
 #ifdef PINK_HAVE_NUMPY
 # include <Python.h>
-# include <boost/python.hpp>
 # include <boost/cstdint.hpp>
 # include <numpy/arrayobject.h>
 # include <boost/smart_ptr.hpp>
-
-# include "pink_python.h"
 #endif /* PINK_HAVE_NUMPY */
+
+#include "ujimage.hpp"
+
+#include <boost/python.hpp>
+using boost::python::arg;
+using boost::python::def;
+
 
 namespace pink {
   namespace python {

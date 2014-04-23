@@ -12,11 +12,7 @@
 
 // boost python wrapper
 
-#include <pink_python.h>
-
-
-using namespace boost::python;
-using namespace pink;
+#include "pyexport.hpp"
 
 namespace pink {
   namespace python {

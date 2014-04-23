@@ -13,15 +13,13 @@
 // boost python wrapper
 // this file opens a file with raw image data as an image of given type
 
+#include "pyexport.hpp"
+
 #include <fstream>
 #include <iostream>
 
 #include "uiFileIO.hpp"
-#include "pink_python.h"
 
-
-using namespace boost::python;
-using namespace pink;
 
 namespace pink {
   namespace python {
@@ -79,10 +77,13 @@ namespace pink {
   } /* namespace python */
 } /* namespace pink */
 
+using boost::python::arg;
+using boost::python::def;
+
 
 void read_raw_image_export()
 {
-  boost::python::def(
+  def(
     "read_raw_image",
     pink::python::py_read_raw_image, 
     ( arg("filename"), arg("dimensions of the image"), arg("image mode") = VFF_TYP_1_BYTE),

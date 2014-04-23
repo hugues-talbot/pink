@@ -12,13 +12,10 @@
 
 // boost python wrapper
 
-#include <pink_python.h>
 
 /// !!! macros should be named upper case
 #undef border
 
-using boost::python::arg;
-using boost::python::def;
 
 // namespace pink {
 //   namespace python {

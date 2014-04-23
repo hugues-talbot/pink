@@ -5,7 +5,7 @@
   This software comes in hope that it will be useful but
   without any warranty to the extent permitted by applicable law.
 
-  (C) UjoImro, 2011
+  (C) UjoImro, 2011-2014
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
