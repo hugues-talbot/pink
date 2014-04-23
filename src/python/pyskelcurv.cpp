@@ -32,217 +32,100 @@
 namespace pink {
   namespace python {
 
-    // ERROR this function changes the parameters
-    // If somebody uses it again it'll have to be corrected
-    int_image
-    priority_image(
-      char_image image,
-      int priovalue
-      )
-    {
-      
-      int32_t i, N;
-      uint8_t *F;
-      int_image prio(image.rows(), image.cols(), image.depth());
+    using pink::pick;    
+    using boost::python::object;
+    using boost::python::extract;    
 
-      N = pink::prod(image.size());
-      F = image.get();
-      for (i = 0; i < N; i++) // inverse l'image
-        if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
-  
-      if (priovalue == 0)
-      {
-        if (image.depth() == 1)
-        {
-          if (! ldisteuc(image, prio))
-          {
-            pink_error("ldisteuc failed");
-          }
-        }
-        else
-        {
-          if (! ldisteuc3d(image, prio))
-          {
-            pink_error("ldisteuc3d failed");
-          }
-        }
-      }
+    object
+    skelcurv(
+      object image,
+      object cprio,
+      const index_t & connex,
+      object inhibit ) {
+
+      cxvimage prioimage;
+      cxvimage inhibimage;
+      int32_t  priovalue = -1;
+      int32_t  priocode;      
+      
+      if (PyArray_Check(cprio.ptr())) { // prio is an image
+        prioimage = cxvimage(cprio);
+      }      
       else
-        if (priovalue == 1)
-        {
-          if (image.depth() == 1)
-          {
-            if (! ldistquad(image, prio))
-            {
-              pink_error("ldistquad failed");
-            }
-          }
-          else
-          {
-            if (! ldistquad3d(image, prio))
-            {
-              pink_error("ldistquad3d failed");
-            }
-          }
-        }
-        else
-          if (priovalue == 2)
-          {
-            if (! lchamfrein(image, prio))
-            {
-              pink_error("lchamfrein failed");
-            }
-          }
-          else
-            if (priovalue == 3)
-            {
-              if (! lsedt_meijster(image, prio))
-              {
-                pink_error("lsedt_meijster failed");
-              }
-            }
-            else
-            {
-              if (! ldist(image, priovalue, prio))
-              {
-                pink_error("ldist failed");
-              }
-            }
-      for (i = 0; i < N; i++) // re-inverse l'image
-        if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
-              
-      return prio;      
-    } /* priority_image */
-    
-    template <class priority_image_type>    
-    char_image general_skelcurv(
-      const char_image & image,
-      priority_image_type prio,
-      int connex,
-      char_image inhibit
-      )
-    {
-      char_image result;
-      result = image.clone();
+        priovalue = extract<int32_t>(cprio);
 
-      if (image.size().size()==2)
-      {
-        if (! lskelcurv(result, prio, can_be_null(inhibit), connex))
-        {
-          pink_error("lskelcurv failed");
-        }        
-      }
-      else /* NOT size==2 */
-      {
-        if (image.size().size()==3)
-        {
-          if (! lskelcurv3d(result, prio, can_be_null(inhibit), connex))
-          {
-            pink_error("lskelcurv3d failed");
-          }
-        }
-        else /* NOT size==3 */
-        {
-          pink_error("only 2D and 3D images are supported");
-        } /* NOT size==3 */
-        
-      } /* NOT size==2 */
+      if (PyArray_Check(inhibit.ptr()))
+        inhibimage = cxvimage(inhibit);
 
-      return result;
-    } /* general_skelcurv */
-    
-    
-    template <class priority_image_type>
-    char_image skelcurv(
-      const char_image & image, 
-      priority_image_type & prio,
-      int connex,
-      char_image inhibit
-      )
-    {
-      char_image result;
-      result = image.clone();      
-
-      result=general_skelcurv(image, prio, connex, inhibit);
-
-      return result;      
-    } /* template skelcurv */
-
-    char_image skelcurv2(
-      const char_image & image, 
-      int priovalue,
-      int connex,
-      char_image inhibit
-      )
-    {
-      char_image result;
-      result = image.clone();      
-
-      int_image prio;
-      prio = priority_image(result, priovalue);
+      cxvimage result = cxvimage(image).clone();
       
-      result = general_skelcurv(image, prio, connex, inhibit);
+      if ((prioimage.isnull()) && (priovalue != 5))
+      {
+        int32_t i, N;
+        uint8_t *F;
+        prioimage = cxvimage( VFF_TYP_4_BYTE, result.size() );
 
-      return result;      
-    } /* NO TEMPLATE skelcurv */
+        N = result.rows() * result.cols() * result.depth();        
+        F = result.pdata<uint8_t>();
+        for (i = 0; i < N; i++) // inverse l'image
+          if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
 
+        bool is2d = (result.depth() == 1);
+        
+        if (priovalue == 0)
+          pick("ldisteuc(3d)", is2d, ldisteuc, ldisteuc3d, result, prioimage );
+        else if (priovalue == 1)
+          pick("ldistquad(3d)", is2d, ldistquad, ldistquad3d, result, prioimage );        
+        else if (priovalue == 2)
+        { if (! lchamfrein(result, prioimage)) pink_error("lchamfrein failed"); }
+        else if (priovalue == 3)
+        { if (! lsedt_meijster(result, prioimage)) pink_error("lsedt_meijster failed"); }
+        else
+        { if (! ldist(result, priovalue, prioimage)) pink_error("ldist failed"); }
 
-    template <class priority_image_type>
-    char_image skelcurv_short(
-      const char_image & image, 
-      priority_image_type & prio,
-      int connex
-      )
-    {
-      return skelcurv(image, prio, connex, char_image());
-    } /* template skelcurv */
+        for (i = 0; i < N; i++) // re-inverse l'image
+          if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
+      }
+      
+      if (result.depth() == 1)
+      {
+        if (! lskelcurv(result, prioimage, inhibimage, connex))
+          pink_error("lskelcurv failed");        
+      }
+      else // NOT result.depth == 1
+      {
+        if (priovalue == 5)
+        {
+          if (! lskeldir3d_1(result, inhibimage, connex, -1))
+            pink_error("lskeldir3d failed");          
+        }
+        else // NOT priovalue == 5
+        {
+          if (! lskelcurv3d(result, prioimage, inhibimage, connex))
+            pink_error("lskelcurv3d failed");          
+        } // NOT priovalue == 5
+      } // NOT result.depth == 1
 
-    char_image skelcurv2_short(
-      const char_image & image, 
-      int priovalue,
-      int connex
-      )
-    {
-      return skelcurv2(image, priovalue, connex, char_image());
-    }
+      return result.steel();    
+    } // skelcurv
+
     
-
   } /* namespace python */
 } /* namespace pink */
 
-using boost::python::arg;
-using boost::python::def;
 
-void skelcurv_export()
+void
+skelcurv_export()
 {
+  using boost::python::arg;
+  using boost::python::def;
+  using boost::python::object;  
 
-  // UI_DEFINE_FUNCTION(
-  // "skelcurv",
-  // pink::python::skelcurv,
-  // ( arg("image"),  arg("priority"), arg("connex"), arg("inhibit") ),
-  // doc__skelcurv__c__
-  // );
-  
-  def("skelcurv",
-      &pink::python::skelcurv2,
-      (arg("image"), arg("priority"),arg("connex"), arg("inhibit") ),
-      doc__skelcurv__c__
-    );
+  def( "skelcurv", pink::python::skelcurv, (arg("image"), arg("prio"), arg("connex"), arg("inhibit") = object(-1) ), doc__skelcurv__c__ );
 
-  // UI_DEFINE_FUNCTION(
-  // "skelcurv",
-  // pink::python::skelcurv_short,
-  // ( arg("image"),  arg("priority"), arg("connex") ),
-  // doc__skelcurv__c__
-  // );
-  
-  def("skelcurv",
-      &pink::python::skelcurv2_short,
-      (arg("image"), arg("priority"),arg("connex") ),
-      doc__skelcurv__c__
-    );
+  import_array();  // numpy initialization
 
-  
+  return;  
 } /* skelcurv_export */
 
 
