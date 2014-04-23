@@ -10,10 +10,11 @@
   ujoimro@gmail.com
 */
 
-#include "pink_python.h"
-
 #include "lfmm.h"
 #include "pde_toolbox.h"
+
+#include "pyexport.hpp"
+#include "python_doc.h"
 
 using boost::python::arg;
 using boost::python::def;

@@ -12,7 +12,8 @@
 // This file contains the wrappers of maxflow functions
 
 
-#include "pink_python.h"
+#include "pyexport.hpp"
+#include "python_doc.h"
 
 #include "uiFlow.hpp"
 #include "uiUngerFlow.hpp"

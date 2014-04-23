@@ -13,7 +13,7 @@
 // boost python wrapper
 // this file opens a file with raw image data as an image of given type
 
-#include "pink_python.h"
+#include "pyexport.hpp"
 
 using namespace boost::python;
 using namespace pink;

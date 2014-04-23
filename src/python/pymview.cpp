@@ -13,6 +13,8 @@
 
 */
 
+#include "pyexport.hpp"
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -20,15 +22,18 @@
 # include <process.h>
 #endif /* _WINDOWS */
 
+#include <string>
+#include <sstream>
+#include <unistd.h>
+#include <iostream>
+
 #include "liarp.h"
 #include "liarwrap.h"
 #include "imclient.h"
-#include "pink_python.h"
 
-// 'error' replaced with global macro 'pink_error'
+using boost::python::def;
+using boost::python::arg;
 
-using namespace boost::python;
-using namespace pink;
 
 namespace pink {
     namespace python {

@@ -13,12 +13,7 @@
 // Wrapper file for ex-LIAR stuff.
 // pypink.cpp was beginning to be too big
 
-#include "pink_python.h"
 #include "liar_fseries.h"
-#include <boost/preprocessor/slot/counter.hpp>
-
-using namespace pink;
-using namespace boost::python;
 
 // using "modern" wrapping
 

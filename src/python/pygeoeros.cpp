@@ -11,10 +11,7 @@
 */
 
 #include "lgeodesic.h"
-#include "pink_python.h"
-
-using namespace boost::python;
-using namespace pink;
+#include "ujimage.hpp"
 
 namespace pink {
   namespace python {

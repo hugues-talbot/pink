@@ -10,6 +10,8 @@
   ujoimro@gmail.com
 */
 
+#include "pyexport.hpp"
+
 #include "ldilateros.h"
 #include "pink_python.h"
 #include "ldilateros3d.h"

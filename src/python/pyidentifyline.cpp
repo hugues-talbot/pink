@@ -14,10 +14,10 @@
 // this file opens a file with raw image data as an image of given type
 
 #include "mclin.h"
-#include "pink_python.h"
+#include "ujimage.hpp"
 
-using namespace boost::python;
-using namespace pink;
+#include <boost/python/list.hpp>
+#include <boost/python/extract.hpp>
 
 namespace pink {
   namespace python {

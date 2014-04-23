@@ -10,12 +10,9 @@
   ujoimro@gmail.com
 */
 
+#include "pyexport.hpp"
 #include "liar_fseries.h"
-#include "pink_python.h"
-
-
-using namespace boost::python;
-using namespace pink;
+#include "ui_pink_types.hpp"
 
 namespace pink {
   namespace python {

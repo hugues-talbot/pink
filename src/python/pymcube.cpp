@@ -10,6 +10,8 @@
   ujoimro@gmail.com
 */
 
+#include "pyexport.hpp"
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -21,10 +23,7 @@
 #include "mcmesh.h"
 #include "mciomesh.h"
 #include "lmcube.h"
-#include "pink_python.h"
 
-using namespace boost::python;
-using namespace pink;
 
 namespace pink {
   namespace python {

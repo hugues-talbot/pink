@@ -12,6 +12,8 @@
 
 
 #include <gsl/gsl_vector.h>
+#include <boost/python/extract.hpp>
+
 // my includes
 #include "uiCircle.hpp"
 

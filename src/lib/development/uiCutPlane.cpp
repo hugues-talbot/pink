@@ -11,21 +11,14 @@
 */
 
 #include <gsl/gsl_interp.h>
-
-#ifdef PINK_HAVE_PYTHON
-#  ifdef _WINDOWS
-#    define BOOST_PYTHON_STATIC_LIB
-#  endif /* _WINDOWS */
-#  include <boost/python.hpp>
-#endif /* PINK_HAVE_PYTHON */
-
 #ifdef PINK_HAVE_PYTHON
 # include <gsl/gsl_multifit_nlin.h>
 #endif /* PINK_HAVE_PYTHON */
 
-#include <eigen2/Eigen/Core>
 #include <eigen2/Eigen/LU>
+#include <eigen2/Eigen/Core>
 #include <eigen2/Eigen/Geometry>
+#include <boost/python/extract.hpp>
 
 #include "pink.h"
 

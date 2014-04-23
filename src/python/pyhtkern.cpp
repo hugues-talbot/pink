@@ -14,12 +14,8 @@
 
 #include "lhtkern.h"
 #include "lhtkern3d.h"
-#include "pink_python.h"
-
-using namespace boost::python;
-using namespace pink;
-
-
+#include "ujimage.hpp"
+#include "pyexport.hpp"
 
 
 namespace pink {

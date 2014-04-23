@@ -17,14 +17,15 @@
 // #  include <pink_development.h>
 // #endif /* PINK_DEVELOPMENT */
 
+#include "pyexport.hpp"
+
 #include "ujimage.hpp"
-#include "pink_python.h"
 #include "ui_genball.hpp"
 #include "uiNormalize.hpp"
+#include "python_doc.h"
 
-using namespace boost::python;
-using namespace pink;
-
+using boost::python::arg;
+using boost::python::def;
 
 
 void pynormalization()

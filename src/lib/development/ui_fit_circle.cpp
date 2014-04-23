@@ -12,18 +12,13 @@
 // This is an implementation of optimal ellipse fitting algorithm
 // PoSh
 
-#include <eigen2/Eigen/Core>
-#include <eigen2/Eigen/LU>
-#include <eigen2/Eigen/Geometry>
 
 #include <fstream>
+#include <eigen2/Eigen/LU>
+#include <eigen2/Eigen/Core>
+#include <eigen2/Eigen/Geometry>
+#include <boost/python/extract.hpp>
 
-#ifdef PINK_HAVE_PYTHON
-#  ifdef _WINDOWS
-#    define BOOST_PYTHON_STATIC_LIB
-#  endif /* _WINDOWS */
-#  include <boost/python.hpp>
-#endif /* PINK_HAVE_PYTHON */
 
 #include "ui_pink_types.hpp"
 #include "ui_fit_circle.hpp"

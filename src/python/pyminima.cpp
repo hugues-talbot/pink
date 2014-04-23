@@ -10,11 +10,10 @@
   ujoimro@gmail.com
 */
 
-#include "lminima.h"
-#include "pink_python.h"
+#include "pyexport.hpp"
 
-using namespace boost::python;
-using namespace pink;
+#include "lminima.h"
+#include "python_doc.h"
 
 namespace pink {
   namespace python {

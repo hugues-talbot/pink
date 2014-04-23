@@ -12,11 +12,6 @@
 // boost python wrapper
 
 
-#include <pink_python.h>
-
-using namespace boost::python;
-using namespace pink;
-
 // typedef std::vector<int> vector_int;
 
 

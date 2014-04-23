@@ -9,11 +9,10 @@
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
-#include "liar_line.h"
-#include "pink_python.h"
 
-using namespace boost::python;
-using namespace pink;
+#include "pyexport.hpp"
+
+#include "liar_line.h"
 
 
 namespace pink {

@@ -12,9 +12,8 @@
 // This file contains the wrappers of maxflow functions
 
 
-#include <pink_python.h>
-
 #include "ui_systest.hpp"
+#include <boost/python.hpp>
 
 using boost::python::arg;
 using boost::python::def;

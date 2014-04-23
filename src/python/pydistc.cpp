@@ -10,22 +10,15 @@
   ujoimro@gmail.com
 */
 
-
+#include "pyexport.hpp"
 
 #include "ldist.h"
-#include "pink_python.h"
 #include "ui_convert.hpp"
 
-#include <boost/cast.hpp>
 
 // you should not use one-letter macro names!
 #undef N
 #undef D
-
-using namespace boost::python;
-using namespace pink;
-using boost::polymorphic_cast;
-
 
 namespace pink {
   namespace python {

@@ -27,6 +27,13 @@
 #ifndef PYEXPORT_HPP
 #define PYEXPORT_HPP
 
+#include <string>
+#include <boost/mpl/vector.hpp>
+#include <boost/python/tuple.hpp>
+
+#include "mcimage.h"
+
+#include "pyexport.hpp"
 #include "ujimage.hpp"
 
 namespace pink {

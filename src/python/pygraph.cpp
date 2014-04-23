@@ -12,19 +12,17 @@
 // this file contains the wrapper for Pink's skeleton class
 
 
-#ifndef PINK_DEVELOPMENT
-#  include "pink_python.h"
-#else /* PINK_DEVELOPMENT */
-#  include "pink_development.h"
-#endif /* PINK_DEVELOPMENT */
+#include "pyexport.hpp"
 
+#include "ljones.h"
 #include "ujimage.hpp"
 #include "ui_graph.hpp"
 #include "python_doc.h"
 #include "ui_skeleton.hpp"
 
 
-void pygraph()
+void
+pygraph()
 {
             
     boost::python::class_< pink::graph_t<index_t> > (
