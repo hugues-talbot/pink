@@ -110,7 +110,7 @@ namespace pink{
   }; // pink2numpy_type
 
   void cstylefree( void * ptr ) {
-    std::cout << "cstylefree freeing (" << ptr << ")" << std::endl;
+    // std::cout << "cstylefree freeing (" << ptr << ")" << std::endl;
     free(ptr);
     return;
   }
