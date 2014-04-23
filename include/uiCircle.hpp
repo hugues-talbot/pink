@@ -16,15 +16,10 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#  ifdef PINK_HAVE_PYTHON
-#    ifdef _WINDOWS
-#      define BOOST_PYTHON_STATIC_LIB
-#    endif /* _WINDOWS */
-#    include <boost/python.hpp>
-#  endif /* PINK_HAVE_PYTHON */
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_interp.h> // uiGradient is using it
+#include <boost/python/list.hpp>
 #include <gsl/gsl_multifit_nlin.h> // uiCircle is using it
 
 #include "ui_pink_types.hpp"
