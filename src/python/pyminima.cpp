@@ -39,17 +39,20 @@ namespace pink {
   } /* namespace python */
 } /* namespace pink */
 
+using boost::python::arg;
+using boost::python::def;
+using pink::python::minima;
 
 /** Note: this is a special function, as we use implicit std::copy-conversion
     
  */
 void minima_export()
 {
-  def("minima", pink::python::minima<char_image>,( arg("image"), arg("mode")), doc__minima__c__);
-  def("minima", pink::python::minima<short_image>,( arg("image"), arg("mode")), doc__minima__c__);
-  def("minima", pink::python::minima<int_image>,( arg("image"), arg("mode")), doc__minima__c__);
-  def("minima", pink::python::minima<float_image>,( arg("image"), arg("mode")), doc__minima__c__);
-  def("minima", pink::python::minima<double_image>,( arg("image"), arg("mode")), doc__minima__c__);  
+  def("minima", minima<pink::char_image>,( arg("image"), arg("mode")), doc__minima__c__);
+  def("minima", minima<pink::short_image>,( arg("image"), arg("mode")), doc__minima__c__);
+  def("minima", minima<pink::int_image>,( arg("image"), arg("mode")), doc__minima__c__);
+  def("minima", minima<pink::float_image>,( arg("image"), arg("mode")), doc__minima__c__);
+  def("minima", minima<pink::double_image>,( arg("image"), arg("mode")), doc__minima__c__);  
 } /* minima_export */
 
 
