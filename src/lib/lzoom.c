@@ -49,9 +49,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lzoom.h>
 
 /* ==================================== */
-int32_t lzoomoutbyte(
-  struct xvimage * in,
-  struct xvimage ** out,
+struct xvimage * lzoomoutbyte(
+  const struct xvimage * in,
   double zoomx,
   double zoomy,
   double zoomz)
@@ -187,9 +186,9 @@ int32_t lzoomoutbyte(
 } /* lzoomoutbyte() */
 
 /* ==================================== */
-int32_t lzoomoutlong(
-  struct xvimage * in,
-  struct xvimage ** out,
+struct xvimage *
+lzoomoutlong(
+  const struct xvimage * in,
   double zoomx,
   double zoomy,
   double zoomz)
@@ -306,9 +305,9 @@ int32_t lzoomoutlong(
 } /* lzoomoutlong() */
 
 /* ==================================== */
-int32_t lzoomoutfloat(
-  struct xvimage * in,
-  struct xvimage ** out,
+struct xvimage *
+lzoomoutfloat(
+  const struct xvimage * in,
   double zoomx,
   double zoomy,
   double zoomz)
@@ -425,9 +424,9 @@ int32_t lzoomoutfloat(
 } /* lzoomoutfloat() */
 
 /* ==================================== */
-int32_t lzoominbyte(
-  struct xvimage * in,
-  struct xvimage ** out,
+struct xvimage *
+lzoominbyte(
+  const struct xvimage * in,
   double zoomx,
   double zoomy,
   double zoomz)
@@ -552,9 +551,9 @@ int32_t lzoominbyte(
 } /* lzoominbyte() */
 
 /* ==================================== */
-int32_t lzoominlong(
-  struct xvimage * in,
-  struct xvimage ** out,
+struct xvimage *
+lzoominlong(
+  const struct xvimage * in,
   double zoomx,
   double zoomy,
   double zoomz)
@@ -666,9 +665,9 @@ int32_t lzoominlong(
 } /* lzoominlong() */
 
 /* ==================================== */
-int32_t lzoominfloat(
-  struct xvimage * in,
-  struct xvimage ** out,
+struct xvimage *
+lzoominfloat(
+  const struct xvimage * in,
   double zoomx,
   double zoomy,
   double zoomz)
@@ -780,9 +779,9 @@ int32_t lzoominfloat(
 } /* lzoominfloat() */
 
 /* ==================================== */
-int32_t lzoom(
-  struct xvimage * in,
-  struct xvimage ** out,
+struct xvimage *
+lzoom(
+  const struct xvimage * in,
   double zoomx,
   double zoomy,
   double zoomz)
@@ -831,9 +830,9 @@ int32_t lzoom(
 } /* lzoom() */
 
 /* ==================================== */
-int32_t lzoom2(
-  struct xvimage * in,
-  struct xvimage ** out,
+struct xvimage *
+lzoom2(
+  const struct xvimage * in,
   int32_t newdim, 
   char dim)
 /* ==================================== */

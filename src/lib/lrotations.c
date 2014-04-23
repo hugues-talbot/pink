@@ -136,7 +136,7 @@ void QSR(int32_t x, int32_t y, int32_t *xx, int32_t *yy,
 }
 
 /* ==================================== */
-struct xvimage * lquasishear2(struct xvimage * image, double theta)
+struct xvimage * lquasishear2(const struct xvimage * image, double theta)
 // version avec allocation d'une image de taille suffisante
 /* ==================================== */
 #undef F_NAME
@@ -207,7 +207,7 @@ struct xvimage * lquasishear2(struct xvimage * image, double theta)
 } // lquasishear2()
 
 /* ==================================== */
-struct xvimage * lrotationRT(struct xvimage * image, double theta, double xc, double yc, uint8_t resize)
+struct xvimage * lrotationRT(const struct xvimage * image, double theta, double xc, double yc, uint8_t resize)
 /* ==================================== */
 /*
 Rotates the input image of the angle theta (in radians) 
@@ -294,7 +294,7 @@ of information occurs.
 } // lrotationRT()
 
 /* ==================================== */
-struct xvimage * lrotationRT3Dx(struct xvimage * image, double theta, double yc, double zc, double *newyc, double *newzc, uint8_t resize)
+struct xvimage * lrotationRT3Dx(const struct xvimage * image, double theta, double yc, double zc, double *newyc, double *newzc, uint8_t resize)
 /* ==================================== */
 /*
 Rotates the input image of the angle theta (in radians) 
@@ -402,7 +402,7 @@ of information occurs.
 } // lrotationRT3Dx()
 
 /* ==================================== */
-struct xvimage * lrotationRT3Dy(struct xvimage * image, double theta, double xc, double zc, double *newxc, double *newzc, uint8_t resize)
+struct xvimage * lrotationRT3Dy(const struct xvimage * image, double theta, double xc, double zc, double *newxc, double *newzc, uint8_t resize)
 /* ==================================== */
 /*
 Rotates the input image of the angle theta (in radians) 
@@ -510,7 +510,7 @@ of information occurs.
 } // lrotationRT3Dy()
 
 /* ==================================== */
-struct xvimage * lrotationRT3Dz(struct xvimage * image, double theta, double xc, double yc, double *newxc, double *newyc, uint8_t resize)
+struct xvimage * lrotationRT3Dz(const struct xvimage * image, double theta, double xc, double yc, double *newxc, double *newyc, uint8_t resize)
 /* ==================================== */
 /*
 Rotates the input image of the angle theta (in radians) 
@@ -618,7 +618,7 @@ of information occurs.
 } // lrotationRT3Dz()
 
 /* ==================================== */
-struct xvimage * lrotationInter(struct xvimage * image, double theta, double xc, double yc, uint8_t resize)
+struct xvimage * lrotationInter(const struct xvimage * image, double theta, double xc, double yc, uint8_t resize)
 /* ==================================== */
 /*
 Rotates the grayscale input image of the angle theta (in radians) 

@@ -203,7 +203,8 @@ int32_t ldrawline2(struct xvimage * image1)
 } // ldrawline2()
 
 /* =============================================================== */
-void ldrawfilledellipse(struct xvimage * image, double R, double S, double T, double U, double V, double Z)
+int32_t 
+ldrawfilledellipse(struct xvimage * image, double R, double S, double T, double U, double V, double Z)
 /* =============================================================== */
 /*
     \param image (entrée/sortie) : l'image où dessiner l'ellipse 
@@ -526,7 +527,7 @@ void ldrawtangents3d(
 #define EPS_DRAWVECT 1e-5
 
 /* ==================================== */
-struct xvimage *ldrawfield2d(struct xvimage *field, double len)
+struct xvimage *ldrawfield2d( const struct xvimage *field, double len)
 /* ==================================== */
 /* draws lines in output image that represent vectors in input field */
 #undef F_NAME
@@ -582,7 +583,7 @@ void ldrawfield2dlist(int32_t npoints, int32_t *X, int32_t *Y, double *tx, doubl
 } // ldrawfield2dlist()
 
 /* ==================================== */
-struct xvimage *ldrawfield3d(struct xvimage *field, double len)
+struct xvimage *ldrawfield3d( const struct xvimage *field, double len)
 /* ==================================== */
 /* draws lines in output image that represent vectors in input field */
 #undef F_NAME
