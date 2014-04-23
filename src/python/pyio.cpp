@@ -24,7 +24,7 @@
  */
 boost::python::object 
 create_image( const index_t & rows, const index_t & cols ) {
-  return boost::python::object(pink::char_image(rows, cols));
+  return pink::char_image(rows, cols).steel();
 }
 
 namespace {
@@ -117,59 +117,23 @@ pyio () {
   
   // export stuff in the IO namespace
 
-  def(
-    "create_image",
-    create_image,
-    (arg("rows"), arg("cols")),
-    "This is a test function, which creates a 2D Numpy array with a given size." );
+  def( "create_image", create_image, (arg("rows"), arg("cols")), "This is a test function, which creates a 2D Numpy array with a given size." );
 
-  exportdef(
-    "writeimage",
-    writeimage,
-    (arg("image"), arg("filename")),
-    "WRITE ME!!!" );
+  exportdef( "writeimage", writeimage, (arg("image"), arg("filename")), "WRITE ME!!!" );
 
-  exportdef(
-    "writese",
-    writese,
-    (arg("image"), arg("filename"), arg("x"), arg("y"), arg("z") ),
-    "Writes a structuring element. FINISH ME!!!" );
+  exportdef( "writese", writese, (arg("image"), arg("filename"), arg("x"), arg("y"), arg("z") ), "Writes a structuring element. FINISH ME!!!" );
 
-  exportdef(
-    "writelongimage",
-    writelongimage,
-    (arg("image"), arg("filename")),
-    "WRITE ME!!!" );
+  exportdef( "writelongimage", writelongimage, (arg("image"), arg("filename")), "WRITE ME!!!" );
   
-  exportdef(
-    "writerawimage",
-    writerawimage,
-    (arg("image"), arg("filename")),
-    "WRITE ME!!!" );
+  exportdef( "writerawimage", writerawimage, (arg("image"), arg("filename")), "WRITE ME!!!" );
   
-  exportdef(
-    "writeascimage",
-    writeascimage,
-    (arg("image"), arg("filename")),
-    "WRITE ME!!!" );
+  exportdef( "writeascimage", writeascimage, (arg("image"), arg("filename")), "WRITE ME!!!" );
   
-  exportdef(
-    "printimage",
-    printimage,
-    (arg("image") ),
-    "WRITE ME!!!" );
+  exportdef( "printimage", printimage, (arg("image") ), "WRITE ME!!!" );
   
-  exportdef(
-    "writergbimage",
-    writergbimage,
-    (arg("red image"), arg("green image"), arg("blue image"), arg("filename")),
-    "WRITE ME!!!" );
+  exportdef( "writergbimage", writergbimage, (arg("red image"), arg("green image"), arg("blue image"), arg("filename")), "WRITE ME!!!" );
   
-  exportdef(
-    "writergbascimage",
-    writergbascimage,
-    (arg("red image"), arg("green image"), arg("blue image"), arg("filename")),
-    "WRITE ME!!!" );
+  exportdef( "writergbascimage", writergbascimage, (arg("red image"), arg("green image"), arg("blue image"), arg("filename")), "WRITE ME!!!" );
 
   def( "readrgbimage", w_readrgbimage, (arg("filename")), "WRITE ME!!!");
 
@@ -177,6 +141,12 @@ pyio () {
     
   def( "readbmp", w_readbmp, (arg("filename")), "WRITE ME!!!");
 
+  allocdef( "readimage", readimage, (arg("filename")) );
+    
+  import_array();  // numpy initialization
   
   return;
 } // pyio
+
+
+// LuM end of file
