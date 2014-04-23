@@ -33,16 +33,11 @@ namespace pink {
     return floor(val + 0.5);
   }
 
-  char_image  float2byte(  const float_image & src, int mode=0 );
-  short_image long2short( const int_image &   src, int mode=0 );
-  char_image  short2byte( const short_image &   src, int mode=0 );
-
-  char_image long2byte(
-    const int_image & src,
-    int mode,
-    int nbnewval
-    );
-    
+  // char_image  float2byte( const float_image & src, int mode=0 );
+  // short_image long2short( const int_image   & src, int mode=0 );
+  // char_image  short2byte( const short_image & src, int mode=0 );
+  // char_image  long2byte(  const int_image & src, int mode, int nbnewval );
+  
   
 #ifdef MCNEW
   template<class image_type>
@@ -53,7 +48,7 @@ namespace pink {
     
     FOR(q, N)
     {
-      result[q] = image[q];        
+      result(q) = image(q);        
     } /* FOR */
     
     FOR(q, N)
@@ -72,7 +67,7 @@ namespace pink {
     
     index_t nbp = pink::prod(image.size());
     
-    FOR(q, nbp) result[q]=image[q];      
+    FOR(q, nbp) result(q)=image(q);      
     
     return result;      
   } /* simple_convert */
@@ -111,8 +106,8 @@ namespace pink {
   template <class image_type, class result_type>
   result_type convert_image( const image_type & image, int mode=0 )
   {
-    index_t nbp =       image.get_size().prod();
-    result_type result( image.get_size() );
+    index_t nbp = pink::prod(image.size());
+    result_type result(image.size());
 
     typedef typename image_type::pixel_type pixel_type;
         
@@ -127,7 +122,7 @@ namespace pink {
     
       FOR(q, nbp) 
       {
-        result[q] = std::min<pixel_type>( uiround(image[q]), maxval );
+        result(q) = std::min<pixel_type>( uiround(image(q)), maxval );
       } /* FOR */
       break;
 
@@ -135,7 +130,7 @@ namespace pink {
 
       FOR(q, nbp) 
       {
-        result[q] = uiround( image[q] ) %  (maxval + 1);
+        result(q) = uiround( image(q) ) %  (maxval + 1);
       } /* FOR */
       break;
 
@@ -150,9 +145,9 @@ namespace pink {
             
       FOR(q, nbp) 
       {
-        t = ( ( image[q] - min ) * maxval ) / static_cast<double>( max - min );
+        t = ( ( image(q) - min ) * maxval ) / static_cast<double>( max - min );
         tmp = uiround(t);
-        result[q] = std::min<typename result_type::pixel_type>( tmp, maxval );
+        result(q) = std::min<typename result_type::pixel_type>( tmp, maxval );
       } /* FOR */
       break;
     }
@@ -162,11 +157,11 @@ namespace pink {
       FOR(q, nbp) 
       {
 
-        T = std::sqrt( static_cast<double>( image[q]) );
+        T = std::sqrt( static_cast<double>( image(q)) );
         tmp = uiround(T);
         tmp = std::min<double>( maxval, tmp );
         tmp = std::max<double>( 0, tmp );
-        result[q] = tmp;
+        result(q) = tmp;
       } /* FOR */
 
       break;
@@ -176,11 +171,11 @@ namespace pink {
       FOR(q, nbp) 
       {
 
-        T = log(static_cast<double>(image[q]));
+        T = log(static_cast<double>(image(q)));
         tmp = uiround(T);
         tmp = std::min<double>(maxval, tmp);
         tmp = std::max<double>(0,      tmp);
-        result[q] = tmp;
+        result(q) = tmp;
       } /* FOR */
 
       break;
