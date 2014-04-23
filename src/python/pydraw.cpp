@@ -20,7 +20,7 @@
 namespace pink {
   namespace python {
 
-    char_image drawcurve2D(
+    pink::char_image drawcurve2D(
       const std::vector<index_t> & size,
       const std::vector<index_t> & coordX,
       const std::vector<index_t> & coordY
@@ -32,7 +32,7 @@ namespace pink {
       if (coordX.size() != coordY.size())
         pink_error("error: The number of X and Y coordinates must be equal.");
 
-      char_image result(size);
+      pink::char_image result(size);
 
       FOR( q, coordX.size()-1 )
       {
