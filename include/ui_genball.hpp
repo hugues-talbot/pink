@@ -14,14 +14,6 @@
 #ifndef UI_GENBALL_HPP_
 #define UI_GENBALL_HPP_
 
-namespace pink {
-
-
-  char_image genball( double radius, int dim );
-  
-
-
-} /* namespace pink */
 #endif /* UI_GENBALL_HPP_ */
 #endif /*__cplusplus*/
 /* LuM end of file */
