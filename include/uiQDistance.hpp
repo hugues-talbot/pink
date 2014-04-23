@@ -17,6 +17,8 @@
 #ifndef UI_QDISTANCE_HPP_
 #define UI_QDISTANCE_HPP_
 
+#include "ui_pink_types.hpp"
+
 #define MEAN boost::accumulators::tag::mean
 #define VARIANCE boost::accumulators::tag::variance
 #define COVARIANCE boost::accumulators::tag::covariance<pixel_type, boost::accumulators::tag::covariate1>
