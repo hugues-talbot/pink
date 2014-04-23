@@ -17,7 +17,6 @@
 #define GRAPH__HPP__
 
 #include <string>
-#include <boost/python.hpp>
 #include <boost/smart_ptr.hpp>
 
 #include "mcgraphe.h"
