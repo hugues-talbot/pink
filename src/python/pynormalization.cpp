@@ -30,31 +30,25 @@ using boost::python::def;
 
 void pynormalization()
 {
-  //CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
-  def(
-    "genball",
-    pink::genball,
-    ( arg("radius"), arg("dimension")=2 ),
-    "Generates a discrete Euclidean ball with given radius and dimensions."
-    );
-
+// !!!!!
+  
   def(
     "normalize",
-    &pink::normalize<char_image, 0, 255>,
+    &pink::normalize<pink::char_image, 0, 255>,
     ( arg("image"), arg("minval")=0, arg("maxval")=255),
     doc__normalize__c__
     );
 
   def(
     "normalize",
-    &pink::normalize<int_image, 0, 255>,
+    &pink::normalize<pink::int_image, 0, 255>,
     ( arg("image"), arg("minval")=0, arg("maxval")=255),
     doc__normalize__c__
     );
 
   def(
     "normalize",
-    &pink::normalize<float_image, 0, 1>,
+    &pink::normalize<pink::float_image, 0, 1>,
     ( arg("image"), arg("minval")=0, arg("maxval")=1),
     doc__normalize__c__    
     );
