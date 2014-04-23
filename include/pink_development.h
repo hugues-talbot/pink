@@ -20,14 +20,9 @@
 #  ifdef _WINDOWS
 #    define BOOST_PYTHON_STATIC_LIB
 #  endif /* _WINDOWS */
-#  include <boost/python.hpp>
-#  include <boost/python/def.hpp>
-#  include <boost/python/module.hpp>
-#  include <boost/python/implicit.hpp>
 #  include <boost/accumulators/statistics.hpp>
 #  include <boost/accumulators/accumulators.hpp>
 #  include <boost/function_types/result_type.hpp>
-#  include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 #  include <eigen2/Eigen/LU>
 #  include <eigen2/Eigen/Core>
