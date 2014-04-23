@@ -11,269 +11,33 @@
 */
 // The pink python wrapper core file
 
-#include "pink_python.h"
-#include "lstat.h"
+#include "pyexport.hpp"
+
+#include "ldir.h"
 #include "ldist.h"
 #include "lasft.h"
-#include "larith.h"
-#include "uiImage.h"
-#include "lderiche.h"
+#include "lhtkern.h"
+#include "lgradill.h"
+#include "lgradsup.h"
+#include "lgradinf.h"
 #include "ldistgeo.h"
 #include "lerosplan.h"
-#include "uiFrame.hpp"
-#include "lminmax.hpp"
-#include "uiInsert.hpp"
-#include "lattribvol.h"
-#include "lattribute.h"
 #include "ldilateros.h"
-#include "ldilatbin3d.h"
+#include "lgradinf3d.h"
+#include "python_doc.h"
+#include "pyasfbin.hpp"
+#include "pyclosing.hpp"
+#include "lmedialaxis.h"
 #include "llambdakern.h"
+#include "ldirections.h"
 #include "lattribarea.h"
-#include "ldilateros3d.h"
-#include "lfiltrestopo.h"
 #include "lfiltreordre.h"
+#include "ldilateros3d.h"
 #include "lattribheight.h"
-#include "llabelextrema.h"
+#include "llocalextrema.h"
 
-
-#include <boost/preprocessor/slot/counter.hpp>
-
-using namespace pink;
-using boost::python::arg;
-using boost::python::def;
-
-namespace morpho
-{
-//   UI_WRAP_FUNCTION(
-//     "lambdaskel",
-//     llambdakern,
-//     ( arg("image"), arg("imcond"), arg("connexity"), arg("lambda") ),
-//     doc__lambdaskel__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "lambdaskel",
-//     llambdakern_short,
-//     ( arg("image"), arg("connexity"), arg("lambda") ),
-//     doc__lambdaskel__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "rankfilter",
-//     lfiltreordre,
-//     ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("r") ),
-//     doc__rankfilter__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "rankfilter",
-//     lfiltreordre3d,
-//     ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("center_z"), arg("r") ),
-//     doc__rankfilter__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "tuf",
-//     ltuf,
-//     ( arg("image"), arg("min connex"), arg("radius") ),
-//     doc__tuf__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "taf",
-//     ltaflambda,
-//     ( arg("image"), arg("min connex"), arg("radius"), arg("lambdapics"), arg("lambdapuits") ),
-//     doc__taf__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "labelextrema",
-//     llabelextrema,
-//     ( arg("image"), arg("connex"), arg("function"), arg("result"), arg("nblabels") ),
-//     doc__label__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_RESULT(
-//     int_image,
-//     "labelfgd",
-//     llabelfgd,
-//     ( arg("image"), arg("connex") ),
-//     doc__labelfgd__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "heightmaxima",
-//     lheightmaxima,
-//     ( arg("image"), arg("connexity"), arg("height") ),
-//     doc__heightmaxima__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "heightminima",
-//     lheightminima,
-//     ( arg("image"), arg("connexity"), arg("height") ),
-//     doc__heightminima__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-// // functions added by Michel
-
-//   UI_WRAP_FUNCTION(
-//     "segmentheight",
-//     lsegmentheight,
-//     ( arg("image"), arg("connexity"), arg("height"), arg("mode") ),
-//     doc__segmentheight__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "segmentarea",
-//     lsegmentarea,
-//     ( arg("image"), arg("connexity"), arg("area"), arg("mode") ),
-//     doc__segmentarea__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "segmentvol",
-//     lsegmentvol,
-//     ( arg("image"), arg("connexity"), arg("vol"), arg("mode") ),
-//     doc__segmentvol__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "heightselnb",
-//     lheightselnb,
-//     ( arg("image"), arg("connexity"), arg("height") ),
-//     doc__heightselnb__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "areaselnb",
-//     lareaselnb,
-//     ( arg("image"), arg("connexity"), arg("area") ),
-//     doc__areaselnb__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "volselnb",
-//     lvolselnb,
-//     ( arg("image"), arg("connexity"), arg("area") ),
-//     doc__volselnb__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_RESULT(
-//     int_image,
-//     "distgeo",
-//     ldistgeo,
-//     ( arg("image"), arg("mask"), arg("mode") ),
-//     doc__distgeo__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_RESULT(
-//     int_image,
-//     "attribute",
-//     lattribute,
-//     ( arg("image"), arg("connex"), arg("typregion"), arg("attrib"), arg("seuil") ),
-//     doc__attribute__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_RESULT(
-//     int_image,
-//     "planarity",
-//     lplanarity,
-//     ( arg("image"), arg("connex") ),
-//     doc__planarity__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-// // // NOTE: affine's using copyimage
-// // UI_WRAP_RESULT(
-// //   "affine",
-// //   laffinetransformation,
-// //   ( arg("image"), arg("hx"), arg("hy"), arg("theta"), arg("tx"), arg("ty")),
-// //   doc__affine__c__
-// //   );
-// // # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "asf",
-//     ldilateros_lasf,
-//     (arg("image"), arg("radius max"), arg("radius min")=1),
-//     doc__asf__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "asft",
-//     lasft_2D3D,
-//     ( arg("image"), arg("constraint image"), arg("complementary constraint image"), arg("connexity"), arg("radius max") ),
-//     doc__asft__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "asft",
-//     lasft_2D3D_null,
-//     ( arg("image"), arg("connexity"), arg("radius max") ),
-//     doc__asft__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "gaussianfilter",
-//     lgaussianfilter,
-//     ( arg("image"), arg("alpha") ),
-//     doc__gaussianfilter__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "gaussianfilter",
-//     lgaussianfilter,
-//     ( arg("image"), arg("alpha") ),
-//     doc__gaussianfilter__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "gradientcd",
-//     lgradientcd,
-//     ( arg("image"), arg("alpha") ),
-//     doc__gradientcd__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "exp",
-//     lexp,
-//     (arg("image")),
-//     doc__exp__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_CPP(
-//     "print_image",
-//     print_image,
-//     (arg("image")),
-//     "Prints the values in a table. Usefull for debugging small 2D images."
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
+void closing_export();
+void opening_export();
 
 //   UI_WRAP_CPP(
 //     "insert_image",
@@ -284,7 +48,7 @@ namespace morpho
 //     "of the new image. If the image doesn't fit into the big one, "
 //     "it is cropped."
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
+
 
 //   UI_WRAP_CPP(
 //     "merge_max_image",
@@ -296,7 +60,7 @@ namespace morpho
 //     "it is cropped. During the insertion the pixels are compared "
 //     "and the bigger value is conserved"
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
+
 
 //   UI_WRAP_CPP(
 //     "frame",
@@ -304,7 +68,7 @@ namespace morpho
 //     ( arg("image"), arg("with value") ),
 //     "This function takes an image, and in the result it sets it's most outer rectangle to the given value."
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
+
 
 //   UI_WRAP_CPP(
 //     "frame_around",
@@ -313,7 +77,7 @@ namespace morpho
 //     "This function takes an image, and in the result and adds a frame around it, with"
 //     " a given value. THIS FUNCTION CHANGES THE RESULTING IMAGE'S SIZE."
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
+
 
 //   UI_WRAP_CPP(
 //     "frame_remove",
@@ -322,7 +86,7 @@ namespace morpho
 //     "This function takes an image, and in the result and removes the most outer rectangle from the result. "
 //     "THIS FUNCTION CHANGES THE RESULTING IMAGE'S SIZE."
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
+
 
 //   UI_WRAP_CPP(
 //     "max",
@@ -330,7 +94,7 @@ namespace morpho
 //     ( arg("image1"), arg("image2") ),
 //     "Generates an image result[i]:=max(image1[i],image2[i])"
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
+
 
 //   UI_WRAP_CPP(
 //     "min",
@@ -338,287 +102,112 @@ namespace morpho
 //     ( arg("image1"), arg("image2") ),
 //     "Generates an image result[i]:=min(image1[i],image2[i])"
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
 
-//   UI_WRAP_FUNCTION(
-//     "segmentvol",
-//     lsegmentvol,
-//     (arg("image"), arg("connexity"), arg("param"), arg("m")),
-//     doc__segmentvol__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "segmentarea",
-//     lsegmentarea,
-//     (arg("image"), arg("connexity"), arg("area"), arg("m")),
-//     doc__segmentarea__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "gammacor",
-//     lgammacor,
-//     (arg("image"), arg("gamma")),
-//     "WRITE ME!!! doc__gammacor__c__"
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "pow",
-//     lpow,
-//     (arg("image"), arg("p")),
-//     doc__pow__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "log",
-//     llog,
-//     (arg("image")),
-//     doc__log__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "inverse",
-//     linverse,
-//     (arg("image")),
-//     doc__inverse__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_VALUE(
-//     "area",
-//     larea,
-//     ( arg("image") ),
-//     doc__area__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_VALUE(
-//     "average",
-//     laverage1,
-//     ( arg("image") ),
-//     doc__average1__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_VALUE(
-//     "average",
-//     laverage2,
-//     ( arg("image"), arg("mask") ),
-//     doc__average1__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "grayskel",
-//     lgrayskel,
-//     (arg("image"), arg("cond image"), arg("connex"), arg("lambda")),
-//     doc__grayskel__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "grayskel",
-//     lgrayskel_short,
-//     (arg("image"), arg("connex"), arg("lambda")),
-//     doc__grayskel__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "erosnum",
-//     lerosnum,
-//     (arg("image"), arg("elem"), arg("x"), arg("y")),
-//     doc__erosnum__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "erosplan",
-//     lerosplan,
-//     (arg("image"), arg("elem"), arg("x"), arg("y")),
-//     doc__erosplan__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "dilatbin",
-//     ldilateros_ldilatbin,
-//     (arg("image"), arg("elem"), arg("x"), arg("y")),
-//     doc__dilatbin__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-
-//   UI_WRAP_FUNCTION(
-//     "dilatbin",
-//     ldilateros3d_ldilatbin3d,
-//     (arg("image"), arg("elem"), arg("x"), arg("y"), arg("z")),
-//     doc__dilatbin__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
 
   
-//   UI_WRAP_FUNCTION(
-//     "dilatnum",
-//     ldilatnum,
-//     (arg("image"), arg("elem"), arg("x"), arg("y")),
-//     doc__dilatnum__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
 
-//   UI_WRAP_FUNCTION(
-//     "lerosbin",
-//     ldilateros_lerosbin,
-//     (arg("image"), arg("elem"), arg("x"), arg("y")),
-//     doc__erosbin__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "lerosbin",
-//     ldilateros3d_lerosbin3d,
-//     (arg("image"), arg("elem"), arg("x"), arg("y"), arg("z")),
-//     doc__erosbin3d__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "ecarttype",
-//     lecarttype,
-//     (arg("image"), arg("elem")),
-//     doc__ecarttype__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-// // NOTE: lderiche the question of l parameter
-//   UI_WRAP_FUNCTION(
-//     "deriche",
-//     lderiche_lderiche,
-//     (arg("image"), arg("alpha"), arg("function"), arg("l") ),
-//     doc__deriche__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "shencastan",
-//     lshencastan,
-//     (arg("image"), arg("beta")),
-//     doc__shencastan__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "asftmed",
-//     lasftmed_2D3D,
-//     (arg("image"),arg("connexity"), arg("max radius")),
-//     doc__asftmed__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "areaopening",
-//     lareaopening,
-//     (arg("image"),arg("connexity"), arg("area")),
-//     doc__areaopening__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-
-//   UI_WRAP_FUNCTION(
-//     "areaclosing",
-//     lareaclosing,
-//     (arg("image"),arg("connexity"), arg("area")),
-//     doc__areaclosing__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "openball",
-//     lopenball,
-//     (arg("image"), arg("radius"), arg("mode")=0),
-//     doc__openball__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "closeball",
-//     lcloseball,
-//     (arg("image"), arg("radius"), arg("mode")=0),
-//     doc__closeball__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "dilatball",
-//     ldilatball,
-//     (arg("image"), arg("radius"), arg("mode")=0),
-//     doc__dilatball__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "erosball",
-//     lerosball,
-//     (arg("image"), arg("radius"), arg("mode")=0),
-//     doc__erosball__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "xor",
-//     lxor,
-//     (arg("image1"), arg("image2")),
-//     doc__xor__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-  
-//   UI_WRAP_FUNCTION(
-//     "volselnb",
-//     lvolselnb,
-//     (arg("image"), arg("connex"), arg("param")),
-//     doc__volselnb__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-  
-//   UI_WRAP_FUNCTION(
-//     "volmaxima",
-//     lvolmaxima,
-//     (arg("image"), arg("connex"), arg("param")),
-//     doc__volmaxima__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-  
-//   UI_WRAP_VALUE(
-//     "variance",
-//     lvariance1,
-//     (arg("image")),
-//     doc__variance1__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-  
-//   UI_WRAP_VALUE(
-//     "variance",
-//     lvariance2,
-//     (arg("image"), arg("mask")),
-//     doc__variance1__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-  
-  
-  
-  
-} /* namespace points */
-
-using namespace morpho;
 
 void pymorpho()
 {
-//  CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
-}
+  using pink::type;
+  using pink::allocdef;
+  using pink::resultdef;
+  using pink::functiondef;
+  
+  using boost::python::arg;
+  using boost::python::def;
+  using boost::python::scope;
+  using boost::python::object;
+  using boost::python::handle;
+  using boost::python::borrowed;
+  
+  // make "from mypackage.morpho import <whatever>" work
+  object morpho_module(handle<>(borrowed(PyImport_AddModule("libcpp_pink.morpho"))));
+  
+  // make "from mypackage import morpho" work
+  scope().attr("morpho") = morpho_module;
+ 
+  // set the current scope to the new sub-module
+  scope morpho_scope = morpho_module;
+
+  // NOT IMPLEMENTED resultdef( "localextrema", llocalextrema, (arg("image"), arg("connex"), arg("minim")), doc__localextrema__c__ );
+ 
+  // NOT IMPLEMENTED functiondef( "gradsup", lgradsup, (arg("image")), /*doc__gradsup__c__*/ "WRITE ME!!!" );
+ 
+  // NOT IMPLEMENTED functiondef( "gradinf3d", lgradinf3d, (arg("image")), /* doc__gradinf3d__c__ */ "WRITE ME!!!" );
+ 
+  functiondef( "gradill", lgradill, ( arg("image"), arg("alpha") ), doc__gradill__c__ );
+ 
+  // !!! functiondef( "gradinf", lgradinf, (arg("image")), /* doc__gradinf__c__*/ "WRITE ME!!!" );
+ 
+  functiondef( "dynrecons", ldynrecons, (arg("image"), arg("cond image"), arg("connexity")), doc__dynrecons__c__ );
+
+  functiondef( "dir", ldir, (arg("image"), arg("dir")), doc__dir__c__ );
+
+  functiondef( "directions", ldirections, (arg("image"), arg("connex"), arg("nbpoints"), arg("normale")), doc__directions__c__ );
+
+  functiondef( "rankfilter", lfiltreordre, ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("r") ), doc__rankfilter__c__ );
+
+  functiondef( "rankfilter", lfiltreordre3d, ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("center_z"), arg("r") ), doc__rankfilter__c__ );
+
+  functiondef( "heightminima", lheightminima, ( arg("image"), arg("connexity"), arg("height") ), doc__heightminima__c__ );
+
+  functiondef( "asf", ldilateros_lasf, (arg("image"), arg("radius max"), arg("radius min")=1), doc__asf__c__ );
+ 
+  functiondef( "asft", lasft_2D3D, ( arg("image"), arg("constraint image"), arg("complementary constraint image"), arg("connexity"), arg("radius max") ), doc__asft__c__ );
+ 
+  functiondef( "asft", lasft_2D3D_null, ( arg("image"), arg("connexity"), arg("radius max") ), doc__asft__c__ );
+
+  functiondef( "erosnum", lerosnum, (arg("image"), arg("elem"), arg("x"), arg("y")), doc__erosnum__c__ );
+ 
+  functiondef( "erosplan", lerosplan, (arg("image"), arg("elem"), arg("x"), arg("y")), doc__erosplan__c__ );
+
+  functiondef( "dilation", ldilateros_ldilat, (arg("image"), arg("elem"), arg("x"), arg("y")), doc__dilat__c__ );
+
+  functiondef( "dilation", ldilat3d, (arg("image"), arg("elem"), arg("x"), arg("y"), arg("z")), doc__dilat__c__ );
+
+  functiondef( "dilatbin", ldilateros_ldilatbin, (arg("image"), arg("elem"), arg("x"), arg("y")), doc__dilatbin__c__ );
+
+  functiondef( "dilatbin", ldilateros3d_ldilatbin3d, (arg("image"), arg("elem"), arg("x"), arg("y"), arg("z")), doc__dilatbin__c__ );
+
+  functiondef( "dilatnum", ldilatnum, (arg("image"), arg("elem"), arg("x"), arg("y")), doc__dilatnum__c__ );
+
+  functiondef( "lerosbin", ldilateros_lerosbin, (arg("image"), arg("elem"), arg("x"), arg("y")), doc__erosbin__c__ );
+
+  functiondef( "lerosbin", ldilateros3d_lerosbin3d, (arg("image"), arg("elem"), arg("x"), arg("y"), arg("z")), doc__erosbin3d__c__ );
+
+  functiondef( "asftmed", lasftmed_2D3D, (arg("image"),arg("connexity"), arg("max radius")), doc__asftmed__c__ );
+
+  functiondef( "areaopening", lareaopening, (arg("image"),arg("connexity"), arg("area")), doc__areaopening__c__ );
+
+  functiondef( "areaclosing", lareaclosing, (arg("image"),arg("connexity"), arg("area")), doc__areaclosing__c__ );
+
+  functiondef( "openball", lopenball, (arg("image"), arg("radius"), arg("mode")=0), doc__openball__c__ );
+
+  functiondef( "closeball", lcloseball, (arg("image"), arg("radius"), arg("mode")=0), doc__closeball__c__ );
+
+  functiondef( "dilatball", ldilatball, (arg("image"), arg("radius"), arg("mode")=0), doc__dilatball__c__ );
+
+  functiondef( "erosball", lerosball, (arg("image"), arg("radius"), arg("mode")=0), doc__erosball__c__ );
+
+  def( "asfbin", pink::python::asfbin, (arg("image"), arg("max_radius"), arg("min_radius") ), doc__asfbin__c__ );
+
+  resultdef( VFF_TYP_4_BYTE, "distgeo", ldistgeo, ( arg("image"), arg("mask"), arg("mode") ), doc__distgeo__c__ );
+
+  resultdef( VFF_TYP_FLOAT, "lmedialaxis_lbisector", lmedialaxis_lbisector, (arg("image"), arg("mask")), doc__bisector__c__ );
+  
+  resultdef( VFF_TYP_FLOAT, "lambdamedialaxis", lmedialaxis_lambdamedialaxis, (arg("image")), doc__lambdamedialaxis__c__ );
+
+  resultdef( VFF_TYP_4_BYTE, "medialaxis", lmedialaxis_lmedialaxis, (arg("image"), arg("distance")), doc__medialaxis__c__ );  
+  
+  closing_export();  
+
+  opening_export();  
+  
+  import_array();  // numpy initialization
+  
+  return; 
+} // pymorpho
 
 
 
