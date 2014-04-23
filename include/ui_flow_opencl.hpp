@@ -19,7 +19,6 @@
 #include <CL/cl.h>
 #include <vector>
 #include <utility>
-#include <boost/python.hpp>
 
 //#include "uiFlow.hpp"
 #include "uiFrame.hpp"
