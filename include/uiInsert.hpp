@@ -14,10 +14,6 @@
 #ifndef UIINSERT_HPP_
 #define UIINSERT_HPP_
 
-#ifdef PINK_HAVE_PYTHON
-# include <boost/python.hpp>
-#endif /* PINK_HAVE_PYTHON */
-
 #include "ujimage.hpp"
 
 namespace pink {
