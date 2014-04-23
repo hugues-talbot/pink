@@ -9,90 +9,78 @@
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
-#include "lsym.h"
-#include "ldilateros.h"
-#include "pink_python.h"
-#include "ldilateros3d.h"
 
-using namespace boost::python;
-using namespace pink;
+#include <boost/python.hpp>
+
+#include "lsym.h"
+#include "ujimage.hpp"
+#include "python_doc.h"
+#include "ldilateros.h"
+#include "ldilateros3d.h"
 
 
 namespace pink {
   namespace python {
-
-    template <class image_t>
-    image_t closing
-    (
-      const image_t & image, 
-      const char_image & elem
-      )
-    {
-      image_t result;
-      result = image.clone();
-      char_image elem_ce; // this image is usually small so it's ok to copy it
-      elem_ce = elem.clone();
-      
-
-      if (! (pink::inside(elem.size(), elem.center())))
-        pink_error("The center of the structuring element must be defined");
-
-      if (! ((image.size().size()==2) || (image.size().size()==3)) )
-        pink_error("Only 2D and 3D images are supported.");
-
-      if (image.size().size() == 2)
-      {
-        index_t x = elem.center()[0];
-        index_t y = elem.center()[1];
-        index_t rs = elem.rows();
-        index_t cs = elem.cols();
-
-        if (! ldilateros_ldilat(result, elem_ce, rs - 1 - x, cs - 1 - y)) pink_error("function ldilat failed");
-
-        if (! lsym(elem_ce, 'c')) pink_error("function lsym failed");
-
-        if (!ldilateros_leros(result, elem_ce, x, y)) pink_error("function leros failed");
-      }
-      else /* NOT image.size().size() == 2 */
-      {
-        index_t x  = elem.center()[0];        
-        index_t y  = elem.center()[1];
-        index_t z  = elem.center()[2];
-        index_t rs = elem.rows();
-        index_t cs = elem.cols();
-        index_t ds = elem.depth();
+    using boost::python::object;
         
-        if (! ldilat3d(result, elem_ce, x, y, z)) pink_error("function leros3d failed");
+    object
+    closing ( const object & image,  const object & elem, const index_t & x, const index_t & y )
+    {
+      if ((2 != cxvimage(image).size().size()) or (2 != cxvimage(elem).size().size()))
+        pink_error("The dimensions of the structuring element, the image and the center must be the same (d=2).");
+      
+      const cxvimage cimage(image);
+      cxvimage result = cimage.clone();
+      cxvimage celem  = cxvimage(elem).clone();
+      
+      index_t rs = celem.rows();
+      index_t cs = celem.cols();
 
-        if (! lsym(elem_ce, 'c')) pink_error("function lsym failed");
+      if (! ldilateros_ldilat(result, celem, rs - 1 - x, cs - 1 - y)) pink_error("function ldilat failed");
+      if (! lsym(celem, 'c')) pink_error("function lsym failed");      
+      if (!ldilateros_leros(result, celem, x, y)) pink_error("function leros failed");
 
-        if (! leros3d(result, elem_ce, rs - 1 - x, cs - 1 - y, ds - 1 - z)) pink_error("function leros3d failed");
-      }  /* NOT image.size().size() == 2 */
+      return result.steel();
+      
+    } // closing
 
+
+    object
+    closing3d ( const object & image,  const object & elem, const index_t & x, const index_t & y, const index_t & z )
+    {
+      if ((3 != cxvimage(image).size().size()) or (3 != cxvimage(elem).size().size()))
+        pink_error("The dimensions of the structuring element, the image and the center must be the same (d=3).");
+
+      cxvimage celem = cxvimage(elem).clone();
+      cxvimage result = cxvimage(image).clone();
+      
+      index_t rs = celem.rows();
+      index_t cs = celem.cols();
+      index_t ds = celem.depth();
+      
+      if (! ldilat3d(result, celem, x, y, z)) pink_error("function leros3d failed");
+      if (! lsym(celem, 'c')) pink_error("function lsym failed");
+      if (! leros3d(result, celem, rs - 1 - x, cs - 1 - y, ds - 1 - z)) pink_error("function leros3d failed");
   
-      return result;    
-    } /* py_closing */
+      return result.steel();
+    } /* closing3d */
 
   } /* namespace python */
 } /* namespace pink */
 
 
-// UI_EXPORT_ONE_FUNCTION(
-//   closeball, 
-//   pink::python::closeball, 
-//   ( arg("image"), arg("the ray of the ball"), arg("distance function")=0 ),
-//   doc__closeball__c__
-//   );
+void
+closing_export() {
+  using boost::python::arg;
+  using boost::python::def;
+  
+  def( "closing", &pink::python::closing, ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y") ), doc__closing__c__ );
+  def( "closing", &pink::python::closing3d, ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("center_z") ), doc__closing__c__ );
+
+  return;  
+} // closing export
 
 
-
-// UI_EXPORT_FUNCTION(
-//   closing, 
-//   pink::python::closing,
-//   ( arg("src"), arg("elem") ),
-//   doc__closing__c__
-//   // end of the documenation
-//   );
 
 
 // LuM end of file
