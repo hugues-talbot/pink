@@ -24,21 +24,14 @@ except:
 
 
 def to_photoimage(image, master=0):
-    size  = [ image.size[0], image.size[1] ]
     if master==0:
-        return ImageTk.PhotoImage(Image.frombuffer("L", size, image.get_pixels() , "raw", "L", 0, 1))
+        return ImageTk.PhotoImage(Image.fromarray(image))
     else:
-        return ImageTk.PhotoImage(Image.frombuffer("L", size, image.get_pixels() , "raw", "L", 0, 1), master=master)
-
+        return ImageTk.PhotoImage(Image.fromarray(image), master=master )
 
 def to_rgb_photoimage(images, master=0):
-    size  = [ images[0].size[0], images[0].size[1] ]
-    tkimage_r = Image.frombuffer("L", size, images[0].get_pixels() , "raw", "L", 0, 1)
-    tkimage_g = Image.frombuffer("L", size, images[1].get_pixels() , "raw", "L", 0, 1)
-    tkimage_b = Image.frombuffer("L", size, images[2].get_pixels() , "raw", "L", 0, 1)
-    tk_image_rgb = Image.merge( "RGB", [tkimage_r, tkimage_g, tkimage_b ])
-    if master == 0:
-        result = ImageTk.PhotoImage(tk_image_rgb.copy())
-    else:
-        result = ImageTk.PhotoImage(tk_image_rgb.copy(), master=master)
-    return result
+    assert( len(images)==3 )
+    arrays = map( Image.fromarray, images )
+    imrgb = Image.merge('RGB', ( arrays[0], arrays[1], arrays[2] ) ) 
+
+    return ImageTk.PhotoImage( imrgb, master=master )
