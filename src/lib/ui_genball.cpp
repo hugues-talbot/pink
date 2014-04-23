@@ -10,56 +10,59 @@
   ujoimro@gmail.com
 */
 
-#ifdef __cplusplus
-
+#include "pyexport.hpp"
 #include "ujimage.hpp"
 
-// you shouldn't use one character macros
-#undef N
+namespace {
 
-namespace pink {
+  using pink::char_image;
+  using boost::python::object;
 
-  image<uint8_t>
-  genball( double radius, int dim )
-  {    
-    image<uint8_t> result;
-    
+  object 
+  genball( double radius, index_t dim )
+  {
+    char_image result;
     if (dim==2) 
     {
-      result.reset( 2*radius+1, 2*radius+1 );
-      result.center() = {radius, radius};
-
-      FOR(q, result.cols())
-        FOR(w, result.rows())
-        if ( sqrt(q*q + w*w) <= radius )
+      result = char_image( 2*radius+1, 2*radius+1 );
+      FOR(w, result.rows())
+        FOR(q, result.cols())
+        if ( sqrt( (q-radius)*(q-radius) + (w-radius)*(w-radius)) <= radius )
           result(q, w) = 255;
     }
-    else /* NOT dim == 2 */
-      if (dim==3)
-      {               
-        result.reset( 2*radius+1, 2*radius+1, 2*radius+1 );
-        result.center() = { radius, radius, radius };
+    else if (dim==3)
+    {
+      result = char_image( 2*radius+1, 2*radius+1, 2*radius+1 );
+      FOR(e, result.depth())
+        FOR(w, result.cols())
+        FOR(q, result.rows())
+        if ( sqrt( (q-radius)*(q-radius) + (w-radius)*(w-radius) + (e-radius)*(e-radius) )<=radius)
+          result(q, w, e)=255;
+    }
+    else /* NOT dim == 3 */
+      pink_error("only 2D and 3D supported in this moment.");           
 
-        FOR(q, result.depth())
-          FOR(w, result.cols())
-          FOR(e, result.rows())
-          if ( sqrt( q*q + w*w + e*e )<=radius)
-            result(e,w,q)=255;
-      }
-      else /* NOT dim == 3 */
-        pink_error("only 2D and 3D supported in this moment.");           
-
-    
-    return result;  
-    
+    return result.steel();  
   } /* genball */
   
+} // unnamed namespace
 
+void 
+genball_export() {
+
+  using boost::python::arg;
+  using boost::python::def;
+  
+  def( "genball", ::genball, ( arg("radius"), arg("dim") ), "Generates a [dim] dimensional binary ball, with [radius] radius." );
+    
+  import_array();  // numpy initialization
+  return;    
+}
+  
 
 
 
   
-} /* namespace pink */
 
 
 
@@ -67,6 +70,4 @@ namespace pink {
 
 
 
-
-#endif /*__cplusplus*/
 /* LuM end of file */
