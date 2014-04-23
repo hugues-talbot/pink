@@ -1,0 +1,4 @@
+re:.*~$
+re:.*\.orig
+re:include/python_doc.h
+re:/_.*
