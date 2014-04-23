@@ -24,71 +24,63 @@
 void
 pygraph()
 {
-            
-    boost::python::class_< pink::graph_t<index_t> > (
-        "graph_t",
-        "This is the class for manipulating graphs.",
-        boost::python::init<>(
-            boost::python::args("self"), "Creates an empty graph object." )
-        )   
 
-        .def( boost::python::init< std::string > (
-                  boost::python::args("self","filename"), "Reads a skeleton from a file." )
-            )
-        
-        .def( "writegraph", &pink::graph_t<index_t>::writegraph,
-              ( boost::python::arg("filename") ),
-              "WRITE ME!!!"
-            )
-
-        .def( "writeps", &pink::graph_t<index_t>::writeps,
-              ( boost::python::arg("filename"), boost::python::arg("scale")=20 ),
-              "WRITE ME!!!"
-            )
-
-        // .def( "", &pink::graph_t<index_t>::,
-        //       ( boost::python::arg("") )
-        //       "WRITE ME!!!"
-        //     )
-
-        .def( "clone", &pink::graph_t<index_t>::clone,
-              "WRITE ME!!!"
-            )
-
-        .def( "nb_edges", &pink::graph_t<index_t>::nb_edges,
-              "WRITE ME!!!"
-            )
-
-        .def( "nb_maxedges", &pink::graph_t<index_t>::nb_maxedges,
-              "WRITE ME!!!"
-            )
-
-        .def( "nb_nodes", &pink::graph_t<index_t>::nb_nodes,
-              "WRITE ME!!!"
-            )
+  using pink::functiondef;
+  using boost::python::arg;
+  using boost::python::def;
+  using boost::python::args;
 
         
-        // .def( "__repr__", &pink::skel_t<index_t>::repr,
-        //       boost::python::args("self"),
-        //       "Prints the graph."
-        //     )
+  boost::python::class_< pink::graph_t<index_t> > (
+    "graph_t",
+    "This is the class for manipulating graphs.",
+    boost::python::init<>(
+      args("self"), "Creates an empty graph object." )
+    )   
 
+    .def( boost::python::init< std::string > (
+            args("self","filename"), "Reads a skeleton from a file." )
+      )
+        
+    .def( "writegraph", &pink::graph_t<index_t>::writegraph,
+          ( arg("filename") ),
+          "WRITE ME!!!"
+      )
 
-        ; // pink::skel_t (skeleton)
+    .def( "writeps", &pink::graph_t<index_t>::writeps,
+          ( arg("filename"), arg("scale")=20 ),
+          "WRITE ME!!!"
+      )
+
+    .def( "clone", &pink::graph_t<index_t>::clone,
+          "WRITE ME!!!"
+      )
+
+    .def( "nb_edges", &pink::graph_t<index_t>::nb_edges,
+          "WRITE ME!!!"
+      )
+
+    .def( "nb_maxedges", &pink::graph_t<index_t>::nb_maxedges,
+          "WRITE ME!!!"
+      )
+
+    .def( "nb_nodes", &pink::graph_t<index_t>::nb_nodes,
+          "WRITE ME!!!"
+      )
+    ; // pink::skel_t (skeleton)
     
-    boost::python::def( "skel2graph", pink::skel2graph<index_t>,
-                        ( boost::python::arg("skeleton"), boost::python::arg("mode"), boost::python::arg("param") ),
-                        doc__skel2graph__c__
-        );
+  def( "skel2graph", pink::skel2graph<index_t>, ( arg("skeleton"), arg("mode"), arg("param") ), doc__skel2graph__c__ );
 
-    boost::python::def( "skel2graph", pink::skel2graph_short<index_t>,
-                        ( boost::python::arg("skeleton"), boost::python::arg("mode")=0 ),
-                        doc__skel2graph__c__
-        );
+  def( "skel2graph", pink::skel2graph_short<index_t>, ( arg("skeleton"), arg("mode")=0 ), doc__skel2graph__c__ );
 
 
+  functiondef( "jones", ljones, (arg("image"), arg("connex")), doc__jones__c__ );
 
-} // pyskeleton
+  import_array();  // numpy initialization
+
+  return;
+  
+} // pygraph
         
 
 
