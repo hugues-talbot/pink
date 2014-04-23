@@ -417,7 +417,7 @@ static int32_t testabaisse26lab(int32_t *F, index_t x, index_t rs, index_t ps, i
 
 /* ==================================== */
 int32_t lskelubp(struct xvimage *image, 
-              struct xvimage *imageprio, 
+              const struct xvimage *imageprio, 
               int32_t connex, 
               int32_t val_inhibit)
 /* ==================================== */
@@ -568,9 +568,9 @@ resultat: F
 
 /* ==================================== */
 int32_t lskelubp2(struct xvimage *image, 
-               struct xvimage *imageprio, 
+               const struct xvimage *imageprio, 
                int32_t connex, 
-               struct xvimage *imageinhib)
+               const struct xvimage *imageinhib)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lskelubp2"
@@ -723,7 +723,7 @@ int32_t lskelubp2(struct xvimage *image,
 
 /* ==================================== */
 int32_t lskelubp3d(struct xvimage *image, 
-                 struct xvimage *imageprio, 
+                 const struct xvimage *imageprio, 
                  int32_t connex, 
                  int32_t val_inhibit)
 /* ==================================== */
@@ -877,9 +877,9 @@ resultat: F
 
 /* ==================================== */
 int32_t lskelubp3d2(struct xvimage *image, 
-                 struct xvimage *imageprio, 
+                 const struct xvimage *imageprio, 
                  int32_t connex, 
-                 struct xvimage *imageinhib)
+                 const struct xvimage *imageinhib)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lskelubp3d2"
@@ -1035,9 +1035,9 @@ int32_t lskelubp3d2(struct xvimage *image,
 
 /* ==================================== */
 int32_t lskelubp3d2lab(struct xvimage *image, 
-		       struct xvimage *imageprio, 
+		       const struct xvimage *imageprio, 
 		       int32_t connex, 
-		       struct xvimage *imageinhib)
+		       const struct xvimage *imageinhib)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lskelubp3d2lab"
@@ -1213,8 +1213,8 @@ int32_t lskelubp3d2lab(struct xvimage *image,
 
 /* ==================================== */
 int32_t lskelcurv(struct xvimage *image, 
-              struct xvimage *imageprio, 
-              struct xvimage *inhibit, 
+              const struct xvimage *imageprio, 
+              const struct xvimage *inhibit, 
               int32_t connex)
 /* ==================================== */
 /* 
@@ -1574,8 +1574,8 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir2d(F, x, rs, N));
 
 /* ==================================== */
 int32_t lskelcurv3d(struct xvimage *image, 
-              struct xvimage *imageprio, 
-              struct xvimage *inhibit, 
+              const struct xvimage *imageprio, 
+              const struct xvimage *inhibit, 
               int32_t connex)
 /* ==================================== */
 /* 
@@ -1912,8 +1912,8 @@ resultat: F
 
 /* ==================================== */
 int32_t lskelsurf3d(struct xvimage *image, 
-              struct xvimage *imageprio, 
-              struct xvimage *inhibit, 
+              const struct xvimage *imageprio, 
+              const struct xvimage *inhibit, 
               int32_t connex)
 /* ==================================== */
 /* 
@@ -2252,13 +2252,13 @@ resultat: F
 
 /* ==================================== */
 int32_t ltoposhrink(struct xvimage *image, 
-              struct xvimage *imageprio, 
+              const struct xvimage *imageprio, 
               int32_t connex, 
               int32_t tmin, 
               int32_t tmax, 
               int32_t tbmin, 
               int32_t tbmax, 
-              struct xvimage *imageinhibit)
+              const struct xvimage *imageinhibit)
 /* ==================================== */
 /* 
 Amincissement 2D binaire avec controle topologique.
@@ -2451,13 +2451,13 @@ resultat: F
 
 /* ==================================== */
 int32_t ltoposhrink3d(struct xvimage *image, 
-                 struct xvimage *imageprio, 
+                 const struct xvimage *imageprio, 
                  int32_t connex, 
                  int32_t tmin, 
                  int32_t tmax, 
                  int32_t tbmin, 
                  int32_t tbmax, 
-                 struct xvimage *imageinhibit)
+                 const struct xvimage *imageinhibit)
 /* ==================================== */
 /* 
 Amincissement 3D binaire avec controle topologique.
@@ -2684,7 +2684,7 @@ resultat: F
 /* ==================================== */
 int32_t lskeleucl(struct xvimage *image, 
               int32_t connex, 
-              struct xvimage *imageinhib)
+              const struct xvimage *imageinhib)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lskeleucl"
@@ -2980,7 +2980,7 @@ uint32_t encodevois(index_t p, uint8_t *F, index_t rs, index_t ps, index_t N)
 
 /* ==================================== */
 int32_t lskelend3d_sav(struct xvimage *image, 
-	       struct xvimage *imageprio, 
+	       const struct xvimage *imageprio, 
 	       int32_t connex, 
 	       uint8_t *endpoint)
 /* ==================================== */
@@ -3628,7 +3628,7 @@ Algo par passes directionnelles.
 
 /* ==================================== */
 int32_t lskeldir3d(struct xvimage *image, 
-		   struct xvimage *inhibit, 
+		   const struct xvimage *inhibit, 
 		   int32_t connex, 
 		   int32_t nsteps)
 /* ==================================== */
@@ -3781,7 +3781,7 @@ writeimage(image, DBGBUF);
 
 /* ==================================== */
 int32_t lskeldir3d_1(struct xvimage *image, 
-		   struct xvimage *inhibit, 
+		   const struct xvimage *inhibit, 
 		   int32_t connex, 
 		   int32_t nsteps)
 /* ==================================== */
@@ -3952,7 +3952,7 @@ writeimage(image, DBGBUF);
 
 /* ==================================== */
 int32_t lskelPSG(struct xvimage *image, 
-		 struct xvimage *imageprio, 
+		 const struct xvimage *imageprio, 
 		 double val)
 /* ==================================== */
 /*
@@ -3971,7 +3971,7 @@ EXPERIMENTAL - Ne pas utiliser dans des applications
 
 /* ==================================== */
 int32_t lskelPSG2(struct xvimage *image,
-		  struct xvimage *imageprio, 
+		  const struct xvimage *imageprio, 
 		  double val)
 /* ==================================== */
 // EXPERIMENTAL - Ne pas utiliser dans des applications
@@ -4146,7 +4146,7 @@ int32_t lskelPSG2(struct xvimage *image,
 
 /* ==================================== */
 int32_t lskelPSG3(struct xvimage *image,
-		  struct xvimage *imageprio, 
+		  const struct xvimage *imageprio, 
 		  double val)
 /* ==================================== */
 // EXPERIMENTAL - Ne pas utiliser dans des applications
@@ -4330,7 +4330,7 @@ int32_t lskelPSG3(struct xvimage *image,
 
 /* ==================================== */
 int32_t lskelCKG(struct xvimage *image, 
-		 struct xvimage *imageprio, 
+		 const struct xvimage *imageprio, 
 		 double val)
 /* ==================================== */
 /*
@@ -4349,7 +4349,7 @@ EXPERIMENTAL - Ne pas utiliser dans des applications
 
 /* ==================================== */
 int32_t lskelCKGmap(struct xvimage *imageprio, 
-		    struct xvimage *image)
+		    const struct xvimage *image)
 /* ==================================== */
 /*
 Carte topologique par squelettisation sym�trique guid�e ultime bas�e sur les noyaux critiques (cruciaux)
@@ -4787,148 +4787,6 @@ Si le test r�ussit, les points non nuls sont marqu�s 0M_CRUCIAL
   if (v[ 8] && (v[ 8] != CAN)) return 0;
   if (v[ 3] && (v[ 3] != CAN)) return 0;
 
-#ifdef DEBUG
-static int trace = 1;
-#endif
-
-/* ==================================== */
-static int32_t match_vois2(uint8_t *v)
-/* ==================================== */
-/*
-               12      11      10       
-               13       8       9
-               14      15      16
-
-		3	2	1			
-		4      26	0
-		5	6	7
-Teste si les conditions suivantes sont r�unies:
-1: v[8] et v[26] doivent �tre marqu�s CAN
-2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit �tre non 2D-simple
-Si le test r�ussit, les points 8, 26 sont marqu�s CR2
-*/
-{
-  uint8_t t;
-#ifdef DEBUG
-  if (trace)
-  {  
-    printf("match_vois2\n");
-    //    print_vois(v);
-  }
-#endif
-  if ((v[8] < CAN) || (v[26] < CAN)) return 0;
-  if (v[0] || v[9]) t = 1; else t = 0;
-  if (v[1] || v[10]) t |= 2;
-  if (v[2] || v[11]) t |= 4;
-  if (v[3] || v[12]) t |= 8;
-  if (v[4] || v[13]) t |= 16;
-  if (v[5] || v[14]) t |= 32;
-  if (v[6] || v[15]) t |= 64;
-  if (v[7] || v[16]) t |= 128;
-  if ((t4b(t) == 1) && (t8(t) == 1)) return 0; // simple 2D
-  v[8] = v[26] = CR2;
-#ifdef DEBUG
-  if (trace)
-    printf("match !\n");
-#endif
-  return 1;
-} // match_vois2()
-
-/* ==================================== */
-static int32_t match_vois1(uint8_t *v)
-/* ==================================== */
-// A A  P1 P2  B B
-// A A  P3 P4  B B
-// avec pour localisations possibles :
-// 12 11   3  2   21 20 
-// 13  8   4 26   22 17
-// et :
-// 11 10    2 1   20 19
-//  8  9   26 0   17 18
-//
-// Teste si les trois conditions suivantes sont r�unies:
-// 1: (P1 et P4) ou (P2 et P3)
-// 2: tous les points Pi non nuls doivent �tre simples et non marqu�s CR2
-// 3: A et B sont tous nuls ou [au moins un A non nul et au moins un B non nul]
-// Si le test r�ussit, les points Pi non nuls sont marqu�s CR1
-{
-  int32_t ret = 0;
-#ifdef DEBUG
-  if (trace)
-  {  
-    printf("match_vois1\n");
-    //    print_vois(v);
-  }
-#endif
-  if (!((v[2] && v[4]) || (v[3] && v[26]))) goto next1;
-  if ((v[2]  && (v[2] != CAN)) ||
-      (v[3]  && (v[3] != CAN)) ||
-      (v[4]  && (v[4] != CAN)) ||
-      (v[26] && (v[26] != CAN))) goto next1;
-  if ((v[12] || v[11] || v[13] || v[8] || v[21] || v[20] || v[22] || v[17]) &&
-      ((!v[12] && !v[11] && !v[13] && !v[8]) || 
-       (!v[21] && !v[20] && !v[22] && !v[17]))) goto next1;
-  if (v[2])  v[2] = CR1;
-  if (v[3])  v[3] = CR1;
-  if (v[4])  v[4] = CR1;
-  if (v[26]) v[26] = CR1;
-  ret = 1;
- next1:
-  if (!((v[2] && v[0]) || (v[1] && v[26]))) goto next2;
-  if ((v[2]  && ((v[2] < CAN) || (v[2] == CR2))) ||
-      (v[1]  && ((v[1] < CAN) || (v[1] == CR2))) ||
-      (v[0]  && ((v[0] < CAN) || (v[0] == CR2))) ||
-      (v[26]  && ((v[26] < CAN) || (v[26] == CR2)))) goto next2;
-  if ((v[10] || v[11] || v[9] || v[8] || v[19] || v[20] || v[18] || v[17]) &&
-      ((!v[10] && !v[11] && !v[9] && !v[8]) || 
-       (!v[19] && !v[20] && !v[18] && !v[17]))) goto next2;
-  if (v[2])  v[2] = CR1;
-  if (v[1])  v[1] = CR1;
-  if (v[0])  v[0] = CR1;
-  if (v[26]) v[26] = CR1;
-  ret = 1;
- next2:
-#ifdef DEBUG
-  if (trace && ret)
-    printf("match !\n");
-#endif
-  return ret;
-} // match_vois1()
-
-/* ==================================== */
-static int32_t match_vois0(uint8_t *v)
-/* ==================================== */
-/*
-               12      11
-               13       8
-
-		3	2
-		4      26
-
-Teste si les conditions suivantes sont r�unies:
-1: au moins un des ensembles {12,26}, {11,4}, {13,2}, {8,3} est inclus dans l'objet, et
-2: les points non nuls sont tous simples, non marqu�s 2M_CRUCIAL et non marqu�s 1M_CRUCIAL
-Si le test r�ussit, les points non nuls sont marqu�s 0M_CRUCIAL
-*/
-{
-#ifdef DEBUG
-  if (trace)
-  {  
-    printf("match_vois0\n");
-    //    print_vois(v);
-  }
-#endif
-  if (!((v[12]&&v[26]) || (v[11]&&v[4]) || (v[13]&&v[2]) || (v[8]&&v[3]) )) return 0;
-
-  if (v[12] && (v[12] != CAN)) return 0;
-  if (v[26] && (v[26] != CAN)) return 0;
-  if (v[11] && (v[11] != CAN)) return 0;
-  if (v[ 4] && (v[ 4] != CAN)) return 0;
-  if (v[13] && (v[13] != CAN)) return 0;
-  if (v[ 2] && (v[ 2] != CAN)) return 0;
-  if (v[ 8] && (v[ 8] != CAN)) return 0;
-  if (v[ 3] && (v[ 3] != CAN)) return 0;
-
   if (v[12]) v[12] = CR0;
   if (v[26]) v[26] = CR0;
   if (v[11]) v[11] = CR0;
@@ -5020,7 +4878,7 @@ static void CrucialPass3d0(
 
 /* ==================================== */
 int32_t lskelCKG2(struct xvimage *image,
-		  struct xvimage *imageprio, 
+		  const struct xvimage *imageprio, 
 		  double val)
 /* ==================================== */
 // parallel 2D binary guided thinning
@@ -5188,7 +5046,7 @@ int32_t lskelCKG2(struct xvimage *image,
 
 /* ==================================== */
 int32_t lskelCKG2map(struct xvimage *imageprio,
-		     struct xvimage *image)
+		     const struct xvimage *image)
 /* ==================================== */
 // EXPERIMENTAL - Ne pas utiliser dans des applications
 // the result is in imageprio : a "topological map"
@@ -5333,7 +5191,7 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
 
 /* ==================================== */
 int32_t lskelCKG3map(struct xvimage *imageprio,
-		     struct xvimage *image)
+		     const struct xvimage *image)
 /* ==================================== */
 // EXPERIMENTAL - Ne pas utiliser dans des applications
 // the result is in imageprio : a "topological map"
@@ -5394,6 +5252,7 @@ int32_t lskelCKG3map(struct xvimage *imageprio,
     fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
     return(0);
   }
+
   /* ================================================ */
   /*               DEBUT ALGO                         */
   /* ================================================ */
@@ -5515,7 +5374,7 @@ int32_t lskelCKG3map(struct xvimage *imageprio,
 
 /* ==================================== */
 int32_t lskelCKG3(struct xvimage *image,
-		  struct xvimage *imageprio, 
+		  const struct xvimage *imageprio, 
 		  double val)
 /* ==================================== */
 // parallel 3D binary guided thinning
@@ -6880,7 +6739,7 @@ static void lskelCKSC3_aux0(uint8_t *Y,  int32_t x, int32_t x1, int32_t x2, int3
 /* ==================================== */
 int32_t lskelCKSC3(
 		   struct xvimage *image, 
-		   struct xvimage *inhibit,
+		   const struct xvimage *inhibit,
 		   int32_t nsteps)
 /* ==================================== */
 /* 3D binary sequential curvilinear thinning
@@ -7255,7 +7114,7 @@ static void lskelCKSC3_aux0(uint8_t *Y,  int32_t x, int32_t x1, int32_t x2, int3
 /* ==================================== */
 int32_t lskelCKSC3(
 		   struct xvimage *image, 
-		   struct xvimage *inhibit,
+		   const struct xvimage *inhibit,
 		   int32_t nsteps)
 /* ==================================== */
 /* 3D binary sequential curvilinear thinning
@@ -7835,7 +7694,7 @@ static int32_t NKP_end(uint8_t *S, index_t p, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 int32_t lskelCKSC3(
 		   struct xvimage *image, 
-		   struct xvimage *inhibit,
+		   const struct xvimage *inhibit,
 		   int32_t nsteps)
 /* ==================================== */
 /* 3D binary sequential curvilinear thinning
@@ -8143,7 +8002,7 @@ static void lskelCKSC3_aux0(uint8_t *Y,  int32_t x, int32_t x1, int32_t x2, int3
 /* ==================================== */
 int32_t lskelCKSC3(
 		   struct xvimage *image, 
-		   struct xvimage *inhibit,
+		   const struct xvimage *inhibit,
 		   int32_t nsteps)
 /* ==================================== */
 /* 3D binary sequential curvilinear thinning

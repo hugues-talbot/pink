@@ -53,7 +53,7 @@ knowledge of the CeCILL license and that you accept its terms.
 /* ==================================== */
 int32_t lgeodilat(
         struct xvimage *g,
-        struct xvimage *f,
+        const struct xvimage *f,
         int32_t connex,
         int32_t niter) 
 /* dilatation geodesique de g sous f */
@@ -90,7 +90,7 @@ int32_t lgeodilat(
 /* ==================================== */
 int32_t lgeodilat2d(
         struct xvimage *g,
-        struct xvimage *f,
+        const struct xvimage *f,
         int32_t connex,
         int32_t niter) 
 /* dilatation geodesique de g sous f */
@@ -228,7 +228,7 @@ int32_t lgeodilat2d(
 /* ==================================== */
 int32_t lgeodilat2d_short(
         struct xvimage *g,
-        struct xvimage *f,
+        const struct xvimage *f,
         int32_t connex,
         int32_t niter) 
 /* dilatation geodesique de g sous f */
@@ -366,7 +366,7 @@ int32_t lgeodilat2d_short(
 /* ==================================== */
 int32_t lgeodilat2d_long(
         struct xvimage *g,
-        struct xvimage *f,
+        const struct xvimage *f,
         int32_t connex,
         int32_t niter) 
 /* dilatation geodesique de g sous f */
@@ -504,7 +504,7 @@ int32_t lgeodilat2d_long(
 /* ==================================== */
 int32_t lreconsdilat(
         struct xvimage *g,
-        struct xvimage *f,
+        const struct xvimage *f,
         int32_t connex) 
 /* reconstruction de g sous f */
 /* g : image marqueur */
@@ -518,7 +518,7 @@ int32_t lreconsdilat(
 /* ==================================== */
 int32_t lgeoeros(
         struct xvimage *g,
-        struct xvimage *f,
+        const struct xvimage *f,
         int32_t connex,
         int32_t niter) 
 /* reconstruction par erosion de g au dessus de f */
@@ -943,7 +943,7 @@ int32_t lselectcomp(
 /* ==================================== */
 int32_t lgeodilat3d(
         struct xvimage *g,
-        struct xvimage *f,
+        const struct xvimage *f,
         int32_t connex,
         int32_t niter) 
 /* reconstruction de g sous f */
@@ -1167,7 +1167,7 @@ int32_t lgeodilat3d(
 /* ==================================== */
 int32_t lgeodilat3d_short(
         struct xvimage *g,
-        struct xvimage *f,
+        const struct xvimage *f,
         int32_t connex,
         int32_t niter) 
 /* reconstruction de g sous f */
@@ -1391,7 +1391,7 @@ int32_t lgeodilat3d_short(
 /* ==================================== */
 int32_t lgeodilat3d_long(
         struct xvimage *g,
-        struct xvimage *f,
+        const struct xvimage *f,
         int32_t connex,
         int32_t niter) 
 /* reconstruction de g sous f */
@@ -1615,7 +1615,7 @@ int32_t lgeodilat3d_long(
 /* ==================================== */
 int32_t lreconsdilat3d(
         struct xvimage *g,
-        struct xvimage *f,
+        const struct xvimage *f,
         int32_t connex) 
 /* reconstruction de g sous f */
 /* g : image marqueur */
@@ -1629,7 +1629,7 @@ int32_t lreconsdilat3d(
 /* ==================================== */
 int32_t lgeoeros3d(
         struct xvimage *g,
-        struct xvimage *f,
+        const struct xvimage *f,
         int32_t connex,
         int32_t niter) 
 /* reconstruction de g sous f */
@@ -1853,7 +1853,7 @@ int32_t lgeoeros3d(
 /* ==================================== */
 int32_t lreconseros3d(
         struct xvimage *g,
-        struct xvimage *f,
+        const struct xvimage *f,
         int32_t connex) 
 /* reconstruction de g sous f */
 /* g : image marqueur */
@@ -1867,7 +1867,7 @@ int32_t lreconseros3d(
 /* ==================================== */
 int32_t lamont(
         struct xvimage *m,
-        struct xvimage *f,
+        const struct xvimage *f,
         int32_t connex,
         int32_t strict) 
 /* connex : 4, 8 (en 2D), 6, 18, 26 (en 3D) */

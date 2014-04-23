@@ -44,76 +44,76 @@ extern "C" {
 
 extern int32_t lskelubp(
         struct xvimage *image,
-        struct xvimage *prio,
+        const struct xvimage *prio,
         int32_t connex,
         int32_t inhibit
 );
 extern int32_t lskelubp2(
         struct xvimage *image,
-        struct xvimage *prio,
+        const struct xvimage *prio,
         int32_t connex,
-        struct xvimage *imageinhib
+        const struct xvimage *imageinhib
 );
 extern int32_t lskelubp3d(
         struct xvimage *image, 
-        struct xvimage *imageprio, 
+        const struct xvimage *imageprio, 
         int32_t connex, 
         int32_t val_inhibit
 );
 extern int32_t lskelubp3d2(
         struct xvimage *image, 
-        struct xvimage *imageprio, 
+        const struct xvimage *imageprio, 
         int32_t connex, 
-        struct xvimage *imageinhib
+        const struct xvimage *imageinhib
 );
 extern int32_t lskelubp3d2lab(
 	struct xvimage *image, 
-	struct xvimage *imageprio, 
+	const struct xvimage *imageprio, 
 	int32_t connex, 
-	struct xvimage *imageinhib
+	const struct xvimage *imageinhib
 );
 extern int32_t lskelcurv(
         struct xvimage *image, 
-        struct xvimage *imageprio, 
-        struct xvimage *inhibit, 
+        const struct xvimage *imageprio, 
+        const struct xvimage *inhibit, 
         int32_t connex
 );
 extern int32_t lskelcurv3d(
         struct xvimage *image, 
-        struct xvimage *imageprio, 
-        struct xvimage *inhibit, 
+        const struct xvimage *imageprio, 
+        const struct xvimage *inhibit, 
         int32_t connex
 );
 extern int32_t lskelsurf3d(
         struct xvimage *image, 
-        struct xvimage *imageprio, 
-        struct xvimage *inhibit, 
+        const struct xvimage *imageprio, 
+        const struct xvimage *inhibit, 
 	int32_t connex
 );
 extern int32_t ltoposhrink(
         struct xvimage *image, 
-        struct xvimage *imageprio, 
+        const struct xvimage *imageprio, 
         int32_t connex, 
         int32_t tmin, 
         int32_t tmax, 
         int32_t tbmin, 
         int32_t tbmax, 
-        struct xvimage *imageinhibit
+        const struct xvimage *imageinhibit
 );
 extern int32_t ltoposhrink3d(
         struct xvimage *image, 
-        struct xvimage *imageprio, 
+        const struct xvimage *imageprio, 
         int32_t connex, 
         int32_t tmin, 
         int32_t tmax, 
         int32_t tbmin, 
         int32_t tbmax, 
-        struct xvimage *imageinhibit
+        const struct xvimage *imageinhibit
 );
 extern int32_t lskeleucl(
 	struct xvimage *image, 
         int32_t connex, 
-        struct xvimage *imageinhib
+        const struct xvimage *imageinhib
 );
 extern int32_t lskelend2d(
         struct xvimage *image, 
@@ -138,61 +138,61 @@ extern int32_t lskelendcurvlab3d(
 );
 extern int32_t lskeldir3d(
         struct xvimage *image, 
-	struct xvimage *inhibit, 
+	const struct xvimage *inhibit, 
 	int32_t connex, 
 	int32_t nsteps
 );
 extern int32_t lskeldir3d_1(
         struct xvimage *image, 
-	struct xvimage *inhibit, 
+	const struct xvimage *inhibit, 
 	int32_t connex, 
 	int32_t nsteps
 );
 extern int32_t lskelPSG(
 	struct xvimage *image, 
-	struct xvimage *imageprio, 
+	const struct xvimage *imageprio, 
 	double val
 );
 extern int32_t lskelPSG2(
 	struct xvimage *image, 
-	struct xvimage *imageprio, 
+	const struct xvimage *imageprio, 
 	double val
 );
 extern int32_t lskelPSG3(
 	struct xvimage *image, 
-	struct xvimage *imageprio, 
+	const struct xvimage *imageprio, 
 	double val
 );
 extern int32_t lskelCKG(
 	struct xvimage *image,
-	struct xvimage *imageprio, 
+	const struct xvimage *imageprio, 
 	double val
 );
 extern int32_t lskelCKG2(
 	struct xvimage *image,
-	struct xvimage *imageprio, 
+	const struct xvimage *imageprio, 
 	double val
 );
 extern int32_t lskelCKG3(
 	struct xvimage *image,
-	struct xvimage *imageprio, 
+	const struct xvimage *imageprio, 
 	double val
 );
 extern int32_t lskelCKGmap(
 	struct xvimage *imageprio,
-	struct xvimage *image
+	const struct xvimage *image
 );
 extern int32_t lskelCKG2map(
 	struct xvimage *imageprio,
-	struct xvimage *image
+	const struct xvimage *image
 );
 extern int32_t lskelCKG3map(
 	struct xvimage *imageprio,
-	struct xvimage *image
+	const struct xvimage *image
 );
 extern int32_t lskelCKSC3(
 	struct xvimage *image, 
-	struct xvimage *inhibit,
+	const struct xvimage *inhibit,
 	int32_t nsteps
 );
 #ifdef __cplusplus
