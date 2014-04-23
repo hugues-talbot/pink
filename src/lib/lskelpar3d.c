@@ -33,7 +33,7 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 /* 
-   Algorithmes 3D parallèles de squelettisation
+   Algorithmes 3D parallï¿½les de squelettisation
    
    Michel Couprie
 
@@ -64,8 +64,8 @@ knowledge of the CeCILL license and that you accept its terms.
 
    Update MC 19/12/2011 : introduction des cliques D-cruciales
    Update MC 03/08/2012 : fix bug asym_match_vois0
-   Update MC 02/11/2012 : squelettes symétriques avec persistence
-   Update MC 27/01/2014 : squelettes asymétriques avec persistence
+   Update MC 02/11/2012 : squelettes symï¿½triques avec persistence
+   Update MC 27/01/2014 : squelettes asymï¿½triques avec persistence
 */
 
 #include <stdio.h>
@@ -161,7 +161,7 @@ static void extract_vois(
                22      17      18
                23      24      25
 
-  le point p ne doit pas être un point de bord de l'image
+  le point p ne doit pas ï¿½tre un point de bord de l'image
 */
 /* ==================================== */
 {
@@ -216,7 +216,7 @@ static void insert_vois(
   index_t N)                       /* taille image */    
 /* 
   recopie vois dans le voisinage de p
-  le point p ne doit pas être un point de bord de l'image
+  le point p ne doit pas ï¿½tre un point de bord de l'image
 */
 /* ==================================== */
 {
@@ -280,8 +280,8 @@ static void print_vois(uint8_t *vois)
 
 /* ==================================== */
 static void isometrieXZ_vois(uint8_t *vois) 
-// effectue une isométrie du voisinage "vois" par échange des axes X et Z (+ symétries)
-// cette isométrie est de plus une involution
+// effectue une isomï¿½trie du voisinage "vois" par ï¿½change des axes X et Z (+ symï¿½tries)
+// cette isomï¿½trie est de plus une involution
 /* ==================================== */
 {
   uint8_t v[26];
@@ -298,8 +298,8 @@ static void isometrieXZ_vois(uint8_t *vois)
 
 /* ==================================== */
 static void isometrieYZ_vois(uint8_t *vois)
-// effectue une isométrie du voisinage "vois" par échange des axes Y et Z (+ symétries)  
-// cette isométrie est de plus une involution
+// effectue une isomï¿½trie du voisinage "vois" par ï¿½change des axes Y et Z (+ symï¿½tries)  
+// cette isomï¿½trie est de plus une involution
 /* ==================================== */
 {
   uint8_t v[26];
@@ -331,7 +331,7 @@ static int32_t match_end(uint8_t *v)
                23      24      25
 
 Teste si au moins un des points 12, 11, 13, 8, 3, 2, 4 est objet et tous les autres fond
-(aussi avec les isométries). 
+(aussi avec les isomï¿½tries). 
 */
 {
 #ifdef DEBUG
@@ -404,10 +404,10 @@ static int32_t match_vois2(uint8_t *v)
 		3	2	1			
 		4      26	0
 		5	6	7
-Teste si les conditions suivantes sont réunies:
-1: v[8] et v[26] doivent être dans l'objet et simples
-2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit être non 2D-simple
-Si le test réussit, les points 8, 26 sont marqués DCRUCIAL
+Teste si les conditions suivantes sont rï¿½unies:
+1: v[8] et v[26] doivent ï¿½tre dans l'objet et simples
+2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit ï¿½tre non 2D-simple
+Si le test rï¿½ussit, les points 8, 26 sont marquï¿½s DCRUCIAL
 */
 {
   uint8_t t;
@@ -449,12 +449,12 @@ static int32_t match_vois2s(uint8_t *v)
 		4      26	0
 		5	6	7
 Pour les conditions de courbe et de surface.
-Teste si les deux conditions suivantes sont réunies:
-1: v[8] et v[26] doivent être simples
-2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit être non 2D-simple
-Si le test réussit, alors les points 8, 26 sont marqués DCRUCIAL, de plus:
-  Si t4b(w[0...7]) == 0 alors les points 8, 26 sont marqués SURF
-  Sinon, si t8(w[0...7]) > 1 alors les points 8, 26 sont marqués CURVE
+Teste si les deux conditions suivantes sont rï¿½unies:
+1: v[8] et v[26] doivent ï¿½tre simples
+2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit ï¿½tre non 2D-simple
+Si le test rï¿½ussit, alors les points 8, 26 sont marquï¿½s DCRUCIAL, de plus:
+  Si t4b(w[0...7]) == 0 alors les points 8, 26 sont marquï¿½s SURF
+  Sinon, si t8(w[0...7]) > 1 alors les points 8, 26 sont marquï¿½s CURVE
 */
 {
   uint8_t t;
@@ -502,11 +502,11 @@ static int32_t match_vois1(uint8_t *v)
 // 11 10    2 1   20 19
 //  8  9   26 0   17 18
 //
-// Teste si les trois conditions suivantes sont réunies:
+// Teste si les trois conditions suivantes sont rï¿½unies:
 // 1: (P1 et P4) ou (P2 et P3)
-// 2: tous les points Pi non nuls doivent être simples et non marqués DCRUCIAL
+// 2: tous les points Pi non nuls doivent ï¿½tre simples et non marquï¿½s DCRUCIAL
 // 3: A et B sont tous nuls ou [au moins un A non nul et au moins un B non nul]
-// Si le test réussit, les points Pi non nuls sont marques DCRUCIAL
+// Si le test rï¿½ussit, les points Pi non nuls sont marques DCRUCIAL
 {
   int32_t ret = 0;
 #ifdef DEBUG
@@ -564,11 +564,11 @@ static int32_t match_vois1s(uint8_t *v)
 //  8  9   26 0   17 18
 //
 // Pour la condition de courbe. 
-// Teste si les trois conditions suivantes sont réunies:
+// Teste si les trois conditions suivantes sont rï¿½unies:
 // 1: (P1 et P4) ou (P2 et P3)
-// 2: tous les points Pi non nuls doivent être simples et non DCRUCIAL
+// 2: tous les points Pi non nuls doivent ï¿½tre simples et non DCRUCIAL
 // 3: au moins un A non nul et au moins un B non nul
-// Si le test réussit, les points Pi non nuls sont marques CURVE
+// Si le test rï¿½ussit, les points Pi non nuls sont marques CURVE
 {
   int32_t ret = 0;
 #ifdef DEBUG
@@ -621,10 +621,10 @@ static int32_t match_vois0(uint8_t *v)
 		3	2
 		4      26
 
-Teste si les conditions suivantes sont réunies:
+Teste si les conditions suivantes sont rï¿½unies:
 1: au moins un des ensembles {12,26}, {11,4}, {13,2}, {8,3} est inclus dans l'objet, et
-2: les points non nuls sont tous simples, non marqués DCRUCIAL et non marqués DCRUCIAL
-Si le test réussit, les points non nuls sont marqués DCRUCIAL
+2: les points non nuls sont tous simples, non marquï¿½s DCRUCIAL et non marquï¿½s DCRUCIAL
+Si le test rï¿½ussit, les points non nuls sont marquï¿½s DCRUCIAL
 */
 {
 #ifdef DEBUG
@@ -671,7 +671,7 @@ static int32_t match2(uint8_t *v)
   isometrieXZ_vois(v);
   isometrieYZ_vois(v);
   if (match_vois2(v)) ret = 1;
-  isometrieYZ_vois(v); // nécessaire à cause du insert_vois qui suit
+  isometrieYZ_vois(v); // nï¿½cessaire ï¿½ cause du insert_vois qui suit
   return ret;
 } /* match2() */
 
@@ -686,7 +686,7 @@ static int32_t match2s(uint8_t *v)
   isometrieXZ_vois(v);
   isometrieYZ_vois(v);
   if (match_vois2s(v)) ret = 1;
-  isometrieYZ_vois(v); // nécessaire à cause du insert_vois qui suit
+  isometrieYZ_vois(v); // nï¿½cessaire ï¿½ cause du insert_vois qui suit
   return ret;
 } /* match2s() */
 
@@ -701,7 +701,7 @@ static int32_t match1(uint8_t *v)
   isometrieXZ_vois(v);
   isometrieYZ_vois(v);
   if (match_vois1(v)) ret = 1;
-  isometrieYZ_vois(v); // nécessaire à cause du insert_vois qui suit
+  isometrieYZ_vois(v); // nï¿½cessaire ï¿½ cause du insert_vois qui suit
   return ret;
 } /* match1() */
 
@@ -716,7 +716,7 @@ static int32_t match1s(uint8_t *v)
   isometrieXZ_vois(v);
   isometrieYZ_vois(v);
   if (match_vois1s(v)) ret = 1;
-  isometrieYZ_vois(v); // nécessaire à cause du insert_vois qui suit
+  isometrieYZ_vois(v); // nï¿½cessaire ï¿½ cause du insert_vois qui suit
   return ret;
 } /* match1s() */
 
@@ -735,11 +735,11 @@ int32_t lskelMK3a(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symétrique ultime
-Algo MK3a données: S
-Répéter jusqu'à stabilité
+Squelette symï¿½trique ultime
+Algo MK3a donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   P := voxels simples pour S
-  R := voxels de P à préserver (match2, match1, match0)
+  R := voxels de P ï¿½ prï¿½server (match2, match1, match0)
   T :=  [S  \  P]  \cup  R
   S := T \cup [S \ (T \oplus \Gamma_26*)]
 
@@ -823,7 +823,7 @@ writeimage(image,"_S");
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup  R, oï¿½ R reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
@@ -863,10 +863,10 @@ int32_t lskelEK3(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symétrique curviligne basé sur les extrémités
-Algo EK3 données: S
-Répéter jusqu'à stabilité
-  E := points extrémité de S
+Squelette symï¿½trique curviligne basï¿½ sur les extrï¿½mitï¿½s
+Algo EK3 donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
+  E := points extrï¿½mitï¿½ de S
   P := voxels simples pour S et pas dans E
   C2 := voxels 2-D-cruciaux (match2)
   C1 := voxels 1-D-cruciaux (match1)
@@ -959,7 +959,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup M, oï¿½ M reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
@@ -992,9 +992,9 @@ int32_t lskelCK3a(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symétrique curviligne
-Algo CK3a données: S
-Répéter jusqu'à stabilité
+Squelette symï¿½trique curviligne
+Algo CK3a donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   C := points de courbe de S
   I := I \cup C
   P := voxels simples pour S et pas dans I
@@ -1116,7 +1116,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup M, oï¿½ M reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
@@ -1149,12 +1149,12 @@ int32_t lskelCK3b(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symétrique curviligne
-Variante avec reconstruction des points extrémités
-Algo CK3b données: S
-Répéter jusqu'à stabilité
+Squelette symï¿½trique curviligne
+Variante avec reconstruction des points extrï¿½mitï¿½s
+Algo CK3b donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   C := points de courbe de S
-  E := points extrémités de S
+  E := points extrï¿½mitï¿½s de S
   C := C union [E inter gamma(C)] 
   I := I \cup C
   P := voxels simples pour S et pas dans I
@@ -1301,7 +1301,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup M, oï¿½ M reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
@@ -1335,11 +1335,11 @@ int32_t lskelCK3(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symétrique curviligne, variante
-Les points "candidats" à devenir des points de courbes sont les
+Squelette symï¿½trique curviligne, variante
+Les points "candidats" ï¿½ devenir des points de courbes sont les
 points qui ne sont pas voisins d'un point isthme 2D ni d'un point interieur
-Algo CK3 données: S
-Répéter jusqu'à stabilité
+Algo CK3 donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   C := points de courbe de S
   P := voxels simples pour S et pas dans C
   C2 := voxels 2-D-cruciaux (match2)
@@ -1430,14 +1430,14 @@ Attention : l'objet ne doit pas toucher le bord de l'image
           j = voisin6(i, k, rs, ps, N);
           if ((j != -1) && IS_SELECTED(S[j])) break;
 	}
-	if (k == 12) // le voxel est résiduel
+	if (k == 12) // le voxel est rï¿½siduel
 #else
 	for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
         {
 	  j = voisin26(i, k, rs, ps, N);
           if ((j != -1) && IS_SELECTED(S[j])) break;
 	}
-	if (k == 26) // le voxel est résiduel
+	if (k == 26) // le voxel est rï¿½siduel
 #endif
 	{
 	  for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
@@ -1475,7 +1475,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup M, oï¿½ M reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
@@ -1509,16 +1509,16 @@ int32_t lskelAK3(struct xvimage *image,
 	     int32_t filter)
 /* ==================================== */
 /*
-Amincissement symétrique avec inclusion de l'axe médian
+Amincissement symï¿½trique avec inclusion de l'axe mï¿½dian
 
 A REVOIR : 
-- pb des "échancrures"
-- si on filtre l'axe médian alors l'homotopie n'est plus garantie ?
+- pb des "ï¿½chancrures"
+- si on filtre l'axe mï¿½dian alors l'homotopie n'est plus garantie ?
 (cf. prop. sur les 0-cliques cruciales)
 
-Algo AK3 données: S
+Algo AK3 donnï¿½es: S
 K := \emptyset ; T := S
-Répéter jusqu'à stabilité
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   E := T \ominus \Gamma_6
   D := T \ [E \oplus \Gamma_6]
   T := E
@@ -1631,17 +1631,17 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       { 
 	extract_vois(S, i, rs, ps, N, v);
 	if (match1(v))
-	  //if (match1s(v))  // VARIANTE POUR EVITER LES "ECHANCRURES" (à voir)
+	  //if (match1s(v))  // VARIANTE POUR EVITER LES "ECHANCRURES" (ï¿½ voir)
 	  insert_vois(v, S, i, rs, ps, N);
       }
 
-    // D := [S \ P] \cup  R, où R représente les pts marqués
+    // D := [S \ P] \cup  R, oï¿½ R reprï¿½sente les pts marquï¿½s
     memset(D, 0, N);
     for (i = 0; i < N; i++) 
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	D[i] = 1;
 
-    for (i = 0; i < N; i++) // pour  tester la stabilité
+    for (i = 0; i < N; i++) // pour  tester la stabilitï¿½
       if (S[i] && !D[i]) 
       {
 	S[i] = 0; 
@@ -1671,10 +1671,10 @@ int32_t lskelMK3(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symétrique ultime avec ensemble de contrainte
-Version révisée d'après le papier IWCIA 2006
-Algo MK3 données: S, I
-Répéter jusqu'à stabilité
+Squelette symï¿½trique ultime avec ensemble de contrainte
+Version rï¿½visï¿½e d'aprï¿½s le papier IWCIA 2006
+Algo MK3 donnï¿½es: S, I
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   P := voxels simples pour S et non dans I
   C2 := voxels 2-D-cruciaux (match2)
   C1 := voxels 1-D-cruciaux (match1)
@@ -1755,7 +1755,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup  R, oï¿½ R reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 
@@ -1785,9 +1785,9 @@ int32_t ldisttopo3(struct xvimage *image,
 		   struct xvimage *res)
 /* ==================================== */
 /*
-Idem squelette symétrique ultime (algo MK3).
-Marque les points (dans res) par le nombre d'itérations nécessaires à leur enlèvement.
-Les points non enlevés sont marqués MARK_INFTY.
+Idem squelette symï¿½trique ultime (algo MK3).
+Marque les points (dans res) par le nombre d'itï¿½rations nï¿½cessaires ï¿½ leur enlï¿½vement.
+Les points non enlevï¿½s sont marquï¿½s MARK_INFTY.
 */
 #undef F_NAME
 #define F_NAME "ldisttopo3"
@@ -1884,7 +1884,7 @@ writeimage(image,"_S");
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup  R, oï¿½ R reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
     for (i = 0; i < N; i++)
@@ -1910,9 +1910,9 @@ int32_t ldistaxetopo3(struct xvimage *image,
 		      struct xvimage *res)
 /* ==================================== */
 /*
-Idem squelette symétrique ultime (algo MK3).
-Marque les points (dans res) par le nombre d'itérations nécessaires à leur enlèvement.
-Les points non enlevés sont marqués MARK_INFTY.
+Idem squelette symï¿½trique ultime (algo MK3).
+Marque les points (dans res) par le nombre d'itï¿½rations nï¿½cessaires ï¿½ leur enlï¿½vement.
+Les points non enlevï¿½s sont marquï¿½s MARK_INFTY.
 Retourne dans image l'axe topologique.
 */
 #undef F_NAME
@@ -1998,7 +1998,7 @@ Retourne dans image l'axe topologique.
 	  insert_vois(v, S, i, rs, ps, N);
       }
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup  R, oï¿½ R reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
     memset(R, 0, N);
@@ -2094,10 +2094,10 @@ int32_t asym_match_vois2(uint8_t *v)
 		3	2	1			
 		4      26	0
 		5	6	7
-Teste si les conditions suivantes sont réunies:
-1: v[8] et v[26] doivent être dans l'objet et simples et non sélectionnés
-2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit être non 2D-simple
-Si le test réussit, le point 8 est marqué SELECTED
+Teste si les conditions suivantes sont rï¿½unies:
+1: v[8] et v[26] doivent ï¿½tre dans l'objet et simples et non sï¿½lectionnï¿½s
+2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit ï¿½tre non 2D-simple
+Si le test rï¿½ussit, le point 8 est marquï¿½ SELECTED
 */
 {
   uint8_t t;
@@ -2127,11 +2127,11 @@ int32_t asym_match_vois1(uint8_t *v)
 // 11 10    2 1   20 19
 //  8  9   26 0   17 18
 //
-// Teste si les trois conditions suivantes sont réunies:
+// Teste si les trois conditions suivantes sont rï¿½unies:
 // 1: (P1 et P4) ou (P2 et P3)
-// 2: tous les points Pi non nuls doivent être simples et non marqués SELECTED
+// 2: tous les points Pi non nuls doivent ï¿½tre simples et non marquï¿½s SELECTED
 // 3: A et B sont tous nuls ou [au moins un A non nul et au moins un B non nul]
-// Si le test réussit, un des points Pi non nuls est marqué SELECTED
+// Si le test rï¿½ussit, un des points Pi non nuls est marquï¿½ SELECTED
 {
   int32_t ret = 0;
   if (!((v[2] && v[4]) || (v[3] && v[26]))) goto next1;
@@ -2181,11 +2181,11 @@ int32_t asym_match_vois0(uint8_t *v)
                22      17      18
                23      24      25
 
-Teste si les conditions suivantes sont réunies:
+Teste si les conditions suivantes sont rï¿½unies:
 1: au moins un des ensembles {26,12}, {26,10}, {26,14}, {26,21} est inclus dans l'objet, et
 2: les points non nuls du cube 2x2x2 contenant cet ensemble sont tous simples, 
-   non marqués SELECTED
-Si le test réussit, le point 26 est marqué SELECTED
+   non marquï¿½s SELECTED
+Si le test rï¿½ussit, le point 26 est marquï¿½ SELECTED
 */
 {
   if (!v[26]) return 0;
@@ -2297,9 +2297,9 @@ int32_t lskelAMK3(struct xvimage *image,
 		   struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette asymétrique ultime avec ensemble de contrainte
-Algo AMK3c données: S
-Répéter jusqu'à stabilité
+Squelette asymï¿½trique ultime avec ensemble de contrainte
+Algo AMK3c donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   P := voxels simples pour S et non dans I
   C2 := voxels 2-D-cruciaux (asym_match2)
   C1 := voxels 1-D-cruciaux (asym_match1)
@@ -2381,7 +2381,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup  R, oï¿½ R reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_SELECTED(S[i]))
 	T[i] = 1;
 
@@ -2424,10 +2424,10 @@ int32_t lskelAEK3(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette asymétrique curviligne basé sur les points extrémités
-Algo AEK3 données: S
-Répéter jusqu'à stabilité
-  C := points extrémités de S
+Squelette asymï¿½trique curviligne basï¿½ sur les points extrï¿½mitï¿½s
+Algo AEK3 donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
+  C := points extrï¿½mitï¿½s de S
   I := I \cup C
   P := voxels simples pour S et pas dans I
   C2 := voxels 2-D-cruciaux (asym_match2)
@@ -2530,7 +2530,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup M, oï¿½ M reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_SELECTED(S[i]))
 	T[i] = 1;
 
@@ -2582,9 +2582,9 @@ int32_t lskelACK3a(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette asymétrique curviligne
-Algo ACK3a données: S
-Répéter jusqu'à stabilité
+Squelette asymï¿½trique curviligne
+Algo ACK3a donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   C := points de courbe de S
   I := I \cup C
   P := voxels simples pour S et pas dans I
@@ -2594,8 +2594,8 @@ Répéter jusqu'à stabilité
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
-Les points de courbe détectés dans les n_earlysteps premières étapes
-sont marqués dans l'image de sortie par une valeur 127 (au lieu de 255)
+Les points de courbe dï¿½tectï¿½s dans les n_earlysteps premiï¿½res ï¿½tapes
+sont marquï¿½s dans l'image de sortie par une valeur 127 (au lieu de 255)
 
 Attention : l'objet ne doit pas toucher le bord de l'image
 */
@@ -2706,7 +2706,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup M, oï¿½ M reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_SELECTED(S[i]))
 	T[i] = 1;
 
@@ -2747,9 +2747,9 @@ int32_t lskelACK3a(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette asymétrique curviligne
-Algo ACK3a données: S
-Répéter jusqu'à stabilité
+Squelette asymï¿½trique curviligne
+Algo ACK3a donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   C := points de courbe de S
   I := I \cup C
   P := voxels simples pour S et pas dans I
@@ -2759,8 +2759,8 @@ Répéter jusqu'à stabilité
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
-Les points de courbe détectés dans les n_earlysteps premières étapes
-sont marqués dans l'image de sortie par une valeur 127 (au lieu de 255)
+Les points de courbe dï¿½tectï¿½s dans les n_earlysteps premiï¿½res ï¿½tapes
+sont marquï¿½s dans l'image de sortie par une valeur 127 (au lieu de 255)
 
 Implementation avec listes de points candidats
 
@@ -2881,7 +2881,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     for (x = 0; x < RLIFO1->Sp; x++)
     {
       i = RLIFO1->Pts[x];
-      // T := [S \ P] \cup M, où M représente les pts marqués
+      // T := [S \ P] \cup M, oï¿½ M reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_SELECTED(S[i]))
 	T[i] = 1;
     }
@@ -2958,11 +2958,11 @@ int32_t lskelACK3(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette asymétrique curviligne, variante
-Les points "candidats" à devenir des points de courbes sont les
+Squelette asymï¿½trique curviligne, variante
+Les points "candidats" ï¿½ devenir des points de courbes sont les
 points qui ne sont pas voisins d'un point isthme 2D ni d'un point interieur
-Algo ACK3 données: S
-Répéter jusqu'à stabilité
+Algo ACK3 donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   C := points de courbe de S
   I := I \cup C
   P := voxels simples pour S et pas dans I
@@ -3053,7 +3053,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	  j = voisin26(i, k, rs, ps, N);
           if ((j != -1) && IS_SELECTED(S[j])) break;
 	}
-	if (k == 26) // le voxel est résiduel
+	if (k == 26) // le voxel est rï¿½siduel
 	{
 	  for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
           {
@@ -3093,7 +3093,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup M, oï¿½ M reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_SELECTED(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
@@ -3132,11 +3132,11 @@ int32_t lskelRK3(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symétrique surfacique (par préservation des points résiduels)
-Les points résiduels sont les points qui ne sont pas voisins d'un point interieur
-Algo RK3 données: S
-Répéter jusqu'à stabilité
-  C := points résiduels de S
+Squelette symï¿½trique surfacique (par prï¿½servation des points rï¿½siduels)
+Les points rï¿½siduels sont les points qui ne sont pas voisins d'un point interieur
+Algo RK3 donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
+  C := points rï¿½siduels de S
   P := voxels simples pour S et pas dans C
   C2 := voxels 2-D-cruciaux (match2)
   C1 := voxels 1-D-cruciaux (match1)
@@ -3216,7 +3216,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
           j = voisin6(i, k, rs, ps, N);
           if ((j != -1) && IS_SELECTED(S[j])) break;
 	}
-	if (k == 12) // le voxel est résiduel
+	if (k == 12) // le voxel est rï¿½siduel
 	  UNSET_SIMPLE(S[i]);
       }
     }
@@ -3246,7 +3246,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup M, oï¿½ M reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
@@ -3279,11 +3279,11 @@ int32_t lskelRK3_26(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symétrique surfacique (par préservation des points résiduels)
-Les points résiduels sont les points qui ne sont pas voisins d'un point interieur
-Algo RK3 données: S
-Répéter jusqu'à stabilité
-  C := points résiduels de S
+Squelette symï¿½trique surfacique (par prï¿½servation des points rï¿½siduels)
+Les points rï¿½siduels sont les points qui ne sont pas voisins d'un point interieur
+Algo RK3 donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
+  C := points rï¿½siduels de S
   P := voxels simples pour S et pas dans C
   C2 := voxels 2-D-cruciaux (match2)
   C1 := voxels 1-D-cruciaux (match1)
@@ -3363,7 +3363,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	  j = voisin26(i, k, rs, ps, N);
           if ((j != -1) && IS_SELECTED(S[j])) break;
 	}
-	if (k == 26) // le voxel est résiduel
+	if (k == 26) // le voxel est rï¿½siduel
 	  UNSET_SIMPLE(S[i]);
       }
     }
@@ -3393,7 +3393,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup M, oï¿½ M reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
@@ -3426,10 +3426,10 @@ int32_t lskelSK3(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symétrique surfacique basé sur les isthmes 2D
-Les points "candidats" à devenir des points de surface sont les isthmes 2D
-Algo SK3 données: S
-Répéter jusqu'à stabilité
+Squelette symï¿½trique surfacique basï¿½ sur les isthmes 2D
+Les points "candidats" ï¿½ devenir des points de surface sont les isthmes 2D
+Algo SK3 donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   C := points de surface de S
   P := voxels simples pour S et pas dans C
   C2 := voxels 2-D-cruciaux (match2)
@@ -3544,7 +3544,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup M, oï¿½ M reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
@@ -3577,9 +3577,9 @@ int32_t lskelSK3a(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symétrique surfacique et curviligne basé sur les isthmes 2D et 1D
-Algo SK3a données: S
-Répéter jusqu'à stabilité
+Squelette symï¿½trique surfacique et curviligne basï¿½ sur les isthmes 2D et 1D
+Algo SK3a donnï¿½es: S
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   C := points de surface ou de courbe de S
   P := voxels simples pour S et pas dans C
   C2 := voxels 2-D-cruciaux (match2)
@@ -3704,7 +3704,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
 
     memset(T, 0, N);
-    for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
+    for (i = 0; i < N; i++) // T := [S \ P] \cup M, oï¿½ M reprï¿½sente les pts marquï¿½s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
@@ -3733,7 +3733,7 @@ writeimage(t,"_T");
 
 // ===================================================================
 // ===================================================================
-// SQUELETTES DIRECTIONNELS (6 sous-itérations)
+// SQUELETTES DIRECTIONNELS (6 sous-itï¿½rations)
 // ===================================================================
 // ===================================================================
 
@@ -3775,7 +3775,7 @@ static int32_t direction(
                 .       5       .       
                 .       .       .       
 #endif
-  le point p ne doit pas être un point de bord de l'image
+  le point p ne doit pas ï¿½tre un point de bord de l'image
 */
 /* ==================================== */
 {
@@ -3822,8 +3822,8 @@ int32_t lskelDK3(struct xvimage *image,
 /* ==================================== */
 /*
 Squelette directionnel ultime avec ensemble de contrainte
-Algo DK3 données: S, I
-Répéter jusqu'à stabilité
+Algo DK3 donnï¿½es: S, I
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   Pour Dir dans {0..5}
     P := voxels simples pour S, de direction Dir et non dans I
     C2 := voxels 2-D-cruciaux (match2)
@@ -3910,7 +3910,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	}
 
       memset(T, 0, N);
-      for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
+      for (i = 0; i < N; i++) // T := [S \ P] \cup  R, oï¿½ R reprï¿½sente les pts marquï¿½s
 	if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	  T[i] = 1;
 
@@ -3943,10 +3943,10 @@ int32_t lskelDRK3(struct xvimage *image,
 /* ==================================== */
 /*
 Squelette directionnel ultime avec ensemble de contrainte
-Algo DRK3 données: S, I
-Répéter jusqu'à stabilité
+Algo DRK3 donnï¿½es: S, I
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   Pour Dir dans {0..5}
-    R := points résiduels de S ; I := I \cup R
+    R := points rï¿½siduels de S ; I := I \cup R
     P := voxels simples pour S, de direction Dir et non dans I
     C2 := voxels 2-D-cruciaux (match2)
     C1 := voxels 1-D-cruciaux (match1)
@@ -4026,7 +4026,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	    j = voisin6(i, k, rs, ps, N);
 	    if ((j != -1) && IS_SELECTED(S[j])) break;
 	  }
-	  if (k == 12) // le voxel est résiduel
+	  if (k == 12) // le voxel est rï¿½siduel
 	    UNSET_SIMPLE(S[i]);
 #else
 	  for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
@@ -4034,7 +4034,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	    j = voisin26(i, k, rs, ps, N);
 	    if ((j != -1) && IS_SELECTED(S[j])) break;
 	  }
-	  if (k == 26) // le voxel est résiduel
+	  if (k == 26) // le voxel est rï¿½siduel
 	    UNSET_SIMPLE(S[i]);
 #endif
 	}
@@ -4068,7 +4068,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	}
 
       memset(T, 0, N);
-      for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
+      for (i = 0; i < N; i++) // T := [S \ P] \cup  R, oï¿½ R reprï¿½sente les pts marquï¿½s
 	if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	  T[i] = 1;
 
@@ -4101,8 +4101,8 @@ int32_t lskelDSK3(struct xvimage *image,
 /* ==================================== */
 /*
 Squelette directionnel ultime avec ensemble de contrainte
-Algo DSK3 données: S, I
-Répéter jusqu'à stabilité
+Algo DSK3 donnï¿½es: S, I
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   Pour Dir dans {0..5}
     C := points de surface de S ; I := I \cup C
     P := voxels simples pour S, de direction Dir et non dans I
@@ -4206,7 +4206,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	}
 
       memset(T, 0, N);
-      for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
+      for (i = 0; i < N; i++) // T := [S \ P] \cup  R, oï¿½ R reprï¿½sente les pts marquï¿½s
 	if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	  T[i] = 1;
 
@@ -4313,8 +4313,8 @@ int32_t lskelACK3p(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette asymétrique curviligne
-Algo ACK3p données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
+Squelette asymï¿½trique curviligne
+Algo ACK3p donnï¿½es: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
 Pour tout x de S faire T[x] := PERS_INIT_VAL
 Pour i := 0; i < n; i++
   C := points de courbe de S
@@ -4461,11 +4461,11 @@ int32_t lskelACK3c(
 		   struct xvimage *persistence)
 /* ==================================== */
 /*
-Squelette asymétrique curviligne - fonction persistance
-Algo ACK3c données: S (image) résultat: P (persistance)
+Squelette asymï¿½trique curviligne - fonction persistance
+Algo ACK3c donnï¿½es: S (image) rï¿½sultat: P (persistance)
 Pour tout x de S faire P[x] := PERS_INIT_VAL
 i := 0
-Répéter jusqu'à stabilité
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   i := i + 1
   C := points de courbe de S
   Pour tout x de C tq P[x] == PERS_INIT_VAL faire P[x] := i // date de naissance
@@ -4490,7 +4490,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   index_t ps = rs * cs;            /* taille plan */
   index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);   /* l'image de depart */
-  float *P = FLOATDATA(persistence);   /* résultat */
+  float *P = FLOATDATA(persistence);   /* rï¿½sultat */
   int32_t step, nonstab;
   int32_t top, topb;
   uint8_t v[27];
@@ -4585,8 +4585,8 @@ int32_t lskelASK3p(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette asymétrique surfacique
-Algo ASK3a données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
+Squelette asymï¿½trique surfacique
+Algo ASK3a donnï¿½es: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
 Pour tout x de S faire T[x] := PERS_INIT_VAL
 Pour i := 0; i < n; i++
   C := points de surface de S
@@ -4735,8 +4735,8 @@ int32_t lskelCK3p(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symétrique curviligne
-Algo CK3p données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
+Squelette symï¿½trique curviligne
+Algo CK3p donnï¿½es: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
 Pour tout x de S faire T[x] := PERS_INIT_VAL
 i := 0 
 Repeat
@@ -4885,7 +4885,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       {
 	SET_INHIBIT(I[i]); 
 #ifdef DEBUG_SKEL_CK3P
-	printf("point %d (%d %d %d) ajout à K\n", i, i % rs, (i % ps) / rs,  i / ps);
+	printf("point %d (%d %d %d) ajout ï¿½ K\n", i, i % rs, (i % ps) / rs,  i / ps);
 #endif	
       }
       if (IS_INHIBIT(I[i])) UNSET_SIMPLE(S[i]);
@@ -4918,8 +4918,8 @@ int32_t lskelSK3p(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symétrique surfacique
-Algo SK3p données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
+Squelette symï¿½trique surfacique
+Algo SK3p donnï¿½es: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
 Pour tout x de S faire T[x] := PERS_INIT_VAL
 Pour i := 0; i < n; i++
   C := points de surface de S
@@ -5074,8 +5074,8 @@ int32_t lskelSCK3p(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symétrique surfacique-curviligne
-Algo SCK3p données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
+Squelette symï¿½trique surfacique-curviligne
+Algo SCK3p donnï¿½es: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
 Pour tout x de S faire T[x] := PERS_INIT_VAL
 Pour i := 0; i < n; i++
   C := points de surface ou de courbe de S
@@ -5241,8 +5241,8 @@ int32_t lskelASCK3p(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette asymétrique surfacique-curviligne
-Algo ASCK3p données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
+Squelette asymï¿½trique surfacique-curviligne
+Algo ASCK3p donnï¿½es: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
 Pour tout x de S faire T[x] := PERS_INIT_VAL
 Pour i := 0; i < n; i++
   C := points de surface ou de courbe de S
@@ -5390,12 +5390,12 @@ int32_t lskelCK3_pers(struct xvimage *image,
 		       struct xvimage *persistence)
 /* ==================================== */
 /*
-Squelette symétrique curviligne - fonction persistance
-Algo CK3_pers données: S (image) résultat: P (persistance)
+Squelette symï¿½trique curviligne - fonction persistance
+Algo CK3_pers donnï¿½es: S (image) rï¿½sultat: P (persistance)
 
 Pour tout x de S faire P[x] := PERS_INIT_VAL
 i := 0
-Répéter jusqu'à stabilité
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   i := i + 1
   C := points de courbe de S
   Pour tout x de C tq P[x] == PERS_INIT_VAL faire P[x] := i // date de naissance
@@ -5421,7 +5421,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   index_t ps = rs * cs;            /* taille plan */
   index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
-  float *P = FLOATDATA(persistence);   /* résultat */
+  float *P = FLOATDATA(persistence);   /* rï¿½sultat */
   int32_t step, nonstab;
   int32_t top, topb;
   uint8_t v[27];
@@ -5538,12 +5538,12 @@ int32_t lskelSK3_pers(struct xvimage *image,
 		      struct xvimage *persistence)
 /* ==================================== */
 /*
-Squelette symétrique surfacique - fonction persistance
-Algo SK3_pers données: S (image) résultat: P (persistance)
+Squelette symï¿½trique surfacique - fonction persistance
+Algo SK3_pers donnï¿½es: S (image) rï¿½sultat: P (persistance)
 
 Pour tout x de S faire P[x] := PERS_INIT_VAL
 i := 0
-Répéter jusqu'à stabilité
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   i := i + 1
   C := points de surface de S
   Pour tout x de C tq P[x] == PERS_INIT_VAL faire P[x] := i // date de naissance
@@ -5569,7 +5569,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   index_t ps = rs * cs;            /* taille plan */
   index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
-  float *P = FLOATDATA(persistence);   /* résultat */
+  float *P = FLOATDATA(persistence);   /* rï¿½sultat */
   int32_t step, nonstab;
   int32_t top, topb;
   uint8_t v[27];
@@ -5676,12 +5676,12 @@ int32_t lskelSCK3_pers(struct xvimage *image,
 		       struct xvimage *persistence)
 /* ==================================== */
 /*
-Squelette symétrique curviligne et surfacique - fonction persistance
-Algo SCK3_pers données: S (image) résultat: P (persistance)
+Squelette symï¿½trique curviligne et surfacique - fonction persistance
+Algo SCK3_pers donnï¿½es: S (image) rï¿½sultat: P (persistance)
 
 Pour tout x de S faire P[x] := PERS_INIT_VAL
 i := 0
-Répéter jusqu'à stabilité
+Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
   i := i + 1
   C := points de courbe ou de surface de S
   Pour tout x de C tq P[x] == PERS_INIT_VAL faire P[x] := i // date de naissance
@@ -5707,7 +5707,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   index_t ps = rs * cs;            /* taille plan */
   index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
-  float *P = FLOATDATA(persistence);   /* résultat */
+  float *P = FLOATDATA(persistence);   /* rï¿½sultat */
   int32_t step, nonstab;
   int32_t top, topb;
   uint8_t v[27];

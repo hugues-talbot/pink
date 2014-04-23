@@ -129,7 +129,7 @@ int main(int argc, char **argv)
 
   if ((connex == 4) || (connex == 8))
   {
-    if (! llpemeyersansligne(image, marqueurs, marqueursfond, masque, connex, result))
+    if (! llpemeyer_llpemeyersansligne(image, marqueurs, marqueursfond, masque, connex, result))
     {
       fprintf(stderr, "%s: llpemeyersansligne failed\n", argv[0]);
       exit(1);
@@ -137,7 +137,7 @@ int main(int argc, char **argv)
   }
   else if ((connex == 6) || (connex == 18) || (connex == 26))
   {
-    if (! llpemeyer3dsansligne(image, marqueurs, marqueursfond, masque, connex, result))
+    if (! llpemeyer_llpemeyer3dsansligne(image, marqueurs, marqueursfond, masque, connex, result))
     {
       fprintf(stderr, "%s: llpemeyer3dsansligne failed\n", argv[0]);
       exit(1);

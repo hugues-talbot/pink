@@ -100,7 +100,7 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
   }
   
  while(!mcrbt_RbtVide(L)){
-   u = RbtPopMin(L);
+   u = mcrbt_RbtPopMin(L);
 #ifdef DEBUG
    printf("poped arete u no: %d de niveau %d\n",u,F[u]);
 #endif
@@ -194,7 +194,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
   }
   
   while(!mcrbt_RbtVide(L)){
-    u = RbtPopMin(L);
+    u = mcrbt_RbtPopMin(L);
 #ifdef DEBUG
     printf("poped arete u no: %d de niveau %d\n",u,F[u]);
 #endif
@@ -304,7 +304,7 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
   }
   printf("Initialisation OK \n");
   while(!mcrbt_RbtVide(L)){
-    u = RbtPopMin(L);
+    u = mcrbt_RbtPopMin(L);
 #ifdef DEBUG
     printf("Arete poped F[(%d,%d,%d,%d),%d] = %d\n", u%rs, (u%ps)/rs, (u%vs)/ps, (u%N)/vs, u/N,F[u]); 
 #endif

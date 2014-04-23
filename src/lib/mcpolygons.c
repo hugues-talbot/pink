@@ -312,7 +312,7 @@ void MCP_ComputeEdges(MCP *P)
     {
       a = F.vert[j]; 
       b = F.vert[(j+1)%F.n];
-      if (RbtSearch(P->RBT, (TypRbtKey)(a*N+b)) == P->RBT->nil)
+      if (mcrbt_RbtSearch(P->RBT, (TypRbtKey)(a*N+b)) == P->RBT->nil)
       {
 	e = MCP_AddEdge(P, a, b);
 	(void)mcrbt_RbtInsert(&P->RBT, (TypRbtKey)(a*N+b), (TypRbtAuxData)e);
@@ -384,7 +384,7 @@ void MCP_SubdivEdges(MCP *P, double param)
     {
       a = F.vert[j]; 
       b = F.vert[(j+1)%F.n];
-      re = RbtSearch(P->RBT, (TypRbtKey)(a*P->Vertices->nsp+b));
+      re = mcrbt_RbtSearch(P->RBT, (TypRbtKey)(a*P->Vertices->nsp+b));
       if (re != P->RBT->nil)
       {
 	E = P->Edges->e[re->auxdata];
@@ -460,7 +460,7 @@ POLYGONS %d %d    // Faces - champ obligatoire
 	fprintf(fileout, "%d ", a);
 #endif
 	b = F.vert[(j+1)%F.n];
-	re = RbtSearch(P->RBT, (TypRbtKey)(a*nsp+b));
+	re = mcrbt_RbtSearch(P->RBT, (TypRbtKey)(a*nsp+b));
 	if (re != P->RBT->nil)
 	{
 	  E = P->Edges->e[re->auxdata];
@@ -523,7 +523,7 @@ sorties :
     pz[i] = P->Vertices->v[a].z; 
     i++;
     b = F.vert[(j+1)%F.n];
-    re = RbtSearch(P->RBT, (TypRbtKey)(a*nsp+b));
+    re = mcrbt_RbtSearch(P->RBT, (TypRbtKey)(a*nsp+b));
     if (re != P->RBT->nil)
     {
       E = P->Edges->e[re->auxdata];

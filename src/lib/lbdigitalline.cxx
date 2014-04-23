@@ -13,10 +13,11 @@ Reference:
 }
 */
 
+#include <algorithm>
+
 #include <lbdigitalline.h>
 
 Reco::Reco()  { Init(); }
-
 void Reco::Init()
 {
   nU = nL = 0;
@@ -208,16 +209,16 @@ void Reco::Rebuild(Lpoint LL, int & n,int miny,int maxy)
   Normal(a,b);
   if ( (b==0)) { LL[0] = U[1]; n=1; return;}
 
-  Z ming = a*U[1].x+b*U[1].y;
-  Z maxg = ming;
-
-  for (int i = 1; i <= nU; i++) { ming = min(ming,a*U[i].x+b*U[i].y);
-                                  maxg = max(maxg,a*U[i].x+b*U[i].y); }
-  for (int i = 1; i <= nL; i++) { ming = min(ming,a*L[i].x+b*L[i].y);
-                                  maxg = max(maxg,a*L[i].x+b*L[i].y); }
-  n=0;
-
-  while ( maxg-ming < b-1 )
+  Z ming = a*U[1].x+b*U[1].y;
+  Z maxg = ming;
+
+  for (int i = 1; i <= nU; i++) { ming = std::min(ming,a*U[i].x+b*U[i].y);
+                                  maxg = std::max(maxg,a*U[i].x+b*U[i].y); }
+  for (int i = 1; i <= nL; i++) { ming = std::min(ming,a*L[i].x+b*L[i].y);
+                                  maxg = std::max(maxg,a*L[i].x+b*L[i].y); }
+  n=0;
+
+  while ( maxg-ming < b-1 )
   { maxg++;  }
 
   for (int x = L[1].x ; x <= L[nL].x ; x++)

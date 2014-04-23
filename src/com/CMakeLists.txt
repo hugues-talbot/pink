@@ -5,6 +5,7 @@
 # -------- Bash front-end ------------
 # ------------------------------------
 
+cmake_minimum_required(VERSION 2.8)
 #-lgsl -lgslcblas -lm -lX11 -lXext /usr/lib64/libboost_thread-il-mt-1_39.so.1.39.0
 FILE( GLOB com_src_c *.c )
 FILE( GLOB com_src_cpp *.cpp )
@@ -27,9 +28,15 @@ endif ( NOT PYTHON_FRONT_END )
 foreach( q ${com_src} )
          string( REGEX MATCH [^/]*.c[^.]*$ filename ${q} )
 	 string( REGEX REPLACE .c[^.]*$ "" executable ${filename} )
-	 add_executable( pink.${executable} ${q} )
-	 add_dependencies( pink.${executable} pink )
-	 target_link_libraries( pink.${executable} pink ${LIBS} )
+	 if (THIS_IS_MSVC)
+	     add_executable( pink.${executable} ${q} )
+	     add_dependencies( pink.${executable} pink )
+	     target_link_libraries( pink.${executable} pink ${LIBS} )
+	 else (THIS_IS_MSVC)
+	     add_executable( pink.${executable} ${q} )
+	     add_dependencies( pink.${executable} pink )
+	     target_link_libraries( pink.${executable} pink ${LIBS} )
+	 endif (THIS_IS_MSVC)
 	 install( TARGETS pink.${executable} DESTINATION bin )
 endforeach(q)
 

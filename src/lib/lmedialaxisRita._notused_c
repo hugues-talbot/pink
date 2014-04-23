@@ -115,7 +115,7 @@ static double norm(vect2Dint v) { return sqrt((double)(v.x*v.x + v.y*v.y)); }
 static double pscal(vect2Dint u, vect2Dint v) { return (double)(u.x*v.x + u.y*v.y); }
 
 /* ==================================== */
-int32_t lmedialaxisRita_lmedax_talbot(struct xvimage *img,   /* donnee: image binaire */       
+int32_t lmedax_talbot(struct xvimage *img,   /* donnee: image binaire */       
                   struct xvimage *res    /* resultat: centres des boules max (approx) */
 )
 /* ==================================== */
@@ -127,7 +127,7 @@ int32_t lmedialaxisRita_lmedax_talbot(struct xvimage *img,   /* donnee: image bi
   suivant l'algo de Danielsson 4SED
 */
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_lmedax_talbot"
+#define F_NAME "lmedax_talbot"
 { 
   uint32_t n1,n2,n3;     /* normes des vecteurs (au carre) */
   int32_t rs = img->row_size;
@@ -205,10 +205,10 @@ int32_t lmedialaxisRita_lmedax_talbot(struct xvimage *img,   /* donnee: image bi
   }
   free(L);
   return(1);
-} // lmedialaxisRita_lmedax_talbot()
+} // lmedax_talbot()
 
 /* ==================================== */
-int32_t lmedialaxisRita_lmedax_meyer(struct xvimage *img,   /* donnee: image binaire */       
+int32_t lmedax_meyer(struct xvimage *img,   /* donnee: image binaire */       
                  struct xvimage *res    /* resultat: centres des boules max (approx) */
 )
 /* ==================================== */
@@ -216,13 +216,13 @@ int32_t lmedialaxisRita_lmedax_meyer(struct xvimage *img,   /* donnee: image bin
   Methode de Meyer (approximation)
 */
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_lmedax_meyer"
+#define F_NAME "lmedax_meyer"
 { 
   int32_t rs = img->row_size;
   int32_t cs = img->col_size;
   int32_t N= rs * cs;            /* taille de l'image */
   uint8_t *F = UCHARDATA(img);          /* pointeur sur l'image */
-  uint32_t *M = SLONGDATA(res);          /* donnees de l'image resultat */
+  uint32_t *M = ULONGDATA(res);          /* donnees de l'image resultat */
   uint32_t *D;          /* distance */
   uint32_t *H;          /* tampon */
   struct xvimage *inv;
@@ -286,10 +286,10 @@ int32_t lmedialaxisRita_lmedax_meyer(struct xvimage *img,   /* donnee: image bin
     if (F[x] && (M[x] < D[x])) M[x] = D[x]; else M[x] = 0;  
   free(D);
   return(1);
-} // lmedialaxisRita_lmedax_meyer()
+} // lmedax_meyer()
 
 /* ==================================== */
-int32_t lmedialaxisRita_lmedax_meyer3d(struct xvimage *img,   /* donnee: image binaire */       
+int32_t lmedax_meyer3d(struct xvimage *img,   /* donnee: image binaire */       
                    struct xvimage *res    /* resultat: centres des boules max (approx) */
 )
 /* ==================================== */
@@ -297,7 +297,7 @@ int32_t lmedialaxisRita_lmedax_meyer3d(struct xvimage *img,   /* donnee: image b
   Methode de Meyer (approximation)
 */
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_lmedax_meyer3d"
+#define F_NAME "lmedax_meyer3d"
 { 
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
@@ -364,13 +364,13 @@ int32_t lmedialaxisRita_lmedax_meyer3d(struct xvimage *img,   /* donnee: image b
     if (F[x] && (M[x] < D[x])) M[x] = D[x]; else M[x] = 0;  
   free(D);
   return(1);
-} // lmedialaxisRita_lmedax_meyer3d()
+} // lmedax_meyer3d()
 
 /* ==================================== */
-int32_t lmedialaxisRita_lmedax_mc(struct xvimage *f)
+int32_t lmedax_mc(struct xvimage *f)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_lmedax_mc"
+#define F_NAME "lmedax_mc"
 {
   int32_t i, k;
   int32_t rs = rowsize(f);        /* taille ligne f */
@@ -498,7 +498,7 @@ int32_t lmedialaxisRita_lmedax_mc(struct xvimage *f)
   freeimage(tmp2);
   freeimage(res);
   return 1;
-} // lmedialaxisRita_lmedax_mc()
+} // lmedax_mc()
 
 
 /* ==================================== */
@@ -546,8 +546,8 @@ typedef struct {		//used to store all possible neighbors of (1/8) Z2 or (1/48) Z
 
 /* int32_t callcheckR(int32_t distance,MaskG M); */
 /* int32_t RadiusMax(uint32_t * gg, int32_t rs, int32_t cs, int32_t ds); */
-int32_t lmedialaxisRita_ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neigbors *Mg);
-int32_t lmedialaxisRita_ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neigbors *Mg);
+int32_t ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neigbors *Mg);
+int32_t ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neigbors *Mg);
 /* int32_t CallMedial(int32_t x, int32_t y, Image image, int32_t rs, int32_t cs, MaskG MgL, LookUpTable Lut, int32_t nbcollut, int32_t rrmax); */
 /* int32_t CallMedial3d(int32_t x, int32_t y, int32_t z, Image image, int32_t rs, int32_t cs, int32_t ds, MaskG MgL, LookUpTable Lut, int32_t nbcollut, int32_t rrmax); */
 

@@ -1743,14 +1743,14 @@ int32_t lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps)
   while (!mcrbt_RbtVide(RBT) && (n < nsteps))
   {
     n++;
-    p = RbtMinLevel(RBT); 
+    p = mcrbt_RbtMinLevel(RBT); 
 #ifdef VERBOSE
     printf("step %d, prio %g ", n, p);
 #endif
     mcskel3d_K3_MarkObj(k);
-    while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == p))
     {
-      i = RbtPopMin(RBT);
+      i = mcrbt_RbtPopMin(RBT);
       if (IS_OBJ(K[i]) && M[i]) 
       { // pas déjà retiré (K[i]) et pas encore traité (M[i])
 	if (I[i] == 0)
@@ -2373,15 +2373,15 @@ int32_t llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps
   while (!mcrbt_RbtVide(RBT) && (n < nsteps))
   {
     n++;
-    p = RbtMinLevel(RBT); 
+    p = mcrbt_RbtMinLevel(RBT); 
 #ifdef VERBOSE
     printf("step %d, prio %g ", n, p);
 #endif
 
     // CONSTRUIT LA LISTE DES POINTS A TRAITER ET MAJ. MARQUEUR COURANT (MARK2)
-    while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == p))
     {
-      i = RbtPopMin(RBT);
+      i = mcrbt_RbtPopMin(RBT);
       if (IS_OBJ(K[i]) && IS_MARKED2(I[i])) 
       { // pas déjà retiré et pas encore traité
 	if (!IS_MARKED1(I[i]))
@@ -2391,7 +2391,7 @@ int32_t llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps
 	                      // points du squelette apparus dans l'itération
 	}
       } // if (IS_OBJ(K[i]) && IS_MARKED2(I[i])) 
-    } // while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    } // while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == p))
 #ifdef DEBUG
     writeimage(k, "_k");
 #endif

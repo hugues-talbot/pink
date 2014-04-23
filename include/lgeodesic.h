@@ -49,7 +49,7 @@ extern int32_t lgeodilat3d(struct xvimage *g, struct xvimage *f, int32_t connex,
 extern int32_t lgeodilat3d_short(struct xvimage *g, struct xvimage *f, int32_t connex, int32_t niter) ;
 extern int32_t lgeodilat3d_long(struct xvimage *g, struct xvimage *f, int32_t connex, int32_t niter) ;
 
-extern int32_t lreconsdilat(
+extern int32_t lgeodesic_lreconsdilat(
         struct xvimage *g,
         struct xvimage *f,
         int32_t connex) ;
@@ -64,6 +64,8 @@ extern int32_t ldeletecomp(
         struct xvimage *f,
         int32_t connex,
         index_t x, index_t y, index_t z) ;
+        index_t y, 
+        index_t z) ;    
 
 extern int32_t lselectcomp(
         struct xvimage *f,
@@ -72,7 +74,7 @@ extern int32_t lselectcomp(
         index_t y, 
         index_t z) ;
 
-extern int32_t lreconsdilat3d(
+extern int32_t lgeodesic_lreconsdilat3d(
         struct xvimage *g,
         struct xvimage *f,
         int32_t connex) ;
@@ -83,7 +85,7 @@ extern int32_t lgeoeros3d(
         int32_t connex,
         int32_t niter) ;
 
-extern int32_t lreconseros3d(
+extern int32_t lgeodesic_lreconseros3d(
         struct xvimage *g,
         struct xvimage *f,
         int32_t connex) ;

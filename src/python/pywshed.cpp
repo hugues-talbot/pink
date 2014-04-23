@@ -39,8 +39,8 @@ namespace wshed
 // by HT for Claire
   UI_WRAP_FUNCTION(
     "watershedMeyer2",
-    llpemeyer2,
-    ( arg("image"), arg("markers"), arg("mask"), arg("connexity") ),
+    llpemeyer_llpemeyer2,
+    ( arg("markers"), arg("image"), arg("mask"), arg("connexity") ),
     doc__watershedMeyer2__c__
     );
 # include BOOST_PP_UPDATE_COUNTER()
@@ -67,7 +67,7 @@ namespace wshed
   UI_WRAP_FUNCTION(
     "watershedMeyer2NM",
     llpemeyer2_nomask,
-    ( arg("image"), arg("markers"), arg("connexity") ),
+    ( arg("markers"), arg("image"), arg("connexity") ),
     doc__watershedMeyer2__c__
     );
 # include BOOST_PP_UPDATE_COUNTER()

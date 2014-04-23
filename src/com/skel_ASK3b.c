@@ -103,19 +103,21 @@ int main(int argc, char **argv)
     }
   }
 
-  if (depth(image) != 1)
-  {
-    if (! lskelASK3b(image, nsteps, isthmus_persistence, inhibit))
-    {
-      fprintf(stderr, "%s: lskelASK3b failed\n", argv[0]);
-      exit(1);
-    } 
-  }
-  else
-  {
-    fprintf(stderr, "%s: image must be 3D\n", argv[0]);
-    exit(1);
-  }
+  return 1;
+  
+  /* if (depth(image) != 1) */
+  /* { */
+  /*   if (! lskelASK3b(image, nsteps, isthmus_persistence, inhibit)) */
+  /*   { */
+  /*     fprintf(stderr, "%s: lskelASK3b failed\n", argv[0]); */
+  /*     exit(1); */
+  /*   }  */
+  /* } */
+  /* else */
+  /* { */
+  /*   fprintf(stderr, "%s: image must be 3D\n", argv[0]); */
+  /*   exit(1); */
+  /* } */
 
   writeimage(image, argv[argc-1]);
   freeimage(image);
