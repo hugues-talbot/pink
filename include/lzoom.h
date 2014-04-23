@@ -46,15 +46,13 @@ extern "C" {
 /* prototype for lzoom.c */
 /* ============== */
 
-extern int32_t lzoom(
-  struct xvimage * in,
-  struct xvimage ** out,
+extern xvimage * lzoom(
+  const struct xvimage * in,
   double zoomx, double zoomy, double zoomz
 );
 
-extern int32_t lzoom2(
-  struct xvimage * in,
-  struct xvimage ** out,
+extern xvimage * lzoom2(
+  const struct xvimage * in,
   int32_t newdim,
   char dim
 );
