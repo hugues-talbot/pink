@@ -231,27 +231,30 @@ const char * pink2numpy_doc =
 const char * numpy2pink_doc =
                      "Converts a pink::ujimage object to a numpy array. The data IS copied.";
 
+using pink::python::wrap2numpy;
+using pink::python::pink2numpy;
+using pink::python::numpy2pink;
                              
 void numpy_export()
 {
 # ifdef PINK_HAVE_NUMPY
-  boost::python::def( "wrap2numpy", &pink::python::wrap2numpy<pink::char_image>,     ( boost::python::arg("image") ), wrap2numpy_doc );
-  boost::python::def( "wrap2numpy", &pink::python::wrap2numpy<pink::short_image>,    ( boost::python::arg("image") ), wrap2numpy_doc );
-  boost::python::def( "wrap2numpy", &pink::python::wrap2numpy<pink::int_image>,      ( boost::python::arg("image") ), wrap2numpy_doc );
-  boost::python::def( "wrap2numpy", &pink::python::wrap2numpy<pink::float_image>,    ( boost::python::arg("image") ), wrap2numpy_doc );
-  boost::python::def( "wrap2numpy", &pink::python::wrap2numpy<pink::double_image>,   ( boost::python::arg("image") ), wrap2numpy_doc );
-//  boost::python::def( "wrap2numpy", &pink::python::wrap2numpy<pink::fcomplex_image>, ( boost::python::arg("image") ), wrap2numpy_doc );
-//  boost::python::def( "wrap2numpy", &pink::python::wrap2numpy<pink::dcomplex_image>, ( boost::python::arg("image") ), wrap2numpy_doc );
+  def( "wrap2numpy", &wrap2numpy<pink::char_image>,     ( arg("image") ), wrap2numpy_doc );
+  def( "wrap2numpy", &wrap2numpy<pink::short_image>,    ( arg("image") ), wrap2numpy_doc );
+  def( "wrap2numpy", &wrap2numpy<pink::int_image>,      ( arg("image") ), wrap2numpy_doc );
+  def( "wrap2numpy", &wrap2numpy<pink::float_image>,    ( arg("image") ), wrap2numpy_doc );
+  def( "wrap2numpy", &wrap2numpy<pink::double_image>,   ( arg("image") ), wrap2numpy_doc );
+//  def( "wrap2numpy", &wrap2numpy<pink::fcomplex_image>, ( arg("image") ), wrap2numpy_doc );
+//  def( "wrap2numpy", &wrap2numpy<pink::dcomplex_image>, ( arg("image") ), wrap2numpy_doc );
 
-  boost::python::def( "numpy2pink", &pink::python::numpy2pink, ( boost::python::arg("array") ), numpy2pink_doc );
+  def( "numpy2pink", &numpy2pink, ( arg("array") ), numpy2pink_doc );
 
-  boost::python::def( "pink2numpy", &pink::python::pink2numpy<pink::char_image>,     ( boost::python::arg("image") ), pink2numpy_doc );
-  boost::python::def( "pink2numpy", &pink::python::pink2numpy<pink::short_image>,    ( boost::python::arg("image") ), pink2numpy_doc );
-  boost::python::def( "pink2numpy", &pink::python::pink2numpy<pink::int_image>,      ( boost::python::arg("image") ), pink2numpy_doc );
-  boost::python::def( "pink2numpy", &pink::python::pink2numpy<pink::float_image>,    ( boost::python::arg("image") ), pink2numpy_doc );
-  boost::python::def( "pink2numpy", &pink::python::pink2numpy<pink::double_image>,   ( boost::python::arg("image") ), pink2numpy_doc );
-//  boost::python::def( "pink2numpy", &pink::python::pink2numpy<pink::fcomplex_image>, ( boost::python::arg("image") ), pink2numpy_doc );
-//  boost::python::def( "pink2numpy", &pink::python::pink2numpy<pink::dcomplex_image>, ( boost::python::arg("image") ), pink2numpy_doc );
+  def( "pink2numpy", &pink2numpy<pink::char_image>,     ( arg("image") ), pink2numpy_doc );
+  def( "pink2numpy", &pink2numpy<pink::short_image>,    ( arg("image") ), pink2numpy_doc );
+  def( "pink2numpy", &pink2numpy<pink::int_image>,      ( arg("image") ), pink2numpy_doc );
+  def( "pink2numpy", &pink2numpy<pink::float_image>,    ( arg("image") ), pink2numpy_doc );
+  def( "pink2numpy", &pink2numpy<pink::double_image>,   ( arg("image") ), pink2numpy_doc );
+//  def( "pink2numpy", &pink2numpy<pink::fcomplex_image>, ( arg("image") ), pink2numpy_doc );
+//  def( "pink2numpy", &pink2numpy<pink::dcomplex_image>, ( arg("image") ), pink2numpy_doc );
   
   import_array();  // numpy initialization
 # endif /* PINK_HAVE_NUMPY */
