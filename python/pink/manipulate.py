@@ -40,12 +40,12 @@ class app(Frame):
         self.function_name = function_name
         self.minval = minval
         self.maxval = maxval
-        self.size = function_name(minval).size
+        self.shape = function_name(minval).shape
         
         apply(Frame.__init__,(self,Master))
         self.__Frame2 = Frame(self)
         self.__Frame2.pack(side='top')
-        self.canvas = Canvas(self.__Frame2, width=self.size[0], height=self.size[1])
+        self.canvas = Canvas(self.__Frame2, width=self.shape[1], height=self.shape[0])
         self.canvas.pack(expand='yes',fill='both',side='top')
         self.__Frame1 = Frame(self)
         self.__Frame1.pack(side='top')
@@ -82,13 +82,13 @@ class app2(Frame):
         self.maxval = maxval
         self.image_in = image_in / 2
         self.tmpimage = image_in
-        self.size = image_in.size
+        self.shape = image_in.shape
         self.surimp = 0
         
         apply(Frame.__init__,(self,Master))
         self.__Frame2 = Frame(self)
         self.__Frame2.pack(side='top')
-        self.canvas = Canvas(self.__Frame2, width=self.size[0], height=self.size[1])
+        self.canvas = Canvas(self.__Frame2, width=self.shape[1], height=self.shape[0])
         self.canvas.pack(expand='yes',fill='both',side='top')
         self.__Frame1 = Frame(self)
         self.__Frame1.pack(side='top')
