@@ -36,17 +36,22 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief segmentation based on a height criterion
 
-<B>Usage:</B> segmentheight in.pgm connex height [r] out.pgm
+<B>Usage:</B> segmentheight in.pgm connex height [mode] out.pgm
+<B>Usage:</B> reconsheight in.pgm connex height out.pgm
 
-<B>Description:</B>
-Height segmentation with connexity <B>connex</B> and depth <B>height</B>, 
-followed by a reconstruction (2D only) if option <B>r</B> is set (see reference: to appear)
-or a maximization if option <B>m</B> is set.
+<B>Description:</B> Height segmentation with connexity <B>connex</B>
+and depth <B>height</B>, followed by a reconstruction (2D only) if
+option <B>mode=r</B> is set (see reference: to appear) or a maximization if
+option <B>mode=m</B> is set. 
+
+In Python use mode=0 without maximization, mode=1 with maximization.
+Use function pink.cpp.segmentation.reconsheight if You want
+reconstruction (2D only).
 
 <B>Types supported:</B> byte 2d, byte 3d
 
 <B>Category:</B> connect
-\ingroup connect
+\ingroup connect segm
 
 \author Michel Couprie
 */
