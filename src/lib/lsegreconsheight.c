@@ -80,6 +80,8 @@ knowledge of the CeCILL license and that you accept its terms.
 int32_t lsegreconsheight(struct xvimage *image, int32_t connex, int32_t param)
 /* ==================================== */
 {
+# define F_NAME "lsegreconsheight"
+  ACCEPTED_TYPES1( image, VFF_TYP_1_BYTE );
   register index_t i, k;         /* index muet */
   index_t rs = rowsize(image);      /* taille ligne */
   index_t cs = colsize(image);      /* taille colonne */
@@ -218,4 +220,5 @@ int32_t lsegreconsheight(struct xvimage *image, int32_t connex, int32_t param)
   free(number_nodes);
   free(node_at_level);
   return(1);
+# undef F_NAME /* lsegreconsheight */
 } /* lsegreconsheight() */
