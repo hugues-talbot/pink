@@ -15,11 +15,9 @@
 
 #include <vector>
 #include <algorithm>
-#include <boost/python.hpp>
 #include <boost/thread.hpp>
 
 #include "uiFrame.hpp"
-#include "pyujimage.hpp"
 #include "ui_systest.hpp"
 
 namespace pink { 
