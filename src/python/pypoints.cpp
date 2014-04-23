@@ -18,62 +18,54 @@
 
 namespace points
 {
-//   UI_WRAP_FUNCTION(
+//   functiondef(
 //     "ptisolated",
 //     lptisolated,
 //     ( arg("image"), arg("connexity") ),
 //     doc__ptisolated__c__
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
 
-//   UI_WRAP_FUNCTION(
+//   functiondef(
 //     "ptend",
 //     lptend,
 //     ( arg("image"), arg("connexity") ),
 //     doc__ptend__c__
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
 
-//   UI_WRAP_FUNCTION(
+//   functiondef(
 //     "ptcurve",
 //     lptcurve,
 //     ( arg("image"), arg("connexity") ),
 //     doc__ptcurve__c__
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
 
-
-//   UI_WRAP_FUNCTION(
+//   functiondef(
 //     "ptjunction",
 //     lptjunction,
 //     ( arg("image"), arg("connexity") ),
 //     doc__ptjunction__c__
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
 
-//   UI_WRAP_FUNCTION(
+//   functiondef(
 //     "selectcomp",
 //     lselectcomp,
 //     ( arg("image"), arg("connexity"), arg("x"), arg("y"), arg("z") ),
 //     doc__selectcomp__c__
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
 
-//   UI_WRAP_FUNCTION(
+//   functiondef(
 //     "holeclosing",
 //     lfermetrous3dbin,
 //     ( arg("image"), arg("connexity"), arg("holesize") ),
 //     doc__holeclosing__c__
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
 
-//   UI_WRAP_FUNCTION(
+//   functiondef(
 //     "holeclosing",
 //     lfermetrous3dbin2,
 //     ( arg("image"), arg("guiding image") ,arg("connexity"), arg("holesize") ),
 //     doc__holeclosing__c__
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
 
 } /* namespace points */
 
