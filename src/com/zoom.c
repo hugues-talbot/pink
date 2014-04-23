@@ -113,7 +113,8 @@ int main(int argc, char **argv)
   if (argc == 4) 
   { 
     z = atof(argv[2]);
-    if (! lzoom(in, &out, z, z, z))
+    out = lzoom(in, z, z, z);
+    if (!out)
     {
       fprintf(stderr, "%s: function lzoom failed\n", argv[0]);
       exit(1);
@@ -122,7 +123,9 @@ int main(int argc, char **argv)
   else if (argc == 5) 
   {
     newdim = atoi(argv[3]);
-    if (! lzoom2(in, &out, newdim, argv[2][0]))
+
+    out = lzoom2(in, newdim, argv[2][0]);
+    if (!out)
     {
       fprintf(stderr, "%s: function lzoom2 failed\n", argv[0]);
       exit(1);
@@ -133,7 +136,8 @@ int main(int argc, char **argv)
     fx = atof(argv[2]);
     fy = atof(argv[3]);
     fz = atof(argv[4]);
-    if (! lzoom(in, &out, fx, fy, fz))
+    out = lzoom(in, fx, fy, fz);
+    if (!out)
     {
       fprintf(stderr, "%s: function lzoom failed\n", argv[0]);
       exit(1);
