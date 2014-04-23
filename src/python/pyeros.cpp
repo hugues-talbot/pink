@@ -13,7 +13,6 @@
 #include "pyexport.hpp"
 
 #include "ldilateros.h"
-#include "pink_python.h"
 #include "ldilateros3d.h"
 
 
@@ -21,41 +20,42 @@ namespace pink {
   namespace python {
 
 
-    template <class image_t>
-    image_t erosion(
-      const image_t & src, 
-      char_image elem
-      )
-    {
-
-      if (! pink::inside(elem.size(), elem.center()) )
-      {
-        pink_error("The center of 'elem' must be specified.");
-      } /* if center not inside*/
-
-      image_t result;
-      result = src.clone();
-
-
-      if ( src.size().size()==2) // the image is 2D
-      {        
-        if (! ldilateros_leros( result, elem,
-                                elem.center()[0], elem.center()[1]))
-        {
-          pink_error("function ldilateros_leros failed");
-        } /* (! ldilateros_leros( src, elem_const_away, x, y)) */
-      }
-      else  // NOT the image is 2D
-      {
-        if (! leros3d( result, elem,
-                       elem.center()[0], elem.center()[1], elem.center()[2]))          
-        {
-          pink_error("function leros3d failed");
-        } /* (! leros3d( src, elem_const_away, x, y)) */        
-      } // NOT the image is 2D
+    // template <class image_t>
+    // image_t erosion(
+    //   const image_t & src, 
+    //   char_image elem,
       
-      return result;    
-    } /* erosion */
+    //   )
+    // {
+
+    //   if (! pink::inside(elem.size(), elem.center()) )
+    //   {
+    //     pink_error("The center of 'elem' must be specified.");
+    //   } /* if center not inside*/
+
+    //   image_t result;
+    //   result = src.clone();
+
+
+    //   if ( src.size().size()==2) // the image is 2D
+    //   {        
+    //     if (! ldilateros_leros( result, elem,
+    //                             elem.center()[0], elem.center()[1]))
+    //     {
+    //       pink_error("function ldilateros_leros failed");
+    //     } /* (! ldilateros_leros( src, elem_const_away, x, y)) */
+    //   }
+    //   else  // NOT the image is 2D
+    //   {
+    //     if (! leros3d( result, elem,
+    //                    elem.center()[0], elem.center()[1], elem.center()[2]))          
+    //     {
+    //       pink_error("function leros3d failed");
+    //     } /* (! leros3d( src, elem_const_away, x, y)) */        
+    //   } // NOT the image is 2D
+      
+    //   return result;    
+    // } /* erosion */
 
   } /* namespace python */
 } /* namespace pink */
