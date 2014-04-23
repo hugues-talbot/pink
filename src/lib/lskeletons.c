@@ -513,7 +513,7 @@ resultat: F
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse4bin(F, x, rs, N))          /* modifie l'image le cas echeant */
       {
@@ -534,7 +534,7 @@ resultat: F
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse8bin(F, x, rs, N))          /* modifie l'image le cas echeant */
       {
@@ -657,7 +657,7 @@ int32_t lskelubp2(struct xvimage *image,
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse4bin(F, x, rs, N))          /* modifie l'image le cas echeant */
       {
@@ -684,7 +684,7 @@ int32_t lskelubp2(struct xvimage *image,
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse8bin(F, x, rs, N))          /* modifie l'image le cas echeant */
       {
@@ -822,7 +822,7 @@ resultat: F
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse6bin(F, x, rs, ps, N))      /* modifie l'image le cas echeant */
       {
@@ -843,7 +843,7 @@ resultat: F
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse26bin(F, x, rs, ps, N))         /* modifie l'image le cas echeant */
       {
@@ -968,7 +968,7 @@ int32_t lskelubp3d2(struct xvimage *image,
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse6bin(F, x, rs, ps, N))      /* modifie l'image le cas echeant */
       {
@@ -995,7 +995,7 @@ int32_t lskelubp3d2(struct xvimage *image,
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse26bin(F, x, rs, ps, N))         /* modifie l'image le cas echeant */
       {
@@ -1151,7 +1151,7 @@ int32_t lskelubp3d2lab(struct xvimage *image,
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse6lab(F, x, rs, ps, N))      /* modifie l'image le cas echeant */
       {
@@ -1178,7 +1178,7 @@ int32_t lskelubp3d2lab(struct xvimage *image,
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse26lab(F, x, rs, ps, N))         /* modifie l'image le cas echeant */
       {
@@ -1426,14 +1426,14 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir2d(F, x, rs, N));
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      prio = (int32_t)mcrbt_RbtMinLevel(RBT) / 10;
+      prio = (int32_t)RbtMinLevel(RBT) / 10;
       oldprio = prio;
 
       while (!mcrbt_RbtVide(RBT) && (prio == oldprio)) 
       {
-        x = mcrbt_RbtPopMin(RBT);
+        x = RbtPopMin(RBT);
         FifoPush(FIFO1, x);
-        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)mcrbt_RbtMinLevel(RBT) / 10;
+        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
       } 
 
       while (!FifoVide(FIFO1))
@@ -1495,14 +1495,14 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir2d(F, x, rs, N));
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      prio = (int32_t)mcrbt_RbtMinLevel(RBT) / 10;
+      prio = (int32_t)RbtMinLevel(RBT) / 10;
       oldprio = prio;
 
       while (!mcrbt_RbtVide(RBT) && (prio == oldprio)) 
       {
-        x = mcrbt_RbtPopMin(RBT);
+        x = RbtPopMin(RBT);
         FifoPush(FIFO1, x);
-        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)mcrbt_RbtMinLevel(RBT) / 10;
+        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
       } 
 
       while (!FifoVide(FIFO1))
@@ -1785,14 +1785,14 @@ resultat: F
 
     while (!mcrbt_RbtVide(RBT))
     {
-      prio = (int32_t)mcrbt_RbtMinLevel(RBT) / 10;
+      prio = (int32_t)RbtMinLevel(RBT) / 10;
       oldprio = prio;
 
       while (!mcrbt_RbtVide(RBT) && (prio == oldprio)) 
       {
-        x = mcrbt_RbtPopMin(RBT);
+        x = RbtPopMin(RBT);
         FifoPush(FIFO1, x);
-        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)mcrbt_RbtMinLevel(RBT) / 10;
+        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
       } 
 
       while (!FifoVide(FIFO1))
@@ -1856,7 +1856,7 @@ resultat: F
   {           
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if ((! IsSet(x,CONTRAINTE)) && testabaisse26bin(F, x, rs, ps, N))
       {
@@ -2125,14 +2125,14 @@ resultat: F
 
     while (!mcrbt_RbtVide(RBT))
     {
-      prio = (int32_t)mcrbt_RbtMinLevel(RBT) / 10;
+      prio = (int32_t)RbtMinLevel(RBT) / 10;
       oldprio = prio;
 
       while (!mcrbt_RbtVide(RBT) && (prio == oldprio)) 
       {
-        x = mcrbt_RbtPopMin(RBT);
+        x = RbtPopMin(RBT);
         FifoPush(FIFO1, x);
-        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)mcrbt_RbtMinLevel(RBT) / 10;
+        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
       } 
 
       while (!FifoVide(FIFO1))
@@ -2196,7 +2196,7 @@ resultat: F
   {           
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if ((! IsSet(x,CONTRAINTE)) && testabaisse26bin(F, x, rs, ps, N))
       {
@@ -2380,7 +2380,7 @@ resultat: F
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       top4(F, x, rs, N, &t, &tb);
       if ((tmin <= t) && (t <= tmax) && (tbmin <= tb) && (tb <= tbmax))
@@ -2409,7 +2409,7 @@ resultat: F
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       top8(F, x, rs, N, &t, &tb);
       if ((tmin <= t) && (t <= tmax) && (tbmin <= tb) && (tb <= tbmax))
@@ -2583,7 +2583,7 @@ resultat: F
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       mctopo3d_top6(F, x, rs, ps, N, &t, &tb);
       if ((tmin <= t) && (t <= tmax) && (tbmin <= tb) && (tb <= tbmax))
@@ -2612,7 +2612,7 @@ resultat: F
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       mctopo3d_top18(F, x, rs, ps, N, &t, &tb);
       if ((tmin <= t) && (t <= tmax) && (tbmin <= tb) && (tb <= tbmax))
@@ -2641,7 +2641,7 @@ resultat: F
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       mctopo3d_top26(F, x, rs, ps, N, &t, &tb);
       if ((tmin <= t) && (t <= tmax) && (tbmin <= tb) && (tb <= tbmax))
@@ -2823,8 +2823,8 @@ int32_t lskeleucl(struct xvimage *image,
 
     while (!mcrbt_RbtVide(RBT))
     {
-      prio = mcrbt_RbtMinLevel(RBT); 
-      x = mcrbt_RbtPopMin(RBT);
+      prio = RbtMinLevel(RBT); 
+      x = RbtPopMin(RBT);
       if (I[x]) goto finwhile;
       if (prio < P[x]) goto finwhile;
       if (testabaisse8bin(F, x, rs, N))          /* modifie l'image le cas echeant */
@@ -2865,8 +2865,8 @@ int32_t lskeleucl(struct xvimage *image,
     mctopo3d_init_topo3d();
     while (!mcrbt_RbtVide(RBT))
     {
-      prio = mcrbt_RbtMinLevel(RBT); 
-      x = mcrbt_RbtPopMin(RBT);
+      prio = RbtMinLevel(RBT); 
+      x = RbtPopMin(RBT);
       if (I[x]) goto finwhile26;
       if (prio < P[x]) goto finwhile26;
       if (testabaisse26bin(F, x, rs, ps, N))          /* modifie l'image le cas echeant */
@@ -3100,7 +3100,7 @@ resultat: F
   {           
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       config = encodevois(x, F, rs, ps, N);
 
@@ -3277,7 +3277,7 @@ Le pr�dicat "endpoint" est d�fini par un tableau de 2^27 bool�ens
       nbiter++;
       while (!mcrbt_RbtVide(RBT))
       {
-	x = mcrbt_RbtPopMin(RBT);
+	x = RbtPopMin(RBT);
 	config = encodevois(x, F, rs, ps, N);
 	if (((nbiter < niseuil) || (!IsEnd(config))) && testabaisse6bin(F, x, rs, ps, N)) nbdel++;
       } /* while (!mcrbt_RbtVide(RBT)) */
@@ -3299,7 +3299,7 @@ Le pr�dicat "endpoint" est d�fini par un tableau de 2^27 bool�ens
       nbiter++;
       while (!mcrbt_RbtVide(RBT))
       {
-	x = mcrbt_RbtPopMin(RBT);
+	x = RbtPopMin(RBT);
 	config = encodevois(x, F, rs, ps, N);
 	if (((nbiter < niseuil) || (!IsEnd(config))) && testabaisse18bin(F, x, rs, ps, N)) nbdel++;
       } /* while (!mcrbt_RbtVide(RBT)) */
@@ -3322,10 +3322,10 @@ Le pr�dicat "endpoint" est d�fini par un tableau de 2^27 bool�ens
       while (!mcrbt_RbtVide(RBT))
       {
 #ifdef DEBUG_lskelend3d
-	{ int32_t lev = mcrbt_RbtMinLevel(RBT);
+	{ int32_t lev = RbtMinLevel(RBT);
 	printf("pop: prio %d ", lev); }
 #endif	
-	x = mcrbt_RbtPopMin(RBT);
+	x = RbtPopMin(RBT);
 #ifdef DEBUG_lskelend3d
 	printf("; point %d (%d,%d,%d)\n", x, x % rs, (x % ps) / rs, x / ps);
 #endif
@@ -3429,7 +3429,7 @@ Algo par passes directionnelles.
       nbiter++;
       while (!mcrbt_RbtVide(RBT))
       {
-	x = mcrbt_RbtPopMin(RBT);
+	x = RbtPopMin(RBT);
 	if (((nbiter < niseuil) || (nbvois4(F, x, rs, N) != 1)) && testabaisse4bin(F, x, rs, N)) nbdel++;
       } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
@@ -3450,7 +3450,7 @@ Algo par passes directionnelles.
       nbiter++;
       while (!mcrbt_RbtVide(RBT))
       {
-	x = mcrbt_RbtPopMin(RBT);
+	x = RbtPopMin(RBT);
 	if (((nbiter < niseuil) || (nbvois8(F, x, rs, N) != 1)) && testabaisse8bin(F, x, rs, N)) nbdel++;
       } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
@@ -3553,7 +3553,7 @@ Algo par passes directionnelles.
       nbiter++;
       while (!mcrbt_RbtVide(RBT))
       {
-	x = mcrbt_RbtPopMin(RBT);
+	x = RbtPopMin(RBT);
 	if (((nbiter < niseuil) || (mctopo3d_nbvoislab6(F, x, rs, ps, N) > 1)) && testabaisse6lab(F, x, rs, ps, N)) nbdel++;
       } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
@@ -3574,7 +3574,7 @@ Algo par passes directionnelles.
       nbiter++;
       while (!mcrbt_RbtVide(RBT))
       {
-	x = mcrbt_RbtPopMin(RBT);
+	x = RbtPopMin(RBT);
 	if (((nbiter < niseuil) || (mctopo3d_nbvoislab18(F, x, rs, ps, N) > 1)) && testabaisse18lab(F, x, rs, ps, N)) nbdel++;
       } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
@@ -3595,7 +3595,7 @@ Algo par passes directionnelles.
       nbiter++;
       while (!mcrbt_RbtVide(RBT))
       {
-	x = mcrbt_RbtPopMin(RBT);
+	x = RbtPopMin(RBT);
 	if (((nbiter < niseuil) || (mctopo3d_nbvoislab26(F, x, rs, ps, N) > 1)) && testabaisse26lab(F, x, rs, ps, N)) nbdel++;
       } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
@@ -4072,7 +4072,7 @@ int32_t lskelPSG2(struct xvimage *image,
 
   while (!mcrbt_RbtVide(RBT))
   {
-    curprio = mcrbt_RbtMinLevel(RBT);
+    curprio = RbtMinLevel(RBT);
 #define DEBUG_lskelPSG2
 #ifdef DEBUG_lskelPSG2
       printf("entering loop, curprio: %g\n", curprio);
@@ -4080,7 +4080,7 @@ int32_t lskelPSG2(struct xvimage *image,
     if (curprio >= val) break;
     do
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
 #ifdef DEBUG_lskelPSG2
       printf("pop: %d\n", x);
 #endif
@@ -4090,7 +4090,7 @@ int32_t lskelPSG2(struct xvimage *image,
 	RlifoPush(&RLIFO, x);
 	C[x] = 1;
       }
-    } while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == curprio));
+    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
 
     for (i = 0; i < RLIFO->Sp; i++)
     {
@@ -4256,21 +4256,21 @@ int32_t lskelPSG3(struct xvimage *image,
 
   while (!mcrbt_RbtVide(RBT))
   {
-    curprio = mcrbt_RbtMinLevel(RBT);
+    curprio = RbtMinLevel(RBT);
 #ifdef DEBUG_lskelPSG3
   printf("%s: curprio = %g\n", F_NAME, curprio);
 #endif
     if (curprio >= val) break;
     do
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (mctopo3d_simple26(F, x, rs, ps, N))
       {
 	RlifoPush(&RLIFO, x);
 	C[x] = 1;
       }
-    } while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == curprio));
+    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
 
     for (i = 0; i < RLIFO->Sp; i++)
     {
@@ -4967,7 +4967,7 @@ int32_t lskelCKG2(struct xvimage *image,
 
   while (!mcrbt_RbtVide(RBT))
   {
-    curprio = mcrbt_RbtMinLevel(RBT);
+    curprio = RbtMinLevel(RBT);
 //#define DEBUG_lskelCKG2
 #ifdef DEBUG_lskelCKG2
       printf("entering loop, curprio: %g\n", curprio);
@@ -4975,7 +4975,7 @@ int32_t lskelCKG2(struct xvimage *image,
     if (curprio >= val) break;
     do
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
 #ifdef DEBUG_lskelCKG2
       printf("pop: %d\n", x);
 #endif
@@ -4985,7 +4985,7 @@ int32_t lskelCKG2(struct xvimage *image,
 	RlifoPush(&RLIFO, x);
 	F[x] = CAN;
       }
-    } while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == curprio));
+    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
 
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass1(F, x, rs, N); }
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
@@ -5058,10 +5058,7 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
   index_t rs = rowsize(imageprio); /* taille ligne */
   index_t cs = colsize(imageprio); /* taille colonne */
   index_t N = rs * cs;             /* taille image */
-  int32_t *P = NULL;   /* l'image de priorites (cas int32) */
-  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
   float   *PF = NULL;  /* l'image de priorites (cas float) */
-  double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
   index_t taillemaxrbt;
   uint8_t *F = UCHARDATA(image);   /* objet */
@@ -5070,25 +5067,11 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
 
   ONLY_2D(image);
   ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);  
-  ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
+  ACCEPTED_TYPES1(imageprio, VFF_TYP_FLOAT);
   COMPARE_SIZE(image, imageprio);
 
   IndicsInit(N);
-
-  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = SLONGDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
-    PB = UCHARDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
-    PF = FLOATDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
-    PD = DOUBLEDATA(imageprio); 
-  else 
-  {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
-    return(0);
-  }
-
+  PF = FLOATDATA(imageprio); 
   taillemaxrbt = 2 * cs +  2 * rs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
   RBT = mcrbt_CreeRbtVide(taillemaxrbt);
@@ -5117,13 +5100,7 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
     if (F[x]) F[x] = OBJ;
     if (F[x] && bordext8(F, x, rs, N))
     {
-      switch(datatype(imageprio))
-      {
-        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
-        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
-        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
-        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
-      }
+      mcrbt_RbtInsert(&RBT, PF[x], x);
       Set(x, EN_RBT);
     }
   }
@@ -5135,15 +5112,15 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
   incrprio = DOUBLE_MIN; // this value will only increase during execution
   while (!mcrbt_RbtVide(RBT))
   {
-    curprio = mcrbt_RbtMinLevel(RBT);
+    curprio = RbtMinLevel(RBT);
     if (curprio > incrprio) incrprio = curprio;
-//#define DEBUG_lskelCKG2
+#define DEBUG_lskelCKG2
 #ifdef DEBUG_lskelCKG2
     printf("entering loop, curprio = %g, incrprio = %g\n", curprio, incrprio);
 #endif
     do
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
 #ifdef DEBUG_lskelCKG2
       printf("pop: %d\n", x);
 #endif
@@ -5153,7 +5130,7 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
 	RlifoPush(&RLIFO, x);
 	F[x] = CAN;
       }
-    } while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == curprio));
+    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
 
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass1(F, x, rs, N); }
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
@@ -5174,13 +5151,7 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
           y = voisin(x, k, rs, N);
           if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))
           {
-	    switch(datatype(imageprio))
-	    {
-	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
-	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
-	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
-	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
-	    }
+	    mcrbt_RbtInsert(&RBT, PF[y], y);
 #ifdef DEBUG_lskelCKG2
 	    printf("push: %d\n", y);
 #endif
@@ -5196,19 +5167,17 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
       if (IsSet(x, NONCRUCIAL)) 
       {
 	F[x] = 0;
-	switch(datatype(imageprio))
-	{
-	case VFF_TYP_4_BYTE: P[x] = (int32_t)incrprio; break;
-	case VFF_TYP_1_BYTE: PB[x] = (uint8_t)incrprio; break;
-	case VFF_TYP_FLOAT : PF[x] = (float)incrprio; break;
-	case VFF_TYP_DOUBLE: PD[x] = incrprio; break;
-	}
+	PF[x] = (float)incrprio;
       }
+      else
+	PF[x] = -1;
     }
 
     RlifoFlush(RLIFO);
 
   } // while (!mcrbt_RbtVide(RBT))
+
+  for (x = 0; x < N; x++) if (PF[x] == -1) PF[x] = (float)incrprio + 1;
 
   /* ================================================ */
   /* UN PEU DE MENAGE                                 */
@@ -5315,7 +5284,7 @@ int32_t lskelCKG3map(struct xvimage *imageprio,
   incrprio = DOUBLE_MIN; // this value will only increase during execution
   while (!mcrbt_RbtVide(RBT))
   {
-    curprio = mcrbt_RbtMinLevel(RBT);
+    curprio = RbtMinLevel(RBT);
     if (curprio > incrprio) incrprio = curprio;
 //#define DEBUG_lskelCKG2
 #ifdef DEBUG_lskelCKG2
@@ -5323,7 +5292,7 @@ int32_t lskelCKG3map(struct xvimage *imageprio,
 #endif
     do
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
 #ifdef DEBUG_lskelCKG2
       printf("pop: %d\n", x);
 #endif
@@ -5333,7 +5302,7 @@ int32_t lskelCKG3map(struct xvimage *imageprio,
 	RlifoPush(&RLIFO, x);
 	F[x] = CAN;
       }
-    } while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == curprio));
+    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
 
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass3d2(F, x, rs, ps, N); }
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
@@ -5497,7 +5466,7 @@ int32_t lskelCKG3(struct xvimage *image,
 
   while (!mcrbt_RbtVide(RBT))
   {
-    curprio = mcrbt_RbtMinLevel(RBT);
+    curprio = RbtMinLevel(RBT);
 //#define DEBUG_lskelCKG3
 #ifdef DEBUG_lskelCKG3
       printf("entering loop, curprio: %g\n", curprio);
@@ -5505,7 +5474,7 @@ int32_t lskelCKG3(struct xvimage *image,
     if (curprio >= val) break;
     do
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
 #ifdef DEBUG_lskelCKG3
       printf("pop: %d\n", x);
 #endif
@@ -5515,7 +5484,7 @@ int32_t lskelCKG3(struct xvimage *image,
 	RlifoPush(&RLIFO, x);
 	F[x] = CAN;
       }
-    } while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == curprio));
+    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
 
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass3d2(F, x, rs, ps, N); }
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    

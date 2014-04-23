@@ -74,12 +74,6 @@ extern int32_t lselectcomp(
         index_t y, 
         index_t z);
 
-extern int32_t lgeodilat3d(
-        struct xvimage *g,
-        struct xvimage *f,
-        int32_t connex,
-        int32_t niter) ;
-
 extern int32_t lgeodesic_lreconsdilat3d(
         struct xvimage *g,
         struct xvimage *f,
