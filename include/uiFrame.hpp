@@ -50,8 +50,6 @@ namespace pink {
     for ( auto & coord : new_size ) coord += 2;
     
     image_type result(new_size);
-    // saving the center of the image
-    result.center() = src_image.center();
 
     for ( auto pixel = result.begin(); pixel != result.end(); ++pixel )
     {
@@ -78,9 +76,6 @@ namespace pink {
     for( auto & coord : new_size ) coord -= 2;
 
     image_type result(new_size);
-
-    // saving the center of the image
-    result.center() = src_image.center();
     
     // copying the original image into the new image
     for ( auto pixel = result.begin(); pixel!=result.end(); ++pixel ) {
