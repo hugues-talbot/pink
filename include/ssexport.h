@@ -13,11 +13,6 @@
 #ifndef UI_SSEXPORT_H_
 #define UI_SSEXPORT_H_
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in ssexport.h: " << msg; call_error(fullmessage.str());}
-
-/// THIS IS A HACK!!!
-
 #ifdef __cplusplus
 extern "C" {
 #endif
