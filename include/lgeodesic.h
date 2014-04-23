@@ -64,8 +64,6 @@ extern int32_t ldeletecomp(
         struct xvimage *f,
         int32_t connex,
         index_t x, index_t y, index_t z) ;
-        index_t y, 
-        index_t z) ;    
 
 extern int32_t lselectcomp(
         struct xvimage *f,
