@@ -20,17 +20,17 @@ namespace pink {
   namespace python {
 
     char_image toposhrink(
-      const char_image & image,
-      const int_image & priority_image,
+      const pink::char_image & image,
+      const pink::int_image & priority_image,
       int connexity,
       int tmin,
       int tmax,
       int tbmin,
       int tbmax,
-      const char_image & inhibit
+      const pink::char_image & inhibit
       )
     {
-      char_image result;
+      pink::char_image result;
       result = image.clone();
       // ???????
       // char_image loc_inhibit;
@@ -56,9 +56,9 @@ namespace pink {
     } /* toposhrink */
     
 
-    char_image toposhrink_small(
-      const char_image & image,
-      int_image priority_image,
+    pink::char_image toposhrink_small(
+      const pink::char_image & image,
+      pink::int_image priority_image,
       int connexity,
       int tmin,
       int tmax,
@@ -66,7 +66,7 @@ namespace pink {
       int tbmax
       )
     {
-      char_image result = toposhrink( image, priority_image, connexity, tmin, tmax, tbmin, tbmax, char_image() );
+      pink::char_image result = toposhrink( image, priority_image, connexity, tmin, tmax, tbmin, tbmax, char_image() );
       return result;      
     } /* toposhrink_small */
     
