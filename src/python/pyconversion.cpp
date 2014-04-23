@@ -13,20 +13,45 @@
 
 
 
-# include "pink_python.h"
-# include "ui_convert.hpp"
+#include "pyexport.hpp"
 
-# include <boost/preprocessor/slot/counter.hpp>
-
-using namespace pink;
-using boost::python::arg;
-using boost::python::def;
+#include "python_doc.h"
+#include "llong2byte.h"
+#include "ui_convert.hpp"
 
 
-
-namespace conversion
+void
+pyconversion()
 {
+  using pink::type;
+  using pink::allocdef;
+  using pink::resultdef;
+  using pink::functiondef;
   
+  using boost::python::arg;
+  using boost::python::def;
+  using boost::python::scope;
+  using boost::python::object;
+  using boost::python::handle;
+  using boost::python::borrowed;
+  
+  // make "from mypackage.conv import <whatever>" work
+  object conv_module(handle<>(borrowed(PyImport_AddModule("libcpp_pink.conv"))));
+  
+  // make "from mypackage import conv" work
+  scope().attr("conv") = conv_module;
+ 
+  // set the current scope to the new sub-module
+  scope conv_scope = conv_module;
+
+  //   UI_WRAP_CPP(
+//     "convert2float",
+//     pink::convert2float,
+//     (arg("image")),
+//     "converts an image to float type"
+//     // end of the documenation
+//     );
+
 
 //   UI_WRAP_CPP(
 //     "convert2float",
@@ -35,38 +60,6 @@ namespace conversion
 //     "converts an image to float type"
 //     // end of the documenation
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-// // #ifdef JULIETTE
-// // // juliette
-// // UI_WRAP_RESULT(
-// //   int_image,
-// //   "short2long",
-// //   short2long,
-// //   (arg("image")),
-// //   "This operator converts the short images to long."
-// //   );
-// // # include BOOST_PP_UPDATE_COUNTER()
-
-// // UI_WRAP_RESULT(
-// //   int_image,
-// //   "long2short",
-// //   long2short,
-// //   (arg("image")),
-// //   "This operator converts the long images to short."
-// //   );
-// // # include BOOST_PP_UPDATE_COUNTER()
-
-// // #endif // JULIETTE
-
-//   UI_WRAP_CPP(
-//     "convert2float",
-//     pink::convert2float,
-//     (arg("image")),
-//     "converts an image to float type"
-//     // end of the documenation
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
 
 //   UI_WRAP_CPP(
 //     "convert2long",
@@ -75,50 +68,23 @@ namespace conversion
 //     "converts an image to long type"
 //     // end of the documenation
 //     );
-// # include BOOST_PP_UPDATE_COUNTER()
 
-} /* namespace conversion */
+  //!! def( "float2byte", float2byte, ( arg("source image"), arg("mode")=2 ), doc__float2byte__c__ );
 
-using namespace conversion;
+  //!! def( "long2byte",  long2byte,  ( arg("image"),arg("mode"),arg("nb_new_val") ), doc__long2byte__c__ );
 
+  //!! def( "short2byte", short2byte, ( arg("image"), arg("mode") ), "converts a short image to long type" );
 
-void pyconversion()
-{
-//   CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
+  //!! def( "long2short", long2short, ( arg("image"), arg("mode") ), "converts a long image to short type" );
 
-  // def(
-  //   "float2byte",
-  //   pink::float2byte,
-  //   ( arg("source image"), arg("mode")=2 ),
-  //   doc__float2byte__c__
-  //   // end of the documenation
-  //   );
-  
-  // def(
-  //   "long2byte",
-  //   pink::long2byte,
-  //   ( arg("image"),arg("mode"),arg("nb_new_val") ),
-  //   doc__long2byte__c__
-  //   // end of the documenation
-  //   );
-  
-  
-  // def(
-  //   "short2byte",
-  //   pink::short2byte,
-  //   ( arg("image"), arg("mode") ),
-  //   "converts a short image to long type"
-  //   );
-  
-  
-  // def(
-  //   "long2short",
-  //   pink::long2short,
-  //   ( arg("image"), arg("mode") ),
-  //   "converts a long image to short type"
-  //   );
-    
-}
+  // #ifdef JULIETTE
+  // resultdef( VFF_TYP_4_BYTE, "short2long", short2long, (arg("image")), "This operator converts the short images to long." );
+
+  //  resultdef( VFF_TYP_2_BYTE, "long2short", long2short, (arg("image")), "This operator converts the long images to short." );
+  // #endif // JULIETTE
+
+  return;
+} // pyconversion
 
 
 // LuM end of file
