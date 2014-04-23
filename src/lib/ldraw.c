@@ -228,6 +228,7 @@ ldrawfilledellipse(struct xvimage * image, double R, double S, double T, double 
       F[j * rs + i] = NDG_MAX;
   }
 
+  return 1;
 } // ldrawfilledellipse()
 
 /* ==================================== */
@@ -538,9 +539,14 @@ struct xvimage *ldrawfield2d( const struct xvimage *field, double len)
   double X, Y, t;
   float * F;
 
-  assert(datatype(field) == VFF_TYP_FLOAT);
-  assert(nbands(field) == 2);
-  assert(depth(field) == 1);
+  ACCEPTED_TYPES1(field, VFF_TYP_FLOAT);
+
+  if (!(nbands(field) == 2)) {
+    fprintf(stderr, "%s: need two band images\n", F_NAME);
+    return 0;      
+  }
+
+  ONLY_2D(field);
 
   rs = rowsize(field);
   cs = colsize(field);
@@ -582,6 +588,22 @@ void ldrawfield2dlist(int32_t npoints, int32_t *X, int32_t *Y, double *tx, doubl
   }
 } // ldrawfield2dlist()
 
+struct xvimage * 
+ldrawfield ( const struct xvimage * field, double len ) {
+#undef F_NAME
+#define F_NAME "ldrawfield"
+  if (depth(field)==2) {
+    return ldrawfield2d(field, len);
+  } 
+  else if (depth(field)==2) {
+    return ldrawfield3d(field, len);
+  } 
+  else 
+    fprintf(stderr, "%s: only works on 2D or 3D images.\n", F_NAME);
+    
+  return 0;
+}
+
 /* ==================================== */
 struct xvimage *ldrawfield3d( const struct xvimage *field, double len)
 /* ==================================== */
@@ -593,9 +615,15 @@ struct xvimage *ldrawfield3d( const struct xvimage *field, double len)
   int32_t N, rs, cs, ds, ps, x1, y1, z1;
   double X, Y, Z, t;
   float * F;
+  
+  ACCEPTED_TYPES1(field, VFF_TYP_FLOAT);
 
-  assert(datatype(field) == VFF_TYP_FLOAT);
-  assert(nbands(field) == 3);
+  if (!(nbands(field) == 2)) {
+    fprintf(stderr, "%s: need two band images\n", F_NAME);
+    return 0;      
+  }
+
+  ONLY_3D(field);
 
   rs = rowsize(field);
   cs = colsize(field);
