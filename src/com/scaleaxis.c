@@ -32,24 +32,30 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file seamcarving.c
+/*! \file scaleaxis.c
 
-\brief applies the seam carving method to shrink an image
+\brief discrete scale axis transform
 
-<B>Usage:</B> seamcarving in.ppm energy.pgm w h out.ppm
+<B>Usage:</B> scaleaxis in.pgm s out.pgm
 
 <B>Description:</B>
+Discrete scale axis, as defined in [MGP10], 
+of the binary image \b X contained in \b in.pgm.
+
+References:<BR> 
+[MGP10] "Discrete scale axis representations for 3D geometry", Balint Miklos, Joachim Giesen, Mark Pauly, SIGGRAPH 2010
 
 <B>Types supported:</B> byte 2d
 
-<B>Category:</B> geo
-\ingroup  geo
+<B>Category:</B> morpho
+\ingroup  morpho
 
 \author Michel Couprie
 */
 
-/* 
-   Michel Couprie - juillet 2012
+/*
+%TEST scaleaxis %IMAGES/2dbyte/binary/b2hebreu.pgm %RESULTS/scaleaxis_b2hebreu.pgm
+%TEST scaleaxis %IMAGES/3dbyte/binary/b3a.pgm %RESULTS/scaleaxis_b3a.pgm
 */
 
 #include <stdio.h>
@@ -58,64 +64,55 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lseamcarving.h>
+#include <lmedialaxis.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * in;
-  struct xvimage * en;
-  struct xvimage * out;
-  index_t w, h;
-  int32_t ret;
+  struct xvimage * image;
+  struct xvimage * res;
+  double scale;
+  uint32_t rs, cs, ds, N;
 
-  if (argc != 6)
+  if (argc != 4)
   {
-    fprintf(stderr, "usage: %s in.ppm energy.pgm w h out.ppm \n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm scale fileout.pgm\n", argv[0]);
     exit(1);
   }
 
-  in = readimage(argv[1]);
-  if (in == NULL)
+  image = readimage(argv[1]);
+  if (image == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
+  rs = rowsize(image);
+  cs = colsize(image);
+  ds = depth(image);
+  N = rs * cs * ds;
 
-  en = readimage(argv[2]);
-  if (en == NULL)
-  {
-    fprintf(stderr, "%s: readimage failed\n", argv[0]);
-    exit(1);
-  }
-  
-  w = atoi(argv[3]);
-  h = atoi(argv[4]);
-  if (h != colsize(in))
-  {
-    h = colsize(in);
-    printf("WARNING: change of h not yet implemented, h forced to %d\n", h);
-  }
-  if (w >= rowsize(in))
-  {
-    printf("WARNING: increase of w not yet implemented, nothing done\n");
-    return 0;
-  }
-
-  out = allocmultimage(NULL, w, h, 1, 1, 3, VFF_TYP_1_BYTE);
-  if (out == NULL)
-  {
+  res = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (res == NULL)
+  {   
     fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
 
-  ret = lseamcarving(in, en, w, out);
+  scale = atof(argv[2]);
 
-  writeimage(out, argv[argc-1]);
-  freeimage(in);
-  freeimage(en);
-  freeimage(out);
+  if (!lmedialaxis_scaleaxis(image, scale, res))
+  {
+    fprintf(stderr, "%s: lmedialaxis_scaleaxis failed\n", argv[0]);
+    exit(1);
+  }
+  
+  writeimage(res, argv[argc - 1]);
+
+  freeimage(res);
+  freeimage(image);
 
   return 0;
 } /* main */
+
+

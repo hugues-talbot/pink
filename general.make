@@ -155,6 +155,8 @@ $(BDIR)/radialrankmaxopening \
 $(BDIR)/rankfilter \
 $(BDIR)/rankmaxopening \
 $(BDIR)/redt \
+$(BDIR)/scaleaxis \
+$(BDIR)/sfema \
 $(BDIR)/ultimateerosion \
 $(BDIR)/voronoilabelling \
 $(BDIR)/fmm
@@ -1266,6 +1268,12 @@ $(BDIR)/rankmaxopening:	 $(CDIR)/rankmaxopening.c $(IDIR)/mcimage.h $(IDIR)/mcco
 
 $(BDIR)/redt:	$(CDIR)/redt.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/ldist.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/redt.c $(ODIR)/ldist.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/redt
+
+$(BDIR)/scaleaxis:	$(CDIR)/scaleaxis.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lmedialaxis.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/scaleaxis.c $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/scaleaxis
+
+$(BDIR)/sfema:	$(CDIR)/sfema.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lmedialaxis.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/sfema.c $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/sfema
 
 $(BDIR)/ultimateerosion:	$(CDIR)/ultimateerosion.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/ldist.h $(IDIR)/lgeodesic.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mcindic.o $(ODIR)/ldist.o $(ODIR)/lgeodesic.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ultimateerosion.c $(ODIR)/ldist.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/lgeodesic.o $(ODIR)/mcindic.o $(LIBS) -o $(BDIR)/ultimateerosion
