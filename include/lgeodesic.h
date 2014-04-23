@@ -63,14 +63,14 @@ extern int32_t lgeoeros(
 extern int32_t ldeletecomp(
         struct xvimage *f,
         int32_t connex,
-        int32_t x, int32_t y, int32_t z) ;
+        index_t x, index_t y, index_t z) ;
 
 extern int32_t lselectcomp(
         struct xvimage *f,
         int32_t connex,
-        int32_t x, 
-        int32_t y, 
-        int32_t z) ;
+        index_t x, 
+        index_t y, 
+        index_t z) ;
 
 extern int32_t lreconsdilat3d(
         struct xvimage *g,
