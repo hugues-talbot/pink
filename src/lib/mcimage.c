@@ -146,6 +146,11 @@ struct xvimage *allocimage(
 #undef F_NAME
 #define F_NAME "allocimage"
 {
+  if ( (!(rs>0)) || (!(cs>=1)) || (!(cs>=1)) ) {
+    fprintf( stderr, "%s: wrong image dimensions\n", F_NAME );
+    return NULL;
+  }
+
   index_t N = rs * cs * ds;             /* taille image */
   struct xvimage *g;
   index_t es;                          /* type size */
@@ -344,6 +349,7 @@ struct xvimage *allocheader(
   {   fprintf(stderr,"%s: malloc failed\n", F_NAME);
       return NULL;
   }
+  // printf("allocheader called (%p)\n", g);
   if (name != NULL)
   {
     g->name = (char *)calloc(1,strlen(name)+1);
@@ -493,6 +499,7 @@ void freeimage( struct xvimage *image )
 void freeheader(struct xvimage *image)
 /* ==================================== */
 {
+  // printf("freeheader image (%p)\n", image);
   assert(image);
   if (image->name != NULL) free(image->name);
   free(image);
