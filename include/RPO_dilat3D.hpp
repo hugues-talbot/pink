@@ -1,3 +1,6 @@
+#ifndef __RPO_DILAT3D_HPP__
+#define __RPO_DILAT3D_HPP__
+
 #include <iostream>
 #include <string>
 #include <omp.h>
@@ -10,20 +13,10 @@
 #include <cassert>
 
 
-//#include "PO.h"
-//#include "pink.h"
-//#include "liarp.h"
-//#include "fseries.hpp"
-//#include "fseries3d.h"
-//#include "liar_fseries.h"
-//#include "larith.h"
+#include "../src/liar/rect3dmm.hpp"
+#include "larith.h"
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
-#include "liarp.h"
-#include "fseries.hpp"
+// PixelType defined in NonLocalFilterSioux as long
 
 
 void usage()
@@ -90,19 +83,19 @@ void RPO_dilat3D(	PixelType* input_buffer,
 	PixelType *res6=new PixelType[dimx*dimy*dimz];
 	PixelType *res7=new PixelType[dimx*dimy*dimz];
 
-    PixelType *image=input_buffer;
-
-    memcpy(&input_buffer[0],&image[0],(dimx*dimy*dimz)*sizeof(PixelType));
+    PixelType *image=new PixelType[dimx*dimy*dimz];
+	memcpy(&image[0],&input_buffer[0],(dimx*dimy*dimz)*sizeof(PixelType));
 
     // Dilation by a cube of size 3x3x3
-    rect3dminmax(image, dimx, dimy, dimz, 3,3,3,false);
-
+    // rect3dminmax erases its input buffer so a copy of input_buffer is done before in image.
+	rect3dminmax(image, dimx, dimy, dimz, 3,3,3,false);
+	
 	// Calling PO for each orientation
 	   #pragma omp parallel sections
 	   {
 	   #pragma omp section
 	   {
-		 PO_3D<PixelType>(image,dimz,dimy,dimx,L,orientation1,res1);
+		 PO_3D<PixelType>(image,dimz,dimy,dimx,L,orientation1,res1); // Defined in /include/Path_Opening.hpp
 		 std::cout<<"orientation1 1 0 0 : passed"<<std::endl;
 	   }
 	   #pragma omp section
@@ -136,14 +129,13 @@ void RPO_dilat3D(	PixelType* input_buffer,
 		   std::cout<<"orientation7 -1 1 -1 : passed"<<std::endl;
 		}
 	 }
-
+	std::cout<<"avant UNION"<<std::endl;
 	 //Union of orientations
 	#pragma omp parallel for
 	for(int i=0; i<dimx*dimy*dimz;i++)
 		output_buffer[i]=res1[i];
-
-    std::cout<<"test"<<std::endl;
-
+		
+	std::cout<<"apres UNION"<<std::endl;
 	#pragma omp parallel for
 	for(int i=0; i<dimx*dimy*dimz;i++)
 		output_buffer[i]=std::max(res2[i],output_buffer[i]);
@@ -169,35 +161,19 @@ void RPO_dilat3D(	PixelType* input_buffer,
 		output_buffer[i]=std::max(res7[i],output_buffer[i]);
 
 
-    // Minimum between the computed RPO on the dilation and the initial image
+	 std::cout<<"avant minmax"<<std::endl;
+    //Erosion
     rect3dminmax(output_buffer, dimx, dimy, dimz, 3,3,3,true);
     
-    struct xvimage * image1;
-    struct xvimage * image2;
-    struct xvimage * image3;
-
-    int32_t typepixel = VFF_TYP_4_BYTE;
-
-    image1=allocheader(NULL,dimx,dimy,dimz,typepixel);
-    image1->image_data=input_buffer;
-
-    image2=allocheader(NULL,dimx,dimy,dimz,typepixel);
-    image2->image_data=output_buffer;
-
-    image3=copyimage(image1);
-    // lmin ecrase image3->image_data
-    lmin(image3,image2);
-
-    output_buffer=(PixelType*)(image3->image_data);
-
-    free(image1);
-    free(image2);
-    free(image3);
+    // Minimum between the computed RPO on the dilation and the initial image
+    for(int i=0; i<dimx*dimy*dimz;i++)
+		output_buffer[i]=std::min(output_buffer[i],input_buffer[i]);
+	
+	//memcpy(&output_buffer[0],&image[0],(dimx*dimy*dimz)*sizeof(PixelType));	
     
 }
 
-
-
+#endif
 
 
 

@@ -1,3 +1,6 @@
+#ifndef __RPO_DILAT_CONSTRAINT_HPP__
+#define __RPO_DILAT_CONSTRAINT_HPP__
+
 #include <iostream>
 #include <string>
 #include <omp.h>
@@ -9,14 +12,13 @@
 #include <queue>
 #include <cassert>
 
-#undef max
 
 
-typedef unsigned long IndexType;
-// PixelType defined in NonLocalFilterSioux as long
+#include "../src/liar/rect3dmm.hpp"
+#include "larith.h"
 
 
-void Neighbourhood(	int nb_col,
+void createNeighbourhoodConstraint(	int nb_col,
 							int dim_frame,
 	 						std::vector<int> & orientation,
 	 						std::vector<int> & upList,
@@ -29,26 +31,8 @@ void Neighbourhood(	int nb_col,
     //depth orientation [1 0 0]
     if((depth_shift == 1 && line_shift == 0 && col_shift == 0) ||
        (depth_shift == -1 && line_shift == 0 && col_shift == 0) ) {
-       upList.push_back( dim_frame - nb_col - 1);
-       upList.push_back( dim_frame - nb_col + 1);
-       upList.push_back( dim_frame + nb_col -1 );
-       upList.push_back( dim_frame + nb_col + 1);
 
-       upList.push_back( dim_frame - 1);
-       upList.push_back( dim_frame - nb_col);
-       upList.push_back( dim_frame + 1);
-       upList.push_back( dim_frame + nb_col);
        upList.push_back( dim_frame );
-
-       downList.push_back( -dim_frame + nb_col + 1);
-       downList.push_back( -dim_frame + nb_col - 1);
-       downList.push_back( -dim_frame - nb_col + 1 );
-       downList.push_back( -dim_frame - nb_col - 1);
-
-       downList.push_back( -dim_frame + 1);
-       downList.push_back( -dim_frame + nb_col);
-       downList.push_back( -dim_frame - 1);
-       downList.push_back( -dim_frame - nb_col);
        downList.push_back( -dim_frame );
 
     }
@@ -56,27 +40,7 @@ void Neighbourhood(	int nb_col,
     if((depth_shift == 0 && line_shift == 1 && col_shift == 0) ||
       (depth_shift == 0 && line_shift == -1 && col_shift == 0)) {
 
-       upList.push_back(dim_frame + nb_col - 1 );
-       upList.push_back(dim_frame + nb_col + 1);
-       upList.push_back( -dim_frame + nb_col -1 );
-       upList.push_back( -dim_frame + nb_col + 1);
-
-
-       upList.push_back(nb_col - 1);
-       upList.push_back(dim_frame + nb_col);
-       upList.push_back( nb_col + 1);
-       upList.push_back( -dim_frame + nb_col);
        upList.push_back( nb_col );
-
-       downList.push_back(-dim_frame - nb_col + 1 );
-       downList.push_back(-dim_frame - nb_col - 1);
-       downList.push_back( dim_frame - nb_col + 1 );
-       downList.push_back( dim_frame - nb_col - 1);
-
-       downList.push_back(-nb_col + 1);
-       downList.push_back(-dim_frame - nb_col);
-       downList.push_back( -nb_col - 1);
-       downList.push_back( dim_frame - nb_col);
        downList.push_back( -nb_col );
 
     }
@@ -84,26 +48,7 @@ void Neighbourhood(	int nb_col,
     if((depth_shift == 0 && line_shift == 0 && col_shift == 1) ||
       (depth_shift == 0 && line_shift == 0 && col_shift == -1)) {
 
-       upList.push_back(-nb_col +1 - dim_frame);
-       upList.push_back(-nb_col +1 + dim_frame);
-       upList.push_back(nb_col +1 - dim_frame);
-       upList.push_back( nb_col +1 + dim_frame);
-
-       upList.push_back(dim_frame + 1);
-       upList.push_back(-nb_col + 1);
-       upList.push_back(-dim_frame + 1);
-       upList.push_back( nb_col + 1);
        upList.push_back( 1 );
-
-       downList.push_back(nb_col -1 + dim_frame);
-       downList.push_back(nb_col -1 - dim_frame);
-       downList.push_back(-nb_col -1 + dim_frame);
-       downList.push_back( -nb_col -1 - dim_frame);
-
-       downList.push_back(-dim_frame - 1);
-       downList.push_back(nb_col - 1);
-       downList.push_back(dim_frame - 1);
-       downList.push_back( -nb_col - 1);
        downList.push_back( -1 );
 
     }
@@ -111,25 +56,8 @@ void Neighbourhood(	int nb_col,
     if((depth_shift == 1 && line_shift == 1 && col_shift == 1) ||
       (depth_shift == -1 && line_shift == -1 && col_shift == -1)) {
 
-	   upList.push_back(1);
-	   upList.push_back(dim_frame);
-	   upList.push_back(nb_col);
 
-	   upList.push_back(dim_frame + nb_col);
-       upList.push_back(nb_col + 1);
-       upList.push_back(dim_frame + 1 );
-       //main direction
        upList.push_back(dim_frame + nb_col + 1);
-
-	   downList.push_back(-1);
-	   downList.push_back(-dim_frame);
-	   downList.push_back(-nb_col);
-
-       downList.push_back( -dim_frame - nb_col);
-       downList.push_back( -nb_col - 1);
-       downList.push_back( -dim_frame - 1 );
-
-       //main direction
        downList.push_back(-dim_frame - nb_col - 1);
 
     }
@@ -137,26 +65,7 @@ void Neighbourhood(	int nb_col,
     if((depth_shift == 1 && line_shift == 1 && col_shift == -1) ||
       (depth_shift == -1 && line_shift == -1 && col_shift == 1)) {
 
-	   upList.push_back(-1);
-	   upList.push_back(dim_frame);
-	   upList.push_back(nb_col);
-
-       upList.push_back(dim_frame + nb_col);
-       upList.push_back(nb_col - 1);
-       upList.push_back(dim_frame - 1);
-
-       //main direction
        upList.push_back( dim_frame + nb_col - 1 );
-
-       downList.push_back( 1 );
-	   downList.push_back( -dim_frame  );
-	   downList.push_back(-nb_col);
-
-	   downList.push_back(-dim_frame - nb_col);
-       downList.push_back(-nb_col +1);
-       downList.push_back(-dim_frame + 1 );
-
-       //main direction
        downList.push_back( -dim_frame - nb_col + 1 );
 
     }
@@ -164,26 +73,7 @@ void Neighbourhood(	int nb_col,
     if((depth_shift == -1 && line_shift == 1 && col_shift == 1) ||
       (depth_shift == 1 && line_shift == -1 && col_shift == -1)) {
 
-        upList.push_back( 1 );
-		upList.push_back( -dim_frame );
-        upList.push_back(nb_col);
-
-		upList.push_back(-dim_frame + nb_col);
-        upList.push_back( nb_col + 1);
-        upList.push_back( -dim_frame + 1 );
-
-        //main direction
         upList.push_back( -dim_frame + nb_col + 1 );
-
-		downList.push_back( -1 );
-		downList.push_back( dim_frame );
-		downList.push_back(-nb_col);
-
-        downList.push_back(dim_frame - nb_col);
-        downList.push_back( -nb_col -1);
-        downList.push_back(  dim_frame - 1 );
-
-        //main direction
         downList.push_back( dim_frame - nb_col -1 );
 
     }
@@ -191,75 +81,20 @@ void Neighbourhood(	int nb_col,
     if((depth_shift == -1 && line_shift == 1 && col_shift == -1) ||
       (depth_shift == 1 && line_shift == -1 && col_shift == 1)) {
 
-		upList.push_back( -1 );
-		upList.push_back( -dim_frame );
-		upList.push_back(nb_col);
-
-        upList.push_back(-dim_frame + nb_col);
-        upList.push_back( nb_col - 1);
-        upList.push_back( -dim_frame - 1 );
-
-        //main direction
         upList.push_back( -dim_frame + nb_col - 1 );
-
-		downList.push_back( 1 );
-		downList.push_back( dim_frame );
-		downList.push_back(-nb_col);
-
-        downList.push_back(dim_frame - nb_col);
-        downList.push_back( -nb_col + 1);
-        downList.push_back(  dim_frame + 1 );
-
-        //main direction
         downList.push_back( dim_frame - nb_col + 1 );
 
     }
 
 }
 
-template<typename PixelType>
-bool my_sorting_function (const PixelType *i,const PixelType *j)
-// Input: i, j : two variables containing memory adress pointing to PixelType variables.
-// Return : True if the variable pointed by i is smaller than the variabled pointed by j
-{
-	return (*i<*j);
-}
-
 template<typename PixelType,typename IndexType>
-std::vector<IndexType> sort_image_value(std::vector<PixelType> I)
-//  Return pixels index of image I sorted according to intensity
-{
-	std::vector<IndexType> index_image(I.size());
-	std::vector<PixelType*>index_pointer_adress(I.size());
-	IndexType it;
-	typename std::vector<PixelType>::iterator it1;
-	typename std::vector<PixelType*>::iterator it2;
-	typename std::vector<IndexType>::iterator it3;
-
-	// Fill index_pointer_adress with memory adress of variables in I
-	for (it=0,it2=index_pointer_adress.begin(); it!=I.size(); ++it, ++it2)
-	{
-		*it2=&I[it];
-	}
-
-	// Sorting adresses according to intensity
-	std::sort(index_pointer_adress.begin(),index_pointer_adress.end(),my_sorting_function<PixelType>);
-
-	// Conversion from adresses to index of image I
-	for (it3=index_image.begin(),it=0; it!=I.size(); ++it,++it3)
-	{
-		*it3=static_cast<IndexType>(index_pointer_adress[it]-&I[0]);
-	}
-	return index_image;
-}
-
-
-template<typename PixelType,typename IndexType>
-void propagation(IndexType p, std::vector<int>&lambda, std::vector<int>&nf, std::vector<int>&nb, std::vector<bool>&b, std::queue<IndexType> &Qc)
+void propagate_constraint(IndexType p, std::vector<int>&lambda, std::vector<int>&lambdaC, std::vector<int>&nfC, std::vector<int>&nf, std::vector<int>&nbC, std::vector<int>&nb, std::vector<bool>&b, std::queue<IndexType> &Qc)
 // Propagation from pixel p
 {
 	std::queue<IndexType> Qq;
 	lambda[p]=0;
+	lambdaC[p]=0;
 
 	std::vector<int>::iterator it;
 	for (it=nf.begin(); it!=nf.end();++it)
@@ -272,32 +107,54 @@ void propagation(IndexType p, std::vector<int>&lambda, std::vector<int>&nf, std:
 
 	while (not Qq.empty())
 	{
+       //bool testQ=false;
 		IndexType q=Qq.front();
 		Qq.pop();
-		int l=0;
-		for (it=nb.begin(); it!=nb.end();++it)
+		std::vector<int>::iterator it2;
+		for (it2=nbC.begin();it2!=nbC.end();++it2)
 		{
-			l=std::max(lambda[q+*it],l);
-		}
-		l+=1;
-
-		if (l<lambda[q])
-		{
-			lambda[q]=l;
-			Qc.push(q);
-			for (it=nf.begin(); it!=nf.end(); ++it)
-			{
-				if (b[q+*it])
-				{
-					Qq.push(q+*it);
-				}
+            int l=lambda[q+*it2]+1;
+            if (l<lambdaC[q])
+            {
+                lambdaC[q]=l;
+                std::vector<int>::iterator it3;
+                for (it3=nf.begin(); it3!=nf.end(); ++it3)
+                {
+                    if (b[q+*it3])
+                    {
+                        Qq.push(q+*it3);
+                    }
+                    //testQ=true;
+                    Qc.push(q);
+                }
 			}
-		}
+
+            std::vector<int>::iterator it4;
+			for (it4=nb.begin(); it4!=nb.end();++it4)
+            {
+                l=std::max(lambdaC[q+*it4]+1,l);
+            }
+
+            if (l<lambda[q])
+            {
+                lambda[q]=l;
+                Qc.push(q);
+                std::vector<int>::iterator it5;
+                for (it5=nfC.begin(); it5!=nfC.end(); ++it5)
+                {
+                    if (b[q+*it5])
+                    {
+                        Qq.push(q+*it5);
+                    }
+                }
+            }
+            //if (testQ=true)
+        }
 	}
 }
 
 template<typename PixelType>
-void PO_3D(	PixelType* Inputbuffer,
+void PO_constraint(	PixelType* Inputbuffer,
 								int dimz,
 								int dimy,
 								int dimx,
@@ -341,11 +198,18 @@ void PO_3D(	PixelType* Inputbuffer,
 	// Create the offset np and nm
 	std::vector<int>np;
 	std::vector<int>nm;
-	Neighbourhood(new_dimx, dim_frame,orientations,np,nm);
+	createNeighbourhood(new_dimx, dim_frame,orientations,np,nm);
+
+	// Create the offset npC and nmC
+    std::vector<int>npC;
+	std::vector<int>nmC;
+	createNeighbourhoodConstraint(new_dimx, dim_frame,orientations,npC,nmC);
 
 	//Create other temporary images
 	std::vector<int>Lp(Image.size(),L);
 	std::vector<int>Lm(Image.size(),L);
+    std::vector<int>LpC(Image.size(),L);
+	std::vector<int>LmC(Image.size(),L);
 
 	//Create FIFO queue Qc
 	std::queue<IndexType> Qc;
@@ -362,22 +226,25 @@ void PO_3D(	PixelType* Inputbuffer,
 		//std::cerr<<"propagation"<<std::endl;
 		if (b[*it])
 		{
-			propagation<PixelType,IndexType>(*it,Lm,np,nm,b,Qc);
-			propagation<PixelType,IndexType>(*it,Lp,nm,np,b,Qc);
-
-
+			propagate_constraint<PixelType,IndexType>(*it,Lm,LmC,npC,np,nmC,nm,b,Qc);
+			propagate_constraint<PixelType,IndexType>(*it,Lp,LpC,nmC,nm,npC,np,b,Qc);
 
 			while (not Qc.empty())
 			{
 				IndexType q=Qc.front();
 				Qc.pop();
-				if (Lp[q]+Lm[q]-1<L)
+				if ((Lp[q]+LmC[q]-1)<L || (LpC[q]+Lm[q]-1)<L)
 				{
-					//std::cout <<"Image["<<q<< "]= "<< Image[*it]<< std::endl;
+
+					//if (Image[*it]>0)
+					//{std::cout <<"Image["<<q<< "]= "<< Image[*it]<< std::endl;}
 					Image[q]=Image[*it];
+
 					b[q]=0;
 					Lp[q]=0;
+					LpC[q]=0;
 					Lm[q]=0;
+					LmC[q]=0;
 				}
 			}
 		}
@@ -386,7 +253,8 @@ void PO_3D(	PixelType* Inputbuffer,
 	//Outputbuffer=&Image[0];
 
 	// Remove border
-	for (int z=0; z<dimz; ++z){
+	for (int z=0; z<dimz; ++z)
+	{
 		for (int y=0; y<dimy; ++y){
 			for (int x=0; x<dimx; ++x){
 				Outputbuffer[z*dimx*dimy+y*dimx+x]=Image[(z+2)*(new_dimx*new_dimy)+(y+2)*new_dimx+(x+2)];
@@ -397,16 +265,14 @@ void PO_3D(	PixelType* Inputbuffer,
 }
 
 
-
 template<typename PixelType>
-void Union_PO3D(	PixelType* input_buffer,
+void RPO_constraint(	PixelType* input_buffer,
 								PixelType* output_buffer,
 								int L,
 								int dimx,
 								int dimy,
-								int dimz){
-
-
+								int dimz)
+{
 	//--------------  Run PO for each orientation ----------------------
 
 	// orientation vector
@@ -448,47 +314,52 @@ void Union_PO3D(	PixelType* input_buffer,
 	PixelType *res5=new PixelType[dimx*dimy*dimz];
 	PixelType *res6=new PixelType[dimx*dimy*dimz];
 	PixelType *res7=new PixelType[dimx*dimy*dimz];
+	PixelType *image=new PixelType[dimx*dimy*dimz];
 
+    memcpy(&image[0],&input_buffer[0],(dimx*dimy*dimz)*sizeof(PixelType));
+
+    // Dilation by a cube of size 3x3x3
+    rect3dminmax(image, dimx, dimy, dimz, 3,3,3,false);
 
 	// Calling PO for each orientation
-	   #pragma omp parallel sections
-	   {
+    #pragma omp parallel sections
+    {
 	   #pragma omp section
 	   {
-		 PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation1,res1);
-		 std::cout<<"orientation1 1 0 0 : passed"<<std::endl;
+		   PO_constraint<PixelType>(image,dimz,dimy,dimx,L,orientation1,res1);
+		   std::cout<<"orientation1 1 0 0 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-		   PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation2,res2);
+		   PO_constraint<PixelType>(image,dimz,dimy,dimx,L,orientation2,res2);
 		   std::cout<<"orientation2 0 1 0 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-	       PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation3,res3);
+	       PO_constraint<PixelType>(image,dimz,dimy,dimx,L,orientation3,res3);
 		   std::cout<<"orientation3 0 0 1 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-	       PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation4,res4);
+	       PO_constraint<PixelType>(image,dimz,dimy,dimx,L,orientation4,res4);
 		   std::cout<<"orientation4 1 1 1 : passed"<<std::endl;
 	   }
 		#pragma omp section
 	   {
-	       PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation5,res5);
+	       PO_constraint<PixelType>(image,dimz,dimy,dimx,L,orientation5,res5);
 		   std::cout<<"orientation5 1 1 -1 : passed"<<std::endl;
 	   }
 	   #pragma omp section
-	  {
-	       PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation6,res6);
+	   {
+	       PO_constraint<PixelType>(image,dimz,dimy,dimx,L,orientation6,res6);
 		   std::cout<<"orientation6 -1 1 1 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-	       PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation7,res7);
+	       PO_constraint<PixelType>(image,dimz,dimy,dimx,L,orientation7,res7);
 		   std::cout<<"orientation7 -1 1 -1 : passed"<<std::endl;
-		}
-	 }
+       }
+    }
 
 	 //Union of orientations
 	#pragma omp parallel for
@@ -519,10 +390,16 @@ void Union_PO3D(	PixelType* input_buffer,
 	for(int i=0; i<dimx*dimy*dimz;i++)
 		output_buffer[i]=std::max(res7[i],output_buffer[i]);
 
-
-
+    // Minimum between the computed RPO on the dilation and the initial image
+    rect3dminmax(output_buffer, dimx, dimy, dimz, 3,3,3,true);
+	// Minimum between the computed RPO on the dilation and the initial image
+		for(int i=0; i<dimx*dimy*dimz;i++)
+			output_buffer[i]=std::min(output_buffer[i],input_buffer[i]);
 
 }
+
+
+#endif
 
 
 
