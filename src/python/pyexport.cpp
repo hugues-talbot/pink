@@ -37,12 +37,23 @@
 #include "ujimage.hpp"
 
 namespace pink {
-    
+
+  namespace tmp {
+
+    using boost::python::object;
+            
+    template <>
+    cxvimage
+    convert< convert_to_pink, object > ( object python_input )
+    {
+      return cxvimage(python_input);
+    }
+            
+  } // namespace tmp
+  
+  
 } // namespace pink
-
-
-
-
+ 
 
 
 
