@@ -91,8 +91,12 @@ int main(int argc, char **argv)
     /* la valeur par defaut est choisie pour donner rs(out) = 50 */
     z = 50.0 / rs;
   }
+  go1 = lzoom(g1, z, z, z);
+  go2 = lzoom(g2, z, z, z);
+  go3 = lzoom(g3, z, z, z);
 
-  if ((! lzoom(g1, &go1, z, z, z)) || (! lzoom(g2, &go2, z, z, z)) || (! lzoom(g3, &go3, z, z, z)))
+
+  if ((! go1) || (! go2) || (! go3))
   {
     fprintf(stderr, "zoom: function lzoom failed\n");
     exit(1);
