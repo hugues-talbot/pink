@@ -157,7 +157,7 @@ int32_t lgeodilat2d(
       return(0);
   }
 
-  for (x = 0; x < N; x++)      /* force G à être <= F */    
+  for (x = 0; x < N; x++)      /* force G ï¿½ ï¿½tre <= F */    
     if (G[x] > F[x]) G[x] = F[x];
 
   iter = 0;
@@ -295,7 +295,7 @@ int32_t lgeodilat2d_short(
       return(0);
   }
 
-  for (x = 0; x < N; x++)      /* force G à être <= F */    
+  for (x = 0; x < N; x++)      /* force G ï¿½ ï¿½tre <= F */    
     if (G[x] > F[x]) G[x] = F[x];
 
   iter = 0;
@@ -433,7 +433,7 @@ int32_t lgeodilat2d_long(
       return(0);
   }
 
-  for (x = 0; x < N; x++)      /* force G à être <= F */    
+  for (x = 0; x < N; x++)      /* force G ï¿½ ï¿½tre <= F */    
     if (G[x] > F[x]) G[x] = F[x];
 
   iter = 0;
@@ -585,7 +585,7 @@ int32_t lgeoeros(
     Set(x, 1);
   }
 
-  for (x = 0; x < N; x++)      /* force G à être >= F */    
+  for (x = 0; x < N; x++)      /* force G ï¿½ ï¿½tre >= F */    
     if (G[x] < F[x]) G[x] = F[x];
 
   iter = 0;
@@ -998,7 +998,7 @@ int32_t lgeodilat3d(
       return(0);
   }
 
-  for (x = 0; x < N; x++)      /* force G à être <= F */    
+  for (x = 0; x < N; x++)      /* force G ï¿½ ï¿½tre <= F */    
     if (G[x] > F[x]) G[x] = F[x];
 
   if (connex == 26)
@@ -1222,7 +1222,7 @@ int32_t lgeodilat3d_short(
       return(0);
   }
 
-  for (x = 0; x < N; x++)      /* force G à être <= F */    
+  for (x = 0; x < N; x++)      /* force G ï¿½ ï¿½tre <= F */    
     if (G[x] > F[x]) G[x] = F[x];
 
   if (connex == 26)
@@ -1446,7 +1446,7 @@ int32_t lgeodilat3d_long(
       return(0);
   }
 
-  for (x = 0; x < N; x++)      /* force G à être <= F */    
+  for (x = 0; x < N; x++)      /* force G ï¿½ ï¿½tre <= F */    
     if (G[x] > F[x]) G[x] = F[x];
 
   if (connex == 26)
@@ -1684,7 +1684,7 @@ int32_t lgeoeros3d(
       return(0);
   }
 
-  for (x = 0; x < N; x++)      /* force G à être >= F */    
+  for (x = 0; x < N; x++)      /* force G ï¿½ ï¿½tre >= F */    
     if (G[x] < F[x]) G[x] = F[x];
 
   if (connex == 26)
