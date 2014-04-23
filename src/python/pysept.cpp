@@ -29,31 +29,8 @@
 using boost::python::arg;
 using boost::python::def;
 
-// namespace sept
-// {
-//   UI_WRAP_MALLOC(
-//     "crop",
-//     lcrop,
-//     (arg("image"), arg("x"), arg("y"), arg("w"), arg("h")),
-//     doc__crop__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_MALLOC(
-//     "crop",
-//     lcrop3d,
-//     (arg("image"), arg("x"), arg("y"), arg("z"), arg("w"), arg("h"), arg("d")),
-//     doc__crop__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_MALLOC(
-//     "autocrop",
-//     lautocrop,
-//     (arg("image"), arg("threshold")),
-//     doc__autocrop__c__
-//     );
-// # include BOOST_PP_UPDATE_COUNTER()
+// namespace sept {
+  
 
 //     UI_WRAP_MALLOC(
 //         "rotate",
@@ -124,14 +101,6 @@ using boost::python::def;
 //     l3disthmus,
 //     (arg("image")),
 //     doc__3disthmus__c__
-//     )
-// # include BOOST_PP_UPDATE_COUNTER()
-
-//   UI_WRAP_FUNCTION(
-//     "barycentrelab",
-//     lbarycentrelab,
-//     (arg("image")),
-//     doc__barycentrelab__c__
 //     )
 // # include BOOST_PP_UPDATE_COUNTER()
 
