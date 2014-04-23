@@ -36,6 +36,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifndef MCGEO__H__
 #define MCGEO__H__
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
