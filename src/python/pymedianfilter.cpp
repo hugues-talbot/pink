@@ -21,18 +21,10 @@ namespace pink {
 
     char_image medianfilter(
       const char_image & image, 
-      const char_image & structuring_element				 
+      const char_image & structuring_element,
+      const std::vector<index_t> & center
       )
     {
-
-      const std::vector<index_t> & center = structuring_element.center();
-      
-      // testing if the center of the 'structuring_element' is set
-      if ( image.center()[1] == -1 )
-      {    
-        pink_error("medianfilter: the center of the structuring element must be set");
-      }  
-  
       char_image result;
       result = image.clone();
   
