@@ -845,6 +845,17 @@ UI_EXPORT_FUNCTION(
   "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
   " The robustness is performed by a dilation / erosion process. \n"
   );
+ 
+
+  UI_EXPORT_FUNCTION(
+  Union_RPO_constraint,
+  pink::python::liarUnion_RPO_constraint,
+  ( arg("input_image"), arg("L")),
+  "\n 3D Robust Path Opening Constraint with a path length L for orientation 'ori'. \n"
+  " Only works with long images \n"
+  "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
+  " The robustness is performed by a dilation / erosion process. \n"
+  );
   
   UI_EXPORT_FUNCTION(
   RPO_dilat_constraint,
@@ -861,16 +872,6 @@ UI_EXPORT_FUNCTION(
   "  -1  1  1  : diagonal NW/SE+depth\n"
   "  -1  1 -1  : diagonal NW/SE-depth\n"
   "\n"
-  "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
-  " The robustness is performed by a dilation / erosion process. \n"
-  );
-
-  UI_EXPORT_FUNCTION(
-  Union_RPO_constraint,
-  pink::python::liarUnion_RPO_constraint,
-  ( arg("input_image"), arg("L")),
-  "\n 3D Robust Path Opening Constraint with a path length L for orientation 'ori'. \n"
-  " Only works with long images \n"
   "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
   " The robustness is performed by a dilation / erosion process. \n"
   );

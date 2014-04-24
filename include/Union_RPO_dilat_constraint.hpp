@@ -1,5 +1,5 @@
-#ifndef __RPO_DILAT_CONSTRAINT_HPP__
-#define __RPO_DILAT_CONSTRAINT_HPP__
+#ifndef __UNION_RPO_DILAT_CONSTRAINT_HPP__
+#define __UNION_RPO_DILAT_CONSTRAINT_HPP__
 
 #include <iostream>
 #include <string>
