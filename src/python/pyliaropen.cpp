@@ -29,6 +29,7 @@ Path_Opening
 
 #include "Path_Opening.hpp"
 #include "RPO_dilat3D.hpp"
+#include "Union_RPO_dilat_constraint.hpp"
 #include "RPO_dilat_constraint.hpp"
 
 #include "liarp.h"
@@ -552,6 +553,48 @@ namespace pink {
 
     } /* liarRPO_dilat3D */
     
+template   <class image_t>
+    image_t liarRPO_dilat_constraint
+    (
+      image_t & input_image,
+      const int L,
+      const int orientationx,
+      const int orientationy,
+      const int orientationz
+    )
+    {
+    
+    // user-specified orientation
+	std::vector<int> orientation(3);
+	orientation[0] = orientationx;
+	orientation[1] = orientationy;
+	orientation[2] = orientationz;
+	
+    int errorcode = 0;
+    image_t result_image = input_image.clone();
+
+	// image structure
+	struct xvimage *inputxvimage = input_image.get_output();
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = outputxvimage->row_size;
+    int ny = outputxvimage->col_size;
+    int nz = outputxvimage->depth_size;
+
+
+    // buffers
+    PixelType *input_buffer = (PixelType*) (inputxvimage->image_data);
+	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
+
+    // Execute PO3D
+    RPO_dilat_constraint<PixelType>(input_buffer, output_buffer, L, nx, ny, nz);
+
+	// get result
+	return (result_image);
+
+    } /* liarRPO_dilat3D */
+    
     
     
     
@@ -801,12 +844,31 @@ UI_EXPORT_FUNCTION(
   "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
   " The robustness is performed by a dilation / erosion process. \n"
   );
+  
+  UI_EXPORT_FUNCTION(
+  RPO_dilat_constraint,
+  pink::python::liarRPO_dilat_constraint,
+  ( arg("input_image"), arg("L"), arg("orientationX"), arg("orientationY"), arg("orientationZ")),
+  "\n 3D Robust Path Opening Constraint with a path length L. \n"
+  " Only works with long images \n"
+  "The following orientations are legal:\n"
+  "   0  0  1  : depth direction\n"
+  "   0  1  0  : vertical\n"
+  "   1  0  0  : horizontal\n"
+  "   1  1  1  : diagonal NE/SW+depth\n"
+  "   1  1 -1  : diagonal NE/SW-depth\n"
+  "  -1  1  1  : diagonal NW/SE+depth\n"
+  "  -1  1 -1  : diagonal NW/SE-depth\n"
+  "\n"
+  "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
+  " The robustness is performed by a dilation / erosion process. \n"
+  );
 
   UI_EXPORT_FUNCTION(
   Union_RPO_constraint,
   pink::python::liarUnion_RPO_constraint,
   ( arg("input_image"), arg("L")),
-  "\n 3D Robust Path Opening Constraint with a path length L. \n"
+  "\n 3D Robust Path Opening Constraint with a path length L for orientation 'ori'. \n"
   " Only works with long images \n"
   "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
   " The robustness is performed by a dilation / erosion process. \n"

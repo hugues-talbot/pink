@@ -8,6 +8,7 @@
 #include "../src/liar/rect3dmm.hpp"
 #include "larith.h"
 
+
 template<typename PixelType>
 void RPO_dilat_constraint(	PixelType* input_buffer,
 								PixelType* output_buffer,
