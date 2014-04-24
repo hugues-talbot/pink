@@ -151,7 +151,7 @@ void Rotation3D_export();
 void fopenline3d_export();
 void PathOpening_export();
 void RPO_dilat3D_export();
-void RPO_constraint_export();
+void Union_RPO_constraint_export();
 
 // opening by unions of lines
 void openbun_export();
@@ -416,7 +416,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   fopenline3d_export();
   PathOpening_export();
   RPO_dilat3D_export();
-  RPO_constraint_export();
+  Union_RPO_constraint_export();
   
   openbun_export();
   closebin_export();

@@ -39,7 +39,7 @@ void RPO_dilat3D(	PixelType* input_buffer,
 								int dimy,
 								int dimz)
 
-{
+{	
 
 	//--------------  Run PO for each orientation ----------------------
 

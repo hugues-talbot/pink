@@ -521,7 +521,7 @@ namespace pink {
     
 
     template   <class image_t>
-    image_t liarRPO_constraint
+    image_t liarUnion_RPO_constraint
     (
       image_t & input_image,
       const int L
@@ -545,7 +545,7 @@ namespace pink {
 	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
 
     // Execute PO3D
-    RPO_constraint<PixelType>(input_buffer, output_buffer, L, nx, ny, nz);
+    Union_RPO_constraint<PixelType>(input_buffer, output_buffer, L, nx, ny, nz);
 
 	// get result
 	return (result_image);
@@ -803,8 +803,8 @@ UI_EXPORT_FUNCTION(
   );
 
   UI_EXPORT_FUNCTION(
-  RPO_constraint,
-  pink::python::liarRPO_constraint,
+  Union_RPO_constraint,
+  pink::python::liarUnion_RPO_constraint,
   ( arg("input_image"), arg("L")),
   "\n 3D Robust Path Opening Constraint with a path length L. \n"
   " Only works with long images \n"
