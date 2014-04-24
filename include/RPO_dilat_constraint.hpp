@@ -13,7 +13,7 @@ template<typename PixelType>
 void RPO_dilat_constraint(	PixelType* input_buffer,
 								PixelType* output_buffer,
 								int L,
-								std::vector<int> orientation,
+								std::vector<int>orientation,
 								int dimx,
 								int dimy,
 								int dimz)

@@ -551,7 +551,8 @@ namespace pink {
 	// get result
 	return (result_image);
 
-    } /* liarRPO_dilat3D */
+    } /* liarUnionRPO_constraint */
+    
     
 template   <class image_t>
     image_t liarRPO_dilat_constraint
@@ -588,12 +589,12 @@ template   <class image_t>
 	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
 
     // Execute PO3D
-    RPO_dilat_constraint<PixelType>(input_buffer, output_buffer, L, nx, ny, nz);
+    RPO_dilat_constraint<PixelType>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
 
 	// get result
 	return (result_image);
 
-    } /* liarRPO_dilat3D */
+    } /* liarRPO_diat_constraint */
     
     
     

@@ -417,8 +417,8 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   fopenline3d_export();
   PathOpening_export();
   RPO_dilat3D_export();
-  RPO_dilat_constraint_export();
   Union_RPO_constraint_export();
+  RPO_dilat_constraint_export();
   
   openbun_export();
   closebin_export();
