@@ -234,8 +234,6 @@ void PO_constraint(	PixelType* Inputbuffer,
 				if ((Lp[q]+LmC[q]-1)<L || (LpC[q]+Lm[q]-1)<L)
 				{
 
-					//if (Image[*it]>0)
-					//{std::cout <<"Image["<<q<< "]= "<< Image[*it]<< std::endl;}
 					Image[q]=Image[*it];
 
 					b[q]=0;
