@@ -32,6 +32,7 @@ Path_Opening
 #include "Union_RPO_dilat3D.hpp"
 #include "Union_RPO_dilat_constraint.hpp"
 #include "RPO_dilat_constraint.hpp"
+#include "Path_Opening_Anisotrope.hpp"
 
 #include "liarp.h"
 
@@ -488,12 +489,60 @@ namespace pink {
 
     } /* liarPathOpening */
     
-   
+
+
     template   <class image_t>
-    image_t liarRPO_dilat3D
+    image_t liarPath_Opening_Anisotrope
     (
       image_t & input_image,
-      const int L
+      const int L,
+      const int orientationx,
+      const int orientationy,
+      const int orientationz,
+      float dim_vox_z=1,
+      float dim_vox_y=1,
+      float dim_vox_x=1
+    )
+    {
+        int errorcode = 0;
+        image_t result_image = input_image.clone();
+
+	// image structure
+	struct xvimage *inputxvimage = input_image.get_output();
+	struct xvimage *outputxvimage = result_image.get_output();
+
+    // user-specified orientation
+	std::vector<int> orientation(3);
+	orientation[0] = orientationx;
+	orientation[1] = orientationy;
+	orientation[2] = orientationz;
+	
+	// dimensions
+	int nx = outputxvimage->row_size;
+    int ny = outputxvimage->col_size;
+    int nz = outputxvimage->depth_size;
+
+
+    // buffers
+    PixelType *input_buffer = (PixelType*) (inputxvimage->image_data);
+	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
+
+    // Execute PO3D
+    PO_3D_anisotrope<PixelType>(input_buffer,nz, ny, nx, L, orientation, output_buffer, dim_vox_z,dim_vox_y,dim_vox_x);
+
+	// get result
+	return (result_image);
+
+    } /* liarPath_Opening_Isotrope */
+    
+    template   <class image_t>
+    image_t liarUnion_PO_Anisotrope
+    (
+      image_t & input_image,
+      const int L,
+      float dim_vox_z=1,
+      float dim_vox_y=1,
+      float dim_vox_x=1
     )
     {
         int errorcode = 0;
@@ -514,22 +563,25 @@ namespace pink {
 	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
 
     // Execute PO3D
-    RPO_dilat3D<PixelType>(input_buffer, output_buffer, L, nx, ny, nz);
+    Union_PO3D_Anisotrope<PixelType>(input_buffer, output_buffer, L, nx, ny, nz,dim_vox_z,dim_vox_y,dim_vox_x);
 
 	// get result
 	return (result_image);
 
-    } /* liarRPO_dilat3D */
+    } /* liarPath_Opening_Isotrope */
+
+
+
     
-    
+   
     template   <class image_t>
-    image_t liarUnion_RPO_dilat3D
+    image_t liarRPO_dilat3D
     (
       image_t & input_image,
+      const int L,
       const int orientationx,
       const int orientationy,
-      const int orientationz,
-      const int L
+      const int orientationz
     )
     {
         int errorcode = 0;
@@ -550,12 +602,45 @@ namespace pink {
 	orientation[1] = orientationy;
 	orientation[2] = orientationz;
 
+
     // buffers
     PixelType *input_buffer = (PixelType*) (inputxvimage->image_data);
 	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
 
     // Execute PO3D
-    Union_RPO_dilat3D<PixelType>(input_buffer, output_buffer, L, orientation,nx, ny, nz);
+    RPO_dilat3D<PixelType>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+
+	// get result
+	return (result_image);
+
+    } /* liarRPO_dilat3D */
+    
+    
+    template   <class image_t>
+    image_t liarUnion_RPO_dilat3D
+    (
+      image_t & input_image,
+      const int L
+    )
+    {
+        int errorcode = 0;
+        image_t result_image = input_image.clone();
+
+	// image structure
+	struct xvimage *inputxvimage = input_image.get_output();
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = outputxvimage->row_size;
+    int ny = outputxvimage->col_size;
+    int nz = outputxvimage->depth_size;
+
+    // buffers
+    PixelType *input_buffer = (PixelType*) (inputxvimage->image_data);
+	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
+
+    // Execute PO3D
+    Union_RPO_dilat3D<PixelType>(input_buffer, output_buffer, L,nx, ny, nz);
 
 	// get result
 	return (result_image);
@@ -877,6 +962,24 @@ UI_EXPORT_FUNCTION(
   ( arg("input_image"), arg("L")),
   "\n 3D Path Opening with a path length L. \n"
   " Only works with long images \n"
+  "This function used the algorithm of Hendriks ""Constrained and Dimensionality-Independant Path Openings"" (2010) \n"
+  );
+  
+UI_EXPORT_FUNCTION(
+  Path_Opening_Anisotrope,
+  pink::python::liarPath_Opening_Anisotrope,
+  ( arg("input_image"), arg("L"), arg("orientationX"), arg("orientationY"), arg("orientationZ"), arg("dim_vox_z")=1, arg("dim_vox_y")=1, arg("dim_vox_x")=1),
+  "\n 3D Path Opening with a path length L. \n"
+  " Works for non isotropic images but only works with long images \n"
+  "This function used the algorithm of Hendriks ""Constrained and Dimensionality-Independant Path Openings"" (2010) \n"
+  );
+  
+  UI_EXPORT_FUNCTION(
+  Union_PO_Anisotrope,
+  pink::python::liarUnion_PO_Anisotrope,
+  ( arg("input_image"), arg("L"), arg("dim_vox_z")=1, arg("dim_vox_y")=1, arg("dim_vox_x")=1),
+  "\n 3D Path Opening with a path length L. \n"
+  " Works for non isotropic images but only works with long images \n"
   "This function used the algorithm of Hendriks ""Constrained and Dimensionality-Independant Path Openings"" (2010) \n"
   );
   
