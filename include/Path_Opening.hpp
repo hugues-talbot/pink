@@ -13,8 +13,6 @@
 
 
 typedef unsigned long IndexType;
-// PixelType defined in NonLocalFilterSioux as long
-
 
 void Neighbourhood(	int nb_col,
 							int dim_frame,
@@ -217,23 +215,23 @@ void Neighbourhood(	int nb_col,
 
 }
 
-template<typename PixelType>
-bool my_sorting_function (const PixelType *i,const PixelType *j)
-// Input: i, j : two variables containing memory adress pointing to PixelType variables.
+template<typename PixType>
+bool my_sorting_function (const PixType *i,const PixType *j)
+// Input: i, j : two variables containing memory adress pointing to PixType variables.
 // Return : True if the variable pointed by i is smaller than the variabled pointed by j
 {
 	return (*i<*j);
 }
 
-template<typename PixelType,typename IndexType>
-std::vector<IndexType> sort_image_value(std::vector<PixelType> I)
+template<typename PixType>
+std::vector<IndexType> sort_image_value(std::vector<PixType> I)
 //  Return pixels index of image I sorted according to intensity
 {
 	std::vector<IndexType> index_image(I.size());
-	std::vector<PixelType*>index_pointer_adress(I.size());
+	std::vector<PixType*>index_pointer_adress(I.size());
 	IndexType it;
-	typename std::vector<PixelType>::iterator it1;
-	typename std::vector<PixelType*>::iterator it2;
+	typename std::vector<PixType>::iterator it1;
+	typename std::vector<PixType*>::iterator it2;
 	typename std::vector<IndexType>::iterator it3;
 
 	// Fill index_pointer_adress with memory adress of variables in I
@@ -243,7 +241,7 @@ std::vector<IndexType> sort_image_value(std::vector<PixelType> I)
 	}
 
 	// Sorting adresses according to intensity
-	std::sort(index_pointer_adress.begin(),index_pointer_adress.end(),my_sorting_function<PixelType>);
+	std::sort(index_pointer_adress.begin(),index_pointer_adress.end(),my_sorting_function<PixType>);
 
 	// Conversion from adresses to index of image I
 	for (it3=index_image.begin(),it=0; it!=I.size(); ++it,++it3)
@@ -254,7 +252,7 @@ std::vector<IndexType> sort_image_value(std::vector<PixelType> I)
 }
 
 
-template<typename PixelType,typename IndexType>
+template<typename PixType>
 void propagation(IndexType p, std::vector<int>&lambda, std::vector<int>&nf, std::vector<int>&nb, std::vector<bool>&b, std::queue<IndexType> &Qc)
 // Propagation from pixel p
 {
@@ -296,19 +294,19 @@ void propagation(IndexType p, std::vector<int>&lambda, std::vector<int>&nf, std:
 	}
 }
 
-template<typename PixelType>
-void PO_3D(	PixelType* Inputbuffer,
+template<typename PixType>
+void PO_3D(	PixType* Inputbuffer,
 								int dimz,
 								int dimy,
 								int dimx,
 								int L,
 								std::vector<int>orientations,
-								PixelType* Outputbuffer)
+								PixType* Outputbuffer)
 //Path opening with orientation
 {
 
 	// Add border of 2 pixels which value is 0 to *Inputbuffer
-	std::vector<PixelType> Image((dimz+4)*(dimy+4)*(dimx+4),0);
+	std::vector<PixType> Image((dimz+4)*(dimy+4)*(dimx+4),0);
     //std::vector<bool>b(Image.size(),0);
 	int new_dimy=dimy+4;
 	int new_dimx=dimx+4;
@@ -336,7 +334,7 @@ void PO_3D(	PixelType* Inputbuffer,
 
 	// Create the sorted list of index of Image according to intensity
 	std::vector<IndexType>index_image;
-	index_image=sort_image_value<PixelType,IndexType>(Image);
+	index_image=sort_image_value<PixType>(Image);
 
 	// Create the offset np and nm
 	std::vector<int>np;
@@ -362,8 +360,8 @@ void PO_3D(	PixelType* Inputbuffer,
 		//std::cerr<<"propagation"<<std::endl;
 		if (b[*it])
 		{
-			propagation<PixelType,IndexType>(*it,Lm,np,nm,b,Qc);
-			propagation<PixelType,IndexType>(*it,Lp,nm,np,b,Qc);
+			propagation<PixType>(*it,Lm,np,nm,b,Qc);
+			propagation<PixType>(*it,Lp,nm,np,b,Qc);
 
 
 
@@ -398,9 +396,9 @@ void PO_3D(	PixelType* Inputbuffer,
 
 
 
-template<typename PixelType>
-void Union_PO3D(	PixelType* input_buffer,
-								PixelType* output_buffer,
+template<typename PixType>
+void Union_PO3D(	PixType* input_buffer,
+								PixType* output_buffer,
 								int L,
 								int dimx,
 								int dimy,
@@ -440,14 +438,14 @@ void Union_PO3D(	PixelType* input_buffer,
 	orientation7[2] = -1;
 
 	// Buffer for results
-	//std::vector<PixelType> res(dimx*dimy*dimz); // allocation dynamique cache
-	PixelType *res1=new PixelType[dimx*dimy*dimz]; //allocation dynamique
-	PixelType *res2=new PixelType[dimx*dimy*dimz];
-	PixelType *res3=new PixelType[dimx*dimy*dimz];
-	PixelType *res4=new PixelType[dimx*dimy*dimz];
-	PixelType *res5=new PixelType[dimx*dimy*dimz];
-	PixelType *res6=new PixelType[dimx*dimy*dimz];
-	PixelType *res7=new PixelType[dimx*dimy*dimz];
+	//std::vector<PixType> res(dimx*dimy*dimz); // allocation dynamique cache
+	PixType *res1=new PixType[dimx*dimy*dimz]; //allocation dynamique
+	PixType *res2=new PixType[dimx*dimy*dimz];
+	PixType *res3=new PixType[dimx*dimy*dimz];
+	PixType *res4=new PixType[dimx*dimy*dimz];
+	PixType *res5=new PixType[dimx*dimy*dimz];
+	PixType *res6=new PixType[dimx*dimy*dimz];
+	PixType *res7=new PixType[dimx*dimy*dimz];
 
 
 	// Calling PO for each orientation
@@ -455,37 +453,37 @@ void Union_PO3D(	PixelType* input_buffer,
 	   {
 	   #pragma omp section
 	   {
-		 PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation1,res1);
+		 PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation1,res1);
 		 std::cout<<"orientation1 1 0 0 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-		   PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation2,res2);
+		   PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation2,res2);
 		   std::cout<<"orientation2 0 1 0 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-	       PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation3,res3);
+	       PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation3,res3);
 		   std::cout<<"orientation3 0 0 1 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-	       PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation4,res4);
+	       PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation4,res4);
 		   std::cout<<"orientation4 1 1 1 : passed"<<std::endl;
 	   }
 		#pragma omp section
 	   {
-	       PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation5,res5);
+	       PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation5,res5);
 		   std::cout<<"orientation5 1 1 -1 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	  {
-	       PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation6,res6);
+	       PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation6,res6);
 		   std::cout<<"orientation6 -1 1 1 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-	       PO_3D<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation7,res7);
+	       PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation7,res7);
 		   std::cout<<"orientation7 -1 1 -1 : passed"<<std::endl;
 		}
 	 }

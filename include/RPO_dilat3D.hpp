@@ -35,7 +35,7 @@ void RPO_dilat3D(	PixelType* input_buffer,
 	memcpy(&image[0],&input_buffer[0],(dimx*dimy*dimz)*sizeof(PixelType));
 
     // Dilation by a cube of size 3x3x3
-    rect3dminmax(image, dimx, dimy, dimz, 3,3,3,false);
+    rect3dminmax<PixelType>(image, dimx, dimy, dimz, 3,3,3,false);
 	
 	PO_3D<PixelType>(image,dimz,dimy,dimx,L,orientation,res);
 	
