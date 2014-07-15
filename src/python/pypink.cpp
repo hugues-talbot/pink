@@ -150,10 +150,10 @@ void fopenline3d_export();
 void PathOpening_export();
 void RPO_dilat3D_export();
 void Union_RPO_dilat3D_export();
-void Union_RPO_constraint_export();
-void RPO_dilat_constraint_export();
-void Path_Opening_Anisotrope_export();
-void Union_PO_Anisotrope_export();
+//void Union_RPO_constraint_export();
+//void RPO_dilat_constraint_export();
+//void Path_Opening_Anisotrope_export();
+//void Union_PO_Anisotrope_export();
 
 // opening by unions of lines
 void openbun_export();
@@ -417,10 +417,10 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   PathOpening_export();
   RPO_dilat3D_export();
   Union_RPO_dilat3D_export();
-  Union_RPO_constraint_export();
-  RPO_dilat_constraint_export();
-  Path_Opening_Anisotrope_export();
-  Union_PO_Anisotrope_export();
+  //Union_RPO_constraint_export();
+  //RPO_dilat_constraint_export();
+  //Path_Opening_Anisotrope_export();
+  //Union_PO_Anisotrope_export();
   
   openbun_export();
   closebin_export();

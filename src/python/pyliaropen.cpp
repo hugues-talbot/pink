@@ -414,7 +414,7 @@ namespace pink {
     
 
 
-    template   <class image_t>
+   /* template   <class image_t>
     image_t liarRPO_Anisotrope
     (
       image_t & input_image,
@@ -458,7 +458,7 @@ namespace pink {
 
     } /* liarPath_Opening_Isotrope */
     
-    template   <class image_t>
+   /* template   <class image_t>
     image_t liarUnion_RPO_Anisotrope
     (
       image_t & input_image,
@@ -570,7 +570,7 @@ namespace pink {
     
     
 
-    template   <class image_t>
+   /* template   <class image_t>
     image_t liarUnion_RPO_constraint
     (
       image_t & input_image,
@@ -603,7 +603,7 @@ namespace pink {
     } /* liarUnionRPO_constraint */
     
     
-template   <class image_t>
+/*template   <class image_t>
     image_t liarRPO_dilat_constraint
     (
       image_t & input_image,
@@ -878,7 +878,7 @@ UI_EXPORT_FUNCTION(
   "This function used the algorithm of Hendriks ""Constrained and Dimensionality-Independant Path Openings"" (2010) \n"
   );
   
-UI_EXPORT_FUNCTION(
+/*UI_EXPORT_FUNCTION(
   RPO_Anisotrope,
   pink::python::liarRPO_Anisotrope,
   ( arg("input_image"), arg("L"), arg("orientationX"), arg("orientationY"), arg("orientationZ"), arg("dim_vox_z")=1, arg("dim_vox_y")=1, arg("dim_vox_x")=1),
@@ -894,7 +894,7 @@ UI_EXPORT_FUNCTION(
   "\n 3D Path Opening with a path length L. \n"
   " Works for non isotropic images but only works with long images \n"
   "This function used the algorithm of Hendriks ""Constrained and Dimensionality-Independant Path Openings"" (2010) \n"
-  );
+  );*/
   
   UI_EXPORT_FUNCTION(
   RPO_dilat3D,
@@ -915,7 +915,7 @@ UI_EXPORT_FUNCTION(
   " The robustness is performed by a dilation / erosion process. \n"
   );
   
-  UI_EXPORT_FUNCTION(
+  /*UI_EXPORT_FUNCTION(
   Union_RPO_constraint,
   pink::python::liarUnion_RPO_constraint,
   ( arg("input_image"), arg("L")),
@@ -942,7 +942,7 @@ UI_EXPORT_FUNCTION(
   "\n"
   "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
   " The robustness is performed by a dilation / erosion process. \n"
-  );
+  );*/
 
 UI_EXPORT_FUNCTION(
     Rotation3D,
