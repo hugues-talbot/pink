@@ -32,7 +32,7 @@ Path_Opening
 #include "Union_RPO_dilat3D.hpp"
 #include "Union_RPO_dilat_constraint.hpp"
 #include "RPO_dilat_constraint.hpp"
-#include "Path_Opening_Anisotrope.hpp"
+#include "RPO_Anisotrope.hpp"
 
 #include "liarp.h"
 
@@ -492,7 +492,7 @@ namespace pink {
 
 
     template   <class image_t>
-    image_t liarPath_Opening_Anisotrope
+    image_t liarRPO_Anisotrope
     (
       image_t & input_image,
       const int L,
@@ -528,7 +528,7 @@ namespace pink {
 	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
 
     // Execute PO3D
-    PO_3D_anisotrope<PixelType>(input_buffer,nz, ny, nx, L, orientation, output_buffer, dim_vox_z,dim_vox_y,dim_vox_x);
+    RPO_anisotrope<PixelType>(input_buffer,output_buffer, L, orientation, nz, ny, nx, dim_vox_z,dim_vox_y,dim_vox_x);
 
 	// get result
 	return (result_image);
@@ -536,7 +536,7 @@ namespace pink {
     } /* liarPath_Opening_Isotrope */
     
     template   <class image_t>
-    image_t liarUnion_PO_Anisotrope
+    image_t liarUnion_RPO_Anisotrope
     (
       image_t & input_image,
       const int L,
@@ -563,7 +563,7 @@ namespace pink {
 	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
 
     // Execute PO3D
-    Union_PO3D_Anisotrope<PixelType>(input_buffer, output_buffer, L, nx, ny, nz,dim_vox_z,dim_vox_y,dim_vox_x);
+    Union_RPO_Anisotrope<PixelType>(input_buffer, output_buffer, L, nx, ny, nz,dim_vox_z,dim_vox_y,dim_vox_x);
 
 	// get result
 	return (result_image);
@@ -966,8 +966,8 @@ UI_EXPORT_FUNCTION(
   );
   
 UI_EXPORT_FUNCTION(
-  Path_Opening_Anisotrope,
-  pink::python::liarPath_Opening_Anisotrope,
+  RPO_Anisotrope,
+  pink::python::liarRPO_Anisotrope,
   ( arg("input_image"), arg("L"), arg("orientationX"), arg("orientationY"), arg("orientationZ"), arg("dim_vox_z")=1, arg("dim_vox_y")=1, arg("dim_vox_x")=1),
   "\n 3D Path Opening with a path length L. \n"
   " Works for non isotropic images but only works with long images \n"
@@ -975,7 +975,7 @@ UI_EXPORT_FUNCTION(
   );
   
   UI_EXPORT_FUNCTION(
-  Union_PO_Anisotrope,
+  Union_RPO_Anisotrope,
   pink::python::liarUnion_PO_Anisotrope,
   ( arg("input_image"), arg("L"), arg("dim_vox_z")=1, arg("dim_vox_y")=1, arg("dim_vox_x")=1),
   "\n 3D Path Opening with a path length L. \n"

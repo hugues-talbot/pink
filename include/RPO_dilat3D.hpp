@@ -40,9 +40,6 @@ void RPO_dilat3D(	PixelType* input_buffer,
 	PO_3D<PixelType>(image,dimz,dimy,dimx,L,orientation,res);
 	
 	// Minimum between the computed RPO on the dilation and the initial image
-    rect3dminmax(res, dimx, dimy, dimz, 3,3,3,true);
-	
-	// Minimum between the computed RPO on the dilation and the initial image
 		for(int i=0; i<dimx*dimy*dimz;i++)
 			output_buffer[i]=std::min(res[i],input_buffer[i]);
     

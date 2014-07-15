@@ -306,7 +306,7 @@ void Neighbourhood_isotrope(	int nb_col,
 
 
 template<typename PixelType,typename IndexType>
-void propagation(IndexType p, std::vector<float>&lambda, std::vector<int>&nf, std::vector<int>&nb, std::vector<bool>&b, std::queue<IndexType> &Qc, std::vector<float>&length)
+void propagation_anisotrope(IndexType p, std::vector<float>&lambda, std::vector<int>&nf, std::vector<int>&nb, std::vector<bool>&b, std::queue<IndexType> &Qc, std::vector<float>&length)
 // Propagation from pixel p
 {
 	std::queue<IndexType> Qq;
@@ -327,16 +327,17 @@ void propagation(IndexType p, std::vector<float>&lambda, std::vector<int>&nf, st
 		Qq.pop();
 		float l=0;
 		int ind=0;
-		float l_modif;
-		float add_length;
+		float l_modif=0;
+		float add_length=0;
 		for (it=nb.begin(); it!=nb.end();++it)
 		{
 			l_modif=std::max(lambda[q+*it],l);
 			if (l_modif>l){
+				l=l_modif;
 				add_length=length[ind];}
 			ind+=1;
 		}
-		l+=add_length;
+		l+=1;
 
 		if (l<lambda[q])
 		{
@@ -423,8 +424,8 @@ void PO_3D_anisotrope(	PixelType* Inputbuffer,
 		//std::cerr<<"propagation"<<std::endl;
 		if (b[*it])
 		{
-			propagation<PixelType,IndexType>(*it,Lm,np,nm,b,Qc,length);
-			propagation<PixelType,IndexType>(*it,Lp,nm,np,b,Qc,length);
+			propagation_anisotrope<PixelType,IndexType>(*it,Lm,np,nm,b,Qc,length);
+			propagation_anisotrope<PixelType,IndexType>(*it,Lp,nm,np,b,Qc,length);
 
 
 
@@ -458,7 +459,40 @@ void PO_3D_anisotrope(	PixelType* Inputbuffer,
 
 
 template<typename PixelType>
-void Union_PO3D_Anisotrope(	PixelType* input_buffer,
+void RPO_anisotrope(	PixelType* input_buffer,
+								PixelType* output_buffer,
+								int L,
+								std::vector<int>orientation,
+								int dimx,
+								int dimy,
+								int dimz,
+								float dim_vox_z,
+								float dim_vox_y,
+								float dim_vox_x)
+
+{	
+
+	PixelType *res=new PixelType[dimx*dimy*dimz];
+	PixelType *image=new PixelType[dimx*dimy*dimz];
+	memcpy(&image[0],&input_buffer[0],(dimx*dimy*dimz)*sizeof(PixelType));
+
+    // Dilation by a cube of size 3x3x3
+    rect3dminmax(image, dimx, dimy, dimz, 3,3,3,false);
+	
+	PO_3D_anisotrope<PixelType>(image,dimz,dimy,dimx,L,orientation,res,dim_vox_z,dim_vox_y,dim_vox_x);
+	
+	// Minimum between the computed RPO on the dilation and the initial image
+    rect3dminmax(res, dimx, dimy, dimz, 3,3,3,true);
+	
+	// Minimum between the computed RPO on the dilation and the initial image
+		for(int i=0; i<dimx*dimy*dimz;i++)
+			output_buffer[i]=std::min(res[i],input_buffer[i]);
+    
+}
+
+
+template<typename PixelType>
+void Union_RPO_Anisotrope(	PixelType* input_buffer,
 								PixelType* output_buffer,
 								int L,
 								int dimx,
@@ -518,37 +552,37 @@ void Union_PO3D_Anisotrope(	PixelType* input_buffer,
 	   {
 	   #pragma omp section
 	   {
-		 PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation1,res1,dim_vox_z,dim_vox_y,dim_vox_x);
+		RPO_anisotrope<PixelType>(input_buffer,output_buffer, L, orientation1, dimz,dimy,dimx,dim_vox_z,dim_vox_y,dim_vox_x);
 		 std::cout<<"orientation1 1 0 0 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-		   PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation2,res2,dim_vox_z,dim_vox_y,dim_vox_x);
+		   RPO_anisotrope<PixelType>(input_buffer,output_buffer, L, orientation2, dimz,dimy,dimx,dim_vox_z,dim_vox_y,dim_vox_x);
 		   std::cout<<"orientation2 0 1 0 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-	       PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation3,res3,dim_vox_z,dim_vox_y,dim_vox_x);
+	       RPO_anisotrope<PixelType>(input_buffer,output_buffer, L, orientation3, dimz,dimy,dimx,dim_vox_z,dim_vox_y,dim_vox_x);
 		   std::cout<<"orientation3 0 0 1 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-	       PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation4,res4,dim_vox_z,dim_vox_y,dim_vox_x);
+	       RPO_anisotrope<PixelType>(input_buffer,output_buffer, L, orientation4, dimz,dimy,dimx,dim_vox_z,dim_vox_y,dim_vox_x);
 		   std::cout<<"orientation4 1 1 1 : passed"<<std::endl;
 	   }
 		#pragma omp section
 	   {
-	       PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation5,res5,dim_vox_z,dim_vox_y,dim_vox_x);
+	       RPO_anisotrope<PixelType>(input_buffer,output_buffer, L, orientation5, dimz,dimy,dimx,dim_vox_z,dim_vox_y,dim_vox_x);
 		   std::cout<<"orientation5 1 1 -1 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	  {
-	       PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation6,res6,dim_vox_z,dim_vox_y,dim_vox_x);
+	       RPO_anisotrope<PixelType>(input_buffer,output_buffer, L, orientation6, dimz,dimy,dimx,dim_vox_z,dim_vox_y,dim_vox_x);
 		   std::cout<<"orientation6 -1 1 1 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-	       PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation7,res7,dim_vox_z,dim_vox_y,dim_vox_x);
+	       RPO_anisotrope<PixelType>(input_buffer,output_buffer, L, orientation7, dimz,dimy,dimx,dim_vox_z,dim_vox_y,dim_vox_x);
 		   std::cout<<"orientation7 -1 1 -1 : passed"<<std::endl;
 		}
 	 }
