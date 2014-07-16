@@ -16,12 +16,12 @@
 #include "../src/liar/rect3dmm.hpp"
 #include "larith.h"
 
-// PixelType defined in NonLocalFilterSioux as long
+// PixType defined in NonLocalFilterSioux as long
 
 
-template<typename PixelType>
-void RPO_dilat3D(	PixelType* input_buffer,
-								PixelType* output_buffer,
+template<typename PixType>
+void RPO_dilat3D(	PixType* input_buffer,
+								PixType* output_buffer,
 								int L,
 								std::vector<int>orientation,
 								int dimx,
@@ -29,15 +29,13 @@ void RPO_dilat3D(	PixelType* input_buffer,
 								int dimz)
 
 {	
-
-	PixelType *res=new PixelType[dimx*dimy*dimz];
-	PixelType *image=new PixelType[dimx*dimy*dimz];
-	memcpy(&image[0],&input_buffer[0],(dimx*dimy*dimz)*sizeof(PixelType));
-
+	PixType *res=new PixType[dimx*dimy*dimz];
+	PixType *image=new PixType[dimx*dimy*dimz];
+	memcpy(&image[0],&input_buffer[0],(dimx*dimy*dimz)*sizeof(PixType));
     // Dilation by a cube of size 3x3x3
-    rect3dminmax<PixelType>(image, dimx, dimy, dimz, 3,3,3,false);
+    rect3dminmax<PixType>(image, dimx, dimy, dimz, 3,3,3,false);
 	
-	PO_3D<PixelType>(image,dimz,dimy,dimx,L,orientation,res);
+	PO_3D<PixType>(image,dimz,dimy,dimx,L,orientation,res);
 	
 	// Minimum between the computed RPO on the dilation and the initial image
 		for(int i=0; i<dimx*dimy*dimz;i++)

@@ -523,17 +523,108 @@ namespace pink {
 	orientation[2] = orientationz;
 
 
-    // buffers
-    PixelType *input_buffer = (PixelType*) (inputxvimage->image_data);
-	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
-
     // Execute PO3D
-    RPO_dilat3D<PixelType>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE){
+        int32_t *input_buffer = (int32_t*) (inputxvimage->image_data);
+		int32_t *output_buffer = (int32_t*) (outputxvimage->image_data);
+    	RPO_dilat3D<int32_t>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    }
 
+    else if (outputxvimage->data_storage_type == VFF_TYP_2_BYTE){
+        int16_t *input_buffer = (int16_t*) (inputxvimage->image_data);
+		int16_t *output_buffer = (int16_t*) (outputxvimage->image_data);
+    	RPO_dilat3D<int16_t>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    }
+    
+    else if (outputxvimage->data_storage_type == VFF_TYP_1_BYTE){
+        int8_t *input_buffer = (int8_t*) (inputxvimage->image_data);
+		int8_t *output_buffer = (int8_t*) (outputxvimage->image_data);
+    	RPO_dilat3D<int8_t>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    }
+    else if (outputxvimage->data_storage_type == VFF_TYP_FLOAT){
+        float *input_buffer = (float*) (inputxvimage->image_data);
+		float *output_buffer = (float*) (outputxvimage->image_data);
+    	RPO_dilat3D<float>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    }
+    else if (outputxvimage->data_storage_type == VFF_TYP_DOUBLE){
+        double *input_buffer = (double*) (inputxvimage->image_data);
+		double *output_buffer = (double*) (outputxvimage->image_data);
+    	RPO_dilat3D<double>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    }
+   	else
+   		std::cerr<<"Type not supported"<<std::endl;
+   		
 	// get result
 	return (result_image);
 
     } /* liarRPO_dilat3D */
+    
+    
+    template   <class image_t>
+    image_t liarRORPO
+    (
+      image_t & input_image,
+      const int L,
+      const int orientationx,
+      const int orientationy,
+      const int orientationz
+    )
+    {
+        int errorcode = 0;
+        image_t result_image = input_image.clone();
+
+	// image structure
+	struct xvimage *inputxvimage = input_image.get_output();
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = outputxvimage->row_size;
+    int ny = outputxvimage->col_size;
+    int nz = outputxvimage->depth_size;
+    
+    // user-specified orientation
+	std::vector<int> orientation(3);
+	orientation[0] = orientationx;
+	orientation[1] = orientationy;
+	orientation[2] = orientationz;
+
+
+    // Execute PO3D
+    if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE){
+        int32_t *input_buffer = (int32_t*) (inputxvimage->image_data);
+		int32_t *output_buffer = (int32_t*) (outputxvimage->image_data);
+    	RPO_dilat3D<int32_t>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    }
+
+    else if (outputxvimage->data_storage_type == VFF_TYP_2_BYTE){
+        int16_t *input_buffer = (int16_t*) (inputxvimage->image_data);
+		int16_t *output_buffer = (int16_t*) (outputxvimage->image_data);
+    	RPO_dilat3D<int16_t>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    }
+    
+    else if (outputxvimage->data_storage_type == VFF_TYP_1_BYTE){
+        int8_t *input_buffer = (int8_t*) (inputxvimage->image_data);
+		int8_t *output_buffer = (int8_t*) (outputxvimage->image_data);
+    	RPO_dilat3D<int8_t>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    }
+    else if (outputxvimage->data_storage_type == VFF_TYP_FLOAT){
+        float *input_buffer = (float*) (inputxvimage->image_data);
+		float *output_buffer = (float*) (outputxvimage->image_data);
+    	RPO_dilat3D<float>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    }
+    else if (outputxvimage->data_storage_type == VFF_TYP_DOUBLE){
+        double *input_buffer = (double*) (inputxvimage->image_data);
+		double *output_buffer = (double*) (outputxvimage->image_data);
+    	RPO_dilat3D<double>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    }
+   	else
+   		std::cerr<<"Type not supported"<<std::endl;
+   		
+	// get result
+	return (result_image);
+
+    } /* liarRPO_dilat3D */
+    
     
     
     template   <class image_t>
