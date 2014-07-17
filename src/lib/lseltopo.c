@@ -343,6 +343,188 @@ int32_t lptend(struct xvimage * image, int32_t connex)
 } /* lptend() */
 
 /* ==================================== */
+static void extract_vois(
+  uint8_t *img,          /* pointeur base image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
+  uint8_t *vois)    
+/* 
+  retourne dans "vois" les valeurs des 27 voisins de p, dans l'ordre suivant: 
+
+               12      11      10       
+               13       8       9
+               14      15      16
+
+		3	2	1
+		4      26	0
+		5	6	7
+
+               21      20      19
+               22      17      18
+               23      24      25
+
+  le point p ne doit pas être un point de bord de l'image
+*/
+/* ==================================== */
+{
+#undef F_NAME
+#define F_NAME "extract_vois"
+  register uint8_t * ptr = img+p;
+  if ((p%rs==rs-1) || (p%ps<rs) || (p%rs==0) || (p%ps>=ps-rs) || 
+      (p < ps) || (p >= N-ps)) /* point de bord */
+  {
+    printf("%s: ERREUR: point de bord\n", F_NAME);
+    exit(0);
+  }
+  vois[ 0] = *(ptr+1);
+  vois[ 1] = *(ptr+1-rs);
+  vois[ 2] = *(ptr-rs);
+  vois[ 3] = *(ptr-rs-1);
+  vois[ 4] = *(ptr-1);
+  vois[ 5] = *(ptr-1+rs);
+  vois[ 6] = *(ptr+rs);
+  vois[ 7] = *(ptr+rs+1);
+
+  vois[ 8] = *(ptr-ps);
+  vois[ 9] = *(ptr-ps+1);
+  vois[10] = *(ptr-ps+1-rs);
+  vois[11] = *(ptr-ps-rs);
+  vois[12] = *(ptr-ps-rs-1);
+  vois[13] = *(ptr-ps-1);
+  vois[14] = *(ptr-ps-1+rs);
+  vois[15] = *(ptr-ps+rs);
+  vois[16] = *(ptr-ps+rs+1);
+
+  vois[17] = *(ptr+ps);
+  vois[18] = *(ptr+ps+1);
+  vois[19] = *(ptr+ps+1-rs);
+  vois[20] = *(ptr+ps-rs);
+  vois[21] = *(ptr+ps-rs-1);
+  vois[22] = *(ptr+ps-1);
+  vois[23] = *(ptr+ps-1+rs);
+  vois[24] = *(ptr+ps+rs);
+  vois[25] = *(ptr+ps+rs+1);
+
+  vois[26] = *(ptr);
+} /* extract_vois() */
+
+/* ==================================== */
+static int32_t match_end(uint8_t *v)
+/* ==================================== */
+/*
+               12      11      10
+               13       8       9
+               14      15      16
+
+		3	2	1
+		4      26	0
+		5	6	7
+
+               21      20      19
+               22      17      18
+               23      24      25
+
+Teste si au moins un des points 12, 11, 13, 8, 3, 2, 4 est objet et tous les autres fond
+(aussi avec les isométries). 
+*/
+{
+  if ((v[19] || v[20] || v[18] || v[17] || v[2] || v[1] || v[0]) &&
+      !v[3 ] && !v[4 ] && !v[21] && !v[22] && 
+      !v[25] && !v[24] && !v[7 ] && !v[6 ] && !v[23] && !v[5] && 
+      !v[12] && !v[11] && !v[10] && !v[13] && 
+      !v[8 ] && !v[9 ] && !v[14] && !v[15] && !v[16]) return 1;
+
+  if ((v[21] || v[20] || v[22] || v[17] || v[2] || v[3] || v[4]) &&
+      !v[1 ] && !v[0 ] && !v[19] && !v[18] && 
+      !v[23] && !v[24] && !v[5 ] && !v[6 ] && !v[25] && !v[7] && 
+      !v[12] && !v[11] && !v[10] && !v[13] && 
+      !v[8 ] && !v[9 ] && !v[14] && !v[15] && !v[16]) return 1;
+
+  if ((v[17] || v[22] || v[24] || v[23] || v[4] || v[5] || v[6]) &&
+      !v[2 ] && !v[3 ] && !v[20] && !v[21] && 
+      !v[18] && !v[25] && !v[0 ] && !v[7 ] && !v[19] && !v[1] && 
+      !v[12] && !v[11] && !v[10] && !v[13] && 
+      !v[8 ] && !v[9 ] && !v[14] && !v[15] && !v[16]) return 1;
+
+  if ((v[17] || v[18] || v[24] || v[25] || v[0] || v[7] || v[6]) &&
+      !v[2 ] && !v[1 ] && !v[20] && !v[19] && 
+      !v[22] && !v[23] && !v[4 ] && !v[5 ] && !v[21] && !v[3] && 
+      !v[12] && !v[11] && !v[10] && !v[13] && 
+      !v[8 ] && !v[9 ] && !v[14] && !v[15] && !v[16]) return 1;
+
+  if ((v[9 ] || v[8] || v[16] || v[15] || v[0] || v[7] || v[6]) &&
+      !v[10] && !v[11] && !v[1 ] && !v[2 ] && 
+      !v[13] && !v[14] && !v[4 ] && !v[5 ] && !v[12] && !v[3] && 
+      !v[21] && !v[20] && !v[19] && !v[22] && 
+      !v[17] && !v[18] && !v[23] && !v[24] && !v[25]) return 1;
+
+  if ((v[13] || v[8] || v[14] || v[15] || v[4] || v[5] || v[6]) &&
+      !v[12] && !v[11] && !v[3 ] && !v[2 ] && 
+      !v[9 ] && !v[16] && !v[0 ] && !v[7 ] && !v[10] && !v[1] && 
+      !v[21] && !v[20] && !v[19] && !v[22] && 
+      !v[17] && !v[18] && !v[23] && !v[24] && !v[25]) return 1;
+
+  if ((v[11] || v[10] || v[8] || v[9] || v[2] || v[1] || v[0]) &&
+      !v[12] && !v[13] && !v[3 ] && !v[4 ] && 
+      !v[15] && !v[16] && !v[6 ] && !v[7 ] && !v[14] && !v[5] && 
+      !v[21] && !v[20] && !v[19] && !v[22] && 
+      !v[17] && !v[18] && !v[23] && !v[24] && !v[25]) return 1;
+
+  if ((v[12] || v[11] || v[13] || v[8] || v[3 ] || v[2 ] || v[4 ]) &&
+      !v[10] && !v[9 ] && !v[1 ] && !v[0 ] && 
+      !v[14] && !v[15] && !v[5 ] && !v[6 ] && !v[16] && !v[7] && 
+      !v[21] && !v[20] && !v[19] && !v[22] && 
+      !v[17] && !v[18] && !v[23] && !v[24] && !v[25]) return 1;
+
+  return 0;
+} // match_end()
+
+/* ==================================== */
+int32_t lptthickend(struct xvimage * image)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lptthickend"
+{
+  index_t x;
+  uint8_t *SOURCE = UCHARDATA(image);
+  uint8_t *RES;
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
+  uint8_t v[27];
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
+  ONLY_3D(image);
+
+  RES = (uint8_t *)calloc(N, sizeof(char));
+  if (RES == NULL)
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
+      return 0;
+  }
+
+  /* ---------------------------------------------------------- */
+  /* calcul du resultat */
+  /* ---------------------------------------------------------- */
+
+  for (x = 0; x < N; x++) 
+    if (SOURCE[x] && nonbord3d(x, rs, ps, N))
+    { 
+      extract_vois(SOURCE, x, rs, ps, N, v);
+      if (match_end(v)) RES[x] = NDG_MAX;
+    }
+
+  for (x = 0; x < N; x++)
+    SOURCE[x] = RES[x];
+
+  free(RES);
+  return 1;
+} /* lptthickend() */
+
+/* ==================================== */
 int32_t lptcurve(struct xvimage * image, int32_t connex)
 /* ==================================== */
 #undef F_NAME

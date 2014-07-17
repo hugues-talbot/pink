@@ -39,7 +39,7 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Usage:</B> skel_CKSC3 in.pgm nsteps [inhibit] out.pgm
 
 <B>Description:</B>
-Sequentl 3D binary thinning or curvilinear skeleton. The parameter \b nsteps gives,
+Sequential 3D binary thinning or curvilinear skeleton. The parameter \b nsteps gives,
 if positive, the number of parallel thinning steps to be processed.
 If the value given for \b nsteps equals -1, the thinning is continued
 until stability.

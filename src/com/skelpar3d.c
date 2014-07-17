@@ -151,7 +151,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "  10: curvilinear, asymmetric, based on 3D and 2D residuals (ACK3)\n");
     fprintf(stderr, "  11: surface, symmetric, based on residual points (RK3)\n");
     fprintf(stderr, "  12: surface, symmetric, based on 2D isthmuses (SK3)\n");
-    fprintf(stderr, "  13: ultimafe, directional (DRK3)\n");
+    fprintf(stderr, "  13: ultimate, directional (DRK3)\n");
     fprintf(stderr, "  14: surface, directional, based on residual points (DRK3)\n");
     fprintf(stderr, "  15: surface, directional, based on 2D isthmuses (DSK3)\n");
     fprintf(stderr, "  16: curvilinear, asymmetric, based on thin 1D isthmus with persistence (ACK3p)\n");

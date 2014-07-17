@@ -54,6 +54,8 @@ extern int32_t lptmultiplelab(struct xvimage * image, int32_t connex, struct xvi
 extern int32_t lptendlab(struct xvimage * image, int32_t connex, struct xvimage * res);
 extern int32_t lptcurvelab(struct xvimage * image, int32_t connex, struct xvimage * res);
 extern int32_t lptjunctionlab(struct xvimage * image, int32_t connex, struct xvimage * res);
+extern int32_t lptthickend(struct xvimage * image);
+
 #ifdef __cplusplus
 }
 #endif

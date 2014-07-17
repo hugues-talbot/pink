@@ -27,8 +27,8 @@
 #include "liarwrap.h"
 #include "imclient.h"
 
-//#define ANSWER_MAX_SIZE 1024
-#define ANSWER_MAX_SIZE 10
+#define ANSWER_MAX_SIZE 1024
+// WHO DID THIS ?? #define ANSWER_MAX_SIZE 10
 #define BIN_MAX_SIZE    8192
 #define HNDSHK_SIZE     300
 #define DEFAULTPORT     7600

@@ -75,7 +75,8 @@ int main(int argc, char **argv)
   FILE *fileout = NULL;
   int32_t i;
   int32_t formatin, formatout;
-
+  double  resolution;
+  
   if ((argc != 3) && (argc != 4))
   {
     fprintf(stderr, "usage: %s in [resolution] out\n", argv[0]);

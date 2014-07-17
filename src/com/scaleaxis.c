@@ -54,8 +54,7 @@ References:<BR>
 */
 
 /*
-%TEST scaleaxis %IMAGES/2dbyte/binary/b2hebreu.pgm %RESULTS/scaleaxis_b2hebreu.pgm
-%TEST scaleaxis %IMAGES/3dbyte/binary/b3a.pgm %RESULTS/scaleaxis_b3a.pgm
+%TEST scaleaxis %IMAGES/2dbyte/binary/b2hebreu.pgm 1.5 %RESULTS/scaleaxis_b2hebreu.pgm
 */
 
 #include <stdio.h>

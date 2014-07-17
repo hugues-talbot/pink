@@ -3419,6 +3419,78 @@ int32_t lmedialaxis_scaleaxis(struct xvimage *image, double s, struct xvimage * 
   return 1;
 } //lmedialaxis_scaleaxis()
  
+#define TypeCle uint32_t
+
+/* =============================================================== */
+static uint32_t Partitionner(uint32_t *A, TypeCle *T, uint32_t p, uint32_t r)
+/* =============================================================== */
+/*
+  partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
+  en deux groupes : les elements q tq T[A[q]] <= T[A[p]] et les autres.
+*/
+{
+  uint32_t t;
+  TypeCle x = T[A[p]];
+  uint32_t i = p - 1;
+  uint32_t j = r + 1;
+  while (1)
+  {
+    do j--; while (T[A[j]] > x);
+    do i++; while (T[A[i]] < x);
+    if (i < j) { t = A[i]; A[i] = A[j]; A[j] = t; }
+    else return j;
+  } /* while (1) */   
+} /* Partitionner() */
+
+/* =============================================================== */
+static uint32_t PartitionStochastique(uint32_t *A, TypeCle *T, uint32_t p, uint32_t r)
+/* =============================================================== */
+/*
+  partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
+  en deux groupes : les elements k tels que T[A[k]] <= T[A[q]] et les autres, 
+  avec q tire au hasard dans [p,r].
+*/
+{
+  uint32_t t, q;
+
+  q = p + (rand() % (r - p + 1));
+  t = A[p];         /* echange A[p] et A[q] */
+  A[p] = A[q]; 
+  A[q] = t;
+  return Partitionner(A, T, p, r);
+} /* PartitionStochastique() */
+
+/* =============================================================== */
+/*! \fn void TriRapideStochastique (int32_t * A, TypeCle *T, int32_t p, int32_t r)
+    \param A (entrée/sortie) : un tableau d'entiers
+    \param T (entrée) : un tableau de valeurs de type TypeCle.
+    \param p (entrée) : indice du début de la zone à trier.
+    \param r (entrée) : indice de fin de la zone à trier.
+    \brief tri par ordre croissant des valeurs du tableau \b T.
+           Le tri s'effectue sur un tableau \b A contenant les index
+           des elements de \b T, l'indice \b p (compris) à l'indice \b r (compris).
+*/
+static void TriRapideStochastique (uint32_t * A, TypeCle *T, uint32_t p, uint32_t r)
+/* =============================================================== */
+{
+  uint32_t q; 
+  if (p < r)
+  {
+    q = PartitionStochastique(A, T, p, r);
+    TriRapideStochastique (A, T, p, q) ;
+    TriRapideStochastique (A, T, q+1, r) ;
+  }
+} /* TriRapideStochastique() */
+
+/* ==================================== */
+static double dist(double x1, double y1, double x2, double y2)
+/* ==================================== */
+{
+  double dx = x2 - x1;
+  double dy = y2 - y1;
+  return sqrt(dx * dx + dy * dy);
+}
+
 /* ==================================== */
 int32_t lmedialaxis_scalefilteredmedialaxis(struct xvimage *image, double s, struct xvimage * res)
 /* ==================================== */
@@ -3435,9 +3507,15 @@ int32_t lmedialaxis_scalefilteredmedialaxis(struct xvimage *image, double s, str
   index_t rs = rowsize(image);
   index_t cs = colsize(image);
   index_t N = rs * cs;
-  index_t i;
+  index_t p, M;
+  int32_t i;
+  uint8_t *I = UCHARDATA(image);
   uint32_t *R;
   double t;
+  index_t  *MAp; // to store medial axis points (indexes)
+  uint32_t *MAr; // to store medial axis radii
+  uint32_t *A;   // indexes for the sorting of MA points
+  
 
   assert(res != NULL);
   ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
@@ -3452,29 +3530,45 @@ int32_t lmedialaxis_scalefilteredmedialaxis(struct xvimage *image, double s, str
     exit(1);
   }
 
-  for (i = 0; i < N; i++)
-  {
-    t = sqrt((double)(R[i])) * s;
-    R[i] = (uint32_t)floor(t * t);
-  }
+  // counts the number M of medial axis points
+  M = 0;
+  for (p = 0; p < N; p++)
+    if (R[p] > 0) M++;
   
-  if (!lredt2d(res, image))
-  {
-    fprintf(stderr, "%s: function lredt2d failed\n", F_NAME);
-    exit(1);
-  }
+  MAp = (index_t *)malloc(M * sizeof(index_t)); assert(MAp != NULL);
+  MAr = (uint32_t *)malloc(M * sizeof(uint32_t)); assert(MAr != NULL);
+  A   = (uint32_t *)malloc(M * sizeof(uint32_t)); assert(A != NULL);
+  for (i = 0; i < M; i++) A[i] = i;
+  for (i = 0, p = 0; p < N; p++) 
+    if (R[p] > 0)
+    { 
+      MAp[i] = p;
+      MAr[i] = R[p];
+      i++;
+    }
+  assert(i == M);
 
-  if (!lmedialaxis_lmedialaxis(image, 3, res))
-  {
-    fprintf(stderr, "%s: lmedialaxis_lmedialaxis failed\n", F_NAME);
-    exit(1);
-  }
+  // tri par ordre croissant des rayons  
+  TriRapideStochastique (A, MAr, 0, M-1);
 
-  for (i = 0; i < N; i++)
-  {
-    t = sqrt((double)(R[i])) / s;
-    R[i] = (uint32_t)floor(t * t);
-  }
+  for (p = 0; p < N; p++) R[p] = 0;
 
+  // foreach p in X do
+  for (p = 0; p < N; p++)
+    if (I[p])
+    {
+      i = M-1;
+      while ((i >= 0) && (
+			  dist(MAp[A[i]]%rs, MAp[A[i]]/rs, p%rs, p/rs) >=
+			  (s * sqrt((double)MAr[A[i]]))
+			 )
+	    ) 
+	i--;
+      if (i >= 0) R[MAp[A[i]]] = MAr[A[i]];
+    }
+
+  free(MAp);
+  free(MAr);
+  free(A);
   return 1;
 } //lmedialaxis_scalefilteredmedialaxis()
