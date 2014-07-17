@@ -6691,7 +6691,6 @@ static void D_Crucial_Isthmes(uint8_t *F, uint8_t *K, int32_t rs, int32_t N, uin
 #ifdef DEBUG_D_Crucial_Isthmes
 printf("2-crucial %d %d\n", i % rs, i / rs);
 #endif
-if (i == 236*rs + 57) printf("2-crucial %d %d\n", i % rs, i / rs);
       A[i] = 1;
       if (!K[i] && t8(mask(F, i, rs, N)) > 1)
       {
@@ -6713,7 +6712,6 @@ printf("isthme mince %d %d\n", i % rs, i / rs);
 #ifdef DEBUG_D_Crucial_Isthmes
 printf("1-crucial %d %d\n", i % rs, i / rs);
 #endif
-if (i == 236*rs + 57) printf("1-crucial %d %d\n", i % rs, i / rs);
 	A[i] = 1;
 	if (r > 1) 
 	{
@@ -6733,7 +6731,6 @@ printf("isthme epais %d %d\n", i % rs, i / rs);
 #ifdef DEBUG_D_Crucial_Isthmes
 printf("0-crucial %d %d\n", i % rs, i / rs);
 #endif
-if (i == 236*rs + 57) printf("0-crucial %d %d\n", i % rs, i / rs);
       Y[i] = 1;
     }
   for (i = 0; i < N; i++) { if (A[i]) Y[i] = 1; if (B[i]) Z[i] = 1; }
@@ -6743,6 +6740,11 @@ if (i == 236*rs + 57) printf("0-crucial %d %d\n", i % rs, i / rs);
 int32_t lskelCK2_pers(struct xvimage *image, 
 		      struct xvimage *persistence)
 /* ==================================== */
+  /* ATTENTION : PAS TESTE */
+  /* ATTENTION : PAS TESTE */
+  /* ATTENTION : PAS TESTE */
+  /* ATTENTION : PAS TESTE */
+  /* ATTENTION : PAS TESTE */
 /* Hiérarchie de squelettes basées sur la persistence des isthmes 1D - version symétrique
  
    // ETAPE 1 : calcul des persistences et du squelette à persistence 0
@@ -6774,6 +6776,7 @@ int32_t lskelCK2_pers(struct xvimage *image,
    until lambda = +infty
 
  */
+
 #undef F_NAME
 #define F_NAME "lskelCK2_pers"
 {
@@ -6824,7 +6827,6 @@ int32_t lskelCK2_pers(struct xvimage *image,
     ndel = 0;
     step++;
 //if (step > 10) goto stop;
-#define VERBOSE
 #ifdef VERBOSE
     printf("step %d\n", step);
 #endif
@@ -6876,23 +6878,14 @@ stop:;
 
     for (x = 0; x < N; x++) if (P[x] > 0) X[x] = S_OBJECT;
 
-
-
-
-
-
-
-
-
-
-
-
-
   for (x = 0; x < N; x++) 
     if (X[x]) 
     {
       X[x] = NDG_MAX; // normalize values
     }
+
+
+
 
   mcrbt_RbtTermine(Q);
   freeimage(Aimage);
@@ -6902,3 +6895,168 @@ stop:;
   freeimage(Kimage);
   return(1);
 } /* lskelCK2_pers() */
+
+#ifdef COMPILE_lskelCK2p
+
+PAS FINI !!!
+
+
+/* ==================================== */
+int32_t lskelCK2p(struct xvimage *image, 
+	     int32_t n_steps,
+	     int32_t isthmus_persistence,
+	     struct xvimage *inhibit)
+/* ==================================== */
+/*
+Squelette symétrique curviligne
+Algo CK2p données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
+Pour tout x de S faire T[x] := PERS_INIT_VAL
+i := 0 
+Repeat
+  i := i + 1
+  C := points de courbe de S
+  Pour tout x de C tq T[x] == PERS_INIT_VAL faire T[x] := i
+  P := pixels simples pour S et pas dans I
+  C1 := pixels 1-D-cruciaux (match1)
+  C0 := pixels 0-D-cruciaux (match0)
+  Z := {x non simples ou cruciaux | T[x] > PERS_INIT_VAL et (i + 1 - T[x]) >= p}
+  P := P  \  [C2 \cup C1 \cup C0]
+  S := S \ P
+  I := I \cup Z 
+Until stability or i = n
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+*/
+#undef F_NAME
+#define F_NAME "lskelCK2p"
+{ 
+  index_t i; // index de pixel
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t N = rs * cs;            /* taille plan */
+  uint8_t *S = UCHARDATA(image);   /* l'image de depart */
+  int16_t *T;
+  uint8_t *I;
+  int32_t step, nonstab;
+  int32_t top, topb;
+
+#ifdef VERBOSE
+  printf("%s: n_steps = %d ; isthmus_persistence = %d\n", F_NAME, n_steps, isthmus_persistence);
+#endif
+
+  assert(n_steps <= INT16_MAX);
+  if (n_steps == -1) n_steps = INT16_MAX;
+  if (isthmus_persistence == -1) isthmus_persistence = INT16_MAX;
+
+  if (inhibit == NULL) 
+  {
+    inhibit = copyimage(image); 
+    razimage(inhibit);
+    I = UCHARDATA(inhibit);
+  }
+  else
+  {
+    I = UCHARDATA(inhibit);
+    for (i = 0; i < N; i++) if (I[i]) I[i] = I_INHIBIT;
+  }
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+
+  T = (int16_t *)malloc(N * sizeof(int16_t)); assert(T != NULL);
+  for (i = 0; i < N; i++) T[i] = PERS_INIT_VAL;
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    // MARQUE LES POINTS SIMPLES
+    for (i = 0; i < N; i++) 
+      if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N))
+	SET_SIMPLE(S[i]);
+
+    // TROISIEME SOUS-ITERATION : MARQUE LES POINTS DE COURBE (1)
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (match1s(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+
+    // MARQUE LES POINTS DE COURBE (3)
+    for (i = 0; i < N; i++)
+    {
+      if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
+      {    
+	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
+	if (top > 1) SET_CURVE(S[i]);
+      }
+      if (IS_CURVE(S[i]) && (T[i] == PERS_INIT_VAL)) 
+      { 
+	T[i] = (int16_t)step;
+#ifdef DEBUG_SKEL_CK3P
+	printf("point %d (%d %d %d) naissance step %d\n", i, i % rs, (i % ps) / rs,  i / ps, step);
+#endif	
+      }
+    }
+    // MARQUE LES POINTS 1-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (match1(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    // MARQUE LES POINTS 0-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (match0(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+
+    // MEMORISE DANS I LES ISTHMES PERSISTANTS
+    for (i = 0; i < N; i++)
+    { 
+      if (IS_OBJECT(S[i]) && (!IS_SIMPLE(S[i]) || IS_DCRUCIAL(S[i])) &&
+	  (T[i] > PERS_INIT_VAL) && ((step+1 - T[i]) >= isthmus_persistence)) 
+      {
+	SET_INHIBIT(I[i]); 
+#ifdef DEBUG_SKEL_CK3P
+	printf("point %d (%d %d %d) ajout à K\n", i, i % rs, (i % ps) / rs,  i / ps);
+#endif	
+      }
+      if (IS_INHIBIT(I[i])) UNSET_SIMPLE(S[i]);
+    }
+
+    for (i = 0; i < N; i++)
+      if (S[i] && IS_SIMPLE(S[i]) && !IS_DCRUCIAL(S[i])) 
+      {
+	S[i] = 0; 
+	nonstab = 1; 
+      }
+    for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+  } // while (nonstab && (step < n_steps))
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = NDG_MAX;
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  free(T);
+  return(1);
+} /* lskelCK2p() */
+
+#endif

@@ -66,8 +66,10 @@ knowledge of the CeCILL license and that you accept its terms.
    Update MC 03/08/2012 : fix bug asym_match_vois0
    Update MC 02/11/2012 : squelettes sym�triques avec persistence
    Update MC 27/01/2014 : squelettes asym�triques avec persistence
+   Update MC 24/06/2014 : fix bug match_vois0
 */
 
+#include <float.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -122,10 +124,13 @@ knowledge of the CeCILL license and that you accept its terms.
 #define UNSET_DCRUCIAL(f)   (f&=~S_DCRUCIAL)
 #define UNSET_SELECTED(f)   (f&=~S_SELECTED)
 
-#define MAXFLOAT	3.40282347e+38F
+//#define MAXFLOAT	3.40282347e+38F
+#define MAXFLOAT FLT_MAX
 
-#define VERBOSE
+//#define VERBOSE
 //#define DEBUG_SKEL_CK3P
+//#define DEBUG_SKEL_MK3A
+//#define DEBUG_SKEL_CK3A
 //#define DEBUG
 #ifdef DEBUG
 int32_t trace = 1;
@@ -623,7 +628,7 @@ static int32_t match_vois0(uint8_t *v)
 
 Teste si les conditions suivantes sont r�unies:
 1: au moins un des ensembles {12,26}, {11,4}, {13,2}, {8,3} est inclus dans l'objet, et
-2: les points non nuls sont tous simples, non marqu�s DCRUCIAL et non marqu�s DCRUCIAL
+2: les points non nuls sont tous simples, et non marqu�s DCRUCIAL
 Si le test r�ussit, les points non nuls sont marqu�s DCRUCIAL
 */
 {
@@ -634,25 +639,96 @@ Si le test r�ussit, les points non nuls sont marqu�s DCRUCIAL
     print_vois(v);
   }
 #endif
-  if (!((v[12]&&v[26]) || (v[11]&&v[4]) || (v[13]&&v[2]) || (v[8]&&v[3]) )) return 0;
+  if (!v[26]) return 0;
+  if (!IS_SIMPLE(v[26]) || IS_DCRUCIAL(v[26])) return 0;
+  if (!(v[12] || v[10] || v[14] || v[21])) return 0;
+  if (v[12])
+  { /*         12      11
+               13       8
 
-  if (v[12] && (!IS_SIMPLE(v[12]) || IS_DCRUCIAL(v[12]))) return 0;
-  if (v[26] && (!IS_SIMPLE(v[26]) || IS_DCRUCIAL(v[26]))) return 0;
-  if (v[11] && (!IS_SIMPLE(v[11]) || IS_DCRUCIAL(v[11]))) return 0;
-  if (v[ 4] && (!IS_SIMPLE(v[ 4]) || IS_DCRUCIAL(v[ 4]))) return 0;
-  if (v[13] && (!IS_SIMPLE(v[13]) || IS_DCRUCIAL(v[13]))) return 0;
-  if (v[ 2] && (!IS_SIMPLE(v[ 2]) || IS_DCRUCIAL(v[ 2]))) return 0;
-  if (v[ 8] && (!IS_SIMPLE(v[ 8]) || IS_DCRUCIAL(v[ 8]))) return 0;
-  if (v[ 3] && (!IS_SIMPLE(v[ 3]) || IS_DCRUCIAL(v[ 3]))) return 0;
+		3	2
+		4      26 */
+     if (!IS_SIMPLE(v[12]) || IS_DCRUCIAL(v[12])) return 0;
+     if (v[11] && (!IS_SIMPLE(v[11]) || IS_DCRUCIAL(v[11]))) return 0;
+     if (v[13] && (!IS_SIMPLE(v[13]) || IS_DCRUCIAL(v[13]))) return 0;
+     if (v[ 8] && (!IS_SIMPLE(v[ 8]) || IS_DCRUCIAL(v[ 8]))) return 0;
+     if (v[ 3] && (!IS_SIMPLE(v[ 3]) || IS_DCRUCIAL(v[ 3]))) return 0;
+     if (v[ 2] && (!IS_SIMPLE(v[ 2]) || IS_DCRUCIAL(v[ 2]))) return 0;
+     if (v[ 4] && (!IS_SIMPLE(v[ 4]) || IS_DCRUCIAL(v[ 4]))) return 0;
+     if (v[12]) SET_DCRUCIAL(v[12]);
+     if (v[11]) SET_DCRUCIAL(v[11]);
+     if (v[ 4]) SET_DCRUCIAL(v[ 4]);
+     if (v[13]) SET_DCRUCIAL(v[13]);
+     if (v[ 2]) SET_DCRUCIAL(v[ 2]);
+     if (v[ 8]) SET_DCRUCIAL(v[ 8]);
+     if (v[ 3]) SET_DCRUCIAL(v[ 3]);
+  }
+  if (v[10])
+  { /*
+               11      10
+               8       9
 
-  if (v[12]) SET_DCRUCIAL(v[12]);
-  if (v[26]) SET_DCRUCIAL(v[26]);
-  if (v[11]) SET_DCRUCIAL(v[11]);
-  if (v[ 4]) SET_DCRUCIAL(v[ 4]);
-  if (v[13]) SET_DCRUCIAL(v[13]);
-  if (v[ 2]) SET_DCRUCIAL(v[ 2]);
-  if (v[ 8]) SET_DCRUCIAL(v[ 8]);
-  if (v[ 3]) SET_DCRUCIAL(v[ 3]);
+		2	1
+		26	0 */
+     if (!IS_SIMPLE(v[10]) || IS_DCRUCIAL(v[10])) return 0;
+     if (v[11] && (!IS_SIMPLE(v[11]) || IS_DCRUCIAL(v[11]))) return 0;
+     if (v[ 8] && (!IS_SIMPLE(v[ 8]) || IS_DCRUCIAL(v[ 8]))) return 0;
+     if (v[ 9] && (!IS_SIMPLE(v[ 9]) || IS_DCRUCIAL(v[ 9]))) return 0;
+     if (v[ 1] && (!IS_SIMPLE(v[ 1]) || IS_DCRUCIAL(v[ 1]))) return 0;
+     if (v[ 2] && (!IS_SIMPLE(v[ 2]) || IS_DCRUCIAL(v[ 2]))) return 0;
+     if (v[ 0] && (!IS_SIMPLE(v[ 0]) || IS_DCRUCIAL(v[ 0]))) return 0;
+     if (v[10]) SET_DCRUCIAL(v[10]);
+     if (v[11]) SET_DCRUCIAL(v[11]);
+     if (v[ 8]) SET_DCRUCIAL(v[ 8]);
+     if (v[ 9]) SET_DCRUCIAL(v[ 9]);
+     if (v[ 1]) SET_DCRUCIAL(v[ 1]);
+     if (v[ 2]) SET_DCRUCIAL(v[ 2]);
+     if (v[ 0]) SET_DCRUCIAL(v[ 0]);
+  }
+  if (v[14])
+  { /*         13       8
+               14      15
+
+		4      26
+		5	6 */
+     if (!IS_SIMPLE(v[14]) || IS_DCRUCIAL(v[14])) return 0;
+     if (v[13] && (!IS_SIMPLE(v[13]) || IS_DCRUCIAL(v[13]))) return 0;
+     if (v[15] && (!IS_SIMPLE(v[15]) || IS_DCRUCIAL(v[15]))) return 0;
+     if (v[ 8] && (!IS_SIMPLE(v[ 8]) || IS_DCRUCIAL(v[ 8]))) return 0;
+     if (v[ 6] && (!IS_SIMPLE(v[ 6]) || IS_DCRUCIAL(v[ 6]))) return 0;
+     if (v[ 5] && (!IS_SIMPLE(v[ 5]) || IS_DCRUCIAL(v[ 5]))) return 0;
+     if (v[ 4] && (!IS_SIMPLE(v[ 4]) || IS_DCRUCIAL(v[ 4]))) return 0;
+     if (v[14]) SET_DCRUCIAL(v[14]);
+     if (v[13]) SET_DCRUCIAL(v[13]);
+     if (v[15]) SET_DCRUCIAL(v[15]);
+     if (v[ 8]) SET_DCRUCIAL(v[ 8]);
+     if (v[ 6]) SET_DCRUCIAL(v[ 6]);
+     if (v[ 5]) SET_DCRUCIAL(v[ 5]);
+     if (v[ 4]) SET_DCRUCIAL(v[ 4]);
+  }
+  if (v[21])
+  {  /*		3	2
+		4      26
+
+               21      20
+               22      17 */
+     if (!IS_SIMPLE(v[21]) || IS_DCRUCIAL(v[21])) return 0;
+     if (v[17] && (!IS_SIMPLE(v[17]) || IS_DCRUCIAL(v[17]))) return 0;
+     if (v[20] && (!IS_SIMPLE(v[20]) || IS_DCRUCIAL(v[20]))) return 0;
+     if (v[22] && (!IS_SIMPLE(v[22]) || IS_DCRUCIAL(v[22]))) return 0;
+     if (v[ 3] && (!IS_SIMPLE(v[ 3]) || IS_DCRUCIAL(v[ 3]))) return 0;
+     if (v[ 2] && (!IS_SIMPLE(v[ 2]) || IS_DCRUCIAL(v[ 2]))) return 0;
+     if (v[ 4] && (!IS_SIMPLE(v[ 4]) || IS_DCRUCIAL(v[ 4]))) return 0;
+     if (v[21]) SET_DCRUCIAL(v[21]);
+     if (v[17]) SET_DCRUCIAL(v[17]);
+     if (v[20]) SET_DCRUCIAL(v[20]);
+     if (v[22]) SET_DCRUCIAL(v[22]);
+     if (v[ 3]) SET_DCRUCIAL(v[ 3]);
+     if (v[ 2]) SET_DCRUCIAL(v[ 2]);
+     if (v[ 4]) SET_DCRUCIAL(v[ 4]);
+  }
+  SET_DCRUCIAL(v[26]);
+
 #ifdef DEBUG
   if (trace)
     printf("match !\n");
@@ -785,23 +861,29 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     nonstab = 0;
     step++;
 #ifdef VERBOSE
-    printf("step %d\n", step);
+    printf("%s: step %d\n", F_NAME, step);
 #endif
 
     // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES
     for (i = 0; i < N; i++) 
       if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
-#ifdef DEBUG
+#ifdef DEBUG_SKEL_MK3A
 writeimage(image,"_S");
 #endif
+
     // DEUXIEME SOUS-ITERATION : MARQUE LES CLIQUES CRUCIALES CORRESPONDANT AUX 2-FACES
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
 	extract_vois(S, i, rs, ps, N, v);
 	if (match2(v))
+	{
+#ifdef DEBUG_SKEL_MK3A
+printf("match 2-clique\n");
+#endif	  
 	  insert_vois(v, S, i, rs, ps, N);
+	}
       }
 
     // TROISIEME SOUS-ITERATION : MARQUE LES CLIQUES CRUCIALES CORRESPONDANT AUX 1-FACES
@@ -810,7 +892,12 @@ writeimage(image,"_S");
       { 
 	extract_vois(S, i, rs, ps, N, v);
 	if (match1(v))
+	{
+#ifdef DEBUG_SKEL_MK3A
+printf("match 1-clique\n");
+#endif	  
 	  insert_vois(v, S, i, rs, ps, N);
+	}
       }
 
     // QUATRIEME SOUS-ITERATION : MARQUE LES CLIQUES CRUCIALES CORRESPONDANT AUX 0-FACES
@@ -819,14 +906,19 @@ writeimage(image,"_S");
       { 
 	extract_vois(S, i, rs, ps, N, v);
 	if (match0(v))
+	{
+#ifdef DEBUG_SKEL_MK3A
+printf("match 0-clique\n");
+#endif	  
 	  insert_vois(v, S, i, rs, ps, N);
+	}
       }
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup  R, o� R repr�sente les pts marqu�s
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
-#ifdef DEBUG
+#ifdef DEBUG_SKEL_MK3A
 writeimage(t,"_T");
 #endif
 
@@ -1048,7 +1140,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     nonstab = 0;
     step++;
 #ifdef VERBOSE
-    printf("step %d\n", step);
+    printf("%s: step %d\n", F_NAME, step);
 #endif
 
     // MARQUE LES POINTS SIMPLES NON DANS I
@@ -1112,7 +1204,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       { 
 	extract_vois(S, i, rs, ps, N, v);
 	if (match0(v))
+	{
+#ifdef DEBUG_SKEL_CK3A
+printf("match 0-clique\n");
+#endif	  
 	  insert_vois(v, S, i, rs, ps, N);
+	}
       }
 
     memset(T, 0, N);
@@ -2227,9 +2324,9 @@ Si le test r�ussit, le point 26 est marqu� SELECTED
 		4      26
 		5	6 */
      if (!IS_SIMPLE(v[14]) || IS_SELECTED(v[14])) return 0;
-     if (v[14] && (!IS_SIMPLE(v[14]) || IS_SELECTED(v[14]))) return 0;
      if (v[13] && (!IS_SIMPLE(v[13]) || IS_SELECTED(v[13]))) return 0;
      if (v[15] && (!IS_SIMPLE(v[15]) || IS_SELECTED(v[15]))) return 0;
+     if (v[ 8] && (!IS_SIMPLE(v[ 8]) || IS_SELECTED(v[ 8]))) return 0;
      if (v[ 6] && (!IS_SIMPLE(v[ 6]) || IS_SELECTED(v[ 6]))) return 0;
      if (v[ 5] && (!IS_SIMPLE(v[ 5]) || IS_SELECTED(v[ 5]))) return 0;
      if (v[ 4] && (!IS_SIMPLE(v[ 4]) || IS_SELECTED(v[ 4]))) return 0;
@@ -2452,7 +2549,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   uint8_t *T = UCHARDATA(t);
   uint8_t *I;
   int32_t step, nonstab;
-  int32_t top, topb;
   uint8_t v[27];
 
 #ifdef VERBOSE
@@ -2552,10 +2648,11 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   return(1);
 } /* lskelAEK3() */
 
+
 //#define NEW_lskelACK3a
 #ifndef NEW_lskelACK3a
 static int32_t NKP_end(uint8_t *S, index_t p, index_t rs, index_t ps, index_t N)
-{
+{ // Condition C3 des papiers ICIAR et IASTED de Nemeth, Kalman, Palagyi
   int32_t k, n;
   index_t y, q, r;
   for (n = k = 0; k < 26; k += 1)
@@ -4770,6 +4867,9 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   int32_t step, nonstab;
   int32_t top, topb;
   uint8_t v[27];
+#ifdef DEBUG_SKEL_CK3P
+  char buf[128];
+#endif
 
 #ifdef VERBOSE
   printf("%s: n_steps = %d ; isthmus_persistence = %d\n", F_NAME, n_steps, isthmus_persistence);
@@ -4898,6 +4998,10 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	nonstab = 1; 
       }
     for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+#ifdef DEBUG_SKEL_CK3P
+sprintf(buf, "_S%d", step);
+writeimage(image, buf);
+#endif
   } // while (nonstab && (step < n_steps))
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = NDG_MAX;
@@ -5233,6 +5337,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   mctopo3d_termine_topo3d();
   return(1);
 } /* lskelSCK3p() */
+
 
 /* ==================================== */
 int32_t lskelASCK3p(struct xvimage *image, 
@@ -5820,3 +5925,72 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   mctopo3d_termine_topo3d();
   return(1);
 } /* lskelSCK3_pers() */
+
+
+/* ==================================== */
+int32_t lptthickisthmus(struct xvimage *image)
+/* ==================================== */
+/*
+Detecte les isthmes "�pais"
+*/
+#undef F_NAME
+#define F_NAME "lptthickisthmus"
+{ 
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  int32_t top, topb;
+  uint8_t v[27];
+
+  mctopo3d_init_topo3d();
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+
+  // MARQUE LES POINTS SIMPLES
+  for (i = 0; i < N; i++) 
+    if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N))
+      SET_SIMPLE(S[i]);
+
+  // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS DE COURBE (2)
+  for (i = 0; i < N; i++) 
+    if (IS_SIMPLE(S[i]))
+    { 
+      extract_vois(S, i, rs, ps, N, v);
+      if (match2s(v))
+	insert_vois(v, S, i, rs, ps, N);
+    }
+
+  // TROISIEME SOUS-ITERATION : MARQUE LES POINTS DE COURBE (1)
+  for (i = 0; i < N; i++) 
+    if (IS_SIMPLE(S[i]))
+    { 
+      extract_vois(S, i, rs, ps, N, v);
+      if (match1s(v))
+	insert_vois(v, S, i, rs, ps, N);
+    }
+
+  // MARQUE LES POINTS DE COURBE (3)
+  for (i = 0; i < N; i++)
+  {
+    if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
+    {    
+      mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
+#ifdef NEW_ISTHMUS
+      if ((top == 2) && (topb == 1)) SET_CURVE(S[i]);
+#else
+      if (top > 1) SET_CURVE(S[i]);
+#endif
+    }
+  }
+
+  // TRANSFERE PTS DE COURBE DANS S
+  for (i = 0; i < N; i++)
+    if (IS_CURVE(S[i])) S[i] = NDG_MAX; else S[i] = 0; 
+
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* lptthickisthmus() */

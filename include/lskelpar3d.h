@@ -127,6 +127,7 @@ extern int32_t lskelSK3_pers(struct xvimage *image,
 		       struct xvimage *persistence);
 extern int32_t lskelSCK3_pers(struct xvimage *image, 
 		       struct xvimage *persistence);
+extern int32_t lptthickisthmus(struct xvimage *image);
 #ifdef __cplusplus
 }
 #endif
