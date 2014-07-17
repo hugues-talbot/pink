@@ -32,56 +32,55 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file directionalfilter.c
+/*! \file skel_ASK3p.c
 
-\brief directional filter for curvilinear feature extraction
+\brief parallel 3D binary surface, asymetric skeleton based on thin 2D isthmuses with persistence
 
-<B>Usage:</B> directionalfilter.c in.pgm width length ndir out.pgm
+<B>Usage:</B> skel_ASK3p in.pgm nsteps isthmus_persistence [inhibit] out.pgm
 
-<B>Description:</B>
-Let F be the original image from \b in.pgm .
-This operator computes the supremum of the convolutions of F
-by a series of kernels K0, ... Kn where n = \b ndir - 1, which are defined
-by, for each (x,y) and each i in [0...n]: 
+<B>Description:</B> Parallel 3D binary thinning or surface,
+asymetric skeleton based on thin 2D isthmuses. The parameter \b nsteps
+gives, if positive, the number of parallel thinning steps to be
+processed.  If the value given for \b nsteps equals -1, the thinning
+is continued until stability.
 
-\verbatim
-sigma = 1 / (2*width*width);
-lambda = 1 / (2*length*length);
-theta = i * PI / n;
-xr = cos(theta) * x - sin(theta) * y;
-yr = sin(theta) * x + cos(theta) * y;
-Ki(x,y) = exp(-lambda*yr*yr) *
-          (4*sigma*sigma*xr*xr - 2*sigma) * 
-          exp(-sigma*xr*xr)
-\endverbatim
+When a point x is detected as a 2D isthmus, a counter p(x) is
+associated to this point and initialized with value 1. This counter is
+incremented a each iteration as long as x is still an isthmus. At each
+iteration, the isthmuses x such that p(x) >= \b isthmus_persistence are
+stored as a constraint set (see also \b inhibit parameter).
 
-<B>Types supported:</B> byte 2d, int32_t 2d, float 2d
+If the parameter \b inhibit is given and is a binary image name,
+then the points of this image will be left unchanged. 
 
-<B>Category:</B> signal
-\ingroup  signal
+\warning The object must not have any point on the frame of the image.
 
-\author Michel Couprie 2003
+<B>Types supported:</B> byte 3d
+
+<B>Category:</B> topobin
+\ingroup  topobin
+
+\author Michel Couprie
 */
-
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lconvol.h>
+#include <lskelpar3d.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  double width, length;  
-  int32_t ndir;
+  struct xvimage * inhibit = NULL;
+  int32_t nsteps, isthmus_persistence;
 
-  if (argc != 6)
+  if ((argc != 5) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s in.pgm width length ndir out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm nsteps isthmus_persistence [inhibit] out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -92,24 +91,34 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  width = atof(argv[2]);
-  length = atof(argv[3]);
-  ndir = atoi(argv[4]);
-
-  if (! convertfloat(&image))
+  nsteps = atoi(argv[2]);
+  isthmus_persistence = atoi(argv[3]);
+  if (argc == 6)
   {
-    fprintf(stderr, "%s: function convertfloat failed\n", argv[0]);
-    exit(1);
-  }
-  
-  if (! ldirectionalfilter(image, width, length, ndir))
-  {
-    fprintf(stderr, "%s: function ldirectionalfilter failed\n", argv[0]);
-    exit(1);
+    inhibit = readimage(argv[4]);
+    if (inhibit == NULL)
+    {
+      fprintf(stderr, "%s: readimage failed\n", argv[0]);
+      exit(1);
+    }
   }
 
-  writeimage(image, argv[argc - 1]);
+  if (depth(image) != 1)
+  {
+    if (! lskelASK3p(image, nsteps, isthmus_persistence, inhibit))
+    {
+      fprintf(stderr, "%s: lskelASK3p failed\n", argv[0]);
+      exit(1);
+    }
+  }
+  else
+  {
+    fprintf(stderr, "%s: image must be 3D\n", argv[0]);
+    exit(1);
+  }
+
+  writeimage(image, argv[argc-1]);
   freeimage(image);
+
   return 0;
 } /* main */
-

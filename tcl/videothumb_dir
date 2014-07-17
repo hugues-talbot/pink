@@ -74,3 +74,10 @@ foreach file $filelist {
   catch { exec videothumb $file "thumb_$name.jpg" } mes
   puts "file $file processed"
 }
+
+set filelist [glob -nocomplain "$VTD(prefix)*.flv"]
+foreach file $filelist {
+  set name [file rootname $file]
+  catch { exec videothumb $file "thumb_$name.jpg" } mes
+  puts "file $file processed"
+}
