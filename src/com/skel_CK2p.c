@@ -32,56 +32,47 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file directionalfilter.c
+/*! \file skel_CK2p.c
 
-\brief directional filter for curvilinear feature extraction
+\brief parallel 2D binary curvilinear skeleton based on 1D isthmuses
 
-<B>Usage:</B> directionalfilter.c in.pgm width length ndir out.pgm
+<B>Usage:</B> skel_CK2p in.pgm pers [inhibit] out.pgm
 
 <B>Description:</B>
-Let F be the original image from \b in.pgm .
-This operator computes the supremum of the convolutions of F
-by a series of kernels K0, ... Kn where n = \b ndir - 1, which are defined
-by, for each (x,y) and each i in [0...n]: 
+Parallel 2D binary thinning or curvilinear skeleton based on 1D isthmuses, 
+with a persistence parameter: \b pers.
 
-\verbatim
-sigma = 1 / (2*width*width);
-lambda = 1 / (2*length*length);
-theta = i * PI / n;
-xr = cos(theta) * x - sin(theta) * y;
-yr = sin(theta) * x + cos(theta) * y;
-Ki(x,y) = exp(-lambda*yr*yr) *
-          (4*sigma*sigma*xr*xr - 2*sigma) * 
-          exp(-sigma*xr*xr)
-\endverbatim
+If the parameter \b inhibit is given and is a binary image name,
+then the points of this image will be left unchanged. 
 
-<B>Types supported:</B> byte 2d, int32_t 2d, float 2d
+<B>Warning:</B> The object must not have any point on the frame of the image.
 
-<B>Category:</B> signal
-\ingroup  signal
+<B>Types supported:</B> byte 2d
 
-\author Michel Couprie 2003
+<B>Category:</B> topobin
+\ingroup  topobin
+
+\author Michel Couprie
 */
-
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lconvol.h>
+#include <lskelpar.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  double width, length;  
-  int32_t ndir;
+  struct xvimage * inhibit = NULL;
+  int32_t pers;
 
-  if (argc != 6)
+  if ((argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s in.pgm width length ndir out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm pers [inhibit] out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -92,24 +83,37 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  width = atof(argv[2]);
-  length = atof(argv[3]);
-  ndir = atoi(argv[4]);
-
-  if (! convertfloat(&image))
+  pers = atoi(argv[2]);
+  if (argc == 5)
   {
-    fprintf(stderr, "%s: function convertfloat failed\n", argv[0]);
-    exit(1);
-  }
-  
-  if (! ldirectionalfilter(image, width, length, ndir))
-  {
-    fprintf(stderr, "%s: function ldirectionalfilter failed\n", argv[0]);
-    exit(1);
+    inhibit = readimage(argv[3]);
+    if (inhibit == NULL)
+    {
+      fprintf(stderr, "%s: readimage failed\n", argv[0]);
+      exit(1);
+    }
   }
 
-  writeimage(image, argv[argc - 1]);
+  if (depth(image) == 1)
+     
+  {
+      /*** MISSING FUNCTION
+    if (! lskelCK2p(image, -1, pers, inhibit))
+    {
+      fprintf(stderr, "%s: lskelCK2p failed\n", argv[0]);
+      exit(1);
+      }
+      ***/ 
+  }
+  else
+  {
+    fprintf(stderr, "%s: image must be 2D\n", argv[0]);
+    exit(1);
+  }
+
+  writeimage(image, argv[argc-1]);
   freeimage(image);
+  if (inhibit) freeimage(inhibit);
+
   return 0;
 } /* main */
-

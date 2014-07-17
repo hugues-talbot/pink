@@ -32,35 +32,29 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file directionalfilter.c
+/*! \file scaleaxis.c
 
-\brief directional filter for curvilinear feature extraction
+\brief discrete scale filtered medial axis transform
 
-<B>Usage:</B> directionalfilter.c in.pgm width length ndir out.pgm
+<B>Usage:</B> scalefilteredmedialaxis in.pgm s out.pgm
 
 <B>Description:</B>
-Let F be the original image from \b in.pgm .
-This operator computes the supremum of the convolutions of F
-by a series of kernels K0, ... Kn where n = \b ndir - 1, which are defined
-by, for each (x,y) and each i in [0...n]: 
+Discrete scale filtered medial axis, as defined in [PCJ13], 
+of the binary image \b X contained in \b in.pgm.
 
-\verbatim
-sigma = 1 / (2*width*width);
-lambda = 1 / (2*length*length);
-theta = i * PI / n;
-xr = cos(theta) * x - sin(theta) * y;
-yr = sin(theta) * x + cos(theta) * y;
-Ki(x,y) = exp(-lambda*yr*yr) *
-          (4*sigma*sigma*xr*xr - 2*sigma) * 
-          exp(-sigma*xr*xr)
-\endverbatim
+References:<BR> 
+[PCJ13] "Scale Filtered Euclidean Medial Axis", Michal Postolski, Michel Couprie, Marcin Janaszewski, DGCI 2013
 
-<B>Types supported:</B> byte 2d, int32_t 2d, float 2d
+<B>Types supported:</B> byte 2d
 
-<B>Category:</B> signal
-\ingroup  signal
+<B>Category:</B> morpho
+\ingroup  morpho
 
-\author Michel Couprie 2003
+\author Michel Couprie
+*/
+
+/*
+%TEST scalefilteredmedialaxis %IMAGES/2dbyte/binary/b2hebreu.pgm 1.5 %RESULTS/scalefilteredmedialaxis_b2hebreu.pgm
 */
 
 #include <stdio.h>
@@ -69,19 +63,20 @@ Ki(x,y) = exp(-lambda*yr*yr) *
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lconvol.h>
+#include <lmedialaxis.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  double width, length;  
-  int32_t ndir;
+  struct xvimage * res;
+  double scale;
+  uint32_t rs, cs, ds, N;
 
-  if (argc != 6)
+  if (argc != 4)
   {
-    fprintf(stderr, "usage: %s in.pgm width length ndir out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm scale fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -91,25 +86,32 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
+  rs = rowsize(image);
+  cs = colsize(image);
+  ds = depth(image);
+  N = rs * cs * ds;
 
-  width = atof(argv[2]);
-  length = atof(argv[3]);
-  ndir = atoi(argv[4]);
+  res = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (res == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+    exit(1);
+  }
 
-  if (! convertfloat(&image))
+  scale = atof(argv[2]);
+
+  if (!lmedialaxis_scalefilteredmedialaxis(image, scale, res))
   {
-    fprintf(stderr, "%s: function convertfloat failed\n", argv[0]);
+    fprintf(stderr, "%s: lmedialaxis_scalefilteredmedialaxis failed\n", argv[0]);
     exit(1);
   }
   
-  if (! ldirectionalfilter(image, width, length, ndir))
-  {
-    fprintf(stderr, "%s: function ldirectionalfilter failed\n", argv[0]);
-    exit(1);
-  }
+  writeimage(res, argv[argc - 1]);
 
-  writeimage(image, argv[argc - 1]);
+  freeimage(res);
   freeimage(image);
+
   return 0;
 } /* main */
+
 

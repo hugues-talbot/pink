@@ -39,7 +39,7 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Usage:</B> sfema in.pgm s out.pgm
 
 <B>Description:</B>
-Discrete scale filtered medial axis, as defined in [PCJ13], 
+Discrete scale filtered Euclidean medial axis, as defined in [PCJ13], 
 of the binary image \b X contained in \b in.pgm.
 
 References:<BR> 

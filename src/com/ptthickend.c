@@ -32,56 +32,37 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file directionalfilter.c
+/*! \file ptthickend.c
 
-\brief directional filter for curvilinear feature extraction
+\brief detects "thick end" points in a binary image
 
-<B>Usage:</B> directionalfilter.c in.pgm width length ndir out.pgm
+<B>Usage:</B> ptthickend in.pgm out.pgm
 
 <B>Description:</B>
-Let F be the original image from \b in.pgm .
-This operator computes the supremum of the convolutions of F
-by a series of kernels K0, ... Kn where n = \b ndir - 1, which are defined
-by, for each (x,y) and each i in [0...n]: 
+An thick end point is a white point, which has only white n-neighbours in the same quadrant (2d) or octant (3d), and at least one. Connectivity n is 8 (2D) or 26 (3d).
 
-\verbatim
-sigma = 1 / (2*width*width);
-lambda = 1 / (2*length*length);
-theta = i * PI / n;
-xr = cos(theta) * x - sin(theta) * y;
-yr = sin(theta) * x + cos(theta) * y;
-Ki(x,y) = exp(-lambda*yr*yr) *
-          (4*sigma*sigma*xr*xr - 2*sigma) * 
-          exp(-sigma*xr*xr)
-\endverbatim
+<B>Category:</B> topobin
+\ingroup  topobin
 
-<B>Types supported:</B> byte 2d, int32_t 2d, float 2d
-
-<B>Category:</B> signal
-\ingroup  signal
-
-\author Michel Couprie 2003
+\author Michel Couprie 2014
 */
-
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lconvol.h>
+#include <lseltopo.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  double width, length;  
-  int32_t ndir;
 
-  if (argc != 6)
+  if (argc != 3)
   {
-    fprintf(stderr, "usage: %s in.pgm width length ndir out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -91,25 +72,13 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
-
-  width = atof(argv[2]);
-  length = atof(argv[3]);
-  ndir = atoi(argv[4]);
-
-  if (! convertfloat(&image))
+  if (! lptthickend(image))
   {
-    fprintf(stderr, "%s: function convertfloat failed\n", argv[0]);
+    fprintf(stderr, "%s: function lptthickend failed\n", argv[0]);
     exit(1);
   }
-  
-  if (! ldirectionalfilter(image, width, length, ndir))
-  {
-    fprintf(stderr, "%s: function ldirectionalfilter failed\n", argv[0]);
-    exit(1);
-  }
-
-  writeimage(image, argv[argc - 1]);
+  writeimage(image, argv[argc-1]);
   freeimage(image);
+
   return 0;
 } /* main */
-
