@@ -30,6 +30,7 @@ Path_Opening
 #include "Path_Opening.hpp"
 #include "RPO_dilat3D.hpp"
 #include "Union_RPO_dilat3D.hpp"
+#include "RORPO.hpp"
 #include "Union_RPO_dilat_constraint.hpp"
 #include "RPO_dilat_constraint.hpp"
 #include "RPO_Anisotrope.hpp"
@@ -564,10 +565,11 @@ namespace pink {
     image_t liarRORPO
     (
       image_t & input_image,
-      const int L,
-      const int orientationx,
-      const int orientationy,
-      const int orientationz
+      const int Smin,
+      const float factor,
+      const int nb_scales,
+      const int nb_core,
+      const int debug
     )
     {
         int errorcode = 0;
@@ -582,40 +584,35 @@ namespace pink {
     int ny = outputxvimage->col_size;
     int nz = outputxvimage->depth_size;
     
-    // user-specified orientation
-	std::vector<int> orientation(3);
-	orientation[0] = orientationx;
-	orientation[1] = orientationy;
-	orientation[2] = orientationz;
 
-
-    // Execute PO3D
+    // Execute RORPO
     if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE){
         int32_t *input_buffer = (int32_t*) (inputxvimage->image_data);
 		int32_t *output_buffer = (int32_t*) (outputxvimage->image_data);
-    	RPO_dilat3D<int32_t>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    	RORPO_multiscale<int32_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
+    	std::cerr<<"after RORPO_multiscale"<<std::endl;
     }
 
     else if (outputxvimage->data_storage_type == VFF_TYP_2_BYTE){
         int16_t *input_buffer = (int16_t*) (inputxvimage->image_data);
 		int16_t *output_buffer = (int16_t*) (outputxvimage->image_data);
-    	RPO_dilat3D<int16_t>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    	RORPO_multiscale<int16_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
     }
     
     else if (outputxvimage->data_storage_type == VFF_TYP_1_BYTE){
         int8_t *input_buffer = (int8_t*) (inputxvimage->image_data);
 		int8_t *output_buffer = (int8_t*) (outputxvimage->image_data);
-    	RPO_dilat3D<int8_t>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    	RORPO_multiscale<int8_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
     }
     else if (outputxvimage->data_storage_type == VFF_TYP_FLOAT){
         float *input_buffer = (float*) (inputxvimage->image_data);
 		float *output_buffer = (float*) (outputxvimage->image_data);
-    	RPO_dilat3D<float>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    	RORPO_multiscale<float>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
     }
     else if (outputxvimage->data_storage_type == VFF_TYP_DOUBLE){
         double *input_buffer = (double*) (inputxvimage->image_data);
 		double *output_buffer = (double*) (outputxvimage->image_data);
-    	RPO_dilat3D<double>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
+    	RORPO_multiscale<double>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
     }
    	else
    		std::cerr<<"Type not supported"<<std::endl;
@@ -991,6 +988,25 @@ UI_EXPORT_FUNCTION(
   RPO_dilat3D,
   pink::python::liarRPO_dilat3D,
   ( arg("input_image"), arg("L"), arg("orientationX"), arg("orientationY"), arg("orientationZ")),
+  "\n 3D Robust Path Opening with a path length L. \n"
+  " Only works with long images \n"
+  "The following orientations are legal:\n"
+  "   0  0  1  : depth direction\n"
+  "   0  1  0  : vertical\n"
+  "   1  0  0  : horizontal\n"
+  "   1  1  1  : diagonal NE/SW+depth\n"
+  "   1  1 -1  : diagonal NE/SW-depth\n"
+  "  -1  1  1  : diagonal NW/SE+depth\n"
+  "  -1  1 -1  : diagonal NW/SE-depth\n"
+  "\n"
+  "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
+  " The robustness is performed by a dilation / erosion process. \n"
+  );
+  
+  UI_EXPORT_FUNCTION(
+  RORPO,
+  pink::python::liarRORPO,
+  ( arg("input_image"), arg("Smin"), arg("factor"), arg("nb_scales"), arg("nb_core"), arg("debug")),
   "\n 3D Robust Path Opening with a path length L. \n"
   " Only works with long images \n"
   "The following orientations are legal:\n"

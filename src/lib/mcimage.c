@@ -361,6 +361,8 @@ struct xvimage *allocheader(
   colsize(g) = cs;
   depth(g) = d;
   datatype(g) = t;
+  tsize(g)=1;
+  nbands(g)=1;
   g->xdim = g->ydim = g->zdim = 0.0;
 
   return g;

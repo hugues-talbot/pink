@@ -804,6 +804,7 @@ int32_t lmax(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
+  uint16_t *spt1, *spt2;
   index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   COMPARE_SIZE(image1, image2);
@@ -814,6 +815,14 @@ int32_t lmax(
     for (i = 0; i < N; i++, pt1++, pt2++)
       *pt1 = mcmax(*pt1, *pt2);
   }
+  
+  else if ((datatype(image1) == VFF_TYP_2_BYTE) && (datatype(image2) == VFF_TYP_2_BYTE))
+  {
+    spt1 = USHORTDATA(image1); spt2 = USHORTDATA(image2);
+    for (i = 0; i < N; i++, spt1++, spt2++)
+      *spt1 = mcmax(*spt1, *spt2);
+  }
+  
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {
     PT1 = SLONGDATA(image1); PT2 = SLONGDATA(image2);

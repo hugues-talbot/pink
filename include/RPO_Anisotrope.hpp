@@ -1,7 +1,3 @@
-#ifndef PATH_OPENING_INCLUDED
-#define PATH_OPENING_INCLUDED
-
-
 #include <iostream>
 #include <string>
 #include <omp.h>
@@ -17,20 +13,34 @@
 
 
 typedef unsigned long IndexType;
+// PixelType defined in NonLocalFilterSioux as long
 
-void Neighbourhood(	int nb_col,
+
+void Neighbourhood_isotrope(	int nb_col,
 							int dim_frame,
 	 						std::vector<int> & orientation,
 	 						std::vector<int> & upList,
-                    		std::vector<int> & downList) {
+                    		std::vector<int> & downList,
+                    		std::vector<float> & length,
+                    		float dim_vox_z,
+                    		float dim_vox_y,
+                    		float dim_vox_x) {
 
     int col_shift = orientation[0];
     int line_shift = orientation[1];
     int depth_shift = orientation[2];
+    
+    int min_dist1=sqrt(dim_vox_x*dim_vox_x+dim_vox_y*dim_vox_y);
+    int min_dist2=sqrt(dim_vox_z*dim_vox_z+dim_vox_y*dim_vox_y);
+    int min_dist3=sqrt(dim_vox_z*dim_vox_z+dim_vox_x*dim_vox_x);
+    int max_dist=sqrt(dim_vox_x*dim_vox_x+dim_vox_y*dim_vox_y+dim_vox_z*dim_vox_z);
 
     //depth orientation [1 0 0]
     if((depth_shift == 1 && line_shift == 0 && col_shift == 0) ||
-       (depth_shift == -1 && line_shift == 0 && col_shift == 0) ) {
+       (depth_shift == -1 && line_shift == 0 && col_shift == 0) ) {    
+       
+
+       
        upList.push_back( dim_frame - nb_col - 1);
        upList.push_back( dim_frame - nb_col + 1);
        upList.push_back( dim_frame + nb_col -1 );
@@ -41,6 +51,7 @@ void Neighbourhood(	int nb_col,
        upList.push_back( dim_frame + 1);
        upList.push_back( dim_frame + nb_col);
        upList.push_back( dim_frame );
+    
 
        downList.push_back( -dim_frame + nb_col + 1);
        downList.push_back( -dim_frame + nb_col - 1);
@@ -52,12 +63,23 @@ void Neighbourhood(	int nb_col,
        downList.push_back( -dim_frame - 1);
        downList.push_back( -dim_frame - nb_col);
        downList.push_back( -dim_frame );
-
+       
+      
+       length.push_back(max_dist);
+       length.push_back(max_dist);
+       length.push_back(max_dist);
+       length.push_back(max_dist);
+       
+       length.push_back(min_dist3);
+       length.push_back(min_dist2);
+       length.push_back(min_dist3);
+       length.push_back(min_dist2);
+       length.push_back(dim_vox_z);
     }
     //from up to down main orientation [0 1 0]
     if((depth_shift == 0 && line_shift == 1 && col_shift == 0) ||
       (depth_shift == 0 && line_shift == -1 && col_shift == 0)) {
-
+       
        upList.push_back(dim_frame + nb_col - 1 );
        upList.push_back(dim_frame + nb_col + 1);
        upList.push_back( -dim_frame + nb_col -1 );
@@ -80,6 +102,18 @@ void Neighbourhood(	int nb_col,
        downList.push_back( -nb_col - 1);
        downList.push_back( dim_frame - nb_col);
        downList.push_back( -nb_col );
+       
+       
+	   length.push_back(max_dist);
+       length.push_back(max_dist);
+       length.push_back(max_dist);
+       length.push_back(max_dist);
+       
+       length.push_back(min_dist1);
+       length.push_back(min_dist2);
+       length.push_back(min_dist1);
+       length.push_back(min_dist2);
+       length.push_back(dim_vox_y);
 
     }
     //from left to right main orientation [0 0 1]
@@ -107,6 +141,17 @@ void Neighbourhood(	int nb_col,
        downList.push_back(dim_frame - 1);
        downList.push_back( -nb_col - 1);
        downList.push_back( -1 );
+       
+	   length.push_back(max_dist);
+       length.push_back(max_dist);
+       length.push_back(max_dist);
+       length.push_back(max_dist);
+       
+       length.push_back(min_dist3);
+       length.push_back(min_dist1);
+       length.push_back(min_dist3);
+       length.push_back(min_dist1);
+       length.push_back(dim_vox_x);
 
     }
     //1st main diagonal [1 1 1]
@@ -133,6 +178,15 @@ void Neighbourhood(	int nb_col,
 
        //main direction
        downList.push_back(-dim_frame - nb_col - 1);
+       
+       length.push_back(dim_vox_x);
+       length.push_back(dim_vox_z);
+       length.push_back(dim_vox_y);
+
+       length.push_back(min_dist2);
+       length.push_back(min_dist1);
+       length.push_back(min_dist3);
+       length.push_back(max_dist);
 
     }
     //2nd main diagonal [1 1 -1]
@@ -160,6 +214,15 @@ void Neighbourhood(	int nb_col,
 
        //main direction
        downList.push_back( -dim_frame - nb_col + 1 );
+       
+       length.push_back(dim_vox_x);
+       length.push_back(dim_vox_z);
+       length.push_back(dim_vox_y);
+
+       length.push_back(min_dist2);
+       length.push_back(min_dist1);
+       length.push_back(min_dist3);
+       length.push_back(max_dist);
 
     }
     //3 main diagonal [-1 1 1]
@@ -187,6 +250,15 @@ void Neighbourhood(	int nb_col,
 
         //main direction
         downList.push_back( dim_frame - nb_col -1 );
+        
+       length.push_back(dim_vox_x);
+       length.push_back(dim_vox_z);
+       length.push_back(dim_vox_y);
+
+       length.push_back(min_dist2);
+       length.push_back(min_dist1);
+       length.push_back(min_dist3);
+       length.push_back(max_dist);
 
     }
     //4 main diagonal [-1 1 -1]
@@ -215,49 +287,26 @@ void Neighbourhood(	int nb_col,
         //main direction
         downList.push_back( dim_frame - nb_col + 1 );
 
+
+       length.push_back(dim_vox_x);
+       length.push_back(dim_vox_z);
+       length.push_back(dim_vox_y);
+
+       length.push_back(min_dist2);
+       length.push_back(min_dist1);
+       length.push_back(min_dist3);
+       length.push_back(max_dist);
+
     }
 
 }
 
-template<typename PixType>
-bool my_sorting_function (const PixType *i,const PixType *j)
-// Input: i, j : two variables containing memory adress pointing to PixType variables.
-// Return : True if the variable pointed by i is smaller than the variabled pointed by j
-{
-	return (*i<*j);
-}
-
-template<typename PixType>
-std::vector<IndexType> sort_image_value(std::vector<PixType> I)
-//  Return pixels index of image I sorted according to intensity
-{
-	std::vector<IndexType> index_image(I.size());
-	std::vector<PixType*>index_pointer_adress(I.size());
-	IndexType it;
-	typename std::vector<PixType>::iterator it1;
-	typename std::vector<PixType*>::iterator it2;
-	typename std::vector<IndexType>::iterator it3;
-
-	// Fill index_pointer_adress with memory adress of variables in I
-	for (it=0,it2=index_pointer_adress.begin(); it!=I.size(); ++it, ++it2)
-	{
-		*it2=&I[it];
-	}
-
-	// Sorting adresses according to intensity
-	std::sort(index_pointer_adress.begin(),index_pointer_adress.end(),my_sorting_function<PixType>);
-
-	// Conversion from adresses to index of image I
-	for (it3=index_image.begin(),it=0; it!=I.size(); ++it,++it3)
-	{
-		*it3=static_cast<IndexType>(index_pointer_adress[it]-&I[0]);
-	}
-	return index_image;
-}
 
 
-template<typename PixType>
-void propagation(IndexType p, std::vector<int>&lambda, std::vector<int>&nf, std::vector<int>&nb, std::vector<bool>&b, std::queue<IndexType> &Qc)
+
+
+template<typename PixelType,typename IndexType>
+void propagation_anisotrope(IndexType p, std::vector<float>&lambda, std::vector<int>&nf, std::vector<int>&nb, std::vector<bool>&b, std::queue<IndexType> &Qc, std::vector<float>&length)
 // Propagation from pixel p
 {
 	std::queue<IndexType> Qq;
@@ -276,10 +325,17 @@ void propagation(IndexType p, std::vector<int>&lambda, std::vector<int>&nf, std:
 	{
 		IndexType q=Qq.front();
 		Qq.pop();
-		int l=0;
+		float l=0;
+		int ind=0;
+		float l_modif=0;
+		float add_length=0;
 		for (it=nb.begin(); it!=nb.end();++it)
 		{
-			l=std::max(lambda[q+*it],l);
+			l_modif=std::max(lambda[q+*it],l);
+			if (l_modif>l){
+				l=l_modif;
+				add_length=length[ind];}
+			ind+=1;
 		}
 		l+=1;
 
@@ -298,19 +354,22 @@ void propagation(IndexType p, std::vector<int>&lambda, std::vector<int>&nf, std:
 	}
 }
 
-template<typename PixType>
-void PO_3D(	PixType* Inputbuffer,
+template<typename PixelType>
+void PO_3D_anisotrope(	PixelType* Inputbuffer,
 								int dimz,
 								int dimy,
 								int dimx,
 								int L,
 								std::vector<int>orientations,
-								PixType* Outputbuffer)
+								PixelType* Outputbuffer,
+								int dim_vox_z,
+								int dim_vox_y,
+								int dim_vox_x)
 //Path opening with orientation
 {
 
 	// Add border of 2 pixels which value is 0 to *Inputbuffer
-	std::vector<PixType> Image((dimz+4)*(dimy+4)*(dimx+4),0);
+	std::vector<PixelType> Image((dimz+4)*(dimy+4)*(dimx+4),0);
     //std::vector<bool>b(Image.size(),0);
 	int new_dimy=dimy+4;
 	int new_dimx=dimx+4;
@@ -338,16 +397,17 @@ void PO_3D(	PixType* Inputbuffer,
 
 	// Create the sorted list of index of Image according to intensity
 	std::vector<IndexType>index_image;
-	index_image=sort_image_value<PixType>(Image);
+	index_image=sort_image_value<PixelType,IndexType>(Image);
 
 	// Create the offset np and nm
 	std::vector<int>np;
 	std::vector<int>nm;
-	Neighbourhood(new_dimx, dim_frame,orientations,np,nm);
+	std::vector<float>length;
+	Neighbourhood_isotrope(new_dimx, dim_frame,orientations,np,nm,length,dim_vox_z,dim_vox_y,dim_vox_x);
 
 	//Create other temporary images
-	std::vector<int>Lp(Image.size(),L);
-	std::vector<int>Lm(Image.size(),L);
+	std::vector<float>Lp(Image.size(),L);
+	std::vector<float>Lm(Image.size(),L);
 
 	//Create FIFO queue Qc
 	std::queue<IndexType> Qc;
@@ -364,8 +424,8 @@ void PO_3D(	PixType* Inputbuffer,
 		//std::cerr<<"propagation"<<std::endl;
 		if (b[*it])
 		{
-			propagation<PixType>(*it,Lm,np,nm,b,Qc);
-			propagation<PixType>(*it,Lp,nm,np,b,Qc);
+			propagation_anisotrope<PixelType,IndexType>(*it,Lm,np,nm,b,Qc,length);
+			propagation_anisotrope<PixelType,IndexType>(*it,Lp,nm,np,b,Qc,length);
 
 
 
@@ -375,7 +435,6 @@ void PO_3D(	PixType* Inputbuffer,
 				Qc.pop();
 				if (Lp[q]+Lm[q]-1<L)
 				{
-					//std::cout <<"Image["<<q<< "]= "<< Image[*it]<< std::endl;
 					Image[q]=Image[*it];
 					b[q]=0;
 					Lp[q]=0;
@@ -399,14 +458,17 @@ void PO_3D(	PixType* Inputbuffer,
 }
 
 
-
-template<typename PixType>
-void Union_PO3D(	PixType* input_buffer,
-								PixType* output_buffer,
+template<typename PixelType>
+void Union_PO3D_Anisotrope(	PixelType* input_buffer,
+								PixelType* output_buffer,
 								int L,
 								int dimx,
 								int dimy,
-								int dimz){
+								int dimz,
+								float dim_vox_z,
+								float dim_vox_y,
+								float dim_vox_x
+								){
 
 
 	//--------------  Run PO for each orientation ----------------------
@@ -442,14 +504,14 @@ void Union_PO3D(	PixType* input_buffer,
 	orientation7[2] = -1;
 
 	// Buffer for results
-	//std::vector<PixType> res(dimx*dimy*dimz); // allocation dynamique cache
-	PixType *res1=new PixType[dimx*dimy*dimz]; //allocation dynamique
-	PixType *res2=new PixType[dimx*dimy*dimz];
-	PixType *res3=new PixType[dimx*dimy*dimz];
-	PixType *res4=new PixType[dimx*dimy*dimz];
-	PixType *res5=new PixType[dimx*dimy*dimz];
-	PixType *res6=new PixType[dimx*dimy*dimz];
-	PixType *res7=new PixType[dimx*dimy*dimz];
+	//std::vector<PixelType> res(dimx*dimy*dimz); // allocation dynamique cache
+	PixelType *res1=new PixelType[dimx*dimy*dimz]; //allocation dynamique
+	PixelType *res2=new PixelType[dimx*dimy*dimz];
+	PixelType *res3=new PixelType[dimx*dimy*dimz];
+	PixelType *res4=new PixelType[dimx*dimy*dimz];
+	PixelType *res5=new PixelType[dimx*dimy*dimz];
+	PixelType *res6=new PixelType[dimx*dimy*dimz];
+	PixelType *res7=new PixelType[dimx*dimy*dimz];
 
 
 	// Calling PO for each orientation
@@ -457,37 +519,37 @@ void Union_PO3D(	PixType* input_buffer,
 	   {
 	   #pragma omp section
 	   {
-		 PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation1,res1);
+		 PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation1,res1,dim_vox_z,dim_vox_y,dim_vox_x);
 		 std::cout<<"orientation1 1 0 0 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-		   PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation2,res2);
+		   PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation2,res2,dim_vox_z,dim_vox_y,dim_vox_x);
 		   std::cout<<"orientation2 0 1 0 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-	       PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation3,res3);
+	       PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation3,res3,dim_vox_z,dim_vox_y,dim_vox_x);
 		   std::cout<<"orientation3 0 0 1 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-	       PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation4,res4);
+	       PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation4,res4,dim_vox_z,dim_vox_y,dim_vox_x);
 		   std::cout<<"orientation4 1 1 1 : passed"<<std::endl;
 	   }
 		#pragma omp section
 	   {
-	       PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation5,res5);
+	       PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation5,res5,dim_vox_z,dim_vox_y,dim_vox_x);
 		   std::cout<<"orientation5 1 1 -1 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	  {
-	       PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation6,res6);
+	       PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation6,res6,dim_vox_z,dim_vox_y,dim_vox_x);
 		   std::cout<<"orientation6 -1 1 1 : passed"<<std::endl;
 	   }
 	   #pragma omp section
 	   {
-	       PO_3D<PixType>(input_buffer,dimz,dimy,dimx,L,orientation7,res7);
+	       PO_3D_anisotrope<PixelType>(input_buffer,dimz,dimy,dimx,L,orientation7,res7,dim_vox_z,dim_vox_y,dim_vox_x);
 		   std::cout<<"orientation7 -1 1 -1 : passed"<<std::endl;
 		}
 	 }
@@ -521,10 +583,8 @@ void Union_PO3D(	PixType* input_buffer,
 	for(int i=0; i<dimx*dimy*dimz;i++)
 		output_buffer[i]=std::max(res7[i],output_buffer[i]);
 
+
+
+
 }
-
-#endif // PATH_OPENING_INCLUDED
-
-
-
 
