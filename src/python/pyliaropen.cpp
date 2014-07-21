@@ -590,13 +590,13 @@ namespace pink {
         int32_t *input_buffer = (int32_t*) (inputxvimage->image_data);
 		int32_t *output_buffer = (int32_t*) (outputxvimage->image_data);
     	RORPO_multiscale<int32_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
-    	std::cerr<<"after RORPO_multiscale"<<std::endl;
     }
 
     else if (outputxvimage->data_storage_type == VFF_TYP_2_BYTE){
         int16_t *input_buffer = (int16_t*) (inputxvimage->image_data);
 		int16_t *output_buffer = (int16_t*) (outputxvimage->image_data);
     	RORPO_multiscale<int16_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
+    	std::cout<<"short"<<std::endl;
     }
     
     else if (outputxvimage->data_storage_type == VFF_TYP_1_BYTE){
