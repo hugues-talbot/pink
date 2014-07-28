@@ -129,13 +129,11 @@ void Union_RPO_dilat3D(	PixelType* input_buffer,
 		   std::cout<<"orientation7 -1 1 -1 : passed"<<std::endl;
 		}
 	 }
-	std::cout<<"avant UNION"<<std::endl;
 	 //Union of orientations
 	#pragma omp parallel for
 	for(int i=0; i<dimx*dimy*dimz;i++)
 		output_buffer[i]=res1[i];
 		
-	std::cout<<"apres UNION"<<std::endl;
 	#pragma omp parallel for
 	for(int i=0; i<dimx*dimy*dimz;i++)
 		output_buffer[i]=std::max(res2[i],output_buffer[i]);
@@ -160,8 +158,6 @@ void Union_RPO_dilat3D(	PixelType* input_buffer,
 	for(int i=0; i<dimx*dimy*dimz;i++)
 		output_buffer[i]=std::max(res7[i],output_buffer[i]);
 
-
-	 std::cout<<"avant minmax"<<std::endl;
     //Erosion
     rect3dminmax(output_buffer, dimx, dimy, dimz, 3,3,3,true);
     
