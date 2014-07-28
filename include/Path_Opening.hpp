@@ -5,9 +5,7 @@
 #include <iostream>
 #include <string>
 #include <omp.h>
-#include <iostream>
 #include <vector>
-#include <queue>
 #include <algorithm>
 #include <iterator>
 #include <queue>

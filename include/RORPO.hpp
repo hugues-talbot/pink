@@ -260,9 +260,6 @@ static void sorting(PixType* I1, PixType* I2, PixType* I3, PixType* I4, PixType*
 template<typename T>
 void Get_RPO_Orientations(T *input_buffer, T *image_dilat, int L, int dimz, int dimy, int dimx, T *res1, T *res2, T *res3, T *res4, T *res5, T *res6, T *res7,int nb_core){
 
-
-	int image_size=dimx*dimy*dimz;
-
 // ####################  Run PO for each orientation ##############################
 
 	// orientation vector
@@ -295,6 +292,9 @@ void Get_RPO_Orientations(T *input_buffer, T *image_dilat, int L, int dimz, int 
 	orientation7[1] = 1;
 	orientation7[2] = -1;
 	
+
+	
+
 	std::cout<<"------- RPO computation with scale " <<L<< "-------"<<std::endl;
 	// Calling PO for each orientation
 	   //omp_set_num_threads(6);
@@ -352,7 +352,7 @@ void Get_RPO_Orientations(T *input_buffer, T *image_dilat, int L, int dimz, int 
 
 
 template<typename T>
-void RORPO(T* input_buffer, T* image_dilat, T** RPO_RPO_limit_orientations, int L, int nb_core, int dimx, int dimy, int dimz)
+T* RORPO(T* input_buffer, T* image_dilat, int L, int nb_core, int dimx, int dimy, int dimz)
 {
 
 	// ######################################### RORPO classique #########################################
@@ -372,6 +372,7 @@ void RORPO(T* input_buffer, T* image_dilat, T** RPO_RPO_limit_orientations, int 
 	
 	// Compute RPO 
 	Get_RPO_Orientations<T>(input_buffer, image_dilat, L, dimz, dimy, dimx, res0, res1, res2, res3, res4, res5, res6, nb_core);
+
 
     // allocate memory for sorting results
     T* RPOt0= new T[image_size];
@@ -436,6 +437,7 @@ void RORPO(T* input_buffer, T* image_dilat, T** RPO_RPO_limit_orientations, int 
      max_crush(Imin4,Imin4_4,dimx,dimy,dimz);
      max_crush(Imin4,Imin4_5,dimx,dimy,dimz);
      max_crush(Imin4,Imin4_6,dimx,dimy,dimz);
+
 	 // ---- Imin limit case 5 orientations ----
     T* Imin5=min_alloc(res3,res4,dimx,dimy,dimz);
     min_crush(Imin5,res5,dimx,dimy,dimz);
@@ -458,9 +460,10 @@ void RORPO(T* input_buffer, T* image_dilat, T** RPO_RPO_limit_orientations, int 
 
     T* diff_Imin4=diff_buffer(Imin4,Imin2_4,image_size);
     T* diff_Imin5=diff_buffer(Imin5,Imin2_5,image_size);
+
+    T* RPO_RPO_limit_orientations=max_alloc(RPO_RPO,diff_Imin4,dimx,dimy,dimz);
+    max_crush(RPO_RPO_limit_orientations,diff_Imin5,dimx,dimy,dimz);
     
-    *RPO_RPO_limit_orientations=max_alloc(RPO_RPO,diff_Imin4,dimx,dimy,dimz);
-    max_crush(*RPO_RPO_limit_orientations,diff_Imin5,dimx,dimy,dimz);
     
     /*nifti_image *nim=NULL;
     nim = nifti_image_read("/medit/data/Images/Images_synthetiques/Niveaux_gris/Plan_Spiral_3D/short/plan_spiral_blob_short_5_5_0.9.nii", 1);
@@ -478,6 +481,7 @@ void RORPO(T* input_buffer, T* image_dilat, T** RPO_RPO_limit_orientations, int 
    free(Imin2_4);
    free(Imin2_5);
    free(Imin4);
+   free(Imin5);
    free(Imin4_1);
    free(Imin4_2);
    free(Imin4_3);
@@ -505,58 +509,89 @@ void RORPO(T* input_buffer, T* image_dilat, T** RPO_RPO_limit_orientations, int 
    delete[](RPOt4);
    delete[](RPOt5);
    delete[](RPOt6);
+
+   return RPO_RPO_limit_orientations;
    
 }
 
 
-
-//Return RORPO multiscale with or without masking
 template<typename T>
-void Call_RORPO(T* image_modif, T* multiscale, std::vector<int>S_list, int nb_scales, int nb_core, int max_value, int dimx, int dimy, int dimz, int debug_flag, char* mask_buffer=NULL)
+T* Call_RORPO(T* image_modif, std::vector<int>S_list, int nb_scales, int nb_core, int max_value, int dimx, int dimy, int dimz, int debug_flag, char* mask_buffer=NULL)
 {
-	
+
     int image_size=dimx*dimy*dimz;
+    
+    // ---------------------- Mask Image -----------------------------------
+	if (mask_buffer!=NULL) // A mask image is given
+	{
+   		if (debug_flag){
+		std::cout<<"Mask Application"<<std::endl;
+		}
+		
+		char* mask_buffer_dilat=new char[dimx*dimy*dimz];
+		memcpy(&mask_buffer_dilat[0],&mask_buffer[0],(dimx*dimy*dimz)*sizeof(char));
+		
+   		//Dilation of the mask (Compute RPO in a larger zone than the mask to reduce border issues)
+		rect3dminmax(mask_buffer_dilat, dimx, dimy, dimz,S_list[nb_scales-1]/4,S_list[nb_scales-1]/4,S_list[nb_scales-1]/4,false);
+
+   		// Application of the dilated mask to input image
+		for (int i=0; i<image_size;++i)
+	        image_modif[i]=image_modif[i]*mask_buffer_dilat[i];
+
+	}
     
 	// -------------------------- Dilation input image by a cube of size 3x3x3 ----------------------------
 	T *input_buffer=new T[dimx*dimy*dimz];
-	memcpy(&input_buffer[0],&image_modif[0],(dimx*dimy*dimz)*sizeof(T));
+	memcpy(input_buffer,image_modif,(dimx*dimy*dimz)*sizeof(T));
 	rect3dminmax(image_modif, dimx, dimy, dimz, 3,3,3,false);
+	
 
-	// ####################### Computation of RORPO for each scale ######################
+	// ####################### Computation of RORPO for each scale #######################
+	T* multiscale=new T[image_size];
+	memset(multiscale,0,image_size*sizeof(T));
 
 	std::vector<int>::iterator it;
-	T *output_buffer;//=new T[image_size];
+	T *output_buffer;
+	
 	for (it=S_list.begin();it!=S_list.end();++it)
 	{
-	    RORPO<T>(input_buffer, image_modif, &output_buffer , *it, nb_core, dimx, dimy, dimz);
-		// ----------------- Max of scales ---------------
-	    max_crush(multiscale,output_buffer,dimx,dimy,dimz);
+	    T *output_buffer=RORPO<T>(input_buffer, image_modif, *it, nb_core, dimx, dimy, dimz);
 	    
+		// ----------------- Max of scales ---------------
+	    max_crush(multiscale,output_buffer,dimx,dimy,dimz); 
+	    free(output_buffer);
+	  
 	}
 
-    // ----------------- Dynamic Enhancement ---------------
+	// ----------------- Dynamic Enhancement ---------------
 	// Find Max value of output_buffer
-	T max_output=multiscale[0];
-	
+	int max_output=multiscale[0];
+
 	for (int i=0; i<image_size;++i)
 	{
-	    if (multiscale[i]>max_output){
+	    if (multiscale[i]>max_output)
 	        max_output=multiscale[i];
-	        }
 	}
-	 
+
 	// Contrast Enhancement
 	for (int i=0; i<image_size; ++i)
 	{
 	    multiscale[i]=static_cast<T>((static_cast<float>(multiscale[i])/static_cast<float>(max_output))*max_value);
 	}	
+			    
 	min_crush(multiscale,input_buffer,dimx,dimy,dimz);
-	   
-	delete[](output_buffer);
-	   
+		
+		
+	if (mask_buffer!=NULL) 
+	{
+		// Application of the non dilated mask to output
+    	for (int i=0; i<image_size;++i)
+            multiscale[i]=multiscale[i]*mask_buffer[i];
+	}
+	
+	delete[](input_buffer);
+	return multiscale;
 }
-
-
 
 // ########################################### CALL FUNCTION ##########################################################
 
@@ -616,14 +651,18 @@ static void RORPO_multiscale(PixType* image, PixType* output, int Smin, float fa
 	}
 
 	// Run RORPO
-	PixType* multiscale=new PixType[image_size];
+	PixType* multiscale;
 	PixType* image_dilat=new PixType[image_size];
 	//output=new PixType[image_size];
 	memcpy(image_dilat,image,image_size*sizeof(PixType));
-	memset(multiscale,0,image_size*sizeof(PixType));
 
-	Call_RORPO<PixType>(image_dilat, multiscale, S_list, nb_scales,nb_core, max_value, dimx, dimy, dimz, debug_flag);	
+	multiscale=Call_RORPO<PixType>(image_dilat, S_list, nb_scales,nb_core, max_value, dimx, dimy, dimz, debug_flag);	
 	memcpy(output,multiscale,image_size*sizeof(PixType));
+	
+	delete[](multiscale);
+	delete[](image_dilat);
+	delete[](image);
+	
 }
 
 //#endif // RORPO_INCLUDED
