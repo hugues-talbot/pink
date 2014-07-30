@@ -109,18 +109,18 @@ pink.surimp(circuit, wires, "wires.ppm")
 # exo1_6
 # extraction of the "corne" from the image 'meb.pgm'
 def extract_corne(image, threshold):
-    seuil = pink.seuil(image, threshold, 0, 255)
-    opened = pink.openball(seuil, 3)
-    geodilat = pink.geodilat(opened, seuil, 8)
+    seuil = pinks.seuil(image, threshold, 0, 255)
+    opened = pinks.openball(seuil, 3)
+    geodilat = pinks.geodilat(opened, seuil, 8)
     diff = seuil - geodilat
-    dilated = pink.dilatball(diff, 4)
-    opened2 = pink.openball(dilated, 10)
-    geodilat2 = pink.geodilat(opened2, dilated, 8)
-    closed = pink.closeball(geodilat2, 4)
-    border = pink.border(closed, 8)
+    dilated = pinks.dilatball(diff, 4)
+    opened2 = pinks.openball(dilated, 10)
+    geodilat2 = pinks.geodilat(opened2, dilated, 8)
+    closed = pinks.closeball(geodilat2, 4)
+    border = pinks.border(closed, 8)
     return border
 
-meb = pink.readimage("../images/meb.pgm")
+meb = pinks.readimage("../images/meb.pgm")
 cornes = extract_corne(meb, 65)
 if debug: imview([cornes, meb])
 
