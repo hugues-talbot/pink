@@ -30,7 +30,7 @@ Path_Opening
 #include "Path_Opening.hpp"
 #include "RPO_dilat3D.hpp"
 #include "Union_RPO_dilat3D.hpp"
-#include "RORPO.hpp"
+#include "RORPO_multiscale.hpp"
 #include "Union_RPO_dilat_constraint.hpp"
 #include "RPO_dilat_constraint.hpp"
 #include "RPO_Anisotrope.hpp"
@@ -589,31 +589,30 @@ namespace pink {
     if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE){
         int32_t *input_buffer = (int32_t*) (inputxvimage->image_data);
 		int32_t *output_buffer = (int32_t*) (outputxvimage->image_data);
-    	RORPO_multiscale<int32_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
+    	int test=RORPO_multiscale<int32_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
     }
 
     else if (outputxvimage->data_storage_type == VFF_TYP_2_BYTE){
-        int16_t *input_buffer = (int16_t*) (inputxvimage->image_data);
-		int16_t *output_buffer = (int16_t*) (outputxvimage->image_data);
-    	RORPO_multiscale<int16_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
-    	std::cout<<"short"<<std::endl;
+        uint16_t *input_buffer = (uint16_t*) (inputxvimage->image_data);
+		uint16_t *output_buffer = (uint16_t*) (outputxvimage->image_data);
+    	int test=RORPO_multiscale<uint16_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
     }
     
     else if (outputxvimage->data_storage_type == VFF_TYP_1_BYTE){
-        int8_t *input_buffer = (int8_t*) (inputxvimage->image_data);
-		int8_t *output_buffer = (int8_t*) (outputxvimage->image_data);
-    	RORPO_multiscale<int8_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
+        uint8_t *input_buffer = (uint8_t*) (inputxvimage->image_data);
+        uint8_t *output_buffer = (uint8_t*) (outputxvimage->image_data);
+    	int test=RORPO_multiscale<uint8_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
     }
-    else if (outputxvimage->data_storage_type == VFF_TYP_FLOAT){
+    /*else if (outputxvimage->data_storage_type == VFF_TYP_FLOAT){
         float *input_buffer = (float*) (inputxvimage->image_data);
 		float *output_buffer = (float*) (outputxvimage->image_data);
-    	RORPO_multiscale<float>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
+    	int test=RORPO_multiscale<float>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
     }
     else if (outputxvimage->data_storage_type == VFF_TYP_DOUBLE){
         double *input_buffer = (double*) (inputxvimage->image_data);
 		double *output_buffer = (double*) (outputxvimage->image_data);
-    	RORPO_multiscale<double>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
-    }
+    	int test=RORPO_multiscale<double>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
+    }*/
    	else
    		std::cerr<<"Type not supported"<<std::endl;
    		
@@ -1008,7 +1007,7 @@ UI_EXPORT_FUNCTION(
   pink::python::liarRORPO,
   ( arg("input_image"), arg("Smin"), arg("factor"), arg("nb_scales"), arg("nb_core"), arg("debug")),
   "\n 3D Robust Path Opening with a path length L. \n"
-  " Only works with long images \n"
+  " Only works with images containing only non-negative values (int32, uint16, uint8). \n"
   "The following orientations are legal:\n"
   "   0  0  1  : depth direction\n"
   "   0  1  0  : vertical\n"

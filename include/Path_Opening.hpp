@@ -254,8 +254,9 @@ std::vector<IndexType> sort_image_value(std::vector<PixType> I)
 }
 
 
-template<typename PixType>
-void propagation(IndexType p, std::vector<int>&lambda, std::vector<int>&nf, std::vector<int>&nb, std::vector<bool>&b, std::queue<IndexType> &Qc)
+
+template<typename PixelType>
+void propagate(IndexType p, std::vector<int>&lambda, std::vector<int>&nf, std::vector<int>&nb, std::vector<bool>&b, std::queue<IndexType> &Qc)
 // Propagation from pixel p
 {
 	std::queue<IndexType> Qq;
@@ -362,8 +363,8 @@ void PO_3D(	PixType* Inputbuffer,
 		//std::cerr<<"propagation"<<std::endl;
 		if (b[*it])
 		{
-			propagation<PixType>(*it,Lm,np,nm,b,Qc);
-			propagation<PixType>(*it,Lp,nm,np,b,Qc);
+			propagate<PixType>(*it,Lm,np,nm,b,Qc);
+			propagate<PixType>(*it,Lp,nm,np,b,Qc);
 
 
 
@@ -396,7 +397,92 @@ void PO_3D(	PixType* Inputbuffer,
 	return ;
 }
 
+// Compute PO with an image which already has a 2-pixel border (good to compute the 7 orientation in parallel)
+template<typename PixelType>
+void PO_3D(	std::vector<PixelType>Image,
+								int new_dimz,
+								int new_dimy,
+								int new_dimx,
+								int L,
+								std::vector<int>orientations,
+								PixelType* Outputbuffer)
+//Path opening with orientation
+{
 
+	// Create the temporary image b  (0 for a 1-pixel border, 1 elsewhere)
+	std::vector<bool>b(Image.size(),0);
+	for (int z=0; z<new_dimz-2; ++z){
+		for (int y=0; y<new_dimy-2; ++y){
+			for (int x=0; x<new_dimx-2; ++x)
+			{
+				b[(z+1)*(new_dimx*new_dimy)+(y+1)*new_dimx+(x+1)]=1;
+			}
+		}
+	}
+
+	int dim_frame=new_dimx*new_dimy;
+
+	// Create the sorted list of index of Image according to intensity
+	std::vector<IndexType>index_image;
+	index_image=sort_image_value<PixelType>(Image);
+
+	// Create the offset np and nm
+	std::vector<int>np;
+	std::vector<int>nm;
+	createNeighbourhood(new_dimx, dim_frame,orientations,np,nm);
+
+	//Create other temporary images
+	std::vector<int>Lp(Image.size(),L);
+	std::vector<int>Lm(Image.size(),L);
+
+	//Create FIFO queue Qc
+	std::queue<IndexType> Qc;
+
+	// Propagate
+	std::vector<IndexType>::iterator it;
+	//std::cerr<<"Avant propagation"<<std::endl;
+	//std::cerr<<"size np et nm:"<<np.size()<<" "<<nm.size()<<std::endl;
+
+	int indice;
+	for (it=index_image.begin(), indice=0; it!=index_image.end(); ++it, ++indice)
+	{
+
+		//std::cerr<<"propagation"<<std::endl;
+		if (b[*it])
+		{
+			propagate<PixelType>(*it,Lm,np,nm,b,Qc);
+			propagate<PixelType>(*it,Lp,nm,np,b,Qc);
+
+
+
+			while (not Qc.empty())
+			{
+				IndexType q=Qc.front();
+				Qc.pop();
+				if (Lp[q]+Lm[q]-1<L)
+				{
+					//std::cout <<"Image["<<q<< "]= "<< Image[*it]<< std::endl;
+					Image[q]=Image[*it];
+					b[q]=0;
+					Lp[q]=0;
+					Lm[q]=0;
+				}
+			}
+		}
+	}
+
+	//Outputbuffer=&Image[0];
+
+	// Remove border
+	for (int z=0; z<new_dimz-4; ++z){
+		for (int y=0; y<new_dimy-4; ++y){
+			for (int x=0; x<new_dimx-4; ++x){
+				Outputbuffer[z*(new_dimx-4)*(new_dimy-4)+y*(new_dimx-4)+x]=Image[(z+2)*(new_dimx*new_dimy)+(y+2)*new_dimx+(x+2)];
+			}
+		}
+	}
+	return ;
+}
 
 template<typename PixType>
 void Union_PO3D(	PixType* input_buffer,
