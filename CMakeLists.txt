@@ -131,7 +131,7 @@ option( OPENCL "Compiles the functions which use OpenCL. " OFF )
 option( NUMA "Compiles the functions which use The NUMA api. " OFF )
 option( SIMD "Compiles the functions with the SIMD (SSE2, SSE3, SSE4, SSE4.1) instruction set. " ON )
 
-## LIAR is incomporated in the PYTHON_FRONT_END
+## LIAR is incomporated in the PYTHON_FONT_END
 # option( LIAR "Compiles additional functions adapted from the Library of Image Analysis Routines," OFF)
 
 option( PYTHON_FRONT_END "Compile the python front-end and the cpp functions" OFF )
