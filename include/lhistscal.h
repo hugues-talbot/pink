@@ -57,6 +57,14 @@ extern int32_t lhistscal3(
         int32_t C
 );
 
+  int32_t
+  lhiststretch(
+    struct xvimage * image,
+    int32_t vmin,
+    int32_t vmax,
+    double  p
+    );
+  
 #ifdef __cplusplus
 }
 #endif

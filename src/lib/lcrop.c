@@ -311,7 +311,7 @@ struct xvimage * lcrop3d(struct xvimage *in, int32_t x, int32_t y, int32_t z, in
 } // lcrop3d()
 
 /* =============================================================== */
-void lsetframe(struct xvimage *image, int32_t grayval) 
+int32_t lsetframe(struct xvimage *image, int32_t grayval) 
 /* =============================================================== */
 // sets the border of image to value grayval
 #undef F_NAME
@@ -361,10 +361,12 @@ void lsetframe(struct xvimage *image, int32_t grayval)
     for (y = 1; y < cs - 1; y++) Im[y * rs] = grayval;
     for (y = 1; y < cs - 1; y++) Im[y * rs + rs - 1] = grayval;
   }
+
+  return 1;
 } // lsetframe()
 
 /* =============================================================== */
-void lsetthickframe(struct xvimage *image, int32_t width, int32_t grayval) 
+int32_t lsetthickframe(struct xvimage *image, int32_t width, int32_t grayval) 
 /* =============================================================== */
 // sets the (thick) border of image to value grayval
 #undef F_NAME
@@ -422,6 +424,7 @@ void lsetthickframe(struct xvimage *image, int32_t width, int32_t grayval)
       for (y = 1; y < cs - 1; y++) Im[y * rs + rs-1-w] = grayval;
     }
   }
+  return 1;
 } // lsetthickframe()
 
 //REMOVED:

@@ -112,7 +112,7 @@ pygeom () {
   // !! insert
   // !! isometry
 
-  allocdef( "zoom", lzoom, ( arg("image"), arg("zoomx"), arg("zoomy"), arg("zoomz") ), doc__zoom__c__ );
+  allocdef( "zoom", lzoom, ( arg("image"), arg("zoomx"), arg("zoomy"), arg("zoomz")=1. ), doc__zoom__c__ );
 
   allocdef( "zoom", lzoom2, ( arg("image"), arg("newdim"), arg("dim") ), doc__zoomint__c__ );
 
@@ -125,7 +125,11 @@ pygeom () {
   functiondef( "drawline", ldrawline, (arg("image"), arg("x1"), arg("y1"), arg("x2"), arg("y2")), doc__drawline__c__ );
 
   functiondef( "drawline", ldrawline3d, (arg("image"), arg("x1"), arg("y1"), arg("z1"), arg("x2"), arg("y2"), arg("z2")), doc__drawline__c__ );
- 
+
+  functiondef( "thickframe", lsetthickframe, (arg("image"), arg("width"), arg("value")=NDG_MAX ), doc__frame__c__ );
+
+  functiondef( "frame", lsetframe, ( arg("image"), arg("value")=NDG_MAX ), doc__frame__c__ );
+
   // NOTE: affine's using copyimage
   resultdef( VFF_TYP_1_BYTE, "affine", laffinetransformation, ( arg("image"), arg("hx"), arg("hy"), arg("theta"), arg("tx"), arg("ty")), doc__affine__c__ );
 

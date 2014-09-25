@@ -72,10 +72,6 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  int32_t i;
-  int32_t rs, cs, d, N;
-  uint8_t *SOURCE;      /* l'image de depart */
-  int32_t histo[256];
   int32_t vmin, vmax;
   double p;
 
@@ -91,43 +87,13 @@ int main(int argc, char **argv)
     fprintf(stderr, "histstretch: readimage failed\n");
     exit(1);
   }
-  rs = rowsize(image);     /* taille ligne */
-  cs = colsize(image);     /* taille colonne */
-  d = depth(image);        /* nombre plans */
-  N = rs * cs * d;         /* taille image */
-  SOURCE = UCHARDATA(image);      /* l'image de depart */
   
   vmin = atoi(argv[2]);
   vmax = atoi(argv[3]);
   p = atof(argv[4]);
 
-  for (i = 0; i <= NDG_MAX; i++) histo[i] = 0;
-  for (i = 0; i < N; i++) histo[SOURCE[i]] += 1;
-
-  /* elimine les niveaux < vmin ou > vmax */
-  for (i = 0; i < vmin; i++) histo[i] = 0;
-  for (i = vmax+1; i <= NDG_MAX; i++) histo[i] = 0;
-
-  /* elimine les niveaux extremes qui ont 0 pixels */
-  while(histo[vmin] == 0) vmin++;
-  while(histo[vmax] == 0) vmax--; 
-
-  /* elimine les niveaux extremes qui ont moins de N/(100/p) pixels */
-#ifdef DEBUG
-printf("N/(100/p) = %g\n", (N*p)/100);
-#endif
-  while(histo[vmin] < (N*p)/100) vmin++;
-  while(histo[vmax] < (N*p)/100) vmax--; 
-#ifdef DEBUG
-printf("vmin = %d ; vmax = %d\n", vmin, vmax);
-#endif
-
-  if (! lhistscal(image, vmin, NDG_MIN, vmax, NDG_MAX))
-  {
-    fprintf(stderr, "histscal: function lhistscal failed\n");
-    exit(1);
-  }
-
+  lhiststrech( image, vmin, vmax, p );
+  
   writeimage(image, argv[argc-1]);
   freeimage(image);
 

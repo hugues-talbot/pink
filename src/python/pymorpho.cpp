@@ -21,6 +21,8 @@
 #include "lgradsup.h"
 #include "lgradinf.h"
 #include "ldistgeo.h"
+#include "lgeodesic.h"
+#include "lhistscal.h"
 #include "lerosplan.h"
 #include "ldilateros.h"
 #include "lgradinf3d.h"
@@ -189,6 +191,10 @@ void pymorpho()
   functiondef( "dilatball", ldilatball, (arg("image"), arg("radius"), arg("mode")=0), doc__dilatball__c__ );
 
   functiondef( "erosball", lerosball, (arg("image"), arg("radius"), arg("mode")=0), doc__erosball__c__ );
+
+  functiondef( "geodilat", lgeodilat, (arg("image"), arg("constraint image"), arg("connex"), arg("nb iterations")=-1 ), doc__geodilat__c__ );
+
+  functiondef( "geoeros",  lgeoeros,  (arg("image"), arg("constraint image"), arg("connex"), arg("nb iterations")=-1 ), doc__geoeros__c__ );
 
   def( "asfbin", pink::python::asfbin, (arg("image"), arg("max_radius"), arg("min_radius") ), doc__asfbin__c__ );
 

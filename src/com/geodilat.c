@@ -96,12 +96,6 @@ int main(int argc, char **argv)
   }
   
   connex = atoi(argv[3]);
-  if ((connex!=4)&&(connex!=8)&&(connex!=6)&&(connex!=18)&&(connex!=26))
-  {
-    fprintf(stderr, "%s: bad connexity - use one of the following:\n", argv[0]);
-    fprintf(stderr, "4, 8 (in 2d), 6, 18, 26 (in 3d)\n");
-    exit(1);
-  }
 
   niter = atoi(argv[4]);
 

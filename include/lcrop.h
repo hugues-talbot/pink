@@ -40,8 +40,8 @@ extern struct xvimage * lcrop(struct xvimage *in, int32_t x, int32_t y, int32_t 
 extern struct xvimage * lcrop3d(struct xvimage *in, int32_t x, int32_t y, int32_t z, int32_t w, int32_t h, int32_t d);
 extern struct xvimage * lautocrop(struct xvimage *in, double seuil);
 extern void lautocrop2(struct xvimage *in, double seuil, index_t *Xmin, index_t *Ymin, index_t *Zmin, index_t *w, index_t *h, index_t *p);
-extern void lsetframe(struct xvimage *image, int32_t grayval);
-extern void lsetthickframe(struct xvimage *image, int32_t width, int32_t grayval);
+extern int32_t lsetframe(struct xvimage *image, int32_t grayval);
+extern int32_t lsetthickframe(struct xvimage *image, int32_t width, int32_t grayval);
 extern struct xvimage * lenframe(struct xvimage *image, int32_t grayval, int32_t width);
 extern struct xvimage * lenframe3d(struct xvimage *image, int32_t grayval, int32_t width);
 extern int32_t linsert(struct xvimage *a, struct xvimage *b, int32_t x, int32_t y, int32_t z);

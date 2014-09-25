@@ -71,20 +71,27 @@ int32_t lgeodilat(
   ACCEPTED_TYPES3(g, VFF_TYP_1_BYTE, VFF_TYP_2_BYTE, VFF_TYP_4_BYTE);
   if (datatype(f) != datatype(g))
   {
-    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME );
     return 0;
   }
 
-    if (depth(f) == 1) 
-    {
-      if (datatype(f) == VFF_TYP_1_BYTE) return lgeodilat2d(g, f, connex, niter);
-      if (datatype(f) == VFF_TYP_2_BYTE) return lgeodilat2d_short(g, f, connex, niter);
-      if (datatype(f) == VFF_TYP_4_BYTE) return lgeodilat2d_long(g, f, connex, niter);
-    }
-    if (datatype(f) == VFF_TYP_1_BYTE) return lgeodilat3d(g, f, connex, niter);
-    if (datatype(f) == VFF_TYP_2_BYTE) return lgeodilat3d_short(g, f, connex, niter);
-    if (datatype(f) == VFF_TYP_4_BYTE) return lgeodilat3d_long(g, f, connex, niter);
-    return 1;
+  if ((connex!=4)&&(connex!=8)&&(connex!=6)&&(connex!=18)&&(connex!=26))
+  {
+    fprintf(stderr, "%s: bad connexity - use one of the following:\n", F_NAME );
+    fprintf(stderr, "4, 8 (in 2d), 6, 18, 26 (in 3d)\n");
+    return 0;
+  }
+
+  if (depth(f) == 1) 
+  {
+    if (datatype(f) == VFF_TYP_1_BYTE) return lgeodilat2d(g, f, connex, niter);
+    if (datatype(f) == VFF_TYP_2_BYTE) return lgeodilat2d_short(g, f, connex, niter);
+    if (datatype(f) == VFF_TYP_4_BYTE) return lgeodilat2d_long(g, f, connex, niter);
+  }
+  if (datatype(f) == VFF_TYP_1_BYTE) return lgeodilat3d(g, f, connex, niter);
+  if (datatype(f) == VFF_TYP_2_BYTE) return lgeodilat3d_short(g, f, connex, niter);
+  if (datatype(f) == VFF_TYP_4_BYTE) return lgeodilat3d_long(g, f, connex, niter);
+  return 1;
 } // lgeodilat()
 
 /* ==================================== */

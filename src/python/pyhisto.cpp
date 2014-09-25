@@ -61,6 +61,8 @@ pyhisto() {
 
   functiondef( "histscal", lhistscal, (arg("image"), arg("a"), arg("A"), arg("b"), arg("B")), doc__histscal__c__ );
 
+  functiondef( "histstretch", lhiststretch, (arg("image"), arg("vmin"), arg("vmax"), arg("p")), doc__histstretch__c__ );
+
   functiondef( "egalise", legalise, (arg("image"), arg("n")), doc__egalise__c__ );
 
   functiondef( "contours", lcontours, (arg("image"), arg("higher threshold"), arg("lower threshold")), doc__contours__c__ );
