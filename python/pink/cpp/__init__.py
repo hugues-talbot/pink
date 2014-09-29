@@ -28,3 +28,4 @@ from libcpp_pink.primitives import *
 from libcpp_pink.signal import *
 from libcpp_pink.stat import *
 from libcpp_pink.util import *
+from libcpp_pink.conv import *

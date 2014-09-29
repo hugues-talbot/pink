@@ -35,7 +35,9 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+  
+#include "mcimage.h"
+  
 extern struct xvimage * lcrop(struct xvimage *in, int32_t x, int32_t y, int32_t w, int32_t h);
 extern struct xvimage * lcrop3d(struct xvimage *in, int32_t x, int32_t y, int32_t z, int32_t w, int32_t h, int32_t d);
 extern struct xvimage * lautocrop(struct xvimage *in, double seuil);

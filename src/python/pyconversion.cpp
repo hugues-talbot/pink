@@ -15,10 +15,10 @@
 
 #include "pyexport.hpp"
 
+#include "lsurimp.h"
 #include "python_doc.h"
 #include "llong2byte.h"
 #include "ui_convert.hpp"
-
 
 void
 pyconversion()
@@ -77,6 +77,8 @@ pyconversion()
 
   //!! def( "long2short", long2short, ( arg("image"), arg("mode") ), "converts a long image to short type" );
 
+  functiondef( "surimp", lsurimp, ( arg("grayscale"), arg("binary"), arg("filename") ), doc__surimp__c__ );
+  
   // #ifdef JULIETTE
   // resultdef( VFF_TYP_4_BYTE, "short2long", short2long, (arg("image")), "This operator converts the short images to long." );
 

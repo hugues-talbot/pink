@@ -120,6 +120,7 @@ void pysignal();
 void pymorpho();
 void pycomplex();
 void pyarithmetic();
+void pyconversion();
 void pyprimitives();
 void pysegmentation();
 
@@ -200,6 +201,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   pymorpho();
   pycomplex();  
   pyarithmetic();
+  pyconversion();
   pyprimitives();
   pysegmentation();
   

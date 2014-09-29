@@ -49,12 +49,14 @@ grayscale image <b>i1.bin</b>. The result is stored as a color image <b>out.ppm<
 \author Michel Couprie
 */
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <sys/types.h>
-#include <stdlib.h>
-#include <mccodimage.h>
-#include <mcimage.h>
-#include <larith.h>
+
+#include "larith.h"
+#include "mcimage.h"
+#include "lsurimp.h"
+#include "mccodimage.h"
 
 /* =============================================================== */
 int main(int argc, char **argv)
@@ -62,8 +64,6 @@ int main(int argc, char **argv)
 {
   struct xvimage * image1;
   struct xvimage * image2;
-  struct xvimage * tmp;
-  struct xvimage * tmp3;
 
   if (argc != 4)
   {
@@ -78,17 +78,10 @@ int main(int argc, char **argv)
       exit(1);
   }
 
-  tmp = copyimage(image2);
-  linverse(tmp);
-  tmp3 = copyimage(image1);
-  lmin(tmp3,tmp);
-  copy2image(tmp,image2);
-  ladd(tmp,tmp3);
-  writergbimage(tmp, tmp3, tmp3, argv[argc-1]);
+  lsurimp( image1, image2, argv[argc-1] );
+  
   freeimage(image1);
   freeimage(image2);
-  freeimage(tmp);
-  freeimage(tmp3);
 
   return 0;
 } /* main */
