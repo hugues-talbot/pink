@@ -88,7 +88,7 @@ knowledge of the CeCILL license and that you accept its terms.
 //#define DESSINECOLSEQ
 
 /* =============================================================== */
-int32_t l2dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit)
+int32_t l2dcollapse( struct xvimage * k, const struct xvimage * prio, const struct xvimage * inhibit )
 /* =============================================================== */
 /* 
   collapse sÅÈquentiel, guidÅÈ et contraint
@@ -218,7 +218,7 @@ int32_t l2dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
 } /* l2dcollapse() */
 
 /* =============================================================== */
-int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, int32_t priomax)
+int32_t l2dpardircollapse_l(struct xvimage * k, const struct xvimage * prio, const struct xvimage * inhibit, int32_t priomax)
 /* =============================================================== */
 /* 
   collapse parallÅËle directionnel
@@ -430,7 +430,7 @@ int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 } /* l2dpardircollapse_l() */
 
 /* =============================================================== */
-int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax)
+int32_t l2dpardircollapse_f(struct xvimage * k, const struct xvimage * prio, const struct xvimage * inhibit, float priomax)
 /* =============================================================== */
 /* 
   collapse parallÅËle directionnel
@@ -654,7 +654,7 @@ int32_t l2dpardircollapse_short(struct xvimage * k, int32_t nsteps)
 } /* l2dpardircollapse_short */
 
 /* =============================================================== */
-int32_t l2dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * inhibit)
+int32_t l2dpardircollapse(struct xvimage * k, int32_t nsteps, const struct xvimage * inhibit)
 /* =============================================================== */
 /* 
   collapse parallÅËle directionnel
@@ -862,7 +862,7 @@ int32_t l2dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
 // 888888888888888888888888888888888888888888888888888888888888888888
  
 /* =============================================================== */
-graphe * l2dtopoflow_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, int32_t priomax)
+graphe * l2dtopoflow_l(struct xvimage * k, const struct xvimage * prio, const struct xvimage * inhibit, int32_t priomax)
 /* =============================================================== */
 /* 
   construction du flot topologique associÅÈ Å‡ un collapse parallÅËle directionnel
@@ -1137,7 +1137,7 @@ graphe * l2dtopoflow_l(struct xvimage * k, struct xvimage * prio, struct xvimage
 } /* l2dtopoflow_l() */
  
 /* =============================================================== */
-graphe * l2dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax)
+graphe * l2dtopoflow_f(struct xvimage * k, const struct xvimage * prio, const struct xvimage * inhibit, float priomax)
 /* =============================================================== */
 /* 
   construction du flot topologique associÅÈ Å‡ un collapse parallÅËle directionnel
@@ -1622,7 +1622,7 @@ static void CheckProperty(graphe *H,
 #endif
 
 /* =============================================================== */
-int32_t l2dflowskeleton(struct xvimage * k, int32_t mode, double level, struct xvimage * func) 
+int32_t l2dflowskeleton(struct xvimage * k, int32_t mode, double level, const struct xvimage * func) 
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "l2dflowskeleton"

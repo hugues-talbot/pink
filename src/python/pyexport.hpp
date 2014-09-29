@@ -54,17 +54,18 @@ namespace pink {
     
             
     typedef map<
-      pair<xvimage*,       object>,
-      pair<const xvimage*, object>,
-      pair<cxvimage,       object>,
-      pair<const cxvimage, object>
+      pair<xvimage*,          object>,
+      pair<const xvimage*,    object>,
+      pair<cxvimage,          object>,
+      pair<const cxvimage,    object>,
+      pair<float_image,       object>,
+      pair<const float_image, object>      
       > mapping_to_python;
     
     typedef map<
       pair<object, cxvimage>
       > mapping_to_pink;
     
-
     typedef map<
       pair< xvimage*,       object>,
       pair< cxvimage,       object>,
@@ -120,7 +121,7 @@ namespace pink {
      */
     template <class result_type, class PINK_TUPLE, class PYTHON_TUPLE>
     struct allocwrapper_t;
-        
+    
     template <class result_type, class...PINK_ARGS, class...PYTHON_ARGS>
     struct allocwrapper_t< result_type, std::tuple<PINK_ARGS...>, std::tuple<PYTHON_ARGS...> >
       : wrapper_t< result_type, std::tuple<PINK_ARGS...>, std::tuple<PYTHON_ARGS...> >
@@ -227,6 +228,48 @@ namespace pink {
       
     }; // struct functionwrapper_t
 
+
+    /**
+       This wrapper class is designed for cpp functions. This function
+       wraps the function and converts the classes to python. 
+    */
+    template <class result_type, class PINK_TUPLE, class PYTHON_TUPLE>
+    struct cppwrapper_t;
+    
+    template <class result_type, class...PINK_ARGS, class...PYTHON_ARGS >
+    struct cppwrapper_t< result_type,
+                         std::tuple<PINK_ARGS...>,
+                         std::tuple<PYTHON_ARGS...> >
+    {
+      typedef result_type (*Fn) ( PINK_ARGS... );
+
+      Fn m_fn;
+            
+      cppwrapper_t( Fn fn ) : m_fn(fn) { }
+            
+      object
+      operator () ( PYTHON_ARGS...args ) {
+        cxvimage result = m_fn(convert<convert_to_pink>(args)...);
+
+        return result.steel();
+      } // operator()
+      
+    }; // struct cppwrapper_t
+
+    
+    template < template <class result_type, class T1, class T2> class wrapper_class,
+               class result_type,
+               class...ARGS >
+    wrapper_class< result_type,
+                   typename caller_t<result_type, ARGS...>::tuple_pink_t,
+                   typename caller_t<result_type, ARGS...>::tuple_python_t >
+    wrap( result_type(*fn)(ARGS...) ) {
+      typedef typename caller_t<result_type, ARGS...>::tuple_pink_t   tuple_pink_t;
+      typedef typename caller_t<result_type, ARGS...>::tuple_python_t tuple_python_t;
+      
+      return wrapper_class<result_type, tuple_pink_t, tuple_python_t>(fn);
+    } // wrap
+    
     
     template <class result_type, class...ARGS>
     struct caller_t {
@@ -240,18 +283,16 @@ namespace pink {
   
     }; // struct caller_t 
 
-    template < template <class result_type, class T1, class T2> class wrapper_class,
-               class result_type,
+    template < class result_type,
                class...ARGS >
-    wrapper_class< result_type,
-                   typename caller_t<result_type, ARGS...>::tuple_pink_t,
-                   typename caller_t<result_type, ARGS...>::tuple_python_t >
-    wrap( result_type(*fn)(ARGS...) ) {
+    cppwrapper_t< result_type,
+                  typename caller_t<result_type, ARGS...>::tuple_pink_t,
+                  typename caller_t<result_type, ARGS...>::tuple_python_t >
+    wrap_cpp( result_type(*fn)(ARGS...) ) {
       typedef typename caller_t<result_type, ARGS...>::tuple_pink_t   tuple_pink_t;
       typedef typename caller_t<result_type, ARGS...>::tuple_python_t tuple_python_t;
-
       
-      return wrapper_class<result_type, tuple_pink_t, tuple_python_t>(fn);
+      return cppwrapper_t<result_type, tuple_pink_t, tuple_python_t>(fn);
     } // wrap
 
     template <class result_type, class...ARGS>
@@ -268,9 +309,19 @@ namespace pink {
     functionwrapper_t< typename caller_t<result_type, ARGS...>::tuple_pink_t,
                        typename remove_first<typename caller_t<result_type, ARGS...>::tuple_python_t >::type >
     wrap_function( result_type (*fn) (ARGS...) ) {
-      return  functionwrapper_t< typename caller_t<result_type, ARGS...>::tuple_pink_t,
-                                 typename remove_first<typename caller_t<result_type, ARGS...>::tuple_python_t >::type > (fn);
+      return functionwrapper_t< typename caller_t<result_type, ARGS...>::tuple_pink_t,
+                                typename remove_first<typename caller_t<result_type, ARGS...>::tuple_python_t >::type > (fn);
     } // wrap_function 
+
+
+    // template <class result_type, class...ARGS>
+    // cppwrapper_t< typename caller_t<result_type, ARGS...>::tuple_pink_t,
+    //               typename caller_t<result_type, ARGS...>::tuple_python_t >
+    // wrap_cpp( result_type (*fn) (ARGS...) ) {
+    //   return cppwrapper_t< typename caller_t<result_type, ARGS...>::tuple_pink_t,
+    //                        typename caller_t<result_type, ARGS...>::tuple_python_t >;
+      
+    // } // wrap_cpp
     
     
   } // namespace tmp
@@ -351,37 +402,61 @@ namespace pink {
     return;
   } // allocdef
 
-  template <class T0, class Fn, class...ARGS >
+  template <class Name, class Fn, class...ARGS >
   void
-  exportdef( T0 t0, Fn fn, ARGS...args ) {
+  exportdef( Name name, Fn fn, ARGS...args ) {
     
     auto wrapper = tmp::wrap<tmp::exportwrapper_t>(fn);
     
-    boost::python::def( t0, wrapper, args... );
+    boost::python::def( name, wrapper, args... );
     return;
   } // exportdef
 
-  template <class T0, class Fn, class...ARGS >
+  template <class Name, class Fn, class...ARGS >
   void
-  resultdef( int32_t type, T0 t0, Fn fn, ARGS...args ) {
+  resultdef( int32_t type, Name name, Fn fn, ARGS...args ) {
     
     auto wrapper = tmp::wrap_result(fn, type);
     
-    boost::python::def( t0, wrapper, args... );
+    boost::python::def( name, wrapper, args... );
     
     return;
   } // resultdef
 
-  template <class T0, class Fn, class...ARGS >
+  template <class Name, class Fn, class...ARGS >
   void
-  functiondef( T0 t0, Fn fn, ARGS...args ) {
+  functiondef( Name name, Fn fn, ARGS...args ) {
     
     auto wrapper = tmp::wrap_function(fn);
     
-    boost::python::def( t0, wrapper, args... );
+    boost::python::def( name, wrapper, args... );
     
     return;
   } // functiondef
+
+
+  /**
+     \brief This wrapper function is called, when the operator is written in C++.
+     
+     description This wrapper function wraps operators which return an
+     image as a result and the image class is directly exportable to
+     python. These classes can be pink::image or cxvimage. 
+
+     \param The function name, the function pointer and additional wrapping arguments.
+     The additional function arguments are directly passed to boost::python::def. 
+     
+     \return none
+  */  
+  template <class Name, class Fn, class...ARGS >
+  void
+  cppdef( Name name, Fn fn, ARGS...args ) {
+
+    auto wrapper = tmp::wrap_cpp(fn);
+
+    boost::python::def( name, wrapper, args... );
+    
+    return;
+  } // cppdef 
   
 } // namespace pink
   

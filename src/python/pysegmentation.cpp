@@ -13,6 +13,7 @@
 
 #include "pyexport.hpp"
 
+#include "uiFlow.hpp"
 #include "lattribvol.h"
 #include "python_doc.h"
 #include "lattribarea.h"
@@ -51,6 +52,8 @@ pysegmentation ()
     
   functiondef( "segmentvol", lsegmentvol, ( arg("image"), arg("connexity"), arg("vol"), arg("mode") ), doc__segmentvol__c__ );
 
+  def( "maxflow", pink::maxflow<pink::float_image>, ( arg("Source and Sink"), arg("Measure (Gradient Image)"), arg("number of iterations"), arg("tau")=0.132, arg("number of threads")=1, arg("packet_size")=100, arg("verbose")=false, arg("debug")=false ), doc__maxflow__cpp__ );
+ 
   import_array();  // numpy initialization
   
   return;  

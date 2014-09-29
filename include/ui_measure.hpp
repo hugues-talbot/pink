@@ -23,7 +23,7 @@ namespace pink {
   
   template <class image_type>
   image_type
-  lmeasure( const image_type & image )
+  lmeasure( const image_type image )
   {
 
     image_type result;

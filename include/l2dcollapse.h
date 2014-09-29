@@ -40,14 +40,14 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
-  extern int32_t l2dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit);
-  extern int32_t l2dpardircollapse_short(struct xvimage * k, int32_t nsteps);
-  extern int32_t l2dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * inhibit);
-  extern int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, int32_t priomax);
-  extern int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax);
-  extern graphe * l2dtopoflow_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, int32_t priomax);
-  extern graphe * l2dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax);
-  extern int32_t l2dflowskeleton(struct xvimage * k, int32_t mode, double level, struct xvimage * func);
+  extern int32_t l2dcollapse(             struct xvimage * k, const struct xvimage * prio, const struct xvimage * inhibit );
+  extern int32_t l2dpardircollapse_short( struct xvimage * k, int32_t nsteps );
+  extern int32_t l2dpardircollapse(       struct xvimage * k, int32_t nsteps,              const struct xvimage * inhibit );
+  extern int32_t l2dpardircollapse_l(     struct xvimage * k, const struct xvimage * prio, const struct xvimage * inhibit, int32_t priomax );
+  extern int32_t l2dpardircollapse_f(     struct xvimage * k, const struct xvimage * prio, const struct xvimage * inhibit, float   priomax );
+  extern graphe * l2dtopoflow_l(          struct xvimage * k, const struct xvimage * prio, const struct xvimage * inhibit, int32_t priomax );
+  extern graphe * l2dtopoflow_f(          struct xvimage * k, const struct xvimage * prio, const struct xvimage * inhibit, float   priomax );
+  extern int32_t l2dflowskeleton(         struct xvimage * k, int32_t mode, double level,  const struct xvimage * func);
 #ifdef __cplusplus
 }
 #endif
