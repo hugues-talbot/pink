@@ -57,7 +57,7 @@ pyutil()
 
   allocdef( "gradientabs", pink::uiGradientAbs, (arg("image")), doc__gradient_abs__cpp__ );
 
-  cppdef( "measure", pink::lmeasure<pink::float_image>, (arg("image")), doc__measure__cpp__    );
+  //!! cppdef( "measure", pink::lmeasure<pink::float_image>, (arg("image")), doc__measure__cpp__    );
 
   exportdef( "circle_tangent", &pink::gsl::circle_tangent,
              (arg("x coordinates"), arg("y coordinates"), arg("point of derivation")),

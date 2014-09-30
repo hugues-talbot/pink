@@ -31,6 +31,8 @@
 #ifndef __UJIMAGE_HPP
 #define __UJIMAGE_HPP
 
+#include "platform_specific.h"
+
 #include <map>
 #include <string>
 #include <cstdint>
@@ -53,6 +55,7 @@
 #include "mcimage.h"
 #include "mccodimage.h"
 #include "ui_pink_types.hpp"
+#include "platform_specific.h"
 
 #undef depth
 #undef nbands

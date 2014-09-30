@@ -62,6 +62,8 @@ knowledge of the CeCILL license and that you accept its terms.
    MC Update juillet 2011 : fonctions writelist2, writelist3
 */
 
+#include "platform_specific.h"
+
 #include <stdio.h>
 #include <stdint.h>
 
