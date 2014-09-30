@@ -77,8 +77,8 @@ install(
     DESTINATION ${PINK_LIBDIR}
 )
 install( 
-    DIRECTORY ${CMAKE_SOURCE_DIR}/include 
-    DESTINATION include/pink
+    DIRECTORY ${CMAKE_SOURCE_DIR}/pink
+    DESTINATION include
 )
 install(
     FILES ${CMAKE_BINARY_DIR}/platform_specific.h
