@@ -69,10 +69,24 @@ if (NOT PINK_LIBDIR)
     endif ( THIS_IS_64bit )
 endif (NOT PINK_LIBDIR)
 
+configure_file( ${CMAKE_SOURCE_DIR}/platform_specific.h.in ${CMAKE_BINARY_DIR}/platform_specific.h )
+
 if (CMAKE_HOST_UNIX)
 install(
     TARGETS pink LIBRARY
     DESTINATION ${PINK_LIBDIR}
+)
+install( 
+    DIRECTORY ${CMAKE_SOURCE_DIR}/include 
+    DESTINATION include/pink
+)
+install(
+    FILES ${CMAKE_BINARY_DIR}/platform_specific.h
+    DESTINATION include/pink
+)
+install(
+    FILES ${CMAKE_BINARY_DIR}/python_doc.h
+    DESTINATION include/pink
 )
 else (CMAKE_HOST_UNIX) ### on Windows(tm) static library does not have to be installed
     # if (THIS_IS_MSVC)

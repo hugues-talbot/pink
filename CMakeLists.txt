@@ -27,7 +27,7 @@ INCLUDE (UJ_CheckIncludeFileCXX.cmake)
 set( POTENTIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library /usr/X11/include)
 set( INCLUDES include src/python /usr/include /opt/local/include)
 
-include_directories( ${INCLUDES} )
+include_directories( ${INCLUDES} ${CMAKE_BINARY_DIR} )
 
 ## This does not work
 ### I didn't think of this myself (HT)
@@ -143,11 +143,13 @@ option( PYTHON_FRONT_END "Compile the python front-end and the cpp functions" OF
 ### **********************************************************************************************
 
 if (64BIT)
-    add_definitions( -DMC_64_BITS )
+    # add_definitions( -DMC_64_BITS )
+    set( 64BITSMACRO "#define MC_64_BITS" )
 endif (64BIT)
 
 if ( PYTHON_FRONT_END )
-    add_definitions(-DPINK_HAVE_PYTHON)
+    # add_definitions(-DPINK_HAVE_PYTHON)
+    set( PYTHONFRONTENDMACRO "#define PINK_HAVE_PYTHON")
 endif( PYTHON_FRONT_END )
 
 if (CMAKE_HOST_UNIX)
@@ -168,7 +170,10 @@ if (CMAKE_HOST_UNIX)
     endif(NOT HTEST2)
 
     # unix defines
-    add_definitions( -DUNIXIO -DPC )
+    # add_definitions( -DUNIXIO -DPC )
+    set(UNIXIOMACRO "#define UNIXIO")
+    set(PCMACRO "#define PC")
+
 
     find_library( MATH_LIB libm.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
     set( LIBS ${MATH_LIB} )
@@ -176,7 +181,9 @@ if (CMAKE_HOST_UNIX)
 endif (CMAKE_HOST_UNIX)
 
 if (THIS_IS_MSVC)
-    add_definitions( -D_WINDOWS -DWIN32 )
+    # add_definitions( -D_WINDOWS -DWIN32 )
+    set(WINDOWSMACRO "#define _WINDOWS")
+    set(WIN32MACRO "#define WIN32")
 endif(THIS_IS_MSVC)
     
 ##
@@ -188,7 +195,8 @@ find_package(CFITSIO)
 
 if (HT_CFITSIO_FOUND)
     #message("cfitsio found, library= " ${CFITSIO_LIBRARY})
-    add_definitions(-DHAVE_FITS_LIB)
+    # add_definitions(-DHAVE_FITS_LIB )
+    set(HAVEFITSLIBMACRO "#define HAVE_FITS_LIB")
     set( LIBS ${LIBS} ${CFITSIO_LIBRARY})
 else (HT_CFITSIO_FOUND)
     #message("cfitsio library not found, FITS handling disabled")
@@ -219,14 +227,16 @@ CHECK_INCLUDE_FILE(semaphore.h SEMTEST)
 if (NOT SEMTEST)
     message("POSIX semaphores not found")
 else (NOT SEMTEST)
-    add_definitions( -DHAVE_POSIX_IPC )
+    # add_definitions( -DHAVE_POSIX_IPC )
+    set( HAVEPOSIXIPCMACRO "#define HAVE_POSIX_IPC" )
 endif(NOT SEMTEST)
 
 CHECK_INCLUDE_FILE(sys/sem.h SYSVTEST)
 if (NOT SYSVTEST)
     message("SysV IPC not found")
 else (NOT SYSVTEST)
-    add_definitions(-DHAVE_SYSV_IPC)
+    # add_definitions(-DHAVE_SYSV_IPC)
+    set( HAVESYSVIPCMACRO "#define HAVE_SYSV_IPC")
 endif(NOT SYSVTEST)
 
 if (THIS_IS_LINUX)
@@ -265,7 +275,8 @@ endif (THIS_IS_MSVC)
 FIND_PACKAGE(TIFF)
 
 if (TIFF_FOUND)
-    ADD_DEFINITIONS(-DHAVE_TIFF_LIB)
+    # ADD_DEFINITIONS(-DHAVE_TIFF_LIB)
+    set( HAVETIFFLIBMACRO "#define HAVE_TIFF_LIB" )
     INCLUDE_DIRECTORIES(${TIFF_INCLUDE_DIR})
     set( LIBS ${LIBS} ${TIFF_LIBRARIES} )
 else(TIFF_FOUND)
@@ -338,7 +349,8 @@ if (OPENCL)
     set( LIBS ${LIBS} ${OPENCL_LIB} )
 	    
     # signalling the compilation that we desire the opencl functions
-    ADD_DEFINITIONS(-DPINK_HAVE_OPENCL)
+    # ADD_DEFINITIONS(-DPINK_HAVE_OPENCL)
+    set( HAVEOPENCLMACRO "#define PINK_HAVE_OPENCL" )
 endif(OPENCL)
 
 if (NUMA)
@@ -349,11 +361,13 @@ if (NUMA)
     if (NOT HTEST16)
  	message( FATAL_ERROR "error numa.h does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST16)
-    ADD_DEFINITIONS(-DPINK_HAVE_NUMA)
+    # ADD_DEFINITIONS(-DPINK_HAVE_NUMA)
+    set( HAVENUMAMACRO "#define PINK_HAVE_NUMA" )
 endif (NUMA)
 
 if (SIMD)
-    ADD_DEFINITIONS(-DPINK_HAVE_SIMD)
+    # ADD_DEFINITIONS(-DPINK_HAVE_SIMD)
+    set( HAVESIMDMACRO "#define PINK_HAVE_SIMD" )
 endif (SIMD)
 
 
@@ -365,7 +379,7 @@ endif (SIMD)
 
 if ( PYTHON_FRONT_END )
 
-    add_definitions(-DPINK_HAVE_PYTHON)
+    # add_definitions(-DPINK_HAVE_PYTHON)
     option( NUMPY "Compiles numpy<->pink conversion utilities." OFF )
 
     find_package(PythonInterp)
@@ -401,7 +415,8 @@ if ( PYTHON_FRONT_END )
 	endif(NOT Boost_PYTHON)
     endif(NOT Boost_FOUND)
 
-    add_definitions(-DBOOST_ALL_NO_LIB)  # tell the compiler to undefine this boost macro
+    # add_definitions(-DBOOST_ALL_NO_LIB)  # tell the compiler to undefine this boost macro
+    set( BOOSTNOLIBMACRO "#define BOOST_ALL_NO_LIB" )
 
     # # required version of BOOST 1.35 or newer
     #set( Boost_MAJOR_VERSION_REQUIRED 1 )
@@ -513,7 +528,8 @@ if ( PYTHON_FRONT_END )
 	if( NOT EXISTS ${NUMPY_INCLUDE}/numpy/arrayobject.h )
 	    message( FATAL_ERROR "${NUMPY_INCLUDE}/numpy/arrayobject.h header is not found. If it is installed, than check the python flags and numpy header directories") 
 	endif( NOT EXISTS ${NUMPY_INCLUDE}/numpy/arrayobject.h )
-	add_definitions( -DPINK_HAVE_NUMPY )
+	# add_definitions( -DPINK_HAVE_NUMPY )
+	set( PINKHAVENUMPYMACRO "#define PINK_HAVE_NUMPY" )
     endif (NUMPY)
 
     ### ******************************************************

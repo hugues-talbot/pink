@@ -1,0 +1,52 @@
+/*
+  This software is licensed under 
+  CeCILL FREE SOFTWARE LICENSE AGREEMENT
+
+  This software comes in hope that it will be useful but 
+  without any warranty to the extent permitted by applicable law.
+
+  (C) UjoImro, 2014
+  ProCarPlan s.r.o.
+  ujoimro@gmail.com
+*/
+
+// This file contains the platform specific configuration that has been detected
+// during the configuration
+
+#ifndef PINK__PLATFORM__SPECIFIC__H__
+#define PINK__PLATFORM__SPECIFIC__H__
+
+${64BITSMACRO}
+
+${PYTHONFRONTENDMACRO}
+
+${UNIXIOMACRO}
+
+${PCMACRO}
+
+${WINDOWSMACRO}
+
+${WIN32MACRO}
+
+${HAVEFITSLIBMACRO}
+
+${HAVEPOSIXIPCMACRO}
+
+${HAVESYSVIPCMACRO}
+
+${HAVETIFFLIBMACRO}
+
+${HAVEOPENCLMACRO}
+
+${HAVENUMAMACRO}
+
+${HAVESIMDMACRO}
+
+${BOOSTNOLIBMACRO}
+
+${PINKHAVENUMPYMACRO}
+
+${PINKDEVELOPMENTMACRO}
+
+#endif /* PINK__PLATFORM__SPECIFIC__H__ */
+// LuM end of file

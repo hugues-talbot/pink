@@ -5,13 +5,14 @@
 # -------- The Python front-end ------
 # ------------------------------------ 
 cmake_minimum_required(VERSION 2.8)
-SET( py_documentation ${CMAKE_SOURCE_DIR}/include/python_doc.h )
+SET( py_documentation ${CMAKE_BINARY_DIR}/python_doc.h )
 
 FILE( GLOB py_src_cpp *.cpp )
 
 if (DEVELOPMENT)
     FILE( GLOB py_src_development_cpp development/*.cpp )
-    add_definitions( -DPINK_DEVELOPMENT )
+    # add_definitions( -DPINK_DEVELOPMENT )
+    set( PINKDEVELOPMENTMACRO "#define PINK_DEVELOPMENT" )
 endif (DEVELOPMENT)
 
 add_library( cpp_pink SHARED ${py_src_cpp} ${py_src_development_cpp} ${py_documentation} )
@@ -26,11 +27,6 @@ else (THIS_IS_MSVC)
     add_dependencies( cpp_pink pink  )
     target_link_libraries( cpp_pink pink ${LIBS} )
 endif (THIS_IS_MSVC)
-
-# unix defines
-if (CMAKE_HOST_UNIX)
-    add_definitions( -DUNIXIO -DPC )
-endif (CMAKE_HOST_UNIX)
 
 set( CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} ${PYTHON_FLAG} )
 include_directories( ${PYTHON_INCLUDE}  ${BOOST_INCLUDE} )
@@ -81,7 +77,7 @@ FILE( GLOB pink_commands ${CMAKE_SOURCE_DIR}/src/com/* )
 #MESSAGE(" command =" COMMAND ${PYTHON_DOCUMENTATION_EXE} ${CMAKE_SOURCE_DIR}/src/com ${CMAKE_SOURCE_DIR}/include/python_doc.h  )
 
 add_custom_command( OUTPUT ${py_documentation}
-                    COMMAND ${PYTHON_DOCUMENTATION_EXE} ${CMAKE_SOURCE_DIR}/python_documenter.py ${CMAKE_SOURCE_DIR}/src/com ${CMAKE_SOURCE_DIR}/include/python_doc.h
+                    COMMAND ${PYTHON_DOCUMENTATION_EXE} ${CMAKE_SOURCE_DIR}/python_documenter.py ${CMAKE_SOURCE_DIR}/src/com ${CMAKE_BINARY_DIR}/python_doc.h
 		    DEPENDS ${pink_commands}
                     )
 
