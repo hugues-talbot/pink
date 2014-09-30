@@ -35,6 +35,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include "platform_specific.h"
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>

@@ -71,6 +71,8 @@ knowledge of the CeCILL license and that you accept its terms.
 
 */
 
+#include "platform_specific.h"
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>

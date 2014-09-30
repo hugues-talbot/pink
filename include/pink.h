@@ -35,6 +35,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifndef PINK_H
 #define PINK_H
 
+#include "platform_specific.h"
+
 #include <errno.h>
 #include <math.h>
 #include <assert.h>

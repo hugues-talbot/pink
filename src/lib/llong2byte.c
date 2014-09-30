@@ -33,6 +33,8 @@ Useful for label images.
    Modif : decembre 1999 - mode 3 (trunchisto)
  */
 
+#include "platform_specific.h"
+
 #include "pink.h"
 
 // ERROR N is not supposed to be used as a define macro

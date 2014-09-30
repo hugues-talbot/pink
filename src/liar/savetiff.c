@@ -61,6 +61,8 @@
  *-----------------------------------------------------------------------*/
 
 
+#include "platform_specific.h"
+
 // still needed even when TIFF is not compiled in
 const char *comp_schemes[] = {"NONE", "LZW", "PACKBITS", "CCITTG3",
 			      "CCITTG4", "RLE", "RLEW", "THUNDER",

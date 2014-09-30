@@ -5,6 +5,8 @@
  * Hugues Talbot	 9 Mar 2000
  *      
  *-----------------------------------------------------------------------*/
+#include "platform_specific.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

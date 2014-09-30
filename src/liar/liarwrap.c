@@ -6,6 +6,8 @@
  *      
  *-----------------------------------------------------------------------*/
 
+#include "platform_specific.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
