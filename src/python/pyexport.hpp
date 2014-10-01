@@ -278,7 +278,6 @@ namespace pink {
                                  typename remove_first<typename caller_t<result_type, ARGS...>::tuple_python_t >::type > (fn);
     } // wrap_function 
     
-    
   } // namespace tmp
 } // namespace pink
 
@@ -347,44 +346,44 @@ namespace boost {
 namespace pink {
   
 
-  template <class T0, class Fn, class...ARGS >
+  template <class Name, class Fn, class...ARGS >
   void
-  allocdef( T0 t0, Fn fn, ARGS...args ) {
+  allocdef( Name name, Fn fn, ARGS...args ) {
 
     auto wrapper = tmp::wrap<tmp::allocwrapper_t>(fn);
 
-    boost::python::def( t0, wrapper, args... );
+    boost::python::def( name, wrapper, args... );
     return;
   } // allocdef
 
-  template <class T0, class Fn, class...ARGS >
+  template <class Name, class Fn, class...ARGS >
   void
-  exportdef( T0 t0, Fn fn, ARGS...args ) {
+  exportdef( Name name, Fn fn, ARGS...args ) {
     
     auto wrapper = tmp::wrap<tmp::exportwrapper_t>(fn);
     
-    boost::python::def( t0, wrapper, args... );
+    boost::python::def( name, wrapper, args... );
     return;
   } // exportdef
 
-  template <class T0, class Fn, class...ARGS >
+  template <class Name, class Fn, class...ARGS >
   void
-  resultdef( int32_t type, T0 t0, Fn fn, ARGS...args ) {
+  resultdef( int32_t type, Name name, Fn fn, ARGS...args ) {
     
     auto wrapper = tmp::wrap_result(fn, type);
     
-    boost::python::def( t0, wrapper, args... );
+    boost::python::def( name, wrapper, args... );
     
     return;
   } // resultdef
 
-  template <class T0, class Fn, class...ARGS >
+  template <class Name, class Fn, class...ARGS >
   void
-  functiondef( T0 t0, Fn fn, ARGS...args ) {
+  functiondef( Name name, Fn fn, ARGS...args ) {
     
     auto wrapper = tmp::wrap_function(fn);
     
-    boost::python::def( t0, wrapper, args... );
+    boost::python::def( name, wrapper, args... );
     
     return;
   } // functiondef
