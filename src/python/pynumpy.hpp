@@ -11,7 +11,7 @@
 
 
 // Pink NumPy Conversion
-
+#include "platform_specific.h"
 
 #ifdef PINK_HAVE_NUMPY
 # include <Python.h>
@@ -29,11 +29,60 @@ namespace pink {
 
     namespace detail {
 
-      template<class T>
-      struct numpy_type_map {
-        static const int typenum;
-      };
+      namespace {
+        template<class T>
+          struct numpy_type_map {
+          static const int typenum;
+        };
+
+        template<> const int numpy_type_map<float>::typenum = NPY_FLOAT;
+        template<> const int numpy_type_map<std::complex<float> >::typenum = NPY_CFLOAT;
+        template<> const int numpy_type_map<double>::typenum = NPY_DOUBLE;
+        template<> const int numpy_type_map<std::complex<double> >::typenum = NPY_CDOUBLE;
+        template<> const int numpy_type_map<long double>::typenum = NPY_LONGDOUBLE;
+        template<> const int numpy_type_map<std::complex<long double> >::typenum = NPY_CLONGDOUBLE;
+        template<> const int numpy_type_map<boost::int8_t>::typenum = NPY_INT8;
+        template<> const int numpy_type_map<boost::uint8_t>::typenum = NPY_UINT8;
+        template<> const int numpy_type_map<boost::int16_t>::typenum = NPY_INT16;
+        template<> const int numpy_type_map<boost::uint16_t>::typenum = NPY_UINT16;
+        template<> const int numpy_type_map<boost::int32_t>::typenum = NPY_INT32;
+        template<> const int numpy_type_map<boost::uint32_t>::typenum = NPY_UINT32;
+        template<> const int numpy_type_map<boost::int64_t>::typenum = NPY_INT64;
+        template<> const int numpy_type_map<boost::uint64_t>::typenum = NPY_UINT64;
+      } // unnamed namespace
       
+      template <class image_type>
+      image_type
+      numpy2pink( boost::python::object & array )
+      {
+        if (!array.ptr())
+          pink_error("Nullpointer error (4322)");
+       
+        //!!! if (! PyArray_Check(array.ptr())) // verifying that the object is indeed a numpy array
+        // pink_error("This function can only convert numpy arrays");
+        PyArrayObject* original_array = reinterpret_cast<PyArrayObject*>(array.ptr());
+        if ( PyArray_TYPE(original_array) != numpy_type_map<typename image_type::pixel_type>::typenum )
+          pink_error("Invalid image type. Conversion failed!");
+        PyArrayObject* tmparray = PyArray_GETCONTIGUOUS(original_array); // making sure that the object is continuous; // if it is continuous than no copy is done here
+        if (!PyArray_ISCONTIGUOUS(tmparray)) // the array is not continuous
+          pink_error("Internal error, the array should be continuous by now.");
+        npy_intp nd = PyArray_NDIM(tmparray);
+        npy_intp * dims = PyArray_DIMS(tmparray);
+        std::vector<index_t> dim( nd, 0 );
+        FOR(q, nd) dim[q]=dims[q];
+        typedef typename image_type::pixel_type pixel_type;
+        if ( detail::numpy_type_map<pixel_type>::typenum == PyArray_TYPE(tmparray) ) // one more check to be sure
+        {
+          pixel_type * data = reinterpret_cast<pixel_type *>(PyArray_DATA(tmparray));
+          image_type result(dim, data);
+          return result;
+        }
+        else
+          pink_error("Cannot convert into Pink Image. Internal error 03.");        
+
+        return image_type();      
+      } // numpy2pink
+
     } // namespace detail
 
     boost::python::object numpy2pink( boost::python::object & array );
@@ -65,7 +114,7 @@ namespace pink {
       return result;      
     }
 
-        template <class image_type>
+    template <class image_type>
     boost::python::object
     pink2numpy( image_type & image )
     {
@@ -104,45 +153,7 @@ namespace pink {
       boost::python::object result(handle);
       return result;      
     }
-
-
-    template <class image_type>
-    image_type
-    numpy2pink_detail( boost::python::object & array )
-    {
-      if (! PyArray_Check(array.ptr())) // verifying that the object is indeed a numpy array
-        pink_error("This function can only convert numpy arrays");
-
-      PyArrayObject* original_array = reinterpret_cast<PyArrayObject*>(array.ptr());
-
-      if ( PyArray_TYPE(original_array) != detail::numpy_type_map<typename image_type::pixel_type>::typenum )
-        pink_error("Invalid image type. Conversion failed!");
-            
-      PyArrayObject* tmparray = PyArray_GETCONTIGUOUS(original_array); // making sure that the object is continuous; // if it is continuous than no copy is done here
-
-      if (!PyArray_ISCONTIGUOUS(tmparray)) // the array is not continuous
-        pink_error("Internal error, the array should be continuous by now.");
-
-      npy_intp nd = PyArray_NDIM(tmparray);
-      npy_intp * dims = PyArray_DIMS(tmparray);
-      std::vector<index_t> dim( nd, 0 );
-
-      FOR(q, nd) dim[q]=dims[q];
-
-      typedef typename image_type::pixel_type pixel_type;
-            
-      if ( detail::numpy_type_map<pixel_type>::typenum == PyArray_TYPE(tmparray) ) // one more check to be sure
-      {
-        pixel_type * data = reinterpret_cast<pixel_type *>(PyArray_DATA(tmparray));
-        image_type result(dim, data);
-        return result;
-      }
-      else
-        pink_error("Cannot convert into Pink Image. Internal error 03.");        
-
-      return image_type();      
-    } // numpy2pink
-    
+   
 
   } // namespace pink
 } // namespace python
