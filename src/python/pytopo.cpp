@@ -190,8 +190,6 @@ void skelcurv_export();
 void
 pytopo()
 {
-
-  using pink::type;
   using pink::allocdef;
   using pink::exportdef;
   using pink::resultdef;
