@@ -29,7 +29,7 @@
 void
 pygeom () {
 
-  using pink::type;
+  using pink::pinktype;  
   using pink::allocdef;
   using pink::resultdef;
   using pink::functiondef;
@@ -59,9 +59,9 @@ pygeom () {
 
   allocdef( "rotate", lrotationInter, (arg("image"), arg("theta"), arg("x"), arg("y"), arg("mode")), doc__rotate__c__ );
 
-  resultdef( type<pink::char_image>(), "affine", laffinetransformation, ( arg("image"), arg("hx"), arg("hy"), arg("theta"), arg("tx"), arg("ty")), doc__affine__c__ );
+  resultdef( pinktype<pink::char_image>(), "affine", laffinetransformation, ( arg("image"), arg("hx"), arg("hy"), arg("theta"), arg("tx"), arg("ty")), doc__affine__c__ );
  
-  resultdef( type<pink::int_image>(), "attribute", lattribute, ( arg("image"), arg("connex"), arg("typregion"), arg("attrib"), arg("seuil") ), doc__attribute__c__ ); 
+  resultdef( pinktype<pink::int_image>(), "attribute", lattribute, ( arg("image"), arg("connex"), arg("typregion"), arg("attrib"), arg("seuil") ), doc__attribute__c__ ); 
  
   allocdef( "autocrop", lautocrop, (arg("image"), arg("threshold")), doc__autocrop__c__ );
   
