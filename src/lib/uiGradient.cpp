@@ -39,7 +39,7 @@ namespace pink
   to ignore, and the result is point by point a variation of the remaining coordinates. there are prodExcept(coord) 
   coordinates on the lower side.
 */
-  std::vector<index_t> && 
+  std::vector<index_t> 
   uiStep( const std::vector<index_t> & dim, index_t step, index_t coord )
   {
     index_t d = dim.size();
@@ -59,8 +59,8 @@ namespace pink
     result[coord]=0;
 
     for ( index_t q = coord + 1; q <= d - 1; q++ ) result[q] = partres[q - 1];
-  
-    return std::move(result);
+    
+    return result;
   } /* uiStep */
 
 
@@ -81,7 +81,7 @@ namespace pink
    ignored.  for large images it should not cause any algorithmical
    (formal) problems.
 */
-  std::vector<double> &&
+  std::vector<double>
   uiDerivateVect( const std::vector<double> & values )
   {
   
@@ -98,7 +98,7 @@ namespace pink
   
     gsl_interp_free( interp );
     gsl_interp_accel_free( accel );
-    return std::move(result);
+    return result;
   } /* uiDerivateVect */
 
 /**
@@ -118,24 +118,21 @@ namespace pink
     FOR( q, d )
     {
       FOR(w, pink::prod_except(f.size(), q))
-      {      
+      {
         std::vector<index_t> coord(uiStep(f.size(), w, q ));
         std::vector<double>  vect(f.size()[q]);
-      
+
         FOR( e, f.size()[q] )
         {
           coord[q] = e;
           vect[e]  = f(coord);
         }
-        
         std::vector<double> der = uiDerivateVect(vect);
-
         FOR( e, f.size()[q] )
-        {
+        {          
           coord[q]=e;
           result(coord) += (der[e] * der[e]); // needed to be added because square is not square any more
         } /* FOR( e, f ) */;
-        
       } /* FOR(w, f.size().prodExcept(q) ) */;
     } /*   FOR( q, d ) */
 

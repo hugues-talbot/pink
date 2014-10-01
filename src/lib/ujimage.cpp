@@ -11,12 +11,11 @@
 */
 
 
-
-
-#include "pink.h"
 #include "mccodimage.h"
+#include "ujimage.hpp"
 
-namespace pink{
+namespace pink {
+  
 
   size_t
   typesize( const index_t & type ) {
@@ -114,10 +113,11 @@ namespace pink{
     free(ptr);
     return;
   }
-  
-  
-    
- //  pink_image::operator xvimage*()
+
+} // namespace pink
+
+
+//  pink_image::operator xvimage*()
 //   {
 //     pink_error("You can only cast complete image objects. This is just the base class");    
 //     return NULL;
@@ -194,7 +194,7 @@ namespace pink{
 //   } /* image_type */
 
   
- // /*
+// /*
 // ***************************************************************************************
 // ***************************************************************************************
 // ***************************************************************************************
@@ -383,10 +383,6 @@ namespace pink{
 //   {
 //     s << value;
 //   } /* write_a_pixel char */
-
-
-} /* namespace pink */
-
 
 
 /*

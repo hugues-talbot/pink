@@ -1,4 +1,4 @@
-/*
+ /*
   This software is licensed under 
   CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
@@ -132,45 +132,42 @@ namespace pink
     // intentionally left empty
   }
 
-  template <class T0>
-  struct type {
-    operator int32_t () { return -1; }
-  }; // struct type
-  
-  template <>
-  struct type<uint8_t> {
-    operator int32_t () { return VFF_TYP_1_BYTE; }
-  }; // struct type
-  
-  template <>
-  struct type<int16_t> {
-    operator int32_t () { return VFF_TYP_2_BYTE; }
-  }; // struct type
-  
-  template <>
-  struct type<int32_t> {
-    operator int32_t () { return VFF_TYP_4_BYTE; }
-  }; // struct type
+  template <class pixel_t> class image;
 
-  template <>
-  struct type<float> {
-    operator int32_t () { return VFF_TYP_FLOAT; }
-  }; // struct type
+  namespace {
+    /**
+       \brief This function returns the pink type id of a pixel_type.
+     
+       description The input is a pixel type, like (float) and the
+       output is the corresponding pink id (VFF_TYP_FLOAT)
+
+       \param none
+       \return The pink id of the type
+    */
+    template <class T0>
+    struct pinktype {
+      operator int32_t () {
+        pink_error("Invalid pixel type in image type (9493)");
+        return -1;
+      }
+    }; // struct type
+
+    template <> struct pinktype<uint8_t> { operator int32_t () { return VFF_TYP_1_BYTE; } };
+    template <> struct pinktype<image<uint8_t> > { operator int32_t () { return VFF_TYP_1_BYTE; } };
+    template <> struct pinktype<int16_t> { operator int32_t () { return VFF_TYP_2_BYTE; } }; 
+    template <> struct pinktype<image<int16_t> > { operator int32_t () { return VFF_TYP_2_BYTE; } }; 
+    template <> struct pinktype<int32_t> { operator int32_t () { return VFF_TYP_4_BYTE; } }; 
+    template <> struct pinktype<image<int32_t> > { operator int32_t () { return VFF_TYP_4_BYTE; } }; 
+    template <> struct pinktype<float> { operator int32_t () { return VFF_TYP_FLOAT; } }; 
+    template <> struct pinktype<image<float> > { operator int32_t () { return VFF_TYP_FLOAT; } }; 
+    template <> struct pinktype<double> { operator int32_t () { return VFF_TYP_DOUBLE; } }; 
+    template <> struct pinktype<image<double> > { operator int32_t () { return VFF_TYP_DOUBLE; } }; 
+    template <> struct pinktype<fcomplex> { operator int32_t () { return VFF_TYP_COMPLEX; } }; 
+    template <> struct pinktype<image<fcomplex> > { operator int32_t () { return VFF_TYP_COMPLEX; } }; 
+    template <> struct pinktype<dcomplex> { operator int32_t () { return VFF_TYP_DCOMPLEX; } }; 
+    template <> struct pinktype<image<dcomplex> > { operator int32_t () { return VFF_TYP_DCOMPLEX; } };
+  } // unnamed namespace
   
-  template <>
-  struct type<double> {
-    operator int32_t () { return VFF_TYP_DOUBLE; }
-  }; // struct type
-  
-  template <>
-  struct type<fcomplex> {
-    operator int32_t () { return VFF_TYP_COMPLEX; }
-  }; // struct type
-  
-  template <>
-  struct type<dcomplex> {
-    operator int32_t () { return VFF_TYP_DCOMPLEX; }
-  }; // struct type
 
   size_t
   typesize( const index_t & type );
@@ -340,6 +337,7 @@ namespace pink
       : m_garbage_collection( new bool(false) )  {
       // std::cout << "cxvimage (" << this << ") created (type, size, data)" << std::endl;
 
+      _assert(size.size()>0);      
       _assert(size[0]>0);
       
       m_size = size;
@@ -356,7 +354,7 @@ namespace pink
       return;
     }
 
-    cxvimage( const int32_t & type, vint_t size, const char * data )
+    cxvimage( const int32_t & type, vint_t size, char * data )
       : m_garbage_collection( new bool(false) ) {
       // std::cout << "cxvimage (" << this << ") created (type, size, data*)" << std::endl;
             
@@ -388,9 +386,10 @@ namespace pink
 
       m_xvimage.reset( tmp, freeheader );
       char * data = new char[ pink::typesize(type) * pink::prod(m_size) ];
-      _assert(data);      
+      _assert(data);
 
       m_data.reset( data, deleter_t(m_garbage_collection, arraydelete<char> ) );
+
       m_xvimage->image_data = m_data.get();
       return;
     }
@@ -402,15 +401,29 @@ namespace pink
 
     cxvimage & 
     operator = ( const cxvimage & other ) {
-      // std::cout << "cxvimage::operator = called on " << this << std::endl;      
+      // std::cout << "cxvimage::operator=(cxvimage&) called on " << this << std::endl;
+      
       m_data               = other.m_data;
       m_size               = other.m_size;
-      m_xvimage            = other.m_xvimage;      
+      m_xvimage            = other.m_xvimage;
       m_garbage_collection = other.m_garbage_collection;
-      
-      return *this;      
+
+      return *this;
     } // operator = 
 
+    cxvimage & 
+    operator = ( cxvimage && other ) {
+      // std::cout << "cxvimage::operator =(cxvimage&&, MOVE) called on " << this << std::endl;
+      
+      m_data               = std::move(other.m_data);
+      m_size               = std::move(other.m_size);
+      m_xvimage            = std::move(other.m_xvimage);
+      m_garbage_collection = std::move(other.m_garbage_collection);
+
+      return *this;
+    } // operator = 
+    
+    
     cxvimage( const cxvimage & other )
       : m_xvimage(other.m_xvimage), m_data(other.m_data), m_size(other.m_size), m_garbage_collection(other.m_garbage_collection) {
       // std::cout << "cxvimage (" << this << ") copied ( const xvimage& )" << std::endl;
@@ -503,6 +516,7 @@ namespace pink
 
     cxvimage
     clone () const {
+      // std::cout << "cxvimage::clone" << std::endl;      
       _assert(!this->isnull());
 
       cxvimage result( imtype(), size() );
@@ -601,18 +615,33 @@ namespace pink
     image( ) { }
         
     image( const index_t & rs, const index_t & cs=1, const index_t & ds=1 )
-      : cxvimage( type<pixel_t>(), rs, cs, ds ) { }
+      : cxvimage( pinktype<pixel_t>(), rs, cs, ds ) { }
 
-    image( const std::vector<index_t> & dim ) { pink_error("IMPLEMENT ME!!!"); }
+    image( const std::vector<index_t> & dim ) : cxvimage( pinktype<pixel_t>(), dim ) { }
 
     image( const std::vector<index_t> & dim, boost::shared_ptr<pixel_t> data ) { pink_error("IMPLEMENT ME!!!"); }
 
-    image( const std::vector<index_t> & dim, const pixel_t * data ) { pink_error("IMPLEMENT ME!!!"); }
+    image( const std::vector<index_t> & dim, pixel_t * data )
+      :  cxvimage( pinktype<pixel_t>(), dim, reinterpret_cast<char*>(data)  ) {
+      // std::cout << "image( vector, pixel_t* ) called" << std::endl;      
+    }
+
+    image( const cxvimage & other ) {
+      if ( pinktype<pixel_t>() != other.imtype() )
+        pink_error("invalid conversion (7338)");
+      
+      this->operator=(other);
+    }
+
+    image( const image<pixel_t> & other ) : cxvimage(other) {
+      // here comes the cloning of not-inherited variables
+      // intentionally left empty
+    }
     
     pixel_t &
     operator() ( const index_t & x ) {
       _assert(!this->isnull());
-      return this->pdata<pixel_t>()[x];      
+      return this->pdata<pixel_t>()[x];
     }
 
     const pixel_t &
@@ -624,7 +653,7 @@ namespace pink
     pixel_t &
     operator() ( const index_t & x, const index_t & y ) {
       _assert(size().size()==2);
-      return this->pdata<pixel_t>()[y*rows() + x];      
+      return this->pdata<pixel_t>()[y*rows() + x];
     }
 
     const pixel_t &
@@ -646,17 +675,34 @@ namespace pink
     }
 
     const pixel_t &
-    operator() ( std::vector<index_t> & pos ) const { pink_error("IMPLEMENT ME!!!"); }
+    operator() ( std::vector<index_t> & pos ) const {
+      pixel_t * data = reinterpret_cast<pixel_t*>(m_data.get());
+      return data[position( size(), pos )];
+    }
 
     pixel_t &
-    operator() ( std::vector<index_t> & pos ) { pink_error("IMPLEMENT ME!!!");  }
+    operator() ( std::vector<index_t> & pos ) {
+      pixel_t * data = reinterpret_cast<pixel_t*>(m_data.get());
+      return data[position( size(), pos )];
+    }
 
     noconst_image_iterator<pixel_t> begin() { return noconst_image_iterator<pixel_t>( 0, this );  }
     noconst_image_iterator<pixel_t> end() { return noconst_image_iterator<pixel_t>( prod(size()), this ); }
     const_image_iterator<pixel_t> begin() const { return const_image_iterator<pixel_t>( 0, this ); }
     const_image_iterator<pixel_t> end() const { return const_image_iterator<pixel_t>( prod(size()), this ); }
 
-    image<pixel_t> clone () const { pink_error("IMPLEMENT ME!!!"); }
+    image<pixel_t> clone () const {
+      // std::cout << "image::<pixel_t>::clone start" << std::endl;      
+      image<pixel_t> result;
+
+      // clone the variables of the base class
+      result = cxvimage::clone();
+
+      // clone the variables of this (image) class
+      // no variables yet
+
+      return result;
+    }
 
     pixel_t * get() { return this->pdata<pixel_t>(); }
 
@@ -667,6 +713,40 @@ namespace pink
       return m_xvimage.get();      
     }
 
+    image<pixel_t> & operator = ( const cxvimage & other ) {
+      // std::cout << "operator image<pixel_t>::operator= called" << std::endl;      
+      // get the references for the variables of the base
+      _assert( pinktype<pixel_t>() == other.imtype());      
+      cxvimage::operator=(other);
+
+      // get the references for our (image) variables ()
+      // intentionally left empty
+
+      return *this;      
+    }
+    
+    image<pixel_t> & operator = ( const image<pixel_t> & other ) {
+      // get the references for the variables of the base
+      cxvimage::operator=(other);
+
+      // get the references for our (image) variables ()
+      // intentionally left empty
+
+      return *this;            
+    }
+    
+    image<pixel_t> & operator = ( image<pixel_t> && other ) {
+      // std::cout << "image<pixel_t>::operator= image<pixel_t> && other" << std::endl;
+
+      // moving the variables of the base class
+      cxvimage::operator=(other);
+
+      // moving the variables of the image class
+      // intentionally left empty
+      
+      return *this;            
+    }
+        
     operator const xvimage* () const override {
       if (isnull()) pink_error("The image is uninitialized! (841)");
       return m_xvimage.get();      

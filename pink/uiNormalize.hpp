@@ -39,6 +39,7 @@ namespace pink {
     )
   {
     image_type result;
+
     result = image.clone();
 
     lnormalize( result, vmin, vmax );    

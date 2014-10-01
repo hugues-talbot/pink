@@ -15,42 +15,41 @@
 
 #include "larith.h"
 #include "lminmax.hpp"
+#include "pynumpy.hpp"
 #include "uiNormalize.hpp"
 
 namespace pink {
 
   const double epsilon=0.00001;  
-  
+
+ 
   template <class image_type>
   image_type
   lmeasure( const image_type image )
   {
 
     image_type result;
+    
     result = image.clone();
     
     float min, max;
-    std::pair<float, float> mm;
-  
-  
-    mm = lminmaxval(image);
+
+    auto mm = lminmaxval(image);
+
     min = mm.first;
     max = mm.second;
-  
-    if ( min == max )
-    {
-      pink_error("All pixels are equal in the image.");
-    } /* if */
-
+    
+    if ( min == max ) pink_error("All pixels are equal in the image.");
+    
     result = normalize<image_type, 0, 1>(image);
-
+    
     result = uiGradientAbs(result);
 
     for ( auto & pixel : result )
       pixel =  1. / ( epsilon + pixel );
-
+    
     result = normalize<image_type, 0, 1>(result);
-
+    
     return result;    
   } /* lmeasure*/ 
 
@@ -69,7 +68,16 @@ namespace pink {
     return result;    
   }
   
-  
+  template <class image_type>
+  boost::python::object
+  pymeasure( boost::python::object image ) {
+    auto p0 = python::detail::numpy2pink<image_type>(image);
+
+    auto result = lmeasure<image_type>(p0);
+
+    return result.steel();
+  }
+    
 }; /* namespace pink */
 
 
