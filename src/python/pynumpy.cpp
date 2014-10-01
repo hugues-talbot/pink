@@ -11,15 +11,6 @@
 
 // Pink NumPy Conversion routine
 
-#ifdef PINK_HAVE_NUMPY
-# include <Python.h>
-# include <boost/cstdint.hpp>
-# include <numpy/arrayobject.h>
-# include <boost/smart_ptr.hpp>
-#endif /* PINK_HAVE_NUMPY */
-
-
-
 #include <boost/python.hpp>
 
 #include "ujimage.hpp"
@@ -36,58 +27,6 @@ namespace pink {
     // Copyright (c) 2008, Michael Droettboom
 #   ifdef PINK_HAVE_NUMPY
 
-    namespace detail {
-
-      template<>
-      const int numpy_type_map<float>::typenum = NPY_FLOAT;
-
-      template<>
-      const int numpy_type_map<std::complex<float> >::typenum = NPY_CFLOAT;
-
-      template<>
-      const int numpy_type_map<double>::typenum = NPY_DOUBLE;
-
-      template<>
-      const int numpy_type_map<std::complex<double> >::typenum = NPY_CDOUBLE;
-
-      template<>
-      const int numpy_type_map<long double>::typenum = NPY_LONGDOUBLE;
-
-      template<>
-      const int numpy_type_map<std::complex<long double> >::typenum = NPY_CLONGDOUBLE;
-
-      template<>
-      const int numpy_type_map<boost::int8_t>::typenum = NPY_INT8;
-
-      template<>
-      const int numpy_type_map<boost::uint8_t>::typenum = NPY_UINT8;
-
-      template<>
-      const int numpy_type_map<boost::int16_t>::typenum = NPY_INT16;
-
-      template<>
-      const int numpy_type_map<boost::uint16_t>::typenum = NPY_UINT16;
-
-      template<>
-      const int numpy_type_map<boost::int32_t>::typenum = NPY_INT32;
-
-      template<>
-      const int numpy_type_map<boost::uint32_t>::typenum = NPY_UINT32;
-
-      template<>
-      const int numpy_type_map<boost::int64_t>::typenum = NPY_INT64;
-
-      template<>
-      const int numpy_type_map<boost::uint64_t>::typenum = NPY_UINT64;
-      
-    }   // namespace detail
-
-
-
-    
-    
-    
-        
     boost::python::object
     numpy2pink( boost::python::object & array )
     {
@@ -97,23 +36,23 @@ namespace pink {
       PyArrayObject* original_array = reinterpret_cast<PyArrayObject*>(array.ptr());
       
       if (PyArray_TYPE(original_array) == NPY_UINT8) {
-        char_image image = numpy2pink_detail<char_image>(array);
+        char_image image = detail::numpy2pink<char_image>(array);
         return boost::python::object(image);        
       }      
       else if (PyArray_TYPE(original_array) == NPY_UINT16) {        
-        short_image image = numpy2pink_detail<short_image>(array);
+        short_image image = detail::numpy2pink<short_image>(array);
         return boost::python::object(image);
       }
       else if (PyArray_TYPE(original_array) == NPY_INT32) {
-        int_image image = numpy2pink_detail<int_image>(array);
+        int_image image = detail::numpy2pink<int_image>(array);
         return boost::python::object(image);
       }
       else if (PyArray_TYPE(original_array) == NPY_FLOAT) {
-        float_image image = numpy2pink_detail<float_image>(array);
+        float_image image = detail::numpy2pink<float_image>(array);
         return boost::python::object(image);
       }
       else if (PyArray_TYPE(original_array) == NPY_DOUBLE) {
-        double_image image = numpy2pink_detail<double_image>(array);
+        double_image image = detail::numpy2pink<double_image>(array);
         return boost::python::object(image);
       }
       else
