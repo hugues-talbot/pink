@@ -22,7 +22,6 @@ void genball_export();
 void
 pyprimitives () {
 
-  using pink::type;
   using pink::allocdef;
   using pink::resultdef;
   using pink::functiondef;
