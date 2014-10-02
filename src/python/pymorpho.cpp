@@ -111,7 +111,6 @@ void opening_export();
 
 void pymorpho()
 {
-  using pink::type;
   using pink::allocdef;
   using pink::resultdef;
   using pink::functiondef;
