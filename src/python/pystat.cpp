@@ -21,7 +21,6 @@
 void pystat()
 {
 
-  using pink::type;
   using pink::allocdef;
   using pink::resultdef;
   using pink::exportdef;  
