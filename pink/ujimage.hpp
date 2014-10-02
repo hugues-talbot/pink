@@ -447,7 +447,7 @@ namespace pink
       m_xvimage.reset( other, freeheader );        
       m_data.reset( reinterpret_cast<char*>(other->image_data), deleter_t(m_garbage_collection, cstylefree) );
       
-      m_size = { other->col_size, other->row_size, other->depth_size, other->time_size };
+      m_size = { other->row_size, other->col_size, other->depth_size, other->time_size };
       if (m_size[3]==1) m_size.pop_back();
       if (m_size[2]==1) m_size.pop_back();
       if (m_size[1]==1) m_size.pop_back();
@@ -477,8 +477,8 @@ namespace pink
       index_t rs = 1;
       index_t cs = 1;
       index_t ds = 1;      
-      if (nd>0) rs = m_size[1];
-      if (nd>1) cs = m_size[0];
+      if (nd>0) rs = m_size[0];
+      if (nd>1) cs = m_size[1];
       if (nd>2) ds = m_size[2];
       
       xvimage * tmp = allocheader( NULL, rs, cs, ds, numpy2pink_type(type) );
@@ -576,10 +576,8 @@ namespace pink
       _assert(nd>=2);
       
       boost::scoped_array<npy_intp> dims( new npy_intp[nd] );
-      dims[0] = size()[1];
-      dims[1] = size()[0];      
       
-      for ( index_t q=2; q<nd; ++q ) dims[q] = size()[q];
+      for ( index_t q=0; q<nd; ++q ) dims[q] = size()[q];
 
       PyObject * numpy_array =
         PyArray_SimpleNewFromData (
