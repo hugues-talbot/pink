@@ -477,8 +477,8 @@ namespace pink
       index_t rs = 1;
       index_t cs = 1;
       index_t ds = 1;      
-      if (nd>0) rs = m_size[0];
-      if (nd>1) cs = m_size[1];
+      if (nd>0) rs = m_size[1];
+      if (nd>1) cs = m_size[0];
       if (nd>2) ds = m_size[2];
       
       xvimage * tmp = allocheader( NULL, rs, cs, ds, numpy2pink_type(type) );
