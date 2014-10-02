@@ -573,8 +573,13 @@ namespace pink
       disable_garbage_collection();
 
       index_t nd = size().size();
+      _assert(nd>=2);
+      
       boost::scoped_array<npy_intp> dims( new npy_intp[nd] );
-      for ( index_t q=0; q<nd; ++q ) dims[q] = size()[q];
+      dims[0] = size()[1];
+      dims[1] = size()[0];      
+      
+      for ( index_t q=2; q<nd; ++q ) dims[q] = size()[q];
 
       PyObject * numpy_array =
         PyArray_SimpleNewFromData (
@@ -637,7 +642,12 @@ namespace pink
       // here comes the cloning of not-inherited variables
       // intentionally left empty
     }
-    
+
+    image( boost::python::object object ) : cxvimage(object) {
+      // here comes the cloning of not-inherited variables
+      // intentionally left empty
+    }
+        
     pixel_t &
     operator() ( const index_t & x ) {
       _assert(!this->isnull());
@@ -676,14 +686,12 @@ namespace pink
 
     const pixel_t &
     operator() ( std::vector<index_t> & pos ) const {
-      pixel_t * data = reinterpret_cast<pixel_t*>(m_data.get());
-      return data[position( size(), pos )];
+      return this->pdata<pixel_t>()[position( size(), pos )];
     }
 
     pixel_t &
     operator() ( std::vector<index_t> & pos ) {
-      pixel_t * data = reinterpret_cast<pixel_t*>(m_data.get());
-      return data[position( size(), pos )];
+      return this->pdata<pixel_t>()[position( size(), pos )];
     }
 
     noconst_image_iterator<pixel_t> begin() { return noconst_image_iterator<pixel_t>( 0, this );  }
