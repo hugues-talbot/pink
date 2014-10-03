@@ -28,17 +28,15 @@
    in every point where the function is defined
    the step is considered to be 1 so far*/
 
- //PTR<vector<uiVal_type> > uiDerivate( vector<uiVal_type> & values );
- //PTR<uiScalarField> uiGradientAbs( PTR<uiScalarField> & f );
- //PTR<uiScalarField> uiDirectionalGrad( PTR<uiScalarField> & f );
- //PTR<uiScalarField> uiDirGradSpecial( PTR<uiScalarField> & f );
+#include <boost/python.hpp>
 
 #include "ujimage.hpp"
 
 namespace pink {
 
   float_image uiGradientAbs( const float_image & f );
-
+  boost::python::object pyuiGradientAbs( boost::python::object f );
+  
 };
 
 
