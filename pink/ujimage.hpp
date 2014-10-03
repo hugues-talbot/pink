@@ -343,7 +343,7 @@ namespace pink
       m_size = size;
       
       while (size.size()<3) size.push_back(1);
-      xvimage * tmp = allocheader( NULL, size[1], size[0], size[2], type );
+      xvimage * tmp = allocheader( NULL, size[0], size[1], size[2], type );
 
       if (!tmp) pink_error("Couldn't allocate the image 014");
       tmp->image_data = reinterpret_cast<void*>(data.get());      
@@ -363,7 +363,7 @@ namespace pink
       m_size = size;
       
       while (size.size()<3) size.push_back(1);
-      xvimage * tmp = allocheader( NULL, size[1], size[0], size[2], type );
+      xvimage * tmp = allocheader( NULL, size[0], size[1], size[2], type );
  
       if (!tmp) pink_error("Couldn't allocate the image 014");
       m_xvimage.reset( tmp, freeheader );
@@ -380,7 +380,7 @@ namespace pink
       _assert(size[0]>0);
       m_size = size;
       while (size.size()<3) size.push_back(1);
-      xvimage * tmp = allocheader( NULL, size[1], size[0], size[2], type );
+      xvimage * tmp = allocheader( NULL, size[0], size[1], size[2], type );
 
       if (!tmp) pink_error("Couldn't allocate the image 016");
 
