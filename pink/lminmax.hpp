@@ -59,10 +59,8 @@ namespace pink {
     typedef typename image_type::pixel_type pixel_type;
     
     std::pair<pixel_type, pixel_type> result;
-    
-    
-    std::pair< const pixel_type * , const pixel_type *> 
-      tmp = boost::minmax_element( (&I(0)), (&I(pink::prod(I.size()))) ); // here the prod is the correct position because it iterates up to
+        
+    auto tmp = boost::minmax_element( I.begin(), I.end() ); // here the prod is the correct position because it iterates up to
 
     result.first = (*tmp.first);
     result.second = (*tmp.second);
