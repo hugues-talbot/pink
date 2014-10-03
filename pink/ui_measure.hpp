@@ -28,28 +28,24 @@ namespace pink {
   lmeasure( const image_type image )
   {
 
+    writeimage( image, "_m_01_image.pgm" );    
     image_type result;
     
-    result = image.clone();
-    
-    float min, max;
-
-    auto mm = lminmaxval(image);
-
-    min = mm.first;
-    max = mm.second;
-    
-    if ( min == max ) pink_error("All pixels are equal in the image.");
-    
     result = normalize<image_type, 0, 1>(image);
+    writeimage( result, "_m_03_normalized.pgm" );    
     
     result = uiGradientAbs(result);
+    writeimage( result, "_m_04_grad.pgm" );    
 
     for ( auto & pixel : result )
       pixel =  1. / ( epsilon + pixel );
+
+    writeimage( result, "_m_05_meas.pgm" );
     
     result = normalize<image_type, 0, 1>(result);
-    
+
+    writeimage( result, "_m_06_res.pgm" );
+
     return result;    
   } /* lmeasure*/ 
 
@@ -71,10 +67,12 @@ namespace pink {
   template <class image_type>
   boost::python::object
   pymeasure( boost::python::object image ) {
-    auto p0 = python::detail::numpy2pink<image_type>(image);
+    
+    image_type p0(image);
 
     auto result = lmeasure<image_type>(p0);
-
+    writeimage( result, "_final_result.pgm" );
+    
     return result.steel();
   }
     
