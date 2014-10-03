@@ -21,30 +21,22 @@
 namespace pink {
 
   const double epsilon=0.00001;  
-
  
   template <class image_type>
   image_type
   lmeasure( const image_type image )
   {
 
-    writeimage( image, "_m_01_image.pgm" );    
     image_type result;
     
     result = normalize<image_type, 0, 1>(image);
-    writeimage( result, "_m_03_normalized.pgm" );    
     
     result = uiGradientAbs(result);
-    writeimage( result, "_m_04_grad.pgm" );    
 
-    for ( auto & pixel : result )
+    for ( auto & pixel : grad )
       pixel =  1. / ( epsilon + pixel );
 
-    writeimage( result, "_m_05_meas.pgm" );
-    
-    result = normalize<image_type, 0, 1>(result);
-
-    writeimage( result, "_m_06_res.pgm" );
+    result = normalize<image_type, 0, 1>(grad);
 
     return result;    
   } /* lmeasure*/ 
