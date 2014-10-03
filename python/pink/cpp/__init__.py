@@ -17,6 +17,7 @@
 from libcpp_pink import *
 from libcpp_pink.IO import *
 from libcpp_pink.complex import *
+from libcpp_pink.connex import *
 from libcpp_pink.histo import *
 from libcpp_pink.morpho import *
 from libcpp_pink.segmentation import *
