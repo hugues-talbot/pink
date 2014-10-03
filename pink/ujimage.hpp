@@ -602,9 +602,7 @@ namespace pink
 
   }; // class cxvimage
   
-  template <class pixel_t>  class image_iterator;
-  template <class pixel_t>  class const_image_iterator;
-  template <class pixel_t>  class noconst_image_iterator;
+  template <class image_t, class pixel_t>  class image_iterator;
   
   template <class pixel_t>
   class image : public cxvimage {
@@ -690,10 +688,10 @@ namespace pink
       return this->pdata<pixel_t>()[position( size(), pos )];
     }
 
-    noconst_image_iterator<pixel_t> begin() { return noconst_image_iterator<pixel_t>( 0, this );  }
-    noconst_image_iterator<pixel_t> end() { return noconst_image_iterator<pixel_t>( prod(size()), this ); }
-    const_image_iterator<pixel_t> begin() const { return const_image_iterator<pixel_t>( 0, this ); }
-    const_image_iterator<pixel_t> end() const { return const_image_iterator<pixel_t>( prod(size()), this ); }
+    image_iterator<      image<pixel_t>,       pixel_t> begin()       { return image_iterator<      image<pixel_t>,       pixel_t > ( 0,            this ); }
+    image_iterator<      image<pixel_t>,       pixel_t> end()         { return image_iterator<      image<pixel_t>,       pixel_t > ( prod(size()), this ); }
+    image_iterator<const image<pixel_t>, const pixel_t> begin() const { return image_iterator<const image<pixel_t>, const pixel_t > ( 0,            this ); }
+    image_iterator<const image<pixel_t>, const pixel_t> end()   const { return image_iterator<const image<pixel_t>, const pixel_t > ( prod(size()), this ); }
 
     image<pixel_t> clone () const {
       // std::cout << "image::<pixel_t>::clone start" << std::endl;      
@@ -777,78 +775,48 @@ namespace pink
   }; // class image
 
   
-  template <class pixel_t>
-  class noconst_image_iterator
+  template <class image_t, class pixel_t>
+  class image_iterator
     : public std::iterator<std::bidirectional_iterator_tag, index_t >{
 
   private:
     index_t m_pos;
-    image<pixel_t> * pm_object;
+    image_t * pm_object;
+    mutable std::vector<index_t> m_vpos;    
 
   public:
 
-    noconst_image_iterator() : m_pos(-1), pm_object(NULL) { }    
+    // image_iterator() : m_pos(-1), pm_object(NULL) { }    
 
-    noconst_image_iterator( const index_t & pos, image<pixel_t> * p_object )
-      : m_pos(pos), pm_object(p_object)  { }
+    image_iterator( const index_t & pos, image_t * p_object )
+      : m_pos(pos), pm_object(p_object), m_vpos(p_object->size())  { }
     
     pixel_t & operator * () { return (*pm_object)(m_pos); } // operator *
 
-    noconst_image_iterator<pixel_t> & operator ++ () { ++m_pos; return *this; } // ++I
+    const pixel_t & operator * () const { return (*pm_object)(m_pos); } // operator *
+    
+    image_iterator<image_t, pixel_t> & operator ++ () { ++m_pos; return *this; } // ++I
 
-    noconst_image_iterator<pixel_t> operator ++ (int) { noconst_image_iterator result(*this); m_pos++; return result; } // I++
+    image_iterator<image_t, pixel_t> operator ++ (int) { image_iterator result(*this); m_pos++; return result; } // I++
 
-    noconst_image_iterator<pixel_t> & operator -- () { --m_pos; return *this; } // --I
+    image_iterator<image_t, pixel_t> & operator -- () { --m_pos; return *this; } // --I
 
-    noconst_image_iterator<pixel_t> operator -- (int) { noconst_image_iterator result(*this); m_pos--; return result;  } // I--
+    image_iterator<image_t, pixel_t> operator -- (int) { image_iterator result(*this); m_pos--; return result;  } // I--
 
-    bool operator == ( noconst_image_iterator const& rhs ) const { return (rhs.m_pos == m_pos); }
+    bool operator == ( image_iterator<image_t, pixel_t> const& rhs ) const { return (rhs.m_pos == m_pos); }
         
-    bool operator!=( noconst_image_iterator const& rhs) const { return !(*this==rhs); }
+    bool operator!=  ( image_iterator<image_t, pixel_t> const& rhs) const { return !(*this==rhs); }
 
     const index_t & row () const { pink_error("IMPLEMENT ME!!!"); }
     const index_t & col () const { pink_error("IMPLEMENT ME!!!"); }
     const index_t & depth () const { pink_error("IMPLEMENT ME!!!"); }
     const index_t & pos () const { pink_error("IMPLEMENT ME!!!"); }
-    const std::vector<index_t> & vpos () const { pink_error("IMPLEMENT ME!!!"); }
+    const std::vector<index_t> & vpos () const {
+      next_step(pm_object->size(), m_pos, m_vpos);
+      return m_vpos;
+    }
     
   }; // class const_image_iterator
-
-  template <class pixel_t>
-  class const_image_iterator
-    : public std::iterator<std::bidirectional_iterator_tag, index_t >{
-
-  private:
-    index_t m_pos;
-    const image<pixel_t> * pm_object;
-
-  public:
-
-    const_image_iterator() : m_pos(-1), pm_object(NULL) { }    
-
-    const_image_iterator( const index_t & pos, const image<pixel_t> * p_object )
-      : m_pos(pos), pm_object(p_object)  { }
-    
-    const pixel_t & operator * () { return (*pm_object)(m_pos); } // operator *
-
-    const_image_iterator<pixel_t> & operator ++ () { ++m_pos; return *this; } // ++I
-
-    const_image_iterator<pixel_t> operator ++ (int) { const_image_iterator result(*this); m_pos++; return result; } // I++
-
-    const_image_iterator<pixel_t> & operator -- () { --m_pos; return *this; } // --I
-
-    const_image_iterator<pixel_t> operator -- (int) { const_image_iterator result(*this); m_pos--; return result;  } // I--
-
-    bool operator == ( const_image_iterator<pixel_t> const& rhs ) const { return (rhs.m_pos == m_pos); }
-        
-    bool operator!=( const_image_iterator<pixel_t> const& rhs) const { return !(*this==rhs); }
-
-    index_t row () const { pink_error("IMPLEMENT ME!!!"); }
-    index_t col () const { pink_error("IMPLEMENT ME!!!"); }
-    index_t depth () const { pink_error("IMPLEMENT ME!!!"); }
-    
-  }; // class const_image_iterator
-
     
   
   /**
