@@ -53,7 +53,7 @@ pyutil()
 
   functiondef( "shencastan", lshencastan, (arg("image"), arg("beta")), doc__shencastan__c__ );
 
-  allocdef( "gradientabs", pink::uiGradientAbs, (arg("image")), doc__gradient_abs__cpp__ );
+  def( "gradientabs", pink::pyuiGradientAbs, (arg("image")), doc__gradient_abs__cpp__ );
 
   def( "measure", pink::pymeasure<pink::float_image>, (arg("image")), doc__measure__cpp__    );
 
