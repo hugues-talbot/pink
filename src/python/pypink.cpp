@@ -119,6 +119,7 @@ void pywshed();
 void pysignal();
 void pymorpho();
 void pycomplex();
+void pyconnect();
 void pyarithmetic();
 void pyconversion();
 void pyprimitives();
@@ -199,7 +200,8 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   pywshed();  
   pysignal();  
   pymorpho();
-  pycomplex();  
+  pycomplex();
+  pyconnect();  
   pyarithmetic();
   pyconversion();
   pyprimitives();
