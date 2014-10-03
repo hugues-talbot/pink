@@ -359,19 +359,9 @@ namespace pink {
   {
 
     FOR( q, m_length_glob ) 
-    {
-      if ( m_src_sink(q) == 1 ) 
-      {
-	m_potencial(q)=1.; 
-      }
-      else /* NOT  (*srcsink) == 1. */
-      {
-	if ( m_src_sink(q)==255 )
-	{ 
-	  m_potencial(q)=0.;	
-	} /* if (*srcsink) == -1. */
-      } /* NOT (*srcsink) == 1.  */
-    } /* FOR */
+      if ( m_src_sink(q) == 255 )  m_potencial(q)=1.; 
+      else if ( m_src_sink(q)==1 ) m_potencial(q)=0.;	
+
   } /* maxmax_flow::upDateSrcSink */
   
 
@@ -585,46 +575,34 @@ namespace pink {
     m_flow_calculated(false),
     m_number_of_threads(number_of_threads)
   {
-    std::cout << "max01" << std::endl;
-    
 #   ifdef UJIMAGE_DEBUG
     std::cout << "creating the max_flow object (" << static_cast<void*>(this) << ")" << std::endl;	
 #   endif /* UJIMAGE_DEBUG */        
 
     m_potencial.reset(gg.size()); // "m_potencial";
     pink::fill(m_potencial, 0.);
-
-    std::cout << "max02" << std::endl;
     
     if (( this->m_number_of_threads == 0 ) || (this->m_number_of_threads > boost::thread::hardware_concurrency() ))
     {
       this->m_number_of_threads = boost::thread::hardware_concurrency();            
     }
 
-    std::cout << "max03" << std::endl;
-    
     // Now we copy the pointers to global variables, so the threads can see them.
     // boost::shared_ptr is boost's 'shared_array' smart pointer.
     this->m_gg = gg.clone();
     m_g_glob = this->m_gg.get();    
     m_flow_glob.reset(new pixel_type[ m_d * m_length_glob ]);
 
-    std::cout << "max04" << std::endl;
-    
     //cleaning the flow
     FOR( q,  m_d * m_length_glob)
     {
       m_flow_glob[q]=0.;
     } /* end of parallel FOR */
     
-    std::cout << "max05" << std::endl;
-    
     // making 
     m_src_sink = SS.clone();
     //int dim [d];
     m_dim.reset(new std::vector<index_t>(m_potencial.size()));
-    
-    std::cout << "max06" << std::endl;
     
     if (verbose)
     {      
@@ -637,8 +615,6 @@ namespace pink {
       std::cout << "threads     = " << this->m_number_of_threads << " (of " << boost::thread::hardware_concurrency() << ")" <<  std::endl;
     } /* if verbose */
 
-    std::cout << "max07" << std::endl;
-    
     //// --------------------- setting up source -------------------------------------------
 
     if (verbose)
@@ -646,26 +622,13 @@ namespace pink {
     
     pixel_type *ps;
     uint8_t *ss;
-    std::cout << "max08" << std::endl;
     		
     ss = &( m_src_sink(0) );
     ps = &( m_potencial(0));
 
-    FOR(q, m_length_glob) {
-      if ( ss[q] == 1 ) 
-      {
-	ps[q]=1.; 
-      } /* ( *ss == 1. ) */
-      else /* NOT ( *ss == 1. ) */
-      {
-	if ( ss[q]==255 )
-	{ 
-	  ps[q]=0.;	
-	} /* if ( *ss==-1. ) */
-      } /* NOT ( *ss == 1. ) */
-    } /* end of parallel FOR */
-
-    std::cout << "max09" << std::endl;
+    FOR(q, m_length_glob) 
+      if ( ss[q] == 255 ) ps[q]=1.; 
+      else if ( ss[q]==1 ) ps[q]=0.;	
     
     //// --------------------- breaking the fields into dibbles ----------------------------
 
@@ -679,8 +642,6 @@ namespace pink {
 	
     uiCreateDibbles();
 
-    std::cout << "max10" << std::endl;
-    
     if (verbose)
       std::cout << "the initialization is finished" << std::endl;
   } /*   max_flow<image_type>::max_flow */	
@@ -998,7 +959,7 @@ namespace pink {
     )
   {
     max_flow<image_type> obj(
-      frame_around(SS, -1),
+      frame_around(SS, 1 ),
       frame_around(gg, 0.),
       iteration,
       glob_tau,
@@ -1036,33 +997,19 @@ namespace pink {
     bool       debug = false    
     )
   {
-    std::cout << "ici01" << std::endl;    
     char_image SS(pySS);    
     image_type gg(pygg);
-    std::cout << "SS.size().size() = " << SS.size().size() << std::endl;
-    std::cout << "gg.size().size() = " << gg.size().size() << std::endl;
     
-    std::cout << "ici02" << std::endl;          
-    max_flow<image_type> obj( frame_around(SS, -1), frame_around(gg, 0.), iteration, glob_tau, number_of_threads, packet_size, verbose );
-    std::cout << "ici02a" << std::endl;          
+    max_flow<image_type> obj( frame_around(SS, 1), frame_around(gg, 0.), iteration, glob_tau, number_of_threads, packet_size, verbose );
     image_type rimage = frame_remove(obj.start());
-    std::cout << "ici03" << std::endl;          
 
     if (debug)
     {
-      std::cout << "ici04" << std::endl;          
-          
-      boost::python::tuple result = boost::python::make_tuple(rimage, obj.m_time);
-      std::cout << "ici05" << std::endl;          
+      boost::python::tuple result = boost::python::make_tuple(rimage.steel(), obj.m_time);
       return result;
     }
     else /* NOT debug */
-    {
-      std::cout << "ici06" << std::endl;          
-      boost::python::object result(rimage);
-      std::cout << "ici07" << std::endl;          
-      return result;        
-    } /* NOT debug */
+      return rimage.steel();      
 
   } /* maxflow_float */
 
