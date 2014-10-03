@@ -114,7 +114,10 @@ namespace pink
 #   endif /* UJIMAGE_DEBUG */
     index_t d = f.size().size();
     float_image result(f.size());
-  
+
+    // clean the image
+    for ( auto & val : result ) val = 0.;    
+    
     FOR( q, d )
     {
       FOR(w, pink::prod_except(f.size(), q))
