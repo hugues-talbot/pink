@@ -33,10 +33,10 @@ namespace pink {
     
     result = uiGradientAbs(result);
 
-    for ( auto & pixel : grad )
+    for ( auto & pixel : result )
       pixel =  1. / ( epsilon + pixel );
 
-    result = normalize<image_type, 0, 1>(grad);
+    result = normalize<image_type, 0, 1>(result);
 
     return result;    
   } /* lmeasure*/ 

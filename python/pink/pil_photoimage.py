@@ -15,6 +15,7 @@ Python Tkinter visualisation
 """
 
 from pink import python_component_missing
+from numpy import copy
 
 try:
     from PIL import Image, ImageTk
@@ -24,10 +25,12 @@ except:
 
 
 def to_photoimage(image, master=0):
+    tmpimage = copy(image)
+    tmpimage.shape = (image.shape[1], image.shape[0])
     if master==0:
-        return ImageTk.PhotoImage(Image.fromarray(image))
+        return ImageTk.PhotoImage(Image.fromarray(tmpimage))
     else:
-        return ImageTk.PhotoImage(Image.fromarray(image), master=master )
+        return ImageTk.PhotoImage(Image.fromarray(tmpimage), master=master )
 
 def to_rgb_photoimage(images, master=0):
     assert( len(images)==3 )
