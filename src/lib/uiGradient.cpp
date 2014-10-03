@@ -139,6 +139,17 @@ namespace pink
     return result;
   } /* uiGradientAbs */
 
+  boost::python::object
+  pyuiGradientAbs( boost::python::object pyimage ) {
+    float_image image(pyimage);
+
+    float_image result = uiGradientAbs(image);
+
+    return result.steel();    
+  }
+  
+
+  
 // directional gradient ------------------------------------------------------------------------------------------------
 
   const double Pi = 3.141592653589793;
