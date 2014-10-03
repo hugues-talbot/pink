@@ -27,7 +27,6 @@
 void
 pyhisto() {
 
-  using pink::type;
   using pink::allocdef;
   using pink::resultdef;
   using pink::functiondef;
