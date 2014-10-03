@@ -24,7 +24,6 @@
 void pyarithmetic()
 {
 
-  using pink::type;
   using pink::allocdef;
   using pink::resultdef;
   using pink::functiondef;
