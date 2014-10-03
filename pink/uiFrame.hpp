@@ -16,6 +16,7 @@
 #include "mcimage.h"
 #include "ujimage.hpp"
 #include <boost/thread.hpp>
+#include <boost/python.hpp>
 #include <boost/smart_ptr.hpp>
 
 namespace pink { 
@@ -45,25 +46,43 @@ namespace pink {
     )
   {
     std::vector<index_t> new_size(src_image.size());
-    
+
     // calculating the size of the framed image
     for ( auto & coord : new_size ) coord += 2;
     
     image_type result(new_size);
+    index_t q = 0;
 
     for ( auto pixel = result.begin(); pixel != result.end(); ++pixel )
-    {
+    {      
       std::vector<index_t> pos = pixel.vpos();
+
       if (pink::on_side(new_size, pos))
         *pixel = withval;
       else
       {
         std::vector<index_t> source(pos);
-        for ( auto & coord : source ) coord+=1;
-        *pixel = src_image(source);        
+        for ( auto & coord : source ) coord-=1;
+        *pixel = src_image(source);
       }
     }
+
+    return result;    
   }
+
+  template <class image_type>
+  boost::python::object
+  pyframe_around(
+    boost::python::object pyimage,
+    typename image_type::pixel_type withval
+    )
+  {
+    image_type image(pyimage);
+    image_type result = frame_around<image_type>(image, withval);
+
+    return result.steel();    
+  }
+  
   
   template <class image_type>
   image_type
