@@ -20,6 +20,7 @@
 #include "lzoom.h"
 #include "loffset.h"
 #include "lzoomint.h"
+#include "uiFrame.hpp"
 #include "ujimage.hpp"
 #include "lattribute.h"
 #include "python_doc.h"
@@ -130,6 +131,8 @@ pygeom () {
 
   functiondef( "frame", lsetframe, ( arg("image"), arg("value")=NDG_MAX ), doc__frame__c__ );
 
+  def( "frame_around", pink::pyframe_around<pink::char_image>, (arg("image"), arg("withval")=255), doc__frame__c__ );
+  
   // NOTE: affine's using copyimage
   resultdef( VFF_TYP_1_BYTE, "affine", laffinetransformation, ( arg("image"), arg("hx"), arg("hy"), arg("theta"), arg("tx"), arg("ty")), doc__affine__c__ );
 
