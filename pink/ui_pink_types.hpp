@@ -179,6 +179,7 @@ namespace pink
   } /* vint::position */
 
 
+  
   template <class T0, class T1>
   void
   fill( T0 & t0, const T1 & t1 ) {
@@ -222,6 +223,34 @@ namespace pink
     return;
   } // next_step
 
+  template <class T0>
+  bool
+  next_step_it( const T0 & size, T0 & pos ) {
+    index_t d = size.size();
+    index_t q = 0;
+    
+    while ( ( pos[q] >= size[q] - 1) && ( q < d-1 ) ) 
+    {
+      q++;
+    }
+  
+    if ( (q == d-1) && (pos[q] >= size[q] - 1) )
+    {
+      return false;
+    }
+  
+    pos[q] += 1;
+    
+    while (q > 0) 
+    {
+      q--;
+      pos[q]=0;    
+    }
+  
+    return true;
+
+  } // next_step_it
+  
 
   template <class T0>
   inline T0
