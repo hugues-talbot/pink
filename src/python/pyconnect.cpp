@@ -34,6 +34,41 @@
 //   );
 
 
+boost::python::object
+pylabeldil( boost::python::object pyimage, boost::python::object pyse, index_t x, index_t y ) {
+  pink::cxvimage image(pyimage);
+  pink::cxvimage se(pyse);  
+  pink::cxvimage result( VFF_TYP_4_BYTE, image.size() );
+  int32_t nblabels;  
+  if (!llabeldil( image, se, x, y, result, &nblabels)) pink_error("llabeldil failed (4352).");
+
+  return boost::python::make_tuple( result.steel(), nblabels );  
+}
+
+boost::python::object
+pylabeldilshort( boost::python::object pyimage ) {
+  pink::cxvimage image(pyimage);
+  
+  // four connex
+  uint8_t pse [] = { 0, 1, 0, 1, 1, 1, 0, 1, 0 };
+  pink::cxvimage se( pink::pinktype<uint8_t>(), {3, 3}, reinterpret_cast<char*>(pse) );
+  
+  pink::cxvimage result( VFF_TYP_4_BYTE, image.size() );
+  std::cout << "image.size()[0] = " << image.size()[0] << std::endl;
+  std::cout << "image.size()[1] = " << image.size()[1] << std::endl;
+  std::cout << "result.size()[0] = " << result.size()[0] << std::endl;
+  std::cout << "result.size()[1] = " << result.size()[1] << std::endl;
+  
+  int32_t nblabels;  
+  if (!llabeldil( image, se, 1, 1, result, &nblabels)) pink_error("llabeldil failed (4353).");
+
+  return boost::python::make_tuple( result.steel(), nblabels );  
+}
+
+
+
+
+
 void
 pyconnect()
 {
@@ -84,6 +119,10 @@ pyconnect()
   resultdef( VFF_TYP_4_BYTE, "planarity", lplanarity, ( arg("image"), arg("connex") ), doc__planarity__c__ );
 
   functiondef( "labelextrema",  llabelextrema,  ( arg("image"), arg("connex"), arg("function"), arg("result"), arg("nblabels") ), doc__label__c__ );
+
+  def( "labeldil", pylabeldil, (arg("image"), arg("structuring element"), arg("x"), arg("y") ), doc__labeldil__c__ );
+
+  def( "labeldil", pylabeldilshort, (arg("image") ), doc__labeldil__c__ );
 
 } // pyconnect
 
