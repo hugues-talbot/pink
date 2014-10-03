@@ -263,8 +263,8 @@ namespace pink
   prod_except( const std::vector<T0> & input, const index_t & skip ) {
     T0 prod = 1;
 
-    index_t q = 0;
-    for ( auto & val : input ) if (q++!=skip) prod *= val;
+    for (index_t q = 0; q<input.size(); q++ ) 
+      if (q!=skip) prod *= input[q];      
     
     return prod;
   } // prod_except
@@ -281,6 +281,7 @@ namespace pink
     
     return;  
   } // pick
+
 
   
   namespace types
