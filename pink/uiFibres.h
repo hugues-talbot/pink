@@ -21,7 +21,6 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
-#include <sqlite3.h>
 #include <math.h>
 
 // In uiGradient.cpp

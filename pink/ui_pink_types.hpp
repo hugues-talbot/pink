@@ -35,7 +35,6 @@
 #include <iostream>
 
 #include "mcimage.h"
-#include "sqlite3.h"
 
 #ifdef UJIMAGE_DEBUG
 # define DEBUG(x) std::cout << "debug: " << BOOST_PP_STRINGIZE(x) << " = " << x << "\n"
