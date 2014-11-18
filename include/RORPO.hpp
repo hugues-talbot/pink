@@ -5,7 +5,9 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
-#include <omp.h>
+#ifdef _OPENMP_
+# include <omp.h>
+#endif // _OPENMP_
 #include <cstdlib>
 
 #include "Get_RPO_Orientations.hpp"

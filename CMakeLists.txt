@@ -90,7 +90,7 @@ else (CMAKE_HOST_UNIX) ## We build with MSVC
 	SET( PINK_LINKING_FLAGS "/STACK:10000000 /machine:x64 /VERBOSE:LIB /NODEFAULTLIB:libcmt.lib" )
     else (64BIT)
 	SET( PINK_LINKING_FLAGS "/STACK:10000000 /machine:x86 /VERBOSE:LIB /NODEFAULTLIB:libcmt.lib" )
-    endif (64BIt)
+    endif (64BIT)
     SET( CMAKE_LINKER_FLAGS ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
     SET( CMAKE_LINKER_FLAGS_RELEASE ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
     SET( CMAKE_MODULE_LINKER_FLAGS ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
@@ -301,12 +301,12 @@ if (DEVELOPMENT)
 
     SET( CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDE} ${EIGEN_INCLUDE} )
 
-    CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/Core HTEST12 ${CMAKE_REQUIRED_FLAGS} )
+    CHECK_INCLUDE_FILE_CXX( Eigen/Core HTEST12 ${CMAKE_REQUIRED_FLAGS} )
     if (NOT HTEST12)
  	message( FATAL_ERROR "error eigen2/Eigen/Core does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST12)
 
-    CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/LU HTEST14  ${CMAKE_REQUIRED_FLAGS} )
+    CHECK_INCLUDE_FILE_CXX( Eigen/LU HTEST14  ${CMAKE_REQUIRED_FLAGS} )
     if (NOT HTEST14)
  	message( FATAL_ERROR "error eigen2/Eigen/LU does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST14)

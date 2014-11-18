@@ -1,11 +1,16 @@
 #include <iostream>
-#include <omp.h>
 #include <vector>
+
+#ifdef _OPENMP_
+# include <omp.h>
+# define OMP
+#endif // _OPENMP_
+
 
 #include "min_modif.hpp"
 #include "Path_Opening.hpp"
 
-#define OMP
+
 
 
 template<typename T>

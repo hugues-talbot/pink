@@ -1,5 +1,6 @@
 #include "../include/NonLocalFilterSioux.h"
 
+#include <algorithm>
 #include <math.h>
 #include <stdlib.h>
 #include <iostream>

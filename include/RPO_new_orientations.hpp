@@ -9,7 +9,10 @@
 #include <queue>
 #include <algorithm>
 #include <iostream>
-#include <omp.h>
+
+#ifdef _OPENMP_
+# include <omp.h>
+#endif
 #include <cstdlib>
 
 #define max(a,b) ((a > b) ? a : b)

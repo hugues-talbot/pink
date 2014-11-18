@@ -12,9 +12,9 @@
 // This is an implementation of optimal ellipse fitting algorithm
 // PoSh
 
-#include <eigen2/Eigen/Core>
-#include <eigen2/Eigen/LU>
-#include <eigen2/Eigen/Geometry>
+#include <Eigen/Core>
+#include <Eigen/LU>
+#include <Eigen/Geometry>
 
 #include <fstream>
 
@@ -28,8 +28,6 @@
 #include "ui_pink_types.hpp"
 #include "ui_fit_circle.hpp"
 
-USING_PART_OF_NAMESPACE_EIGEN
-
 namespace pink
 {
 
@@ -39,7 +37,7 @@ namespace pink
   }
   
   // gives the leading dimension (the size of the longer side) of the matrix
-  int outer_stride( const MatrixXd & mat )
+  int outer_stride( const Eigen::MatrixXd & mat )
   {
     int cols = mat.cols();
     int rows = mat.rows();
@@ -55,7 +53,7 @@ namespace pink
   // The eigenvalues are stored as: (lambda(:, 1) + lambda(:, 2)*i)./lambda(:, 3)
   //
   // returns true on success.
-  bool generalized_eigenvalue(const MatrixXd& A, const MatrixXd& B, MatrixXd& v, MatrixXd& lambda)
+  bool generalized_eigenvalue(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B, Eigen::MatrixXd& v, Eigen::MatrixXd& lambda)
   {
     int Nval = A.cols(); // Number of columns of A and B. Number of rows of v.
     if (B.cols() != Nval  || A.rows()!=Nval || B.rows()!=Nval)
@@ -80,14 +78,14 @@ namespace pink
     dggev_("N", "V", &Nval, A.data(), &LDA, B.data(), &LDB, alphar, alphai, beta, 0, &LDV, v.data(), &LDV, &WORKDUMMY, &LWORK, &INFO);
     
     LWORK = int(WORKDUMMY) + 32;
-    VectorXd WORK(LWORK);
+    Eigen::VectorXd WORK(LWORK);
     
     dggev_("N", "V", &Nval, A.data(), &LDA, B.data(), &LDB, alphar, alphai, beta, 0, &LDV, v.data(), &LDV, WORK.data(), &LWORK, &INFO);
     
     return INFO==0;
   } /* generalized_eigenvalue */
   
-  VectorXd fit_circle( const VectorXd & x, const VectorXd & y, const std::string & filename = "" )
+  Eigen::VectorXd fit_circle( const Eigen::VectorXd & x, const Eigen::VectorXd & y, const std::string & filename = "" )
   {
     bool verbose = (filename != "");
 
@@ -104,15 +102,15 @@ namespace pink
 
     
     // Build desing matrix
-    MatrixXd Dmat(x.size(),4);
-    Dmat << x.cwise()*x + y.cwise()*y, x, y, VectorXd(x.size()).setOnes();
+    Eigen::MatrixXd Dmat(x.size(),4);
+    Dmat << x.array()*x.array() + y.array()*y.array(), x, y, Eigen::VectorXd(x.size()).setOnes();
 
     // Build scatter matrix
-    MatrixXd Smat;
+    Eigen::MatrixXd Smat;
     Smat = Dmat.transpose()*Dmat;
 
     // Build 4x4 constraint matrix
-    MatrixXd Cmat(4,4);
+    Eigen::MatrixXd Cmat(4,4);
     Cmat.setZero();    
     Cmat(1,1)=1;
     Cmat(2,2)=1;
@@ -120,7 +118,7 @@ namespace pink
     Cmat(0,3)=-2;
 
     // Solve generalized eigensystem
-    MatrixXd gevec, geval;    
+    Eigen::MatrixXd gevec, geval;    
     generalized_eigenvalue(Smat, Cmat, gevec, geval);
 
     double max = 1000000000000; 
@@ -139,7 +137,7 @@ namespace pink
       } /* if fabs... */      
     } /* FOR */
     
-    VectorXd result(geval.rows());
+    Eigen::VectorXd result(geval.rows());
 
     FOR (q, geval.rows())
     {
@@ -187,15 +185,15 @@ namespace pink
     const std::string & filename /* = "" */ // default argument specified in the header
     )
   {
-    VectorXd x(boost::python::len(py_x));
-    VectorXd y(boost::python::len(py_y));
+    Eigen::VectorXd x(boost::python::len(py_x));
+    Eigen::VectorXd y(boost::python::len(py_y));
     FOR(q, boost::python::len(py_x))
     {
       x[q]=boost::python::extract<float>(py_x[q]);
       y[q]=boost::python::extract<float>(py_y[q]);
     } /* FOR */
 
-    VectorXd circle=fit_circle(x, y, filename);
+    Eigen::VectorXd circle=fit_circle(x, y, filename);
     boost::python::list result;
 
     FOR(q, circle.size())

@@ -4,7 +4,9 @@
 
 #include <iostream>
 #include <string>
-#include <omp.h>
+#ifdef _OPENMP_
+# include <omp.h>
+#endif
 #include <vector>
 #include <algorithm>
 #include <iterator>
@@ -13,7 +15,10 @@
 
 #undef max
 
-
+#if defined(_MSC_VER)
+# define not !
+# define and &&
+#endif // defined(_MSC_VER)
 typedef unsigned long IndexType;
 
 void Neighbourhood(	int nb_col,
