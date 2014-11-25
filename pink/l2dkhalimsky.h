@@ -36,9 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-#ifndef _MCIMAGE_H
-#include <mcimage.h>
-#endif
+#include "mcimage.h"
 
 extern int32_t l2dmakecomplex(struct xvimage * i);
 extern int32_t l2d_is_complex(struct xvimage * k);

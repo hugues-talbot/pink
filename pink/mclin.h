@@ -42,9 +42,7 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-#ifndef _MCIMAGE_H
-#include <mcimage.h>
-#endif
+#include "mcimage.h"
 
 #define MCLIN_EPSILON 1E-10
 

@@ -200,13 +200,14 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <mccodimage.h>
-#include <mcimage.h>
-#include <mcfah.h>
-#include <mcindic.h>
-#include <mccbt.h>
-#include <llabelextrema.h>
-#include <llpetoporeg.h>
+
+#include "mccodimage.h"
+#include "mcimage.h"
+#include "mcfah.h"
+#include "mcindic.h"
+#include "mccbt.h"
+#include "llabelextrema.h"
+#include "llpetoporeg.h"
 
 #define EN_FAH   0
 #define MINIMUM  1

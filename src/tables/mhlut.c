@@ -24,11 +24,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <mccodimage.h>
-#include <mcimage.h>
-#include <avsimage.h>
-#include <llut.h>
-#include <lhma.h>
+
+#include "mccodimage.h"
+#include "mcimage.h"
+#include "avsimage.h"
+#include "llut.h"
+#include "lhma.h"
 
 /* =============================================================== */
 void twoExpansion(u_int8_t *B, int32_t rs, int32_t cs, int32_t ds) {

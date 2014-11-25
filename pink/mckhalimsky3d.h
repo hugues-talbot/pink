@@ -36,9 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-#ifndef _MCIMAGE_H
-#include <mcimage.h>
-#endif
+#include "mcimage.h"
 
 #define CUBE3D(i,j,k)  ((i%2)+(j%2)+(k%2)==3)
 #define CARRE3D(i,j,k) ((i%2)+(j%2)+(k%2)==2)

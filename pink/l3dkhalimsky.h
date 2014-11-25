@@ -36,9 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-#ifndef _MCIMAGE_H
-#include <mcimage.h>
-#endif
+#include "mcimage.h"
 
 extern int32_t l3dkhalimskize(struct xvimage * i, struct xvimage **k, int32_t mode);
 extern int32_t l3dcolor(struct xvimage * k);

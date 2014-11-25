@@ -54,9 +54,7 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-#ifndef _MCIMAGE_H
-#include <mcimage.h>
-#endif
+#include "mcimage.h"
   
 extern int32_t ldist(struct xvimage *img, int32_t connex, struct xvimage *res);
 extern int32_t ldistbyte(struct xvimage *img, int32_t connex, struct xvimage *res);

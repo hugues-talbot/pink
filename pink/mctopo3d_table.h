@@ -36,9 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-#ifndef _MCIMAGE_H
-#include <mcimage.h>
-#endif
+#include "mcimage.h"
 
 extern void mctopo3d_table_init_topo3d();
 extern void mctopo3d_table_termine_topo3d();

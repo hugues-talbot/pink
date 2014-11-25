@@ -36,9 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-#ifndef _MCIMAGE_H
-#include <mcimage.h>
-#endif
+#include "mcimage.h"
 
 #define CARRE(i,j) ((i%2)+(j%2)==2)
 #define INTER(i,j) ((i%2)+(j%2)==1)

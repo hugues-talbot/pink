@@ -12,10 +12,11 @@ Michel Couprie, août 2006
 #include <stdint.h>
 #include <assert.h>
 #include <math.h>
-#include <mcutil.h>
-#include <mcimage.h>
-#include <mccodimage.h>
-#include <mctopo3d.h>
+
+#include "mcutil.h"
+#include "mcimage.h"
+#include "mccodimage.h"
+#include "mctopo3d.h"
 
 #define SetSimple(x) simplepoint[x/8]|=(1<<(x%8))
 #define IsSimple(x) (simplepoint[x/8]&(1<<(x%8)))
