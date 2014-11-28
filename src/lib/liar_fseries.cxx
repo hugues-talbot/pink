@@ -49,7 +49,6 @@ Running time in independent of the size of the SE.
 #include <sys/types.h>
 #include <stdlib.h>
 
-#include "pink.h"
 #include "liarp.h"
 #include "mcimage.h"
 #include "fseries.hpp"

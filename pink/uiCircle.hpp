@@ -19,7 +19,9 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_interp.h> // uiGradient is using it
-#include <boost/python/list.hpp>
+#ifdef PINK_HAVE_NUMPY
+# include <boost/python/list.hpp>
+#endif /* PINK_HAVE_NUMPY */
 #include <gsl/gsl_multifit_nlin.h> // uiCircle is using it
 
 #include "ui_pink_types.hpp"
@@ -162,12 +164,13 @@ namespace pink {
     float circle_tangent( const vector & v_x, const vector & v_y, float x );
     
 
+#   ifdef PINK_HAVE_NUMPY
     // same as circle tangent, just for python
     float py_circle_tangent( const boost::python::list & py_x,
                              const boost::python::list & py_y,
                              float x
       );
-    
+#   endif /* PINK_HAVE_NUMPY */
   } /* namespace gsl */  
 } /* end namespace pink */
 

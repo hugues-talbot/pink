@@ -10,6 +10,7 @@
 
 #include <cmath>
 #include "liarp.h"
+#include "ui_pink_types.hpp"
 
 /** \brief opening by union of lines
  * 

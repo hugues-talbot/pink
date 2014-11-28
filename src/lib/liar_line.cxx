@@ -53,12 +53,12 @@ for instance openings by unions of line and closings by intersection of lines.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <mccodimage.h>
-#include <mcimage.h>
 
-#include "pink.h"
+#include "mccodimage.h"
+#include "mcimage.h"
 #include "liarp.h"
 #include "liar_line.h"
+#include "ujimage.hpp"
 
 #include "fseries.hpp"
 

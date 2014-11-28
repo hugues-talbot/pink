@@ -33,10 +33,11 @@ Useful for label images.
    Modif : decembre 1999 - mode 3 (trunchisto)
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "platform_specific.h"
-
-#include "pink.h"
-
+#include "mccodimage.h"
 // ERROR N is not supposed to be used as a define macro
 #undef N
 

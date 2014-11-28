@@ -12,7 +12,9 @@
 
 
 #include <gsl/gsl_vector.h>
-#include <boost/python/extract.hpp>
+#ifdef PINK_HAVE_NUMPY
+# include <boost/python/extract.hpp>
+#endif /* PINK_HAVE_NUMPY */
 
 // my includes
 #include "uiCircle.hpp"
@@ -522,8 +524,8 @@ namespace pink
     {
       // intentionally left empty
     }
-  
-
+    
+#   ifdef PINK_HAVE_NUMPY
     float py_circle_tangent( const boost::python::list & py_x,
                              const boost::python::list & py_y,
                              float x
@@ -550,8 +552,8 @@ namespace pink
       
       return circle_tangent(p_x,p_y,x);
       
-    }
-    
+  } // py_circle_tangent
+#   endif /* PINK_HAVE_NUMPY */
     
 
 // returns the circle-estimated derivative in x

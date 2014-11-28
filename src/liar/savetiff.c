@@ -68,7 +68,7 @@ const char *comp_schemes[] = {"NONE", "LZW", "PACKBITS", "CCITTG3",
 			      "CCITTG4", "RLE", "RLEW", "THUNDER",
 			      "" };
 
-#ifndef HAVE_TIFF_LIB
+#ifdef HAVE_TIFF_LIB
 
 #include <stio.h>
 #include <stdlib.h>
@@ -358,7 +358,7 @@ int save_tiff(void **outbuffp,	   /* output buffer  */
 }
 
 
-#else // HAVE_TIFF_LIB
+#else // NOT HAVE_TIFF_LIB
 
 #include <stdio.h>
 
@@ -393,4 +393,4 @@ int save_tiff(void **outbuffp,	   /* output buffer  */
     return 1;
 }
 
-#endif // HAVE_TIFF_LIB
+#endif // NOT HAVE_TIFF_LIB

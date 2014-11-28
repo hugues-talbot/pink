@@ -46,15 +46,15 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifndef CCSORT_HXX
 #define CCSORT_HXX
 
+#include <vector>
 #include <assert.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <mtrand64.h> // 64-bit random number generator
 #include <stdint.h>
-#include <powerwatsegm.h>
-#include<stdint.h>
 #include <stdio.h>
-#include <boost/smart_ptr.hpp>
+
+#include "powerwatsegm.h"
+
 
 template <class wtype> wtype * linsortimageup(wtype *F,uint32_t  N, int maxi);
 template <class wtype> wtype * linsortimagedown(uint32_t *F, uint32_t N, int maxi);
@@ -228,7 +228,7 @@ template <class wtype> wtype * linsortimageup(wtype *F, uint32_t N, int maxi)
 #define F_NAME "linsortimageup"
 {
   int i, j, k; 
-  boost::scoped_array<int> H( new int[maxi+1] );
+  std::vector<int> H(maxi+1);
     uint32_t *T = (uint32_t *)calloc(1,N * sizeof(uint32_t));
     if (T == NULL)
     {   fprintf(stderr, "%s() : calloc failed for T\n", F_NAME);
@@ -272,7 +272,7 @@ template <class wtype> wtype * linsortimagedown(wtype *F, uint32_t N, int maxi)
 #define F_NAME "linsortimagedown"
 {
   int i, j, k;
-  boost::scoped_array<int> H( new int[maxi+1] );
+  std::vector<int> H(maxi+1);
     uint32_t *T = (uint32_t *)calloc(1,N* sizeof(uint32_t));
     if (T == NULL)
     {   fprintf(stderr, "%s() : calloc failed for T\n", F_NAME);

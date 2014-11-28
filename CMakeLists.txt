@@ -1,5 +1,5 @@
 # -*- sh -*-
-# UjoImro, 2010
+# UjoImro, 2010-2014
 
 
 #message( STATUS "Abandon every hope, ye who entereth here.")
@@ -24,8 +24,8 @@ INCLUDE (UJ_CheckIncludeFile.cmake)
 INCLUDE (UJ_CheckIncludeFileCXX.cmake)
 #INCLUDE (FindCFITSIO.cmake)
 
-set( POTENTIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library /usr/X11/include)
-set( INCLUDES include src/python /usr/include /opt/local/include)
+set( POTENTIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library /usr/X11/include )
+set( INCLUDES ${INCLUDES} include src/python /usr/include /opt/local/include )
 
 include_directories( ${INCLUDES} ${CMAKE_BINARY_DIR} )
 
@@ -93,8 +93,8 @@ option( 64BIT "Compiles Pink in 64bit mode. This is necessary for files which co
 
 if (CMAKE_HOST_UNIX) ### We build with gcc
     # default optimization options
-    SET( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -msse -msse2" CACHE STRING "Optimization flags for the C++ compiler in Release mode" FORCE )
-    SET( CMAKE_C_FLAGS_RELEASE   "-O3 -DNDEBUG -msse -msse2" CACHE STRING "Optimization flags for the C   compiler in Release mode" FORCE )
+    SET( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" CACHE STRING "Optimization flags for the C++ compiler in Release mode" FORCE )
+    SET( CMAKE_C_FLAGS_RELEASE   "-O3 -DNDEBUG" CACHE STRING "Optimization flags for the C   compiler in Release mode" FORCE )
 else (CMAKE_HOST_UNIX) ## We build with MSVC
     SET( CMAKE_CXX_FLAGS_RELEASE " /O2 -DNDEBUG /MT " CACHE STRING "Optimization flags for the C++ compiler in Release mode" FORCE )
     SET( CMAKE_C_FLAGS_RELEASE   " /O2 -DNDEBUG /MT " CACHE STRING "Optimization flags for the C   compiler in Release mode" FORCE )
@@ -127,6 +127,7 @@ endif (CMAKE_MINOR_VERSION>=8)
 ### **********************************************************************************************
 
 option( DEVELOPMENT "Compiles additional functions which are not-yet part of the core library (Mostly because they require additional dependencies). " OFF )
+option( ENABLE_ASSERTIONS "This option enables the _assert calls in Pink. Usefull for debugging." OFF )
 option( OPENCL "Compiles the functions which use OpenCL. " OFF )
 option( NUMA "Compiles the functions which use The NUMA api. " OFF )
 option( SIMD "Compiles the functions with the SIMD (SSE2, SSE3, SSE4, SSE4.1) instruction set. " ON )
@@ -142,6 +143,10 @@ option( PYTHON_FRONT_END "Compile the python front-end and the cpp functions" OF
 ### **********************************************************************************************
 ### **********************************************************************************************
 
+if (ENABLE_ASSERTIONS)
+    set( PINKASSERT "#define PINKASSERTIONS" )
+endif (ENABLE_ASSERTIONS)
+
 if (64BIT)
     # add_definitions( -DMC_64_BITS )
     set( 64BITSMACRO "#define MC_64_BITS" )
@@ -154,26 +159,25 @@ endif( PYTHON_FRONT_END )
 
 if (CMAKE_HOST_UNIX)
 
-    CHECK_INCLUDE_FILE( X11/Xlib.h  HTEST1 ) 
-    if (NOT HTEST1) 
-	message( FATAL_ERROR "error X11 header file X11/Xlib.h not found") 
-    endif(NOT HTEST1)
+    # CHECK_INCLUDE_FILE( X11/Xlib.h  HTEST1 ) 
+    # if (NOT HTEST1) 
+    # 	message( FATAL_ERROR "error X11 header file X11/Xlib.h not found") 
+    # endif(NOT HTEST1)
 
     # CHECK_INCLUDE_FILE( curses.h  HTEST101 ) 
     # if (NOT HTEST101) 
     # 	message( FATAL_ERROR "error ncurses header file curses.h not found") 
     # endif(NOT HTEST101)
 	
-    CHECK_INCLUDE_FILE( X11/Xutil.h  HTEST2 )
-    if (NOT HTEST2)
-	message( FATAL_ERROR "error X11 header file X11/Xutil.h not found")
-    endif(NOT HTEST2)
+    # CHECK_INCLUDE_FILE( X11/Xutil.h  HTEST2 )
+    # if (NOT HTEST2)
+    # 	message( FATAL_ERROR "error X11 header file X11/Xutil.h not found")
+    # endif(NOT HTEST2)
 
     # unix defines
     # add_definitions( -DUNIXIO -DPC )
-    set(UNIXIOMACRO "#define UNIXIO")
-    set(PCMACRO "#define PC")
-
+    set( UNIXIOMACRO "#define UNIXIO" )
+    set( PCMACRO "#define PC" )
 
     find_library( MATH_LIB libm.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
     set( LIBS ${MATH_LIB} )
@@ -185,7 +189,7 @@ if (THIS_IS_MSVC)
     set(WINDOWSMACRO "#define _WINDOWS")
     set(WIN32MACRO "#define WIN32")
 endif(THIS_IS_MSVC)
-    
+
 ##
 ## We need the optional CFITSIO library for reading the 
 ## FITS image format, widely used in astronomy
@@ -208,7 +212,7 @@ endif (HT_CFITSIO_FOUND)
 
 if (CMAKE_HOST_UNIX) # These packages certainly will not be available   
     # Libraries required to compile the pink library
-    find_package( X11 REQUIRED )
+    # find_package( X11 REQUIRED )
     find_package( Threads REQUIRED )
 
     set( LIBS ${LIBS} ${X11_LIBRARIES} )
@@ -325,14 +329,14 @@ if (DEVELOPMENT)
 
     SET( CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDE} ${EIGEN_INCLUDE} )
 
-    CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/Core HTEST12 ${CMAKE_REQUIRED_FLAGS} )
+    CHECK_INCLUDE_FILE_CXX( Eigen/Core HTEST12 ${CMAKE_REQUIRED_FLAGS} )
     if (NOT HTEST12)
- 	message( FATAL_ERROR "error eigen2/Eigen/Core does not compile. Check if its correctly installed. You may need a newer version. ")
+ 	message( FATAL_ERROR "error Eigen/Core does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST12)
 
-    CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/LU HTEST14  ${CMAKE_REQUIRED_FLAGS} )
+    CHECK_INCLUDE_FILE_CXX( Eigen/LU HTEST14  ${CMAKE_REQUIRED_FLAGS} )
     if (NOT HTEST14)
- 	message( FATAL_ERROR "error eigen2/Eigen/LU does not compile. Check if its correctly installed. You may need a newer version. ")
+ 	message( FATAL_ERROR "error Eigen/LU does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST14)
 
 endif (DEVELOPMENT)

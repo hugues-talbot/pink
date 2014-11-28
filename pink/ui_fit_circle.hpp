@@ -13,8 +13,11 @@
 #ifndef UI_FIT_CIRCLE_HPP_
 #define UI_FIT_CIRCLE_HPP_
 
-#include <eigen3/Eigen/Core>
-#include <boost/python/list.hpp>
+#include <Eigen/Core>
+
+#ifdef PINK_HAVE_NUMPY
+# include <boost/python/list.hpp>
+#endif /* PINK_HAVE_NUMPY */
 
 const double epsilon=0.001;
 
