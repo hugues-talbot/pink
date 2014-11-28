@@ -84,10 +84,12 @@ install(
     FILES ${CMAKE_BINARY_DIR}/platform_specific.h
     DESTINATION include/pink
 )
+if (PYTHON_FRONT_END)
 install(
     FILES ${CMAKE_BINARY_DIR}/python_doc.h
     DESTINATION include/pink
 )
+endif (PYTHON_FRONT_END)
 else (CMAKE_HOST_UNIX) ### on Windows(tm) static library does not have to be installed
     # if (THIS_IS_MSVC)
     # 	install(

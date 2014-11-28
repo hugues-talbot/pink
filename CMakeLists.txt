@@ -243,10 +243,12 @@ else (NOT SYSVTEST)
     set( HAVESYSVIPCMACRO "#define HAVE_SYSV_IPC")
 endif(NOT SYSVTEST)
 
-if (THIS_IS_LINUX)
-    find_library( POSIX_REALTIME_LIB librt.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
-    set( LIBS ${LIBS} ${POSIX_REALTIME_LIB} )
-endif (THIS_IS_LINUX)
+#if (THIS_IS_LINUX)
+#    message( "POTENTIAL_LIBDIRS = ${POTENTIAL_LIBDIRS}" )
+#    find_library( POSIX_REALTIME_LIB librt.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
+#    message( "POSIX_REALTIME_LIB = ${POSIX_REALTIME_LIB}" )
+#    set( LIBS ${LIBS} ${POSIX_REALTIME_LIB} )
+#endif (THIS_IS_LINUX)
 
 if (THIS_IS_MSVC)
     find_library( WINSOCK_LIBRARY winsock.lib )
@@ -300,9 +302,6 @@ set( LIBS ${LIBS} ${GSL_LIB} )
 
 find_library( GSLCBLAS_LIB libgslcblas.${LIBEXT} ${POTENTIAL_LIBDIRS} )
 set( LIBS ${LIBS} ${GSLCBLAS_LIB} )
-
-find_library( LAPACK_LIB liblapack.${LIBEXT} ${POTENTIAL_LIBDIRS} )
-set( LIBS ${LIBS} ${LAPACK_LIB} )
 
 if (THIS_IS_MSVC)
     find_library( BLAS_LIB blas.${LIBEXT} ${POTENTIAL_LIBDIRS} )
