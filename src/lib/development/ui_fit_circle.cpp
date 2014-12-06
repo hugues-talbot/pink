@@ -12,6 +12,7 @@
 // This is an implementation of optimal ellipse fitting algorithm
 // PoSh
 
+#include "ui_pink_types.hpp"
 
 #include <fstream>
 #include <Eigen/LU>
@@ -22,7 +23,6 @@
 # include <boost/python/extract.hpp>
 #endif /* PINK_HAVE_NUMPY */
 
-#include "ui_pink_types.hpp"
 #include "ui_fit_circle.hpp"
 
 namespace pink
@@ -52,6 +52,9 @@ namespace pink
   // returns true on success.
   bool generalized_eigenvalue(const Eigen::MatrixXd & A, const Eigen::MatrixXd & B, Eigen::MatrixXd & v, Eigen::MatrixXd & lambda)
   {
+#   ifndef /*NOT*/ PINK_HAVE_NUMPY
+    pink_error("This function is disabled!!! (9392)");
+#   else /* PINK_HAVE_NUMPY */
     int Nval = A.cols(); // Number of columns of A and B. Number of rows of v.
     if (B.cols() != Nval  || A.rows()!=Nval || B.rows()!=Nval)
       return false;
@@ -80,6 +83,7 @@ namespace pink
     dggev_("N", "V", &Nval, A.data(), &LDA, B.data(), &LDB, alphar, alphai, beta, 0, &LDV, v.data(), &LDV, WORK.data(), &LWORK, &INFO);
     
     return INFO==0;
+#   endif /* PINK_HAVE_NUMPY */
   } /* generalized_eigenvalue */
   
   Eigen::VectorXd fit_circle( const Eigen::VectorXd & x, const Eigen::VectorXd & y, const std::string & filename = "" )

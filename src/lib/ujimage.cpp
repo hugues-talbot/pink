@@ -11,6 +11,7 @@
 */
 
 
+#include "mcimage.h"
 #include "mccodimage.h"
 #include "ujimage.hpp"
 

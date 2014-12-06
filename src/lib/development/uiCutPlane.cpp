@@ -10,6 +10,8 @@
   ujoimro@gmail.com
 */
 
+#include "ui_pink_types.hpp"
+
 #include <gsl/gsl_interp.h>
 #ifdef PINK_HAVE_PYTHON
 # include <gsl/gsl_multifit_nlin.h>
@@ -19,6 +21,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #ifdef PINK_HAVE_NUMPY
+# include <boost/python/list.hpp>
 # include <boost/python/extract.hpp>
 #endif /* PINK_HAVE_NUMPY */
 

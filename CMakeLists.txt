@@ -20,8 +20,10 @@
 
 cmake_minimum_required (VERSION 2.6)
 project(pink-image)
-INCLUDE (UJ_CheckIncludeFile.cmake)
-INCLUDE (UJ_CheckIncludeFileCXX.cmake)
+
+INCLUDE (CheckIncludeFile)
+INCLUDE (CheckIncludeFileCXX)
+
 #INCLUDE (FindCFITSIO.cmake)
 
 set( POTENTIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library /usr/X11/include )
@@ -180,7 +182,7 @@ if (CMAKE_HOST_UNIX)
     set( PCMACRO "#define PC" )
 
     find_library( MATH_LIB libm.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
-    set( LIBS ${MATH_LIB} )
+    set( LIBS ${LIBS} ${MATH_LIB} )
 
 endif (CMAKE_HOST_UNIX)
 
@@ -321,19 +323,19 @@ endif(NOT HTEST)
 ### ******************************************************
 if (DEVELOPMENT)
     if(NOT EIGEN_INCLUDE)
-        SET(EIGEN_INCLUDE "/usr/include" CACHE PATH "The directory of the eigen2 headers. Remember in the case of /usr/local/include/eigen2, you specify /usr/local/include." )
+        SET(EIGEN_INCLUDE "/usr/include" CACHE PATH "The directory of the eigen3 headers. Remember in the case of /usr/local/include/eigen3, you specify /usr/local/include/eigen3." )
     endif(NOT EIGEN_INCLUDE)
 
     include_directories( ${EIGEN_INCLUDE} )
 
-    SET( CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDE} ${EIGEN_INCLUDE} )
+    SET( CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${EIGEN_INCLUDE} )
 
-    CHECK_INCLUDE_FILE_CXX( Eigen/Core HTEST12 ${CMAKE_REQUIRED_FLAGS} )
+    CHECK_INCLUDE_FILE_CXX( Eigen/Core HTEST12 )
     if (NOT HTEST12)
  	message( FATAL_ERROR "error Eigen/Core does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST12)
 
-    CHECK_INCLUDE_FILE_CXX( Eigen/LU HTEST14  ${CMAKE_REQUIRED_FLAGS} )
+    CHECK_INCLUDE_FILE_CXX( Eigen/LU HTEST14 )
     if (NOT HTEST14)
  	message( FATAL_ERROR "error Eigen/LU does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST14)
@@ -381,6 +383,9 @@ endif (SIMD)
 ### **********************************************************************************************
 
 if ( PYTHON_FRONT_END )
+
+    find_library( LAPACK_LIB liblapack.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
+    set( LIBS ${LIBS} ${LAPACK_LIB} )
 
     # add_definitions(-DPINK_HAVE_PYTHON)
     option( NUMPY "Compiles numpy<->pink conversion utilities." OFF )

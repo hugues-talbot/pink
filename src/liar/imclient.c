@@ -949,8 +949,12 @@ int imview_px_ipc_setup(const char *sync_filename)
     strcpy(tmppathbuf, px_templ_name);
     strncat(tmppathbuf, STR_SHM, ANSWER_MAX_SIZE-l);
     /* file descriptor */
+#   ifdef HAVE_TIFF_LIB
     shmfd = shm_open(tmppathbuf, O_RDWR, IPC_FILE_MODE); /* should have been created by server */
-
+#   else /* NOT HAVE_TIFF_LIB */
+    shmfd = -1;
+    imexception("imview_px_ipc_setup, shm_open(%s) failed: %s (no shm_open support 43343)\n", tmppathbuf, strerror(errno));
+#   endif /* NOT HAVE_TIFF_LIB */
     if (shmfd < 0) {
         imexception("imview_px_ipc_setup, shm_open(%s) failed: %s\n", tmppathbuf, strerror(errno));
         return(2);
@@ -1029,10 +1033,14 @@ int imview_px_ipc_wind_down(void)
 
     strcpy(tmppathbuf, px_templ_name);
     strncat(tmppathbuf, STR_SHM, ANSWER_MAX_SIZE-l);
+
+#   ifdef HAVE_TIFF_LIB
     if (shm_unlink(tmppathbuf) != 0) {
         imexception("Ooops: shm_unlink[%s] failed\n", tmppathbuf); /* same here */
     }
-
+#   else /* NOT HAVE_TIFF_LIB */
+    imexception("Ooops: shm_unlink[%s] failed (no shm_unlink 23423)\n", tmppathbuf); /* same here */
+#   endif /* NOT HAVE_TIFF_LIB */
     free(px_templ_name);
     px_templ_name = NULL;
     

@@ -157,8 +157,10 @@ int democlient_main(int argc, char *argv[])
     system(imenv);
 
     if (!usepath) {
+#       ifdef HAVE_TIFF_LIB
         A = imloadtiff(argv[argc -1]);
         res = democlient_upload_image(A, argv[argc-1], "localhost", transfer);
+#       endif /* HAVE_TIFF_LIB */
     } else {
         res = democlient_load_image(argv[argc-1], "localhost");
     }

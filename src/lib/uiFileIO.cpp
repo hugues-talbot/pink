@@ -12,7 +12,8 @@
 
 #ifdef __cplusplus
 
-#include <pink.h>
+#include <string>
+#include <fstream>
 
 namespace pink {
 

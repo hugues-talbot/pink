@@ -32,6 +32,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <assert.h>
 #include <iostream>
 
 #include "mcimage.h"

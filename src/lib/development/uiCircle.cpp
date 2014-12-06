@@ -12,9 +12,6 @@
 
 
 #include <gsl/gsl_vector.h>
-#ifdef PINK_HAVE_NUMPY
-# include <boost/python/extract.hpp>
-#endif /* PINK_HAVE_NUMPY */
 
 // my includes
 #include "uiCircle.hpp"

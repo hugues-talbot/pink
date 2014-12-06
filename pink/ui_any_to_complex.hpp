@@ -14,8 +14,6 @@
 #ifndef UI_ANY_TO_COMPLEX_HPP_
 #define UI_ANY_TO_COMPLEX_HPP_
 
-#include "pink.h"
-
 namespace pink {
 
   // template <class image_type>

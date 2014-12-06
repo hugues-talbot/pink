@@ -2,8 +2,7 @@
 // This software is meant to be free
 
 
-#include "pink.h"
-
+#include <string>
 
 std::string greet()
 {

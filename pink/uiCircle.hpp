@@ -13,6 +13,8 @@
 #ifndef UI_CIRCLE_HPP_
 #define UI_CIRCLE_HPP_
 
+#include "ui_pink_types.hpp"
+
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -21,10 +23,10 @@
 #include <gsl/gsl_interp.h> // uiGradient is using it
 #ifdef PINK_HAVE_NUMPY
 # include <boost/python/list.hpp>
+# include <boost/python/extract.hpp>
 #endif /* PINK_HAVE_NUMPY */
 #include <gsl/gsl_multifit_nlin.h> // uiCircle is using it
 
-#include "ui_pink_types.hpp"
 
 namespace pink { 
 

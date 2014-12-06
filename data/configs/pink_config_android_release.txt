@@ -2,17 +2,7 @@
 
 # cmake -D PINK_MAJOR:STRING=`date +%Y` -D PINK_MINOR:STRING=`date +%m` -D PINK_REVISION:STRING=`date +%d` -C ~/doc/projects/pink-hg/data/configs/pink_config_pink_anyuws_debug.txt ~/doc/projects/pink-hg/
 
-SET( ANDTOOLCHAIN "/home/ujoimro/Inst/android-cmake/android-cmake/toolchain/android.toolchain.cmake" CACHE PATH "Android Toolchain Directory" )
-
-# CXX compiler for Android.
-SET( CMAKE_CXX_COMPILER "/home/ujoimro/tmp/droid/bin/arm-linux-androideabi-g++"    CACHE FILEPATH "desc." )
-SET( CMAKE_C_COMPILER   "/home/ujoimro/tmp/droid/bin/arm-linux-androideabi-gcc"    CACHE FILEPATH "desc." )
-SET( CMAKE_LINKER       "/home/ujoimro/tmp/droid/bin/arm-linux-androideabi-ld"     CACHE FILEPATH "desc." )
-SET( CMAKE_RANLIB       "/home/ujoimro/tmp/droid/bin/arm-linux-androideabi-ranlib" CACHE FILEPATH "desc." )
-SET( CMAKE_STRIP        "/home/ujoimro/tmp/droid/bin/arm-linux-androideabi-strip"  CACHE FILEPATH "desc." )
-SET( CMAKE_AR           "/home/ujoimro/tmp/droid/bin/arm-linux-androideabi-ar"     CACHE FILEPATH "desc." )
-SET( CMAKE_NM           "/home/ujoimro/tmp/droid/bin/arm-linux-androideabi-nm"     CACHE FILEPATH "desc." )
-SET( CMAKE_MAKE_PROGRAM "/usr/bin/gmake" CACHE FILEPATH "desc." )
+include("/home/ujoimro/doc/projects/ibipio/config/android_compiler.cmake")
 
 SET( GSLCBLAS_LIB            "/home/ujoimro/Inst/gsl/androidbuild/install/lib/libgslcblas.a" CACHE FILEPATH "desc." ) # Path to a library.
 SET( GSL_INCLUDE             "/home/ujoimro/Inst/gsl/androidbuild/install/include"           CACHE PATH     "desc." ) # The directory of the gsl library headers.

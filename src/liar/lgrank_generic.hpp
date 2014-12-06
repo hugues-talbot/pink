@@ -9,6 +9,8 @@
 #ifndef LGRANK_GENERIC_HPP
 #define LGRANK_GENERIC_HPP
 
+#include <string.h>
+
 #include "liarp.h"                   
 
 template <typename Type>

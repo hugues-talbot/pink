@@ -95,9 +95,9 @@ extern char *pixtypestr_[];
 extern int   pixsize_[];
 
 /* prototypes */
-
+#   ifdef HAVE_TIFF_LIB
     IMAGE *imloadtiff(const char *path);
-
+#   endif /* HAVE_TIFF_LIB */
     void LIAREnableDebug(void);
     void LIARDisableDebug(void);
     int LIARdebug(const char * msg,...);

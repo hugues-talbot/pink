@@ -54,7 +54,6 @@
 #include "mcimage.h"
 #include "mccodimage.h"
 #include "ui_pink_types.hpp"
-#include "platform_specific.h"
 
 #undef depth
 #undef nbands
@@ -593,7 +592,7 @@ namespace pink
           pdata<void>()
           );
 
-      deleter_t * deleter = boost::get_deleter<deleter_t, char>(m_data);
+      deleter_t * deleter = std::get_deleter<deleter_t, char>(m_data);
       _passert(deleter);
 
       PyObject * data = PyCObject_FromVoidPtr( m_data.get(), deleter->get_deleter() );

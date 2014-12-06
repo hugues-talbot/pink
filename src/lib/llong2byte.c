@@ -40,7 +40,7 @@ Useful for label images.
 #include "mccodimage.h"
 // ERROR N is not supposed to be used as a define macro
 #undef N
-
+#include "mcutil.h"
 
 /* =============================================================== */
 int32_t long2byte_Partitionner(int32_t *A, int32_t *T, int32_t p, int32_t r)

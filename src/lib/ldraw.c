@@ -42,11 +42,12 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <sys/types.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <mcutil.h>
-#include <mcimage.h>
-#include <mccodimage.h>
-#include <lbresen.h>
-#include <ldraw.h>
+
+#include "mcutil.h"
+#include "mcimage.h"
+#include "mccodimage.h"
+#include "lbresen.h"
+#include "ldraw.h"
 
 //#define DEBUG_DL3
 //#define DEBUG_DC3

@@ -70,7 +70,7 @@ const char *comp_schemes[] = {"NONE", "LZW", "PACKBITS", "CCITTG3",
 
 #ifdef HAVE_TIFF_LIB
 
-#include <stio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <tiffio.h>
 
