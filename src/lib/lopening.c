@@ -32,67 +32,70 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file opening.c
-
-\brief morphological opening by a plane structuring element
-
-<B>Usage:</B> opening in.pgm se.pgm out.pgm
-
-<B>Description:</B>
-Morphological opening by a plane structuring element.
-The (plane) structuring element is given by the non-null values in \b se.pgm, 
-its origin (wrt the point (0,0) of \b se.pgm ) 
-is given by a comment line in the file <B>se.pgm</B>. 
-
-<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
-
-<B>Category:</B> morpho
-\ingroup  morpho
-
-\author Michel Couprie 2002
-
-*/
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <sys/types.h>
 
-#include "mcimage.h"
-#include "lopening.h"
-#include "mccodimage.h"
+#include "lsym.h"
+#include "ldilateros.h"
+#include "ldilateros3d.h"
 
 
-/* =============================================================== */
-int main(int argc, char **argv)
-/* =============================================================== */
-{
-  struct xvimage * image;
-  struct xvimage * elem;
-  index_t x, y, z=0;
+int32_t 
+lopening( struct xvimage * image, struct xvimage * elem, index_t center_x, index_t center_y, index_t center_z ) {
+#undef F_NAME
+#define F_NAME "lopening"
 
-  if (argc != 4)
+  index_t rs, cs, ds;
+
+  rs = rowsize(elem);
+  cs = colsize(elem);
+  ds = depth(elem);
+
+  if (depth(image) == 1)
   {
-    fprintf(stderr, "usage: %s f.pgm el.pgm out.pgm \n", argv[0]);
-    exit(1);
-  }
+    if (! ldilateros_leros(image, elem, center_x, center_y))
+    {
+      fprintf(stderr, "%s: function leros failed\n", F_NAME);
+      return 0;
+    }
 
-  image = readimage(argv[1]);
-  elem = readse(argv[2], &x, &y, &z);
-  if ((image == NULL) || (elem == NULL))
+    if (! lsym(elem, 'c'))
+    {
+      fprintf(stderr, "%s: function lsym failed\n", F_NAME);
+      return 0;
+    }
+
+    if (! ldilateros_ldilat(image, elem, rs - 1 - center_x, cs - 1 - center_y))
+    {
+      fprintf(stderr, "%s: function ldilat failed\n", F_NAME);
+      return 0;
+    }
+  }
+  else
   {
-    fprintf(stderr, "%s: readse failed\n", argv[0]);
-    exit(1);
+/*
+    fprintf(stderr, "%s: opening 3d Not Yet Implemented\n", F_NAME);
+    return 0;
+*/
+    if (! leros3d(image, elem, center_x, center_y, center_z))
+    {
+      fprintf(stderr, "%s: function leros3d failed\n", F_NAME);
+      return 0;
+    }
+
+    if (! lsym(elem, 'c'))
+    {
+      fprintf(stderr, "%s: function lsym failed\n", F_NAME);
+      return 0;
+    }
+
+    if (! ldilat3d(image, elem, rs - 1 - center_x, cs - 1 - center_y, ds - 1 - center_z))
+    {
+      fprintf(stderr, "%s: function ldilat3d failed\n", F_NAME);
+      return 0;
+    }
+
   }
-
-  if (!lopening(image, elem, x, y, z)) {
-    fprintf(stderr, "%s: function lopening failed\n", argv[0]);
-    return EXIT_FAILURE;
-  }
-
-  writeimage(image, argv[argc-1]);
-  freeimage(image);
-  freeimage(elem);
-
-  return 0;
-} /* main */
+  return 1;
+#undef F_NAME
+}

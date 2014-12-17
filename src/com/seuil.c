@@ -61,9 +61,10 @@ If n2 is present, for each pixel x, out[x] = if (n <= in[x] < n2) then 255 else 
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <mccodimage.h>
-#include <mcimage.h>
-#include <lseuil.h>
+
+#include "mccodimage.h"
+#include "mcimage.h"
+#include "lseuil.h"
 
 /* =============================================================== */
 int main(int argc, char **argv)
