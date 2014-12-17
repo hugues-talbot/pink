@@ -90,6 +90,7 @@ class Image {
 	
 		// Fill the image with data pointed by p_Pointer
 		void Add_data_from_pointer(T* p_Pointer){
+	
 			for (int z=0; z<m_nDimz ; ++z){
 				for (int y=0; y<m_nDimy; ++y){
 					for (int x=0; x<m_nDimx; ++x){

@@ -27,7 +27,7 @@ SET( SIMD ON CACHE BOOL "desc." )
 SET( TIFF_INCLUDE_DIR "C:/Pink/Build/libtiff/tiff-4.0.3_64bit/libtiff" CACHE PATH "desc." )
 SET( TIFF_LIBRARY "C:/Pink/Build/libtiff/tiff-4.0.3_64bit/libtiff/libtiff.lib" CACHE FILEPATH "desc." )
 SET( GSL_INCLUDE "C:/Pink/Build/libgsl/gsl-1.15_64bit" CACHE PATH "desc." )
-SET( EIGEN_INCLUDE "C:/Pink/Build/eigen2/eigen-eigen-b23437e61a07" CACHE PATH "desc." )
+SET( EIGEN_INCLUDE "C:/Pink/Build/eigen2/eigen3" CACHE PATH "desc." )
 
 SET( NUMPY OFF CACHE BOOL "desc." )
 SET( CMAKE_INSTALL_PREFIX "install" CACHE PATH "desc." )

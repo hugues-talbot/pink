@@ -22,6 +22,8 @@ const double epsilon=0.001;
 #  include <boost/python.hpp>
 #endif /* PINK_HAVE_PYTHON */
 
+#include <Eigen/Core>
+
 extern "C"
 {
   // this is the lapack generalized eigenvalue calculation function
