@@ -35,9 +35,6 @@ This file is part of libRORPO
 #include "Geodilation.hpp"
 #include "RPO.hpp"
 
-extern "C" {
-	#include "nifti1_io.h"
-}
 
 template<typename T>
 Image<T> RORPO(const Image<T> &I, int L, int nb_core)

@@ -25,7 +25,7 @@ This file is part of libRORPO
 #include <vector>
 
 #include "sorting.hpp"
-#include "rect3dmm.hpp"
+#include "../src/liar/rect3dmm.hpp"
 
 
 #include "Algo.hpp"

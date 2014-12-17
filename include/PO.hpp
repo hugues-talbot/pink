@@ -29,7 +29,7 @@ This file is part of libRORPO
 #include <iterator>
 #include <cassert>
 
-#include "rect3dmm.hpp"
+#include "../src/liar/rect3dmm.hpp"
 #include "sorting.hpp"
 #include "Image.hpp"
 
