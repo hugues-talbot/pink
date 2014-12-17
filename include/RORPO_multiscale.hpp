@@ -1,91 +1,95 @@
-//#ifndef RORPO_MULTISCALE_HPP_INCLUDED
-//#define RORPO_MULTISCALE_HPP_INCLUDED
+#ifndef RORPO_MULTISCALE_INCLUDED
+#define RORPO_MULTISCALE_INCLUDED
 
-#include <stdio.h>
+/* Copyright (C) 2014 Odyssee Merveille
+ 
+This file is part of libRORPO
+
+    libRORPO is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    libRORPO is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with libRORPO.  If not, see <http://www.gnu.org/licenses/>.
+   
+*/
+
 #include <iostream>
-#include <string.h>
-#include <string>
+#include <fstream>
+#include <sstream>
 #include <vector>
-#include <queue>
-#include <algorithm>
-#include <omp.h>
-#include <cstdlib>
 
-#include "Call_RORPO.hpp"
+#include "rect3dmm.hpp"
+#include "RORPO.hpp"
 
-template<typename PixType>
-int RORPO_multiscale(PixType* image, PixType* output, int Smin, float factor, int nb_scales, int nb_core, int dimx, int dimy, int dimz, int debug_flag=-1)
+
+template<typename PixelType, typename MaskType>
+Image<PixelType> RORPO_multiscale(Image<PixelType> &I, std::vector<int>S_list, int nb_core, int debug_flag, Image<MaskType> &Mask)
 {
-
-// ################################# Scales Computations ###################################
-
-	const int image_size=dimx*dimy*dimz;
-	std::vector<int> S_list(nb_scales);
-	S_list[0]=Smin;
-
-	if (debug_flag){
-	    std::cout<<" "<<std::endl;
-		std::cout<<"Scales : ";
-		std::cout<<S_list[0]<< " ";
-	}
-			
-	for (int i=1; i<nb_scales;++i)
+    
+    // ---------------------- Mask Image -----------------------------------
+	if (Mask.ImageSize() > 0) // A mask image is given
 	{
-		S_list[i]=int(Smin*pow(factor,i));
-		if (debug_flag){
-			std::cout<<S_list[i]<< " ";
-			
+   		if (debug_flag){
+		std::cout<<"Mask Application"<<std::endl;
+		std::cout<<"Dilation of the Mask by a ball of radius "<<S_list[S_list.size()-1]/2<<std::endl;
+		}
+		int r_dilat= int(S_list[S_list.size()-1]/2);
+		Image<MaskType> Mask_dilat=Mask.Copy_image();
+		
+		rect3dminmax(Mask_dilat.GetPointer(), Mask_dilat.Dimx(), Mask_dilat.Dimy(), Mask_dilat.Dimz(), r_dilat, r_dilat, r_dilat, false);	
+		
+   		// Application of the dilated mask to input image
+		MaskImage<PixelType, MaskType>(I, Mask_dilat);
+		Mask_dilat.ClearImage();
+	}
+    
+
+	// ####################### Computation of RORPO for each scale #######################
+	
+	Image<PixelType> Multiscale(I.Dimx(), I.Dimy(), I.Dimz());
+
+	std::vector<int>::iterator it;
+	
+	for (it=S_list.begin();it!=S_list.end();++it)
+	{
+		Image<PixelType> One_Scale = RORPO<PixelType>(I, *it, nb_core);
+		// ----------------- Max of scales ---------------
+	    MaxCrush(Multiscale, One_Scale); 
+	}
+
+    // ----------------- Dynamic Enhancement ---------------
+	// Find Max value of output_buffer
+	int max_value_RORPO = Multiscale.Max_value();
+	int max_value_I = I.Max_value();
+
+	//std::cout<<"max_output and max_value "<<max_output<<";"<<max_value<<std::endl;
+	
+		// Contrast Enhancement
+	for (int z = 0; z < Multiscale.Dimz() ; ++z){
+		for (int y = 0; y < Multiscale.Dimy(); ++y){
+			for (int x = 0; x < Multiscale.Dimx(); ++x){
+				Multiscale(x, y, z) = (PixelType)((Multiscale(x, y, z) / (float)max_value_RORPO ) * max_value_I);
+			}
 		}
 	}
-	std::cout<<std::endl;
-	
-	/*for (int i=1; i<nb_scales-1;i++)
+
+	MinCrush(Multiscale, I);
+		
+		
+	if (Mask.ImageSize() > 0) // A mask image is given
 	{
-	    S_list[i]=Smin+i*((factor-Smin)/(nb_scales-1));
-	    std::cout<<S_list[i]<< " ";
-	}
-	S_list[nb_scales-1]=factor;
-	std::cout<<factor<< " ";*/
-	
-	
-	
-	// ---------- Find min and max value --------
-	int min_value=image[0];
-	int max_value=image[0];
-	
-	for (int i=0; i<image_size;++i)
-	{
-	
-		if (image[i]<0){
-			std::cerr<<"Image contain negative values"<<std::endl;
-			return 0;
-		}
-		if (image[i]<min_value)
-			min_value=image[i];
-
-		if (image[i]>max_value)
-			max_value=image[i];
+		// Application of the non dilated mask to output
+    	MaskImage<PixelType, MaskType>(Multiscale, Mask);
 	}
 
-	if (debug_flag){
-		std::cout<<"min value: "<<min_value<<std::endl;
-		std::cout<<"max value: "<<max_value<<std::endl;
-		std::cout<<" "<<std::endl;
-	}
-
-	// Run RORPO
-	PixType* multiscale;
-	PixType* image_dilat=new PixType[image_size];
-	//output=new PixType[image_size];
-	memcpy(image_dilat,image,image_size*sizeof(PixType));
-
-	multiscale=Call_RORPO<PixType>(image_dilat, S_list, nb_scales,nb_core, max_value, dimx, dimy, dimz, debug_flag);	
-	memcpy(output,multiscale,image_size*sizeof(PixType));
-	
-	delete[](multiscale);
-	delete[](image_dilat);
-	return 1;
+	return Multiscale;
 }
 
-//#endif // RORPO_MULTISCALE_HPP_INCLUDED
-
+#endif // RORPO_MULTISCALE_INCLUDED

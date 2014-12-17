@@ -10,14 +10,13 @@ Path_Opening
   ujoimro@gmail.com
 */
 
-
+#include <queue>
 #include <cmath>
 #include <cassert>
 #include <iostream>
 #include <algorithm>
 #include "liar_fseries.h"
 #include "pink_python.h"
-#include "RPO_new_orientations.hpp"
 
 #include "BilateralFilter.h"
 #include "BilateralFilter.hpp"
@@ -26,20 +25,17 @@ Path_Opening
 #include "NonLocalFilter.hpp"
 
 #include "NonLocalFilterSioux.h"
-
-#include "Path_Opening.hpp"
-#include "RPO_dilat3D.hpp"
-#include "Union_RPO_dilat3D.hpp"
-#include "RORPO_multiscale.hpp"
-#include "Union_RPO_dilat_constraint.hpp"
-#include "RPO_dilat_constraint.hpp"
-#include "RPO_Anisotrope.hpp"
-
 #include "liarp.h"
-
 
 #include "rotate3d.h"
 #include "rotate3d_generic.h"
+
+#include "Image.hpp"
+#include "sorting.hpp"
+#include "PO.hpp"
+#include "RPO.hpp"
+#include "Algo.hpp"
+#include "RORPO.hpp"
 
 
 using namespace boost::python;
@@ -116,6 +112,9 @@ namespace pink {
       return result;
     } /* liaropenpoly */
 
+
+
+
     template   <class image_t>
     image_t liarRPO
     (
@@ -123,16 +122,11 @@ namespace pink {
       const int orientationx,
       const int orientationy,
       const int orientationz,
-      const int L,
-      const int K,
-      const int reconstruct
+      const int L
     )
     {
-        int errorcode = 0;
-        image_t result_image = input_image.clone();
-
-        // The low-level function seems to always succeed
-	//
+        
+    image_t result_image = input_image.clone();
 
 	// user-specified orientation
 	std::vector<int> orientation(3);
@@ -145,23 +139,59 @@ namespace pink {
 
 	// dimensions
 	int nx = outputxvimage->row_size;
-        int ny = outputxvimage->col_size;
-        int nz = outputxvimage->depth_size;
+	int ny = outputxvimage->col_size;
+	int nz = outputxvimage->depth_size;
 
-	// buffers
-	// this looks weird, but input_buffer is copied immediately inside RPO
-	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
-	// at this stage the output buffer contains the input image because of the clone() above
+	if (outputxvimage->data_storage_type == VFF_TYP_1_BYTE) {
+		
+		// Images
+		Image<unsigned char> I(nx, ny, nz);
+		unsigned char* input_buffer = (unsigned char*) (outputxvimage->image_data);
+		I.Add_data_from_pointer(input_buffer);
+		Image<unsigned char> Output(nx, ny, nz);
+		Output.Add_data_from_pointer((unsigned char*) (outputxvimage->image_data));
+				
+		// Sorted Image
+		std::vector<long> index_image=sort_image_value<unsigned char,long>(I.GetPointer(), I.ImageSize());
 
+		// Execute PO3D
+		PO_3D<unsigned char>(I, L, index_image, orientation, Output);
+		std::memcpy(outputxvimage->image_data, Output.GetPointer(),nx*ny*nz*sizeof(unsigned char));
+	}
+	
+    else if (outputxvimage->data_storage_type == VFF_TYP_2_BYTE){
+		// Images
+		Image<unsigned short> I(nx, ny, nz);
+		I.Add_data_from_pointer((unsigned short*) (outputxvimage->image_data));
+		Image<unsigned short> Output(nx, ny, nz);
+		Output.Add_data_from_pointer((unsigned short*) (outputxvimage->image_data));
+		
+		// Sorted Image
+		std::vector<long> index_image=sort_image_value<unsigned short,long>(I.GetPointer(), I.ImageSize());
 
-        if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE) {
-            // call the RPO function
-            RPO3D(output_buffer, output_buffer,orientation, L, K, reconstruct, nx, ny, nz);
-
-        } 
-        else {
-            pink_error("Pixel type not yet supported\n");
-        } 
+		// Execute PO3D
+		PO_3D<unsigned short>(I, L, index_image, orientation, Output);
+		std::memcpy(outputxvimage->image_data, Output.GetPointer(),nx*ny*nz*sizeof(unsigned short));
+	}
+	
+	else if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE){
+		// Images
+		Image<uint32_t> I(nx, ny, nz);
+		uint32_t* input_buffer = (uint32_t*) (outputxvimage->image_data);
+		I.Add_data_from_pointer(input_buffer);
+		Image<uint32_t> Output(nx, ny, nz);
+		Output.Add_data_from_pointer((uint32_t*) (outputxvimage->image_data));
+		// Sorted Image
+		std::vector<long> index_image=sort_image_value<uint32_t,long>(I.GetPointer(), I.ImageSize());
+		// Execute PO3D
+		PO_3D<uint32_t>(I, L, index_image, orientation, Output);
+		
+		std::memcpy(outputxvimage->image_data, Output.GetPointer(),nx*ny*nz*sizeof(uint32_t));
+	}
+    
+    else {
+		pink_error("Pixel type not yet supported\n");
+    } 
         
         return result_image;
 
@@ -174,8 +204,7 @@ namespace pink {
     (
       const image_t & input_image,
       const int L,
-      const int K,
-      const int reconstruct
+      const int nb_core
     )
     {
         int errorcode = 0;
@@ -188,25 +217,166 @@ namespace pink {
 	int nx = outputxvimage->row_size;
     int ny = outputxvimage->col_size;
     int nz = outputxvimage->depth_size;
+    
+    if (outputxvimage->data_storage_type == VFF_TYP_1_BYTE) {
+		
+		// Images
+		Image<unsigned char> I(nx, ny, nz);
+		unsigned char* input_buffer = (unsigned char*) (outputxvimage->image_data);
+		I.Add_data_from_pointer(input_buffer);
+		Image<unsigned char> Output(nx, ny, nz);
+		//Output.Add_data_from_pointer((unsigned char*) (outputxvimage->image_data));
+		
+		// the 7 RPO images with a 2-pixel border 
+		Image<unsigned char> RPO1(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<unsigned char> RPO2(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<unsigned char> RPO3(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<unsigned char> RPO4(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<unsigned char> RPO5(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<unsigned char> RPO6(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<unsigned char> RPO7(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+				
+		// Execute RPO3D
+		RPO<unsigned char>(I, L, RPO1, RPO2, RPO3, RPO4, RPO5,RPO6, RPO7, nb_core);
+		
+		MaxCrush(Output, RPO1);
+		MaxCrush(Output, RPO2);
+		MaxCrush(Output, RPO3);
+		MaxCrush(Output, RPO4);
+		MaxCrush(Output, RPO5);
+		MaxCrush(Output, RPO6);
+		MaxCrush(Output, RPO7);
+		
+		std::memcpy(outputxvimage->image_data, Output.GetPointer(),nx*ny*nz*sizeof(unsigned char));
+	}
+	
+    else if (outputxvimage->data_storage_type == VFF_TYP_2_BYTE){
+				// Images
+		Image<unsigned short> I(nx, ny, nz);
+		unsigned short* input_buffer = (unsigned short*) (outputxvimage->image_data);
+		I.Add_data_from_pointer(input_buffer);
+		Image<unsigned short> Output(nx, ny, nz);
+		//Output.Add_data_from_pointer((unsigned short*) (outputxvimage->image_data));
+		
+		// the 7 RPO images with a 2-pixel border 
+		Image<unsigned short> RPO1(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<unsigned short> RPO2(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<unsigned short> RPO3(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<unsigned short> RPO4(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<unsigned short> RPO5(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<unsigned short> RPO6(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<unsigned short> RPO7(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+				
+		// Execute RPO3D
+		RPO<unsigned short>(I, L, RPO1, RPO2, RPO3, RPO4, RPO5,RPO6, RPO7, nb_core);
+		
+		MaxCrush(Output, RPO1);
+		MaxCrush(Output, RPO2);
+		MaxCrush(Output, RPO3);
+		MaxCrush(Output, RPO4);
+		MaxCrush(Output, RPO5);
+		MaxCrush(Output, RPO6);
+		MaxCrush(Output, RPO7);
+		
+		std::memcpy(outputxvimage->image_data, Output.GetPointer(),nx*ny*nz*sizeof(unsigned short));
+	}
+	
+	else if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE){
+				// Images
+		Image<uint32_t> I(nx, ny, nz);
+		uint32_t* input_buffer = (uint32_t*) (outputxvimage->image_data);
+		I.Add_data_from_pointer(input_buffer);
+		Image<uint32_t> Output(nx, ny, nz);
+		//Output.Add_data_from_pointer((uint32_t*) (outputxvimage->image_data));
+		
+		// the 7 RPO images with a 2-pixel border 
+		Image<uint32_t> RPO1(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<uint32_t> RPO2(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<uint32_t> RPO3(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<uint32_t> RPO4(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<uint32_t> RPO5(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<uint32_t> RPO6(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+		Image<uint32_t> RPO7(I.Dimx() + 4, I.Dimy() + 4, I.Dimz() + 4, 2);
+				
+		// Execute RPO3D
+		RPO<uint32_t>(I, L, RPO1, RPO2, RPO3, RPO4, RPO5,RPO6, RPO7, nb_core);
+		
+		MaxCrush(Output, RPO1);
+		MaxCrush(Output, RPO2);
+		MaxCrush(Output, RPO3);
+		MaxCrush(Output, RPO4);
+		MaxCrush(Output, RPO5);
+		MaxCrush(Output, RPO6);
+		MaxCrush(Output, RPO7);
+		
+		std::memcpy(outputxvimage->image_data, Output.GetPointer(),nx*ny*nz*sizeof(uint32_t));
+	}
 
-	// buffers
-	// this looks weird, but input_buffer is copied immediately inside RPO
-	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
-	// at this stage the output buffer contains the input image because of the clone() above
-
-
-        if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE) {
-            // call the RPO function
-            UNION_RPO3D(output_buffer, output_buffer,L, K, reconstruct, nx, ny, nz);
-
-        }
-         else {
-            pink_error("Pixel type not yet supported\n");
-        } 
-        
         return result_image;
 
     } /* liarUnionRPO*/
+
+
+    template   <class image_t>
+    image_t liarRORPO
+    (
+      const image_t & input_image,
+      const int L,
+      const int nb_core
+    )
+    {
+        int errorcode = 0;
+        image_t result_image = input_image.clone();
+
+	// image structure
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = outputxvimage->row_size;
+    int ny = outputxvimage->col_size;
+    int nz = outputxvimage->depth_size;
+    
+    if (outputxvimage->data_storage_type == VFF_TYP_1_BYTE) {
+		
+		// Images
+		Image<unsigned char> I(nx, ny, nz);
+		unsigned char* input_buffer = (unsigned char*) (outputxvimage->image_data);
+		I.Add_data_from_pointer(input_buffer);
+		Image<unsigned char> Output;
+
+		// Execute RPO3D
+		Output=RORPO<unsigned char>(I, L, nb_core);
+		
+		std::memcpy(outputxvimage->image_data, Output.GetPointer(),nx*ny*nz*sizeof(unsigned char));
+	}
+	
+    else if (outputxvimage->data_storage_type == VFF_TYP_2_BYTE){
+				// Images
+		Image<unsigned short> I(nx, ny, nz);
+		unsigned short* input_buffer = (unsigned short*) (outputxvimage->image_data);
+		I.Add_data_from_pointer(input_buffer);
+		Image<unsigned short> Output;
+		
+		// Execute RPO3D
+		Output=RORPO<unsigned short>(I, L, nb_core);
+		std::memcpy(outputxvimage->image_data, Output.GetPointer(),nx*ny*nz*sizeof(unsigned short));
+	}
+	
+	else if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE){
+				// Images
+		Image<uint32_t> I(nx, ny, nz);
+		uint32_t* input_buffer = (uint32_t*) (outputxvimage->image_data);
+		I.Add_data_from_pointer(input_buffer);
+		Image<uint32_t> Output;
+		// Execute RPO3D
+		Output=RORPO<uint32_t>(I, L, nb_core);
+		
+		std::memcpy(outputxvimage->image_data, Output.GetPointer(),nx*ny*nz*sizeof(uint32_t));
+	}
+
+        return result_image;
+
+    } /* liarRORPO*/
 
 
 
@@ -378,363 +548,7 @@ namespace pink {
 
     } /* liarNonLocalFilterSioux */
     
-    
-    
-    
-    template   <class image_t>
-    image_t liarPathOpening
-    (
-      image_t & input_image,
-      const int L
-    )
-    {
-        int errorcode = 0;
-        image_t result_image = input_image.clone();
 
-	// image structure
-	struct xvimage *inputxvimage = input_image.get_output();
-	struct xvimage *outputxvimage = result_image.get_output();
-
-	// dimensions
-	int nx = outputxvimage->row_size;
-    int ny = outputxvimage->col_size;
-    int nz = outputxvimage->depth_size;
-
-
-    // buffers
-    PixelType *input_buffer = (PixelType*) (inputxvimage->image_data);
-	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
-
-    // Execute PO3D
-    Union_PO3D<PixelType>(input_buffer, output_buffer, L, nx, ny, nz);
-
-	// get result
-	return (result_image);
-
-    } /* liarPathOpening */
-    
-
-
-   /* template   <class image_t>
-    image_t liarRPO_Anisotrope
-    (
-      image_t & input_image,
-      const int L,
-      const int orientationx,
-      const int orientationy,
-      const int orientationz,
-      float dim_vox_z=1,
-      float dim_vox_y=1,
-      float dim_vox_x=1
-    )
-    {
-        int errorcode = 0;
-        image_t result_image = input_image.clone();
-
-	// image structure
-	struct xvimage *inputxvimage = input_image.get_output();
-	struct xvimage *outputxvimage = result_image.get_output();
-
-    // user-specified orientation
-	std::vector<int> orientation(3);
-	orientation[0] = orientationx;
-	orientation[1] = orientationy;
-	orientation[2] = orientationz;
-	
-	// dimensions
-	int nx = outputxvimage->row_size;
-    int ny = outputxvimage->col_size;
-    int nz = outputxvimage->depth_size;
-
-
-    // buffers
-    PixelType *input_buffer = (PixelType*) (inputxvimage->image_data);
-	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
-
-    // Execute PO3D
-    RPO_anisotrope<PixelType>(input_buffer,output_buffer, L, orientation, nz, ny, nx, dim_vox_z,dim_vox_y,dim_vox_x);
-
-	// get result
-	return (result_image);
-
-    } /* liarPath_Opening_Isotrope */
-    
-   /* template   <class image_t>
-    image_t liarUnion_RPO_Anisotrope
-    (
-      image_t & input_image,
-      const int L,
-      float dim_vox_z=1,
-      float dim_vox_y=1,
-      float dim_vox_x=1
-    )
-    {
-        int errorcode = 0;
-        image_t result_image = input_image.clone();
-
-	// image structure
-	struct xvimage *inputxvimage = input_image.get_output();
-	struct xvimage *outputxvimage = result_image.get_output();
-
-	// dimensions
-	int nx = outputxvimage->row_size;
-    int ny = outputxvimage->col_size;
-    int nz = outputxvimage->depth_size;
-
-
-    // buffers
-    PixelType *input_buffer = (PixelType*) (inputxvimage->image_data);
-	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
-
-    // Execute PO3D
-    Union_RPO_Anisotrope<PixelType>(input_buffer, output_buffer, L, nx, ny, nz,dim_vox_z,dim_vox_y,dim_vox_x);
-
-	// get result
-	return (result_image);
-
-    } /* liarPath_Opening_Isotrope */
-
-
-    template   <class image_t>
-    image_t liarRPO_dilat3D
-    (
-      image_t & input_image,
-      const int L,
-      const int orientationx,
-      const int orientationy,
-      const int orientationz
-    )
-    {
-        int errorcode = 0;
-        image_t result_image = input_image.clone();
-
-	// image structure
-	struct xvimage *inputxvimage = input_image.get_output();
-	struct xvimage *outputxvimage = result_image.get_output();
-
-	// dimensions
-	int nx = outputxvimage->row_size;
-    int ny = outputxvimage->col_size;
-    int nz = outputxvimage->depth_size;
-    
-    // user-specified orientation
-	std::vector<int> orientation(3);
-	orientation[0] = orientationx;
-	orientation[1] = orientationy;
-	orientation[2] = orientationz;
-
-
-    // Execute PO3D
-    if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE){
-        int32_t *input_buffer = (int32_t*) (inputxvimage->image_data);
-		int32_t *output_buffer = (int32_t*) (outputxvimage->image_data);
-    	RPO_dilat3D<int32_t>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
-    }
-
-    else if (outputxvimage->data_storage_type == VFF_TYP_2_BYTE){
-        int16_t *input_buffer = (int16_t*) (inputxvimage->image_data);
-		int16_t *output_buffer = (int16_t*) (outputxvimage->image_data);
-    	RPO_dilat3D<int16_t>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
-    }
-    
-    else if (outputxvimage->data_storage_type == VFF_TYP_1_BYTE){
-        int8_t *input_buffer = (int8_t*) (inputxvimage->image_data);
-		int8_t *output_buffer = (int8_t*) (outputxvimage->image_data);
-    	RPO_dilat3D<int8_t>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
-    }
-    else if (outputxvimage->data_storage_type == VFF_TYP_FLOAT){
-        float *input_buffer = (float*) (inputxvimage->image_data);
-		float *output_buffer = (float*) (outputxvimage->image_data);
-    	RPO_dilat3D<float>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
-    }
-    else if (outputxvimage->data_storage_type == VFF_TYP_DOUBLE){
-        double *input_buffer = (double*) (inputxvimage->image_data);
-		double *output_buffer = (double*) (outputxvimage->image_data);
-    	RPO_dilat3D<double>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
-    }
-   	else
-   		std::cerr<<"Type not supported"<<std::endl;
-   		
-	// get result
-	return (result_image);
-
-    } /* liarRPO_dilat3D */
-    
-    
-    template   <class image_t>
-    image_t liarRORPO
-    (
-      image_t & input_image,
-      const int Smin,
-      const float factor,
-      const int nb_scales,
-      const int nb_core,
-      const int debug
-    )
-    {
-        int errorcode = 0;
-        image_t result_image = input_image.clone();
-
-	// image structure
-	struct xvimage *inputxvimage = input_image.get_output();
-	struct xvimage *outputxvimage = result_image.get_output();
-
-	// dimensions
-	int nx = outputxvimage->row_size;
-    int ny = outputxvimage->col_size;
-    int nz = outputxvimage->depth_size;
-    
-
-    // Execute RORPO
-    if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE){
-        int32_t *input_buffer = (int32_t*) (inputxvimage->image_data);
-		int32_t *output_buffer = (int32_t*) (outputxvimage->image_data);
-    	int test=RORPO_multiscale<int32_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
-    }
-
-    else if (outputxvimage->data_storage_type == VFF_TYP_2_BYTE){
-        uint16_t *input_buffer = (uint16_t*) (inputxvimage->image_data);
-		uint16_t *output_buffer = (uint16_t*) (outputxvimage->image_data);
-    	int test=RORPO_multiscale<uint16_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
-    }
-    
-    else if (outputxvimage->data_storage_type == VFF_TYP_1_BYTE){
-        uint8_t *input_buffer = (uint8_t*) (inputxvimage->image_data);
-        uint8_t *output_buffer = (uint8_t*) (outputxvimage->image_data);
-    	int test=RORPO_multiscale<uint8_t>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
-    }
-    /*else if (outputxvimage->data_storage_type == VFF_TYP_FLOAT){
-        float *input_buffer = (float*) (inputxvimage->image_data);
-		float *output_buffer = (float*) (outputxvimage->image_data);
-    	int test=RORPO_multiscale<float>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
-    }
-    else if (outputxvimage->data_storage_type == VFF_TYP_DOUBLE){
-        double *input_buffer = (double*) (inputxvimage->image_data);
-		double *output_buffer = (double*) (outputxvimage->image_data);
-    	int test=RORPO_multiscale<double>(input_buffer, output_buffer, Smin, factor, nb_scales, nb_core, nx, ny, nz, debug);
-    }*/
-   	else
-   		std::cerr<<"Type not supported"<<std::endl;
-   		
-	// get result
-	return (result_image);
-
-    } /* liarRPO_dilat3D */
-    
-    
-    
-    template   <class image_t>
-    image_t liarUnion_RPO_dilat3D
-    (
-      image_t & input_image,
-      const int L
-    )
-    {
-        int errorcode = 0;
-        image_t result_image = input_image.clone();
-
-	// image structure
-	struct xvimage *inputxvimage = input_image.get_output();
-	struct xvimage *outputxvimage = result_image.get_output();
-
-	// dimensions
-	int nx = outputxvimage->row_size;
-    int ny = outputxvimage->col_size;
-    int nz = outputxvimage->depth_size;
-
-    // buffers
-    PixelType *input_buffer = (PixelType*) (inputxvimage->image_data);
-	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
-
-    // Execute PO3D
-    Union_RPO_dilat3D<PixelType>(input_buffer, output_buffer, L,nx, ny, nz);
-
-	// get result
-	return (result_image);
-
-    } /* liarUnion_RPO_dilat3D */
-    
-    
-    
-
-   /* template   <class image_t>
-    image_t liarUnion_RPO_constraint
-    (
-      image_t & input_image,
-      const int L
-    )
-    {
-        int errorcode = 0;
-        image_t result_image = input_image.clone();
-
-	// image structure
-	struct xvimage *inputxvimage = input_image.get_output();
-	struct xvimage *outputxvimage = result_image.get_output();
-
-	// dimensions
-	int nx = outputxvimage->row_size;
-    int ny = outputxvimage->col_size;
-    int nz = outputxvimage->depth_size;
-
-
-    // buffers
-    PixelType *input_buffer = (PixelType*) (inputxvimage->image_data);
-	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
-
-    // Execute PO3D
-    Union_RPO_constraint<PixelType>(input_buffer, output_buffer, L, nx, ny, nz);
-
-	// get result
-	return (result_image);
-
-    } /* liarUnionRPO_constraint */
-    
-    
-/*template   <class image_t>
-    image_t liarRPO_dilat_constraint
-    (
-      image_t & input_image,
-      const int L,
-      const int orientationx,
-      const int orientationy,
-      const int orientationz
-    )
-    {
-    
-    // user-specified orientation
-	std::vector<int> orientation(3);
-	orientation[0] = orientationx;
-	orientation[1] = orientationy;
-	orientation[2] = orientationz;
-	
-    int errorcode = 0;
-    image_t result_image = input_image.clone();
-
-	// image structure
-	struct xvimage *inputxvimage = input_image.get_output();
-	struct xvimage *outputxvimage = result_image.get_output();
-
-	// dimensions
-	int nx = outputxvimage->row_size;
-    int ny = outputxvimage->col_size;
-    int nz = outputxvimage->depth_size;
-
-
-    // buffers
-    PixelType *input_buffer = (PixelType*) (inputxvimage->image_data);
-	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
-
-    // Execute PO3D
-    RPO_dilat_constraint<PixelType>(input_buffer, output_buffer, L, orientation, nx, ny, nz);
-
-	// get result
-	return (result_image);
-
-    } /* liarRPO_diat_constraint */
-    
-    
-    
-    
     template   <class image_t>
     image_t liarRotation3D
     (
@@ -893,8 +707,8 @@ UI_EXPORT_FUNCTION(
 UI_EXPORT_FUNCTION(
   RPO,
   pink::python::liarRPO,
-  ( arg("input_image"), arg("orientationX"),arg("orientationY"), arg("orientationZ"), arg("L"), arg("K"),arg("reconstruction") ),
-  "Robust path opening, given an orientation (x,y,z); a length L, a noise robustness factor K, and optional reconstruction\n"
+  ( arg("input_image"), arg("orientationX"),arg("orientationY"), arg("orientationZ"), arg("L")),
+  "3D Robust path opening, given an orientation (x,y,z) and a length L\n"
   "the following orientations are legal:\n"
   "   0  0  1  : depth direction\n"
   "   0  1  0  : vertical\n"
@@ -904,20 +718,21 @@ UI_EXPORT_FUNCTION(
   "  -1  1  1  : diagonal NW/SE+depth\n"
   "  -1  1 -1  : diagonal NW/SE-depth\n"
   "\n"
-  "For 2D images, directions (0 1), (1 0), (1 1) and (-1 1) are sufficient\n"
-  "reconstruction parameter is 0 or 1\n"
-  );
+  "Unsigned char, unsigned short and unsigned long images are accepted \n"
+  "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
+  " The robustness is performed by a dilation / erosion process. \n"
+);
 
 
 UI_EXPORT_FUNCTION(
   UnionRPO,
   pink::python::liarUnionRPO,
-  ( arg("input_image"), arg("L"), arg("K"),arg("reconstruction") ),
-  "Compute the union of the Robust path opening in each orientation (see RPO), given a length L, a noise robustness factor K, and optional reconstruction\n"
-  "Works in 2 and 3 dimensions\n"
+  ( arg("input_image"), arg("L"), arg("nb_cores")=7),
+  "Compute the union of the Robust path opening in each orientation (see RPO), given a length L\n"
+  "Works in 3 dimensions\n"
   );
   
-  UI_EXPORT_FUNCTION(
+ /* UI_EXPORT_FUNCTION(
   Union_RPO_dilat3D,
   pink::python::liarUnion_RPO_dilat3D,
   ( arg("input_image"), arg("L")),
@@ -925,7 +740,7 @@ UI_EXPORT_FUNCTION(
   " Only works with long images \n"
   "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
   " The robustness is performed by a dilation / erosion process. \n"
-  );
+  );*/
 
 UI_EXPORT_FUNCTION(
   BilateralFilter,
@@ -956,14 +771,14 @@ UI_EXPORT_FUNCTION(
   " This function uses the algorithm of Darbon &al in ""Fast NonLocal Filtering Applied to Electron Cryomicroscopy"" (2008) \n"
   );
   
-UI_EXPORT_FUNCTION(
+/*UI_EXPORT_FUNCTION(
   PathOpening,
   pink::python::liarPathOpening,
   ( arg("input_image"), arg("L")),
   "\n 3D Path Opening with a path length L. \n"
   " Only works with long images \n"
   "This function used the algorithm of Hendriks ""Constrained and Dimensionality-Independant Path Openings"" (2010) \n"
-  );
+  );*/
   
 /*UI_EXPORT_FUNCTION(
   RPO_Anisotrope,
@@ -983,7 +798,7 @@ UI_EXPORT_FUNCTION(
   "This function used the algorithm of Hendriks ""Constrained and Dimensionality-Independant Path Openings"" (2010) \n"
   );*/
   
-  UI_EXPORT_FUNCTION(
+ /* UI_EXPORT_FUNCTION(
   RPO_dilat3D,
   pink::python::liarRPO_dilat3D,
   ( arg("input_image"), arg("L"), arg("orientationX"), arg("orientationY"), arg("orientationZ")),
@@ -1000,25 +815,14 @@ UI_EXPORT_FUNCTION(
   "\n"
   "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
   " The robustness is performed by a dilation / erosion process. \n"
-  );
+  );*/
   
   UI_EXPORT_FUNCTION(
   RORPO,
   pink::python::liarRORPO,
-  ( arg("input_image"), arg("Smin"), arg("factor"), arg("nb_scales"), arg("nb_core"), arg("debug")),
-  "\n 3D Robust Path Opening with a path length L. \n"
-  " Only works with images containing only non-negative values (int32, uint16, uint8). \n"
-  "The following orientations are legal:\n"
-  "   0  0  1  : depth direction\n"
-  "   0  1  0  : vertical\n"
-  "   1  0  0  : horizontal\n"
-  "   1  1  1  : diagonal NE/SW+depth\n"
-  "   1  1 -1  : diagonal NE/SW-depth\n"
-  "  -1  1  1  : diagonal NW/SE+depth\n"
-  "  -1  1 -1  : diagonal NW/SE-depth\n"
-  "\n"
-  "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
-  " The robustness is performed by a dilation / erosion process. \n"
+  ( arg("input_image"), arg("L"), arg("nb_cores")=7),
+  " Compute the RORPO filter with path length L on a 3D image (uchar, ushort or ulong).\n"
+  "See Tubular Structure Filtering by Ranking Orientation Responses of Path Operators, O. Merveille, H. Talbot, L.Najman and N.Passat (2014)\n"
   );
   
   /*UI_EXPORT_FUNCTION(
@@ -1050,7 +854,7 @@ UI_EXPORT_FUNCTION(
   " The robustness is performed by a dilation / erosion process. \n"
   );*/
 
-UI_EXPORT_FUNCTION(
+/*UI_EXPORT_FUNCTION(
     Rotation3D,
     pink::python::liarRotation3D,
   ( arg("input_image"), arg("alpha"), arg("beta"), arg("gamma"), arg("interpolate"), arg("value"), arg("rmbdr")),
@@ -1059,7 +863,7 @@ UI_EXPORT_FUNCTION(
   " interpolate : 0 means Nearest neighbor interpolation, 1 means linear interpolation \n"
   " value : value of the pixel added during the rotation (usually set to 0) \n"
   " rmbdr : mode for the border ? \n"
-  );
+  );*/
 
 
 UI_EXPORT_FUNCTION(
