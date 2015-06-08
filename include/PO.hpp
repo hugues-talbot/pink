@@ -36,7 +36,7 @@ This file is part of libRORPO
 typedef long IndexType;
 
 
-void createNeighbourhood(	int nb_col,
+void createNeighbourhood3D(	int nb_col,
 							int dim_frame,
 	 						std::vector<int> & orientation,
 	 						std::vector<int> & upList,
@@ -237,6 +237,69 @@ void createNeighbourhood(	int nb_col,
 
 }
 
+void createNeighbourhood2D(	int nb_col,
+	 						std::vector<int> & orientation,
+	 						std::vector<int> & upList,
+                    		std::vector<int> & downList) {
+
+    int col_shift = orientation[0];
+    int line_shift = orientation[1];
+    
+    //from up to down main orientation [1 0]
+    if((line_shift == 1 && col_shift == 0) ||
+       (line_shift == -1 && col_shift == 0) ) {
+		   
+       upList.push_back( -nb_col + 1);
+       upList.push_back( nb_col + 1);
+       upList.push_back( 1);
+
+       downList.push_back( nb_col - 1);
+       downList.push_back( -nb_col - 1);
+       downList.push_back( -1);
+
+    }
+
+    //from left to right main orientation [0 1]
+    if((line_shift == 0 && col_shift == 1) ||
+      (line_shift == 0 && col_shift == -1)) {
+       
+       upList.push_back( - nb_col - 1);
+       upList.push_back( - nb_col + 1);
+       upList.push_back( - nb_col);
+
+       downList.push_back( nb_col + 1);
+       downList.push_back( nb_col - 1);
+       downList.push_back( nb_col);
+
+    }
+    //1st diagonal [1 -1]
+    if((line_shift == 1 && col_shift == -1) ||
+      (line_shift == -1 && col_shift == 1)) {
+
+	   upList.push_back(1);
+	   upList.push_back( nb_col + 1);
+	   upList.push_back( nb_col);
+
+	   downList.push_back( -1);
+	   downList.push_back( -nb_col - 1);
+	   downList.push_back( -nb_col);
+
+    }
+    //2nd diagonal [1 1]
+    if((line_shift == 1 && col_shift == 1) ||
+      (line_shift == -1 && col_shift == -1)) {
+
+	   upList.push_back( -1);
+	   upList.push_back( nb_col);
+	   upList.push_back( nb_col - 1);
+
+       downList.push_back( 1 );
+	   downList.push_back( -nb_col  );
+	   downList.push_back( -nb_col + 1);
+   }
+
+}
+
 
 template<typename PixelType>
 void propagate(IndexType p, std::vector<int>&lambda, std::vector<int>&nf, std::vector<int>&nb, std::vector<bool>&b, std::queue<IndexType> &Qc)
@@ -341,7 +404,96 @@ void PO_3D(	Image<T> &I,
 	// Create the offset np and nm
 	std::vector<int>np;
 	std::vector<int>nm;
-	createNeighbourhood(I.Dimx(), I.Dimx() * I.Dimy(), orientations, np, nm);
+	createNeighbourhood3D(I.Dimx(), I.Dimx() * I.Dimy(), orientations, np, nm);
+
+	//Create other temporary images
+	std::vector<int>Lp(I.ImageSize(),L);
+	std::vector<int>Lm(I.ImageSize(),L);
+
+
+	//Create FIFO queue Qc
+	std::queue<IndexType> Qc;
+
+	// Propagate
+	std::vector<IndexType>::iterator it;
+	//std::cerr<<"Avant propagation"<<std::endl;
+	//std::cerr<<"size np et nm:"<<np.size()<<" "<<nm.size()<<std::endl;
+	
+	//std::vector<unsigned char>b_bis=b.GetData();
+
+	int indice;
+	for (it = index_image.begin(), indice = 0 ; it != index_image.end() ; ++it , ++indice)
+	{
+
+		//std::cerr<<"propagation"<<std::endl;
+		if (b[*it])
+		{
+			//std::cout<<(float(indice)/index_image.size())*100<<std::endl;
+
+			
+			propagate<T>(*it, Lm, np, nm, b, Qc);
+			propagate<T>(*it, Lp, nm, np, b, Qc);
+
+			while (not Qc.empty())
+			{
+				IndexType q = Qc.front();
+				Qc.pop();
+				if (Lp[q] + Lm[q]-1 < L)
+				{
+					//std::cout <<"Image["<<q<< "]= "<< Image[*it]<< std::endl;
+					Output.GetData()[q] = Output.GetData()[*it];
+					b[q] = 0;
+					Lp[q] = 0;
+					Lm[q] = 0;
+				}
+			}
+		}
+	}
+
+	return ;
+}
+
+
+template<typename T>
+void PO_2D(	Image<T> &I,
+			int L,
+			std::vector<IndexType> &index_image,
+			std::vector<int> &orientations,
+			Image<T> &Output)
+			
+{
+	
+	int new_dimy=I.Dimy();
+	int new_dimx=I.Dimx();
+	
+	// Create the temporary image b  (0 for a 1-pixel border, 1 elsewhere)
+	std::vector<bool>b(I.ImageSize(),1);
+	
+	//x=0
+	for (int y = 0 ; y < I.Dimy() ; ++y){
+		b[y*new_dimx]=0;
+
+	}
+	
+	//x=dimx-1
+	for (int y = 0 ; y < I.Dimy() ; ++y){
+		b[y*new_dimx+new_dimx-1]=0;
+	}
+	
+	// y=0
+	for (int x = 0 ; x < I.Dimx() ; ++x){
+		b[x]=0;	
+	}
+	
+	// y=dimy-1
+	for (int x = 0 ; x < I.Dimx() ; ++x){
+		b[(new_dimy-1)*new_dimx+x]=0;
+	}
+	
+	// Create the offset np and nm
+	std::vector<int>np;
+	std::vector<int>nm;
+	createNeighbourhood2D(I.Dimx(), orientations, np, nm);
 
 	//Create other temporary images
 	std::vector<int>Lp(I.ImageSize(),L);

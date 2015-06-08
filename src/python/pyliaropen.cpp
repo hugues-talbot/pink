@@ -116,7 +116,7 @@ namespace pink {
 
 
     template   <class image_t>
-    image_t liarRPO
+    image_t liarRPO3D
     (
       const image_t & input_image,
       const int orientationx,
@@ -196,6 +196,85 @@ namespace pink {
         return result_image;
 
     } /* liarRPO*/
+    
+    template   <class image_t>
+    image_t liarRPO2D
+    (
+      const image_t & input_image,
+      const int orientationx,
+      const int orientationy,
+      const int L
+    )
+    {
+        
+    image_t result_image = input_image.clone();
+
+	// user-specified orientation
+	std::vector<int> orientation(3);
+	orientation[0] = orientationx;
+	orientation[1] = orientationy;
+
+	// image structure
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = outputxvimage->row_size;
+	int ny = outputxvimage->col_size;
+
+	if (outputxvimage->data_storage_type == VFF_TYP_1_BYTE) {
+		
+		// Images
+		Image<unsigned char> I(nx, ny, 1);
+		unsigned char* input_buffer = (unsigned char*) (outputxvimage->image_data);
+		I.Add_data_from_pointer(input_buffer);
+		Image<unsigned char> Output(nx, ny, 1);
+		Output.Add_data_from_pointer((unsigned char*) (outputxvimage->image_data));
+				
+		// Sorted Image
+		std::vector<long> index_image=sort_image_value<unsigned char,long>(I.GetPointer(), I.ImageSize());
+
+		// Execute PO3D
+		PO_2D<unsigned char>(I, L, index_image, orientation, Output);
+		std::memcpy(outputxvimage->image_data, Output.GetPointer(),nx*ny*sizeof(unsigned char));
+	}
+	
+    else if (outputxvimage->data_storage_type == VFF_TYP_2_BYTE){
+		// Images
+		Image<unsigned short> I(nx, ny, 1);
+		I.Add_data_from_pointer((unsigned short*) (outputxvimage->image_data));
+		Image<unsigned short> Output(nx, ny, 1);
+		Output.Add_data_from_pointer((unsigned short*) (outputxvimage->image_data));
+		
+		// Sorted Image
+		std::vector<long> index_image=sort_image_value<unsigned short,long>(I.GetPointer(), I.ImageSize());
+
+		// Execute PO3D
+		PO_2D<unsigned short>(I, L, index_image, orientation, Output);
+		std::memcpy(outputxvimage->image_data, Output.GetPointer(),nx*ny*sizeof(unsigned short));
+	}
+	
+	else if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE){
+		// Images
+		Image<uint32_t> I(nx, ny, 1);
+		uint32_t* input_buffer = (uint32_t*) (outputxvimage->image_data);
+		I.Add_data_from_pointer(input_buffer);
+		Image<uint32_t> Output(nx, ny, 1);
+		Output.Add_data_from_pointer((uint32_t*) (outputxvimage->image_data));
+		// Sorted Image
+		std::vector<long> index_image=sort_image_value<uint32_t,long>(I.GetPointer(), I.ImageSize());
+		// Execute PO3D
+		PO_2D<uint32_t>(I, L, index_image, orientation, Output);
+		
+		std::memcpy(outputxvimage->image_data, Output.GetPointer(),nx*ny*sizeof(uint32_t));
+	}
+    
+    else {
+		pink_error("Pixel type not yet supported\n");
+    } 
+        
+        return result_image;
+
+    } /* liarRPO2D*/
     
     
     
@@ -705,8 +784,8 @@ UI_EXPORT_FUNCTION(
 
 
 UI_EXPORT_FUNCTION(
-  RPO,
-  pink::python::liarRPO,
+  RPO3D,
+  pink::python::liarRPO3D,
   ( arg("input_image"), arg("orientationX"),arg("orientationY"), arg("orientationZ"), arg("L")),
   "3D Robust path opening, given an orientation (x,y,z) and a length L\n"
   "the following orientations are legal:\n"
@@ -720,9 +799,24 @@ UI_EXPORT_FUNCTION(
   "\n"
   "Unsigned char, unsigned short and unsigned long images are accepted \n"
   "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
-  " The robustness is performed by a dilation / erosion process. \n"
+  " The robustness is performed by a dilation process. \n"
 );
 
+UI_EXPORT_FUNCTION(
+  RPO2D,
+  pink::python::liarRPO2D,
+  ( arg("input_image"), arg("orientationX"),arg("orientationY"), arg("L")),
+  "2D Robust path opening, given an orientation (x,y) and a length L\n"
+  "the following orientations are legal:\n"
+  "   1  0  : vertical orientation\n"
+  "   0  1  : horizontal\n"
+  "   1  -1  : diagonal NW/SW\n"
+  "   -1  1  : diagonal NE/SW-depth\n"
+  "\n"
+  "Unsigned char, unsigned short and unsigned long images are accepted \n"
+  "This function used the algorithm of Hendriks to compute Path Opening ""Constrained and Dimensionality-Independant Path Openings"" (2010).\n"
+  " The robustness is performed by a dilation process. \n"
+);
 
 UI_EXPORT_FUNCTION(
   UnionRPO,
