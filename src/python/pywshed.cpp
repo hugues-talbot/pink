@@ -70,7 +70,18 @@ namespace wshed
     llpemeyer2_nomask,
     ( arg("markers"), arg("image"), arg("connexity") ),
     doc__watershedMeyer2__c__
-    );
+      );
+
+# include BOOST_PP_UPDATE_COUNTER()
+    // by HT for Eloise (ah les femmes !)
+    // Note the output image is the first image in the list
+    UI_WRAP_FUNCTION(
+        "watershedMeyerlabnoline",
+        llpemeyer_llpemeyersanslignelab,
+        ( arg("markers"), arg("image"), arg("mask"), arg("connectivity") ),
+          "WRITE ME" // missing doc
+        );
+    
 # include BOOST_PP_UPDATE_COUNTER()
 
   UI_WRAP_FUNCTION(

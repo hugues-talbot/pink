@@ -1167,7 +1167,7 @@ int32_t llpemeyer_llpemeyersanslignelab(
 
   if (depth(image) != 1) 
   {
-    fprintf(stderr, "%s: net yet implemented for 3D images\n", F_NAME);
+    fprintf(stderr, "%s: please use the 3d version of this function\n", F_NAME);
     exit(0);
   }
 
@@ -1214,7 +1214,7 @@ int32_t llpemeyer_llpemeyersanslignelab(
     case 4: incr_vois = 2; break;
     case 8: incr_vois = 1; break;
     default: 
-      fprintf(stderr, "%s: mauvaise connexite: %d\n", F_NAME, connex);
+      fprintf(stderr, "%s: incorrect connectivity: %d\n", F_NAME, connex);
       return 0;
   } /* switch (connex) */    
 
