@@ -122,7 +122,14 @@ extern int32_t llpemeyer3dsanslignelab(
         struct xvimage *marqueurs, // entree-sortie
         struct xvimage *masque,
         int32_t connex
-);
+    );
+
+extern    int32_t llpemeyer_llpemeyer3dsanslignelab(
+        struct xvimage *image,
+        struct xvimage *marqueurs, // entree-sortie
+        struct xvimage *masque,
+        int32_t connex
+    );
 
 extern int32_t llpemeyer_llpemeyer3d2(
         struct xvimage *image,

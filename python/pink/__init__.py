@@ -65,6 +65,13 @@ try:
     from matplotlib_helper import *
 except:
     print("warning: cannot import matplotlib")
+
+try:
+    from watershed import Watershed
+except:
+    print("Warning: cannot import Watershed")
+
+
 # from python_pink import *
 # from long2byte import long2byte
 # from parallel_map import parallel_map

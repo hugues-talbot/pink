@@ -79,8 +79,26 @@ namespace wshed
         "watershedMeyerlabnoline",
         llpemeyer_llpemeyersanslignelab,
         ( arg("markers"), arg("image"), arg("mask"), arg("connectivity") ),
-          "WRITE ME" // missing doc
+        "Pixel-based, labeled 2D Meyer watershed without separating lines\n"
+        "  mask is mandatory\n"
+        "  markers must be INT32\n"
+        "  image must be UINT8\n"
+        "Connectivity must be only 4 or 8"// missing doc
         );
+
+# include BOOST_PP_UPDATE_COUNTER()    
+    UI_WRAP_FUNCTION(
+        "watershedMeyer3Dlabnoline",
+        llpemeyer_llpemeyer3dsanslignelab,
+        ( arg("markers"), arg("image"), arg("mask"), arg("connectivity") ),
+        "Pixel-based, labelled 3D Meyer watershed without separating surfaces\n"
+        "  mask is mandatory\n"
+        "  markers must be INT32\n"
+        "  image must be UINT8\n"
+        "Connectivity must be only 6, 18 or 26"// missing doc
+        );
+
+    
     
 # include BOOST_PP_UPDATE_COUNTER()
 
