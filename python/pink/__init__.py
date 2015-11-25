@@ -67,7 +67,7 @@ except:
     print("warning: cannot import matplotlib")
 
 try:
-    from watershed import Watershed
+    from watershed import MeyerWatershed
 except:
     print("Warning: cannot import Watershed")
 
