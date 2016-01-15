@@ -126,7 +126,7 @@ void vint_object_export(); void vector_int_object_export();void wshedtopo_export
 /*void erosball_export()*/;void medianfilter_export();
 
 // skeleton function
-void skeleton2_export();void zoom_export();
+void skeleton2_export(); // void zoom_export();
 
 void dilation_export(); void erosion_export(); void geodilat_export();
 void geoeros_export(); void opening_export(); void drawcurve2D_export();
@@ -396,7 +396,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   wshedtopo_export(); /* erosball_export();*/  medianfilter_export();
 
   // the skeleton function
-  skeleton2_export();  zoom_export();
+  skeleton2_export();  // zoom_export();
 
   dilation_export(); erosion_export();  geodilat_export();  geoeros_export();
   opening_export();  drawcurve2D_export();
