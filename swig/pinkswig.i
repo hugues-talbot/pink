@@ -199,4 +199,12 @@ struct xvimage* opening(struct xvimage *image, struct xvimage *elem, int32_t x=-
 struct xvimage* closing(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
 struct xvimage* geodilat(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter=-1);
 struct xvimage* geoeros(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter=-1);
-xvimage *  createimage(index_t x, index_t y, index_t z, int32_t type, long int data);
+struct xvimage* createimage(index_t x, index_t y, index_t z, int32_t type, long int data);
+struct xvimage* threshold(struct xvimage *imagein, double seuil, double seuil2=0.);
+struct xvimage* erosball(struct xvimage *imagein, int r, int mode=0);
+struct xvimage* dilatball(struct xvimage *imagein, int r, int mode=0);
+struct xvimage* frame(struct xvimage *imagein, int width=1);
+struct xvimage* inverse(struct xvimage *imagein);
+struct xvimage* min(struct xvimage *imagein1, struct xvimage *imagein2);
+struct xvimage* max(struct xvimage *imagein1, struct xvimage *imagein2);
+struct xvimage* border(struct xvimage *imagein, int connex=4);

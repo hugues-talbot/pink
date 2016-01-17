@@ -55,7 +55,14 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/lib/mcfah.c
 	     ../src/lib/mcfahpure.c
              ../src/lib/mclifo.c
-	     ../src/lib/mcfifo.c
+             ../src/lib/mcfifo.c
+	     ../src/lib/lseuil.c
+	     ../src/lib/ldist.c
+	     ../src/lib/lcrop.c
+	     ../src/lib/larith.c
+	     ../src/lib/lborder.c
+	     ../src/lib/mctopo.c
+	     ../src/lib/mctopo3d.c
 	     )
 
 SET_SOURCE_FILES_PROPERTIES(pinkswig.i PROPERTIES C ON)
