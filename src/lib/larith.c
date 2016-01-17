@@ -98,6 +98,7 @@ int32_t ladd(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
+  double *DPT1, *DPT2; 
   index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   COMPARE_SIZE(image1, image2);
@@ -119,6 +120,12 @@ int32_t ladd(
     FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
     for (i = 0; i < N; i++, FPT1++, FPT2++)
       *FPT1 = *FPT1 + *FPT2;
+  }
+  else if ((datatype(image1) == VFF_TYP_DOUBLE) && (datatype(image2) == VFF_TYP_DOUBLE))
+  {
+    DPT1 = DOUBLEDATA(image1); DPT2 = DOUBLEDATA(image2);
+    for (i = 0; i < N; i++, DPT1++, DPT2++)
+      *DPT1 = *DPT1 + *DPT2;
   }
   else if ((datatype(image1) == VFF_TYP_COMPLEX) && (datatype(image2) == VFF_TYP_COMPLEX))
   {
@@ -1453,6 +1460,7 @@ int32_t lsub(
   uint16_t *pt3, *pt4;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
+  double *DPT1, *DPT2; 
   index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   COMPARE_SIZE(image1, image2);
@@ -1480,6 +1488,12 @@ int32_t lsub(
     FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
     for (i = 0; i < N; i++, FPT1++, FPT2++)
       *FPT1 = *FPT1 - *FPT2;
+  }
+  else if ((datatype(image1) == VFF_TYP_DOUBLE) && (datatype(image2) == VFF_TYP_DOUBLE))
+  {
+    DPT1 = DOUBLEDATA(image1); DPT2 = DOUBLEDATA(image2);
+    for (i = 0; i < N; i++, DPT1++, DPT2++)
+      *DPT1 = *DPT1 - *DPT2;
   }
   else if ((datatype(image1) == VFF_TYP_COMPLEX) && (datatype(image2) == VFF_TYP_COMPLEX))
   {

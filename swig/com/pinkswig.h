@@ -15,6 +15,10 @@ static "C" {
  
  struct xvimage* createimage(index_t x, index_t y, index_t z, int32_t type, long int data);
 
+ // Arithmetic
+ struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2);
+ struct xvimage* sub(struct xvimage *imagein1, struct xvimage *imagein2);
+  
  // real Com functions start here
  struct xvimage* wshedtopo(struct xvimage *image, int connex, int inverse);
  struct xvimage* watershed(struct xvimage *image, struct xvimage *mark, int connex, int inverse);

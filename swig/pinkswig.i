@@ -24,7 +24,7 @@
   typedef unsigned long long uint64_t;
   typedef unsigned long long u_int64_t;
 
-typedef int32_t index_t;
+  typedef int32_t index_t;
 
 #define	VFF_TYP_BIT		0	/* pixels are on or off (binary image)*/
                                         /* Note: This is an X11 XBitmap 
@@ -116,6 +116,7 @@ typedef struct xvimage {
 */
 }} xvimage;
 
+
 %pythoncode{
 import ctypes
 def fromnumpy(mat):
@@ -178,6 +179,12 @@ def __setitem__(self, tup, value):
       x, y, z = tup
       self.setpixel(value,x,y,z)
 
+def __add__(self,other):
+     return add(self, other)
+
+def __sub__(self,other):
+     return sub(self, other)
+
 }};
 
 struct xvimage * readimage(
@@ -190,21 +197,210 @@ void writeimage(
 );
 
 
-struct xvimage* minima(struct xvimage *image, int connex);
-struct xvimage* wshedtopo(struct xvimage *image, int connex, int inverse=1);
-struct xvimage* watershed(struct xvimage *image, struct xvimage *mark, int connex, int inverse=1);
-struct xvimage* dilation(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
-struct xvimage* erosion(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
-struct xvimage* opening(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
-struct xvimage* closing(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
-struct xvimage* geodilat(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter=-1);
-struct xvimage* geoeros(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter=-1);
 struct xvimage* createimage(index_t x, index_t y, index_t z, int32_t type, long int data);
-struct xvimage* threshold(struct xvimage *imagein, double seuil, double seuil2=0.);
-struct xvimage* erosball(struct xvimage *imagein, int r, int mode=0);
-struct xvimage* dilatball(struct xvimage *imagein, int r, int mode=0);
+struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2);
+struct xvimage* sub(struct xvimage *imagein1, struct xvimage *imagein2);
+
+%feature("docstring",
+	 "Regional minima \n"
+	 "Description: \n"
+	 "Selects the regional minima of a grayscale image with connexity connex.\n"
+	 "Types supported: byte 2d, int32_t 2d, byte 3d, int32_t 3d\n");
+struct xvimage* minima(struct xvimage *image, int connex);
+
+%feature("docstring",
+	 "Topological grayscale watershed.\n"
+	 "Description:\n"
+	 "Topological watershed as defined in [B05,CNB05], preserves the minima with connectivity connex.\n"
+	 "If inverse!=0, then a watershed divide is computed\n"
+	 "If inverse==0, the dual operator is applied, i.e., thalweg lines are computed.\n"
+	 "[B05] G. Bertrand: ""On topological watersheds"",\n" 
+	 "                   Journal of Mathematical Imaging and Vision,\n"
+	 "                   Vol. 22, No. 2-3, pp. 217-230, 2005\n"
+	 "[CNB05] M. Couprie and L. Najman and G. Bertrand: ""Quasi-linear algorithms for the topological watershed"",\n"
+	 "                   Journal of Mathematical Imaging and Vision,\n"
+	 "                   Vol. 22, No. 2-3, pp. 231-249, 2005.\n"
+	 "Types supported: byte 2d, byte 3d\n");
+struct xvimage* wshedtopo(struct xvimage *image, int connex, int inverse=1);
+
+%feature("docstring",
+	 "Topological binary watershed.\n"
+	 "Description:\n"
+	 "Topological watershed as defined in [B05,CNB05] with connectivity connex.\n"
+	 "A marker image is supplied in mark. The result is a binary image.\n"
+	 "If inverse!=0, then a watershed divide is computed\n"
+	 "If inverse==0, the dual operator is applied, i.e., thalweg lines are computed.\n"
+	 "[B05] G. Bertrand: ""On topological watersheds"",\n" 
+	 "                   Journal of Mathematical Imaging and Vision,\n"
+	 "                   Vol. 22, No. 2-3, pp. 217-230, 2005\n"
+	 "[CNB05] M. Couprie and L. Najman and G. Bertrand: ""Quasi-linear algorithms for the topological watershed"",\n"
+	 "                   Journal of Mathematical Imaging and Vision,\n"
+	 "                   Vol. 22, No. 2-3, pp. 231-249, 2005.\n"
+	 "Types supported: byte 2d, byte 3d\n");
+struct xvimage* watershed(struct xvimage *image, struct xvimage *mark, int connex, int inverse=1);
+
+
+%feature("docstring",
+	 "Description:\n"
+	 "Morphological dilation by a plane structuring element.\n"
+	 "The (plane) structuring element is given by the non-null values in the image elem, \n"
+	 "its origin (wrt the point (0,0) of elem) \n"
+	 "is given by the parameters x, y and z. \n"
+	 "If x==-1 (resp. y==-1, z==-1), then the center is in the middle of elem,\n"
+	 "i.e., x=rowsize(elem)/2 (resp. y=colsize(elem)/2, z=depth(elem).\n"
+	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+struct xvimage* dilation(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
+
+%feature("docstring",
+	 "Description:\n"
+	 "Morphological erosion by a plane structuring element.\n"
+	 "The (plane) structuring element is given by the non-null values in the image elem, \n"
+	 "its origin (wrt the point (0,0) of elem) \n"
+	 "is given by the parameters x, y and z. \n"
+	 "If x==-1 (resp. y==-1, z==-1), then the center is in the middle of elem,\n"
+	 "i.e., x=rowsize(elem)/2 (resp. y=colsize(elem)/2, z=depth(elem).\n"
+	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+struct xvimage* erosion(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
+
+%feature("docstring",
+	 "Description:\n"
+	 "Morphological opening by a plane structuring element.\n"
+	 "The (plane) structuring element is given by the non-null values in the image elem, \n"
+	 "its origin (wrt the point (0,0) of elem) \n"
+	 "is given by the parameters x, y and z. \n"
+	 "If x==-1 (resp. y==-1, z==-1), then the center is in the middle of elem,\n"
+	 "i.e., x=rowsize(elem)/2 (resp. y=colsize(elem)/2, z=depth(elem).\n"
+	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+struct xvimage* opening(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
+
+%feature("docstring",
+	 "Description:\n"
+	 "Morphological closing by a plane structuring element.\n"
+	 "The (plane) structuring element is given by the non-null values in the image elem, \n"
+	 "its origin (wrt the point (0,0) of elem) \n"
+	 "is given by the parameters x, y and z. \n"
+	 "If x==-1 (resp. y==-1, z==-1), then the center is in the middle of elem,\n"
+	 "i.e., x=rowsize(elem)/2 (resp. y=colsize(elem)/2, z=depth(elem).\n"
+	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+struct xvimage* closing(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
+
+%feature("docstring",
+	 "Geodesic (grayscale or binary) dilation\n"
+	 "Description:\n"
+	 "Geodesic dilation of image1 under image2.\n"
+	 "Let G and F be the two input images. If G is not over F, then \n"
+	 "G is replaced initially by min(G,F).\n"
+	 "The structuring element is specified by the value of the parameter connex,\n"
+	 "which can be one of the following ones: 4, 8 in 2d, or 6, 18, 26 in 3d.\n"
+	 "The parameter niter sets the number of iterations. If niter == -1,\n"
+	 "then the iterations continue until stability.\n"
+	 "Types supported: byte 2d, byte 3d, short 2d, short 3d, long 2d, long 3d.\n");
+struct xvimage* geodilat(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter=-1);
+
+%feature("docstring",
+	 "Geodesic (grayscale or binary) erosion\n"
+	 "Description:\n"
+	 "Geodesic erosion of image1 over image2.\n"
+	 "Let G and F be the two input images. If G is not over F, then \n"
+	 "G is replaced initially by max(G,F).\n"
+	 "The structuring element is specified by the value of the parameter connex,\n"
+	 "which can be one of the following ones: 4, 8 in 2d, or 6, 18, 26 in 3d.\n"
+	 "The parameter niter sets the number of iterations. If niter == -1,\n"
+	 "then the iterations continue until stability.\n"
+	 "Types supported: byte 2d, byte 3d, short 2d, short 3d, long 2d, long 3d.\n");
+struct xvimage* geoeros(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter=-1);
+
+%feature("docstring",
+	 "Simple threshold\n"
+	 "<B>Description:</B>\n"
+	 "If th2<=0, for each pixel x, out[x] = if (in[x] < th1) then 0 else 255\n"
+	 "If th2>0, for each pixel x, out[x] = if (th1 <= in[x] < th2) then 255 else 0\n"
+	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+struct xvimage* threshold(struct xvimage *imagein, double th1, double th2=0.);
+
+%feature("docstring",
+	 "Morphological binary erosion by a metric ball.\n"
+	 "This erosion is the dual of the dilatball operator,\n"
+	 "i.e. erosball(X) = inverse(dilatball(inverse(X))).\n"
+	 "The structuring element for this erosion is a ball (or a disc) of radius r.\n"
+	 "The erosion is computed by thresholding a distance map.\n"
+	 "The distance used depends on the optional parameter dist (default is 0) :\n"
+	 "-  0: rounded euclidean distance\n"
+	 "-  2: chamfer distance\n"
+	 "-  3: exact quadratic euclidean distance\n"
+	 "-  4: 4-distance in 2d\n"
+	 "-  8: 8-distance in 2d\n"
+	 "-  6: 6-distance in 3d\n"
+	 "- 18: 18-distance in 3d\n"
+	 "- 26: 26-distance in 3d\n"
+	 "\n"
+	 "Warning: The input image imagein must be a binary image. No test is done.\n");
+struct xvimage* erosball(struct xvimage *imagein, int r, int dist=0);
+
+%feature("docstring",
+	 "Morphological binary dilation by a metric ball.\n"
+	 "The structuring element for this erosion is a ball (or a disc) of radius r.\n"
+	 "In this case the result of the dilation is defined by Y = {x; d(x,X) <= r} where X\n"
+	 "represents the original point set (non-null pixels in the original image).\n"
+	 "The dilation is computed by thresholding a distance map.\n"
+	 "The distance used depends on the optional parameter dist (default is 0) :\n"
+	 "-  0: rounded euclidean distance\n"
+	 "-  2: chamfer distance\n"
+	 "-  3: exact quadratic euclidean distance\n"
+	 "-  4: 4-distance in 2d\n"
+	 "-  8: 8-distance in 2d\n"
+	 "-  6: 6-distance in 3d\n"
+	 "- 18: 18-distance in 3d\n"
+	 "- 26: 26-distance in 3d\n"
+	 "\n"
+	 "Warning: The input image imagein must be a binary image. No test is done.\n");
+struct xvimage* dilatball(struct xvimage *imagein, int r, int dist=0);
+
+%feature("docstring",
+	 "Generates an image with a white border and a black interior\n\n"
+	 "Description:\n"
+	 "The resulting image has the same size as the input image. Its border is set to 255,\n"
+	 "all other pixels are set to \n"
+	 "If the optional parameter width is given, then the border has thickness 'width'.\n"
+         "Types supported: byte 2d, byte 3d\n");
 struct xvimage* frame(struct xvimage *imagein, int width=1);
+
+%feature("docstring",
+	 "Computes the pixelwise inverse of an image\n\n"
+	 "Description:\n"
+	 "Byte images: for each pixel x, out[x] = 255 - in[x].<br>\n"
+	 "Long or float images: for each pixel x, out[x] = VMAX - in[x], where VMAX = max{in[x]}.\n"
+	 "Types supported: byte 2d, byte 3d, long 2d, long 3d, float 2d, float 3d\n");
 struct xvimage* inverse(struct xvimage *imagein);
+
+%feature("docstring",
+	 "Minimum of 2 images\n"
+	 "Description:\n"
+	 "For each pixel x, out[x] = min{in1[x], in2[x]}. \n"
+	 "Images must be of the same type and same dimensions.\n"
+	 "Otherwise, a conversion to the more general type is performed.\n"
+	 "Types supported: byte 2d, byte 3d, long 2d, long 3d, float 2d, float 3d\n");
 struct xvimage* min(struct xvimage *imagein1, struct xvimage *imagein2);
+
+%feature("docstring",
+	 "Maximum of 2 images\n"
+	 "Description:\n"
+	 "For each pixel x, out[x] = max{in1[x], in2[x]}. \n"
+	 "Images must be of the same type and same dimensions.\n"
+	 "Otherwise, a conversion to the more general type is performed.\n"
+	 "Types supported: byte 2d, byte 3d, long 2d, long 3d, float 2d, float 3d\n");
 struct xvimage* max(struct xvimage *imagein1, struct xvimage *imagein2);
+
+
+%feature("docstring",
+	 "border of a binary image\n"
+	 "Description:\n"
+	 "Let X be the subset of Zn that corresponds to the input image, and \n"
+	 "let k be the value of the parameter connex (that is, 4, 8 (2d) or 6, 26 (3d)),\n"
+	 "which is the connectivity chosen for X.\n"
+	 "\n"
+	 "The border B(X) of X is defined by:\n"
+	 "B(X) = {x in X, (Gamma_nk(x) inter Xbar) not empty}\n"
+	 "where nk is the complementary connectivity for k.\n"
+	 "Types supported: byte 2d, byte 3d\n");
 struct xvimage* border(struct xvimage *imagein, int connex=4);
