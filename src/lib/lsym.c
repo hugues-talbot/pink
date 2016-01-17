@@ -53,13 +53,13 @@ int32_t lsym(struct xvimage * image1, char mode)
   int32_t i, j, k, ip, jp, kp;
   uint8_t *pt1;
   uint8_t tmp;
-  int32_t rs, cs, ps, ds, N;
+  int32_t rs, cs, ps, ds;//, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
   ds = depth(image1);
   ps = rs * cs;
-  N = ps * ds;
+  //N = ps * ds;
   pt1 = UCHARDATA(image1);
   
   /* ---------------------------------------------------------- */

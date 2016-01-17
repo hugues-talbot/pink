@@ -891,14 +891,14 @@ void list2image(struct xvimage * image, double *P, index_t n)
 #define F_NAME "list2image"
 {
   index_t rs, cs, ds, ps, x, y, z, i;
-  index_t N;
+  //index_t N;
   uint8_t *F;
 
   rs = rowsize(image);
   cs = colsize(image);
   ds = depth(image);
   ps = rs * cs;
-  N = ps * ds;
+  //N = ps * ds;
   F = UCHARDATA(image);
   if (ds == 1) // 2D
   {
@@ -985,11 +985,11 @@ void writeimage(struct xvimage * image, const char *filename)
 #undef F_NAME
 #define F_NAME "writeimage"
 {
-  index_t rs, cs, ds, np;
+  index_t rs, cs, ds;//, np;
   rs = rowsize(image);
   cs = colsize(image);
   ds = depth(image);
-  np = nbands(image);
+  //np = nbands(image);
 
   if ((rs<=25) && (cs<=25) && (ds<=25) &&// (np==1) &&
       ((datatype(image) == VFF_TYP_1_BYTE) || (datatype(image) == VFF_TYP_4_BYTE) || 
@@ -1744,7 +1744,7 @@ void writergbascimage(
 {
   FILE *fd = NULL;
   index_t rs, cs, i, j;
-  index_t N;
+  //index_t N;
   int32_t nndg;
 
   fd = pink_fopen_write(filename);
@@ -1764,7 +1764,7 @@ void writergbascimage(
     exit(0);
   }
   
-  N = rs * cs;
+  //N = rs * cs;
   nndg = 255;
 
   fputs("P3\n", fd);
@@ -2705,7 +2705,7 @@ int32_t readrgbimage(
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  index_t rs, cs, i, ds;
+  index_t rs, cs, i;//, ds;
   index_t N;
   int32_t ascii = 0;  
   int32_t c;
@@ -2748,7 +2748,7 @@ int32_t readrgbimage(
 
   if (c == 3) /* format ppm MatLab : tout sur une ligne */
   {
-    ds = 1;
+    //ds = 1;
     goto readdata;
   }
 
@@ -3376,7 +3376,7 @@ int32_t readrgb(const char *filename, struct xvimage ** r, struct xvimage ** g, 
   struct RGBFILEHEADER FileHeader;
   uint8_t *R, *G, *B;
   index_t i, j, rs, cs;
-  index_t N;
+  //index_t N;
 
   fd = pink_fopen_read(filename);
 
@@ -3408,7 +3408,7 @@ int32_t readrgb(const char *filename, struct xvimage ** r, struct xvimage ** g, 
   }
   rs = FileHeader.width;
   cs = FileHeader.height;
-  N = rs * cs;
+  //N = rs * cs;
   *r = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); 
   *g = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); 
   *b = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); 

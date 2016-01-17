@@ -1,0 +1,66 @@
+
+# This is a CMake example for Python
+
+cmake_minimum_required(VERSION 2.7)
+
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
+    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(warnings "-Wall -Wextra")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    set(warnings "/W4 /WX /EHsc")
+endif()
+if (NOT CONFIGURED_ONCE)
+    set(CMAKE_CXX_FLAGS "${warnings}"
+        CACHE STRING "Flags used by the compiler during all build types." FORCE)
+    set(CMAKE_C_FLAGS   "${warnings}"
+        CACHE STRING "Flags used by the compiler during all build types." FORCE)
+endif()
+
+if (CMAKE_HOST_UNIX)
+    add_definitions( -DUNIXIO -DPC)
+endif (CMAKE_HOST_UNIX)
+
+if (THIS_IS_MSVC)
+    add_definitions( -D_WINDOWS -DWIN32 )
+endif(THIS_IS_MSVC)
+
+FIND_PACKAGE(SWIG REQUIRED)
+INCLUDE(${SWIG_USE_FILE})
+
+FIND_PACKAGE(PythonLibs)
+
+INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../include)
+
+#include_directories(../include)
+    
+ADD_LIBRARY( pinklib STATIC
+	     ../src/lib/mcimage.c
+	     ../src/lib/mccodimage.c
+             ../src/lib/lwshedtopo.c
+             ../src/lib/ldilateros.c
+	     ../src/lib/ldilateros3d.c
+	     ../src/lib/lsym.c
+             ../src/lib/lminima.c
+	     ../src/lib/llabelextrema.c
+             ../src/lib/lgeodesic.c
+             ../src/lib/mcindic.c
+             ../src/lib/mccomptree.c
+	     ../src/lib/mcunionfind.c
+             ../src/lib/mcfahsalembier.c
+	     ../src/lib/mcfah.c
+	     ../src/lib/mcfahpure.c
+             ../src/lib/mclifo.c
+	     ../src/lib/mcfifo.c
+	     )
+
+SET_SOURCE_FILES_PROPERTIES(pinkswig.i PROPERTIES C ON)
+SET_SOURCE_FILES_PROPERTIES(pinkswg.i PROPERTIES SWIG_FLAGS "-includeall")
+SWIG_ADD_MODULE(pinkswig python pinkswig.i com/pinkswig.c)
+
+SWIG_LINK_LIBRARIES(pinkswig ${PYTHON_LIBRARIES} pinklib)
+
