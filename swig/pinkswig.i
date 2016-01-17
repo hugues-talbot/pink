@@ -185,6 +185,12 @@ def __add__(self,other):
 def __sub__(self,other):
      return sub(self, other)
 
+def __div__(self,other):
+     return divide(self, other)
+
+def __mul__(self,other):
+     return mult(self, other)
+
 }};
 
 struct xvimage * readimage(
@@ -200,6 +206,8 @@ void writeimage(
 struct xvimage* createimage(index_t x, index_t y, index_t z, int32_t type, long int data);
 struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2);
 struct xvimage* sub(struct xvimage *imagein1, struct xvimage *imagein2);
+struct xvimage* mult(struct xvimage *imagein1, struct xvimage *imagein2);
+struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2);
 
 %feature("docstring",
 	 "Regional minima \n"

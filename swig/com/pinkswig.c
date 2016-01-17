@@ -703,3 +703,67 @@ struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2)
   freeimage(image2);
   return image1;
 }
+
+struct xvimage* mult(struct xvimage *imagein1, struct xvimage *imagein2)
+{
+  static char *name="mult";
+  struct xvimage *image1 = checkAllocCopy(imagein1, name);
+  if (image1 == NULL)
+    return NULL;
+  struct xvimage *image2 = checkAllocCopy(imagein2, name);
+  if (image2 == NULL) {
+    freeimage(image1);
+    return NULL;
+  }
+
+  if (! convertgen(&image1, &image2))
+  {
+    fprintf(stderr, "%s: function convertgen failed\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
+
+  if (! lmult(image1, image2))
+  {
+    fprintf(stderr, "%s: function lmult failed\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
+  
+  freeimage(image2);
+  return image1;
+}
+
+struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2)
+{
+  static char *name="div";
+  struct xvimage *image1 = checkAllocCopy(imagein1, name);
+  if (image1 == NULL)
+    return NULL;
+  struct xvimage *image2 = checkAllocCopy(imagein2, name);
+  if (image2 == NULL) {
+    freeimage(image1);
+    return NULL;
+  }
+
+  if (! convertgen(&image1, &image2))
+  {
+    fprintf(stderr, "%s: function convertgen failed\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
+
+  if (! ldivide(image1, image2))
+  {
+    fprintf(stderr, "%s: function ldivide failed\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
+  
+  freeimage(image2);
+  return image1;
+}
