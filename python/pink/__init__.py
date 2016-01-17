@@ -71,6 +71,11 @@ try:
 except:
     print("Warning: cannot import Watershed")
 
+try:
+    from readimage import readimage
+except:
+    print("Warning: no readimage")
+
 
 # from python_pink import *
 # from long2byte import long2byte

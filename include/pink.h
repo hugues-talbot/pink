@@ -296,8 +296,8 @@ knowledge of the CeCILL license and that you accept its terms.
 //#include "lvoronoi.h"
 #include "lwarp.h"
 #include "lwshedtopo.h"
-#include "lzoom.h"
-#include "lzoomint.h"
+//#include "lzoom.h"
+//#include "lzoomint.h"
 #include "rgbfileheader.h"
 
 // liar-related stuff Hugues Talbot	 3 Jun 2011
