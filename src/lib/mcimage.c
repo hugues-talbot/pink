@@ -106,7 +106,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define WARN_HUGE
 
 // Fopen strategy
-__pink__inline FILE* pink_fopen_read( const char * filename )
+static __pink__inline FILE* pink_fopen_read( const char * filename )
 {
 # ifdef UNIXIO
   return fopen( filename, "r" );
@@ -120,7 +120,7 @@ __pink__inline FILE* pink_fopen_read( const char * filename )
 # endif /* NOT UNIXIO */
 } /* pink_fopen_read */
 
-__pink__inline FILE* pink_fopen_write( const char * filename )
+static __pink__inline FILE* pink_fopen_write( const char * filename )
 {
 # ifdef UNIXIO
   return fopen( filename, "w" );
@@ -2058,7 +2058,7 @@ struct xvimage * readimage( const char *filename )
   index_t rs, cs, ds, nb, N, i;
   struct xvimage * image;
   int32_t ascii, color;
-  int32_t typepixel;
+  int32_t typepixel=0;
   int32_t c, ndgmax;
   double xdim=1.0, ydim=1.0, zdim=1.0;
   char *read;
