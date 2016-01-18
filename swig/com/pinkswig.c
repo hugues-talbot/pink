@@ -11,6 +11,7 @@
 
 #include <lwshedtopo.h>
 #include <lminima.h>
+#include <lmaxima.h>
 #include <ldilateros.h>
 #include <ldilateros3d.h>
 #include <lsym.h>
@@ -20,6 +21,9 @@
 #include <lcrop.h>
 #include <larith.h>
 #include <lborder.h>
+#include <lattribheight.h>
+#include <lattribarea.h>
+#include <lattribvol.h>
 
 /* ==================================== */
 // Helper function to use with numpy (dataInt should be uintptr_t)
@@ -35,6 +39,19 @@ xvimage *  createimage(index_t x, index_t y, index_t z, int32_t type, long int d
     im->image_data = (void *)data;
   }
   return im;
+}
+
+/* ==================================== */
+int EqualSize(struct xvimage * image1, struct xvimage *image2)
+/* ==================================== */
+{
+  if (   (depth(image1) == depth(image2))
+      && (rowsize(image1) == rowsize(image2))
+      && (colsize(image1) == colsize(image2))
+      )
+    return 1;
+  else
+    return 0;
 }
 
 /* ==================================== */
@@ -86,9 +103,18 @@ struct xvimage* checkAllocCopy(struct xvimage* imagein, char *name)
 
 struct xvimage* wshedtopo(struct xvimage *image, int connex, int inverse)
 {
-
+  static char *name="wshedtopo";
+  if (image == NULL)
+    {
+      fprintf(stderr, "%s:  NULL image - can not process\n", name);
+      return NULL;
+    }
   struct xvimage * result=allocimage(NULL, rowsize(image), colsize(image), depth(image), datatype(image));
-
+  if (result == NULL)
+    {
+      fprintf(stderr, "%s:  malloc failed\n", name);
+      return NULL;
+    }
   if (inverse)
     copyinvert(result,image);
   else
@@ -96,7 +122,7 @@ struct xvimage* wshedtopo(struct xvimage *image, int connex, int inverse)
   
   if (! lwshedtopo_lwshedtopo(result, connex))
   {
-    fprintf(stderr, "%s: lwshedtopo_lwshedtopo failed\n", "wshedtopo");
+    fprintf(stderr, "%s: lwshedtopo_lwshedtopo failed\n", name);
     freeimage(result);
     return NULL;
   }
@@ -109,9 +135,22 @@ struct xvimage* wshedtopo(struct xvimage *image, int connex, int inverse)
 
 struct xvimage* watershed(struct xvimage *image, struct xvimage *mark, int connex, int inverse)
 {
-
+  static char *name="watershed";
+  if ((image == NULL) || (mark == NULL))
+    {
+      fprintf(stderr, "%s:  NULL image - can not process\n", name);
+      return NULL;
+    }
+  if (!EqualSize(image, mark) ) {
+      fprintf(stderr, "%s:  Images not of the same size - can not process\n", name);
+      return NULL;
+  }    
   struct xvimage * result=allocimage(NULL, rowsize(image), colsize(image), depth(image), datatype(image));
-
+  if (result == NULL)
+    {
+      fprintf(stderr, "%s:  malloc failed\n", name);
+      return NULL;
+    }
   if (inverse)
     copyinvert(result,image);
   else
@@ -119,7 +158,7 @@ struct xvimage* watershed(struct xvimage *image, struct xvimage *mark, int conne
   
   if (! lwshedtopobin(result, mark, connex))
   {
-    fprintf(stderr, "%s: lwshedtopo_lwshedtopo failed\n", "wshedtopo");
+    fprintf(stderr, "%s: lwshedtopo_lwshedtopo failed\n", name);
     freeimage(result);
     return NULL;
   }
@@ -132,15 +171,33 @@ struct xvimage* watershed(struct xvimage *image, struct xvimage *mark, int conne
 
 struct xvimage* minima(struct xvimage *image, int connex)
 {
-  struct xvimage * result=allocimage(NULL, rowsize(image), colsize(image), depth(image), datatype(image));
-  copy(result,image);
+  static char *name="minima";
+  struct xvimage * result=checkAllocCopy(image, name);
+  if (result == NULL)
+    return NULL;
+  
   char c[20];
   sprintf(c, "%d", connex);
   if (!lminima(result, c))
     {
-      fprintf(stderr, "%s: lminima failed\n", "minima");
+      fprintf(stderr, "%s: lminima failed\n", name);
       return(NULL);
     } /* if ! lminima*/
+  return result;
+}
+
+struct xvimage* maxima(struct xvimage *image, int connex)
+{
+  static char *name="maxima";
+  struct xvimage * result=checkAllocCopy(image, name);
+  if (result == NULL)
+    return NULL;
+  
+  if (!lmaxima(result, connex))
+    {
+      fprintf(stderr, "%s: lminima failed\n", "maxima");
+      return(NULL);
+    } /* if ! lmaxima*/
   return result;
 }
 
@@ -559,6 +616,11 @@ struct xvimage* inverse(struct xvimage *imagein)
 struct xvimage* min(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="min";
+
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    return NULL;
+  }
   
   struct xvimage *image1 = checkAllocCopy(imagein1, name);
   if (image1 == NULL)
@@ -593,6 +655,11 @@ struct xvimage* max(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="max";
   
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    return NULL;
+  }
+
   struct xvimage *image1 = checkAllocCopy(imagein1, name);
   if (image1 == NULL)
     return NULL;
@@ -643,6 +710,10 @@ struct xvimage* border(struct xvimage *imagein, int connex)
 struct xvimage* sub(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="sub";
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    return NULL;
+  }
   struct xvimage *image1 = checkAllocCopy(imagein1, name);
   if (image1 == NULL)
     return NULL;
@@ -675,6 +746,10 @@ struct xvimage* sub(struct xvimage *imagein1, struct xvimage *imagein2)
 struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="add";
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    return NULL;
+  }
   struct xvimage *image1 = checkAllocCopy(imagein1, name);
   if (image1 == NULL)
     return NULL;
@@ -707,6 +782,10 @@ struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2)
 struct xvimage* mult(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="mult";
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    return NULL;
+  }
   struct xvimage *image1 = checkAllocCopy(imagein1, name);
   if (image1 == NULL)
     return NULL;
@@ -739,6 +818,10 @@ struct xvimage* mult(struct xvimage *imagein1, struct xvimage *imagein2)
 struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="div";
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    return NULL;
+  }
   struct xvimage *image1 = checkAllocCopy(imagein1, name);
   if (image1 == NULL)
     return NULL;
@@ -766,4 +849,98 @@ struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2)
   
   freeimage(image2);
   return image1;
+}
+
+struct xvimage* heightmaxima(struct xvimage *imagein, int32_t param, int32_t connex)
+{
+  static char *name="heightmaxima";
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+  if (! lheightmaxima(image, connex, param))
+  {
+    fprintf(stderr, "%s: lheightmaxima failed\n", name);
+    freeimage(image);
+    return NULL;
+  }
+  return image;
+}
+
+struct xvimage* heightminima(struct xvimage *imagein, int32_t param, int32_t connex)
+{
+  static char *name="heightminima";
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+  if (! lheightminima(image, connex, param))
+  {
+    fprintf(stderr, "%s: lheightminima failed\n", name);
+    freeimage(image);
+    return NULL;
+  }
+  return image;
+}
+
+// param == param+1
+struct xvimage* areaopening(struct xvimage *imagein, int32_t param, int32_t connex)
+{
+  static char *name="areaopening";
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+  if (! lareaopening(image, connex, param+1))
+  {
+    fprintf(stderr, "%s: lareaopening failed\n", name);
+    freeimage(image);
+    return NULL;
+  }
+  return image;
+}
+
+// param == param+1
+struct xvimage* areaclosing(struct xvimage *imagein, int32_t param, int32_t connex)
+{
+  static char *name="areaclosing";
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+  if (! lareaclosing(image, connex, param+1))
+  {
+    fprintf(stderr, "%s: lareaclosing failed\n", name);
+    freeimage(image);
+    return NULL;
+  }
+  return image;
+}
+
+struct xvimage* volmaxima(struct xvimage *imagein, int32_t param, int32_t connex)
+{
+  static char *name="volmaxima";
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+  if (! lvolmaxima(image, connex, param))
+  {
+    fprintf(stderr, "%s: lvolmaxima failed\n", name);
+    freeimage(image);
+    return NULL;
+  }
+  return image;
+}
+
+struct xvimage* volminima(struct xvimage *imagein, int32_t param, int32_t connex)
+{
+  static char *name="volminima";
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+  invert(image);
+  if (! lvolmaxima(image, connex, param))
+  {
+    fprintf(stderr, "%s: lvolmaxima failed\n", name);
+    freeimage(image);
+    return NULL;
+  }
+  invert(image);
+  return image;
 }

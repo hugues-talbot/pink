@@ -713,6 +713,11 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
       float *FL = FLOATDATA(im3);
       for (i = 0; i < N; i++) FL[i] = (float)F[i];
     }
+    else if (typemax == VFF_TYP_DOUBLE)
+    {
+      double *DL = DOUBLEDATA(im3);
+      for (i = 0; i < N; i++) DL[i] = (double)F[i];
+    }
     else if (typemax == VFF_TYP_COMPLEX)
     {
       fcomplex *CL = COMPLEXDATA(im3);
@@ -739,6 +744,11 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
     {
       float *FL = FLOATDATA(im3);
       for (i = 0; i < N; i++) FL[i] = (float)L[i];
+    }
+    else if (typemax == VFF_TYP_DOUBLE)
+    {
+      double *DL = DOUBLEDATA(im3);
+      for (i = 0; i < N; i++) DL[i] = (double)L[i];
     }
     else
     if (typemax == VFF_TYP_COMPLEX)
@@ -768,6 +778,11 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
       fcomplex *CL = COMPLEXDATA(im3);
       razimage(im3);
       for (i = 0; i < N; i++) CL[i].re = (float)FL[i];
+    }
+    else if (typemax == VFF_TYP_DOUBLE)
+    {
+      double *DL = DOUBLEDATA(im3);
+      for (i = 0; i < N; i++) DL[i] = (double)FL[i];
     }
     else
     {

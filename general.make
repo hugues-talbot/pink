@@ -616,6 +616,7 @@ $(ODIR)/llabelplateaux.o \
 $(ODIR)/llabeltree.o \
 $(ODIR)/lmedialaxis.o \
 $(ODIR)/lminima.o \
+$(ODIR)/lmaxima.o \
 $(ODIR)/lvoronoilabelling.o \
 $(ODIR)/lfmm.o \
 $(ODIR)/bimage.o \
@@ -1526,8 +1527,8 @@ $(BDIR)/lvkern:	$(CDIR)/lvkern.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/
 $(BDIR)/lvkernu:	$(CDIR)/lvkernu.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mclifo.h $(IDIR)/lhisto.h $(IDIR)/llabelextrema.h $(IDIR)/lhtkern.h $(IDIR)/lhtkern3d.h $(OBJ_COMMON) $(ODIR)/libpink.a
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/lvkernu.c $(OBJ_COMMON) $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/lvkernu
 
-$(BDIR)/maxima:	$(CDIR)/maxima.c $(IDIR)/llabelextrema.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mccodimage.h $(ODIR)/llabelextrema.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/maxima.c $(ODIR)/llabelextrema.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/maxima
+$(BDIR)/maxima:	$(CDIR)/maxima.c $(IDIR)/llabelextrema.h $(IDIR)/mcimage.h $(IDIR)/lminima.h $(IDIR)/mclifo.h $(IDIR)/mccodimage.h $(ODIR)/llabelextrema.o $(ODIR)/lmaxima.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/maxima.c $(ODIR)/llabelextrema.o $(ODIR)/lmaxima.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/maxima
 
 $(BDIR)/minima:	$(CDIR)/minima.c $(IDIR)/lminima.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mccodimage.h $(IDIR)/llabelextrema.h $(ODIR)/llabelextrema.o $(ODIR)/lminima.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/minima.c $(ODIR)/lminima.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(ODIR)/llabelextrema.o $(LIBS) -o $(BDIR)/minima
@@ -2480,6 +2481,10 @@ $(ODIR)/lmedialaxis.o:	$(LDIR)/lmedialaxis.c $(IDIR)/mccodimage.h $(IDIR)/mcimag
 $(ODIR)/lminima.o:	$(LDIR)/lminima.c $(IDIR)/mclifo.h $(IDIR)/mccodimage.h $(IDIR)/mcutil.h $(IDIR)/llabelextrema.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lminima.c -o $(ODIR)/lminima.o
 	ar rcs $(ODIR)/libpink.a $(ODIR)/lminima.o
+
+$(ODIR)/lmaxima.o:	$(LDIR)/lmaxima.c $(IDIR)/mclifo.h $(IDIR)/mccodimage.h $(IDIR)/mcutil.h $(IDIR)/llabelextrema.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lmaxima.c -o $(ODIR)/lmaxima.o
+	ar rcs $(ODIR)/libpink.a $(ODIR)/lmaxima.o
 
 $(ODIR)/lvoronoilabelling.o:	$(LDIR)/lvoronoilabelling.c $(IDIR)/mccodimage.h $(IDIR)/mclifo.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lvoronoilabelling.c -o $(ODIR)/lvoronoilabelling.o

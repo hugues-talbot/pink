@@ -54,19 +54,15 @@ Selects the regional maxima of a grayscale image with connexity <B>connex</B>.
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <llabelextrema.h>
+#include <lmaxima.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t nblabels, connex, i;
+  int32_t connex, i;
   struct xvimage * image;
   struct xvimage * result;
-  uint8_t * I;
-  int32_t * IL;
-  int32_t N;
-  int32_t * R;
 
   if (argc != 4)
   {
@@ -80,60 +76,15 @@ int main(int argc, char **argv)
     fprintf(stderr, "maxima: readimage failed\n");
     exit(1);
   }
-  N = rowsize(image) * colsize(image) * depth(image);
 
   connex = atoi(argv[2]);
-
-  result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
-  if (result == NULL)
-  {   
-    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+  if (!lmaxima(image, connex))
+  {
+    fprintf(stderr, "%s: lmaxima failed\n", argv[0]);
     exit(1);
-  }
-  R = SLONGDATA(result);
+  } /* if ! lmaxima*/
 
-  if (connex == 0)
-  {
-    if (datatype(image) == VFF_TYP_1_BYTE)
-    {   
-      uint8_t absmax;
-      I = UCHARDATA(image);
-      absmax = I[0];
-      for (i = 1; i < N; i++) if (I[i] > absmax) absmax = I[i];
-      for (i = 0; i < N; i++) if (I[i] == absmax) I[i] = NDG_MAX; else I[i] = NDG_MIN;
-    }
-    else if (datatype(image) == VFF_TYP_4_BYTE) 
-    {   
-      int32_t absmax;
-      IL = SLONGDATA(image);
-      absmax = IL[0];
-      for (i = 1; i < N; i++) if (IL[i] > absmax) absmax = IL[i];
-      for (i = 0; i < N; i++) if (IL[i] == absmax) IL[i] = NDG_MAX; else IL[i] = NDG_MIN;
-    }
-  }
-  else
-  {
-    if (! llabelextrema(image, connex, LABMAX, result, &nblabels))
-    {
-      fprintf(stderr, "%s: llabelextrema failed\n", argv[0]);
-      exit(1);
-    }
-
-    printf("%s : NOMBRE DE MAXIMA : %d\n", argv[0], nblabels-1);
-
-    if (datatype(image) == VFF_TYP_1_BYTE)
-    {   
-      I = UCHARDATA(image);
-      for (i = 0; i < N; i++)
-        if (R[i]) I[i] = NDG_MAX; else I[i] = NDG_MIN;
-    }
-    else if (datatype(image) == VFF_TYP_4_BYTE) 
-    {   
-      IL = SLONGDATA(image);
-      for (i = 0; i < N; i++)
-        if (R[i]) IL[i] = (int32_t)NDG_MAX; else IL[i] = (int32_t)NDG_MIN;
-    }
-  }
+  // if the image type is int, than we convert it to byte
   if (datatype(image) == VFF_TYP_4_BYTE)
   {
     struct xvimage *im2;

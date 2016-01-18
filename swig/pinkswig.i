@@ -70,7 +70,10 @@ typedef struct xvimage {
     case VFF_TYP_DOUBLE: sprintf(type, "double"); break;
     default: sprintf(type,"other");
     }
-    sprintf(tmp,"xvimage(%d,%d,%d) [type = %s]", rowsize($self),colsize($self),depth($self), type);
+    if (depth($self)==1)
+      sprintf(tmp,"xvimage(%d,%d) [type = %s]", rowsize($self),colsize($self), type);
+    else 
+      sprintf(tmp,"xvimage(%d,%d,%d) [type = %s]", rowsize($self),colsize($self),depth($self), type);
     return tmp;
   }
 
@@ -106,6 +109,9 @@ typedef struct xvimage {
     freeimage($self);
   }
 
+  void save(char *name) {
+    writeimage($self, name);
+  }
 /*
   uint8_t getpixel(index_t x, index_t y, index_t z=0) {
     return voxel($self,x,y,z);
@@ -131,7 +137,7 @@ def fromnumpy(mat):
       return createimage(row, col, depth, translate[type], mat.ctypes.data)
     else:
       print "Type:", type, "is not supported"
-      return
+      return None
 }
 
 %extend xvimage {
@@ -170,7 +176,7 @@ def __getitem__(self, tup):
     else:
       x, y, z = tup
     return self.getpixel(x,y,z)
-	
+
 def __setitem__(self, tup, value):
     if len(tup)==2:
       x, y = tup
@@ -213,8 +219,17 @@ struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2);
 	 "Regional minima \n"
 	 "Description: \n"
 	 "Selects the regional minima of a grayscale image with connexity connex.\n"
+	 "connex should be 0[min. absolus], or 4, 8 (in 2D) or 6, 18, 26 (in 3D) \n"
 	 "Types supported: byte 2d, int32_t 2d, byte 3d, int32_t 3d\n");
 struct xvimage* minima(struct xvimage *image, int connex);
+
+%feature("docstring",
+	 "Regional maxima \n"
+	 "Description: \n"
+	 "Selects the regional maxima of a grayscale image with connexity connex.\n"
+	 "connex should be 0[min. absolus], or 4, 8 (in 2D) or 6, 18, 26 (in 3D) \n"
+	 "Types supported: byte 2d, int32_t 2d, byte 3d, int32_t 3d\n");
+struct xvimage* maxima(struct xvimage *image, int connex);
 
 %feature("docstring",
 	 "Topological grayscale watershed.\n"
@@ -275,7 +290,7 @@ struct xvimage* erosion(struct xvimage *image, struct xvimage *elem, int32_t x=-
 	 "Morphological opening by a plane structuring element.\n"
 	 "The (plane) structuring element is given by the non-null values in the image elem, \n"
 	 "its origin (wrt the point (0,0) of elem) \n"
-	 "is given by the parameters x, y and z. \n"
+ "is given by the parameters x, y and z. \n"
 	 "If x==-1 (resp. y==-1, z==-1), then the center is in the middle of elem,\n"
 	 "i.e., x=rowsize(elem)/2 (resp. y=colsize(elem)/2, z=depth(elem).\n"
 	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
@@ -412,3 +427,45 @@ struct xvimage* max(struct xvimage *imagein1, struct xvimage *imagein2);
 	 "where nk is the complementary connectivity for k.\n"
 	 "Types supported: byte 2d, byte 3d\n");
 struct xvimage* border(struct xvimage *imagein, int connex=4);
+
+%feature("docstring",
+	 "h-maxima operator\n"
+	 "Description:\n"
+	 "h-maxima with connexity connex and depth ""depth"".\n"
+	 "Types supported: byte 2d, byte 3d\n");
+struct xvimage* heightmaxima(struct xvimage *imagein, int32_t depth, int32_t connex=4);
+
+%feature("docstring",
+	 "h-minima operator\n"
+	 "Description:\n"
+	 "h-minima with connexity connex and depth ""depth"".\n"
+	 "Types supported: byte 2d, byte 3d\n");
+struct xvimage* heightminima(struct xvimage *imagein, int32_t depth, int32_t connex=4);
+
+%feature("docstring",
+	 "Area opening operator\n"
+	 "Description:\n"
+	 "Area opening with connexity connex and parameter area+1.\n"
+	 "Types supported: byte 2d, byte 3d\n");
+struct xvimage* areaopening(struct xvimage *imagein, int32_t area, int32_t connex=4);
+
+%feature("docstring",
+	 "Area closing operator\n"
+	 "Description:\n"
+	 "Area closing with connexity connex and parameter area+1.\n"
+	 "Types supported: byte 2d, byte 3d\n");
+struct xvimage* areaclosing(struct xvimage *imagein, int32_t area, int32_t connex=4);
+
+%feature("docstring",
+	 "Maxima-Volume-based filtering\n"
+	 "Description:\n"
+	 "Maxima-Volume-based filtering with connexity connex and volume vol."
+	 "Types supported: byte 2d, byte 3d\n");
+struct xvimage* volmaxima(struct xvimage *imagein, int32_t vol, int32_t connex=4);
+
+%feature("docstring",
+	 "Minima-Volume-based filtering\n"
+	 "Description:\n"
+	 "Minima-Volume-based filtering with connexity connex and volume vol."
+	 "Types supported: byte 2d, byte 3d\n");
+struct xvimage* volminima(struct xvimage *imagein, int32_t vol, int32_t connex=4);

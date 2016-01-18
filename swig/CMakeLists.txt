@@ -46,6 +46,7 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/lib/ldilateros3d.c
 	     ../src/lib/lsym.c
              ../src/lib/lminima.c
+             ../src/lib/lmaxima.c
 	     ../src/lib/llabelextrema.c
              ../src/lib/lgeodesic.c
              ../src/lib/mcindic.c
@@ -63,6 +64,9 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/lib/lborder.c
 	     ../src/lib/mctopo.c
 	     ../src/lib/mctopo3d.c
+	     ../src/lib/lattribheight.c
+	     ../src/lib/lattribarea.c
+	     ../src/lib/lattribvol.c
 	     )
 
 SET_SOURCE_FILES_PROPERTIES(pinkswig.i PROPERTIES C ON)

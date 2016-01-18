@@ -70,8 +70,8 @@ int32_t lminima(
   result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
   if (result == NULL)
   {   
-    fprintf(stderr, "allocimage failed\n");
-    exit(1);
+    fprintf(stderr, "lminima: allocimage failed\n");
+    return 0;
   }
   R = SLONGDATA(result);
 

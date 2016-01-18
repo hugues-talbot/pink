@@ -11,6 +11,7 @@ static "C" {
  void invert(struct xvimage * image);
  void copy(struct xvimage*result, struct xvimage * image);
  void copyinvert(struct xvimage*result, struct xvimage * image);
+ int EqualSize(struct xvimage * image1, struct xvimage *image2);
  struct xvimage* checkAllocCopy(struct xvimage* imagein, char *name);
  
  struct xvimage* createimage(index_t x, index_t y, index_t z, int32_t type, long int data);
@@ -25,6 +26,7 @@ static "C" {
  struct xvimage* wshedtopo(struct xvimage *image, int connex, int inverse);
  struct xvimage* watershed(struct xvimage *image, struct xvimage *mark, int connex, int inverse);
  struct xvimage* minima(struct xvimage *image, int connex);
+ struct xvimage* maxima(struct xvimage *image, int connex);
  struct xvimage* dilation(struct xvimage *image, struct xvimage *elem, int32_t x, int32_t y, int32_t z);
  struct xvimage* erosion(struct xvimage *image, struct xvimage *elem, int32_t x, int32_t y, int32_t z);
  struct xvimage* opening(struct xvimage *image, struct xvimage *elem, int32_t x, int32_t y, int32_t z);
@@ -39,7 +41,13 @@ static "C" {
  struct xvimage* min(struct xvimage *imagein1, struct xvimage *imagein2);
  struct xvimage* max(struct xvimage *imagein1, struct xvimage *imagein2);
  struct xvimage* border(struct xvimage *imagein, int connex);
- 
+ struct xvimage* heightmaxima(struct xvimage *imagein, int32_t param, int32_t connex);
+ struct xvimage* heightminima(struct xvimage *imagein, int32_t param, int32_t connex);
+ struct xvimage* areaopening(struct xvimage *imagein, int32_t param, int32_t connex);
+ struct xvimage* areaclosing(struct xvimage *imagein, int32_t param, int32_t connex);
+ struct xvimage* volmaxima(struct xvimage *imagein, int32_t param, int32_t connex);
+ struct xvimage* volminima(struct xvimage *imagein, int32_t param, int32_t connex);
+
 #ifdef __cplusplus
 }
 #endif
