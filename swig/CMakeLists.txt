@@ -56,7 +56,9 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/lib/mcfah.c
 	     ../src/lib/mcfahpure.c
              ../src/lib/mclifo.c
+             ../src/lib/mcrlifo.c
              ../src/lib/mcfifo.c
+	     ../src/lib/mcliste.c
 	     ../src/lib/lseuil.c
 	     ../src/lib/ldist.c
 	     ../src/lib/lcrop.c
@@ -67,6 +69,12 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/lib/lattribheight.c
 	     ../src/lib/lattribarea.c
 	     ../src/lib/lattribvol.c
+	     ../src/lib/mcgeo.c
+	     ../src/lib/lskeletons.c
+	     ../src/lib/mctopo.c
+	     ../src/lib/mctopo3d.c
+	     ../src/lib/mcrbt.c
+	     ../src/lib/lskeletons.c
 	     )
 
 SET_SOURCE_FILES_PROPERTIES(pinkswig.i PROPERTIES C ON)

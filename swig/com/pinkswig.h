@@ -47,6 +47,11 @@ static "C" {
  struct xvimage* areaclosing(struct xvimage *imagein, int32_t param, int32_t connex);
  struct xvimage* volmaxima(struct xvimage *imagein, int32_t param, int32_t connex);
  struct xvimage* volminima(struct xvimage *imagein, int32_t param, int32_t connex);
+ struct xvimage* dist(struct xvimage *image, int32_t mode);
+ struct xvimage* skeletonprio1(struct xvimage *imagein, struct xvimage *prio, int32_t connex, int32_t inhibvalue);
+ struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t connex, int32_t inhibivalue);
+ struct xvimage* skeletonprio2(struct xvimage *imagein, struct xvimage *prio, int32_t connex, struct xvimage *inhibimage);
+ struct xvimage* skeletondist2(struct xvimage *imagein, int32_t mode, int32_t connex, struct xvimage *inhibimage);
 
 #ifdef __cplusplus
 }

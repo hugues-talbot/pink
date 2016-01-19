@@ -126,6 +126,12 @@ typedef struct xvimage {
 %pythoncode{
 import ctypes
 def fromnumpy(mat):
+    if mat.flags['C_CONTIGUOUS'] == False:
+      print "fromnumpy: Memory is not contiguous."
+      print "fromnumpy: Please use ""numpy.ascontiguousarray""."
+      print "fromnumpy: and do not forget to keep a reference"
+      print "fromnumpy: to the Numpy array thus created."
+      return None
     if len(mat.shape) == 2:
       row, col = mat.shape
       depth = 1
@@ -463,9 +469,105 @@ struct xvimage* areaclosing(struct xvimage *imagein, int32_t area, int32_t conne
 	 "Types supported: byte 2d, byte 3d\n");
 struct xvimage* volmaxima(struct xvimage *imagein, int32_t vol, int32_t connex=4);
 
+
 %feature("docstring",
 	 "Minima-Volume-based filtering\n"
 	 "Description:\n"
 	 "Minima-Volume-based filtering with connexity connex and volume vol."
 	 "Types supported: byte 2d, byte 3d\n");
 struct xvimage* volminima(struct xvimage *imagein, int32_t vol, int32_t connex=4);
+
+%feature("docstring",
+         "distance transform \n"
+         "Description:\n"
+         "Distance to the object X defined by the binary image ""image"".\n"
+         "The result function DX(x) is defined by: DX(x) = min {d(x,y), y in X}.\n"
+         "\n"
+         "The distance d used depends on the parameter ""mode"":\n"
+         "-   0: euclidean distance (rounded to the nearest int32)\n"
+         "-   1: approximate quadratic euclidean distance (Danielsson)\n"
+         "-   2: chamfer distance ([5,7] in 2D; [4,5,6] in 3D)\n"
+         "-   3: exact quadratic euclidean distance (int32)\n"
+         "-   4: 4-distance in 2d\n"
+         "-   5: exact euclidean distance (float)\n"
+         "-   8: 8-distance in 2d\n"
+         "-   6: 6-distance in 3d\n"
+         "-  18: 18-distance in 3d\n"
+         "-  26: 26-distance in 3d\n"
+         "-  40: 4-distance in 2d (byte coded ouput)\n"
+         "-  80: 8-distance in 2d (byte coded ouput)\n"
+         "-  60: 6-distance in 3d (byte coded ouput)\n"
+         "- 180: 18-distance in 3d (byte coded ouput)\n"
+         "- 260: 26-distance in 3d (byte coded ouput)\n"
+         "\n"
+         "The output is of type int32_t for modes < 40, of type float for mode==5,of type byte for other modes.\n"
+         "\n"
+	 "Types supported: byte 2d, byte 3d\n");
+struct xvimage* dist(struct xvimage *image, int32_t mode);
+
+%rename(skeleton) skeletonprio2;
+%rename(skeleton) skeletondist2;
+%rename(skeleton) skeletonprio1;
+%rename(skeleton) skeletondist1;
+
+%feature("docstring",
+         "ultimate binary skeleton guided by a priority image (see [BC07])\n"
+         "Description:\n"
+         "Ultimate binary skeleton guided by a priority image ""prio"".\n"
+         "If a number ""mode"" is provided instead of an image ""prio,""\n"
+         "then the priority image is a distance map.\n"
+         "\n"
+         "The distance map computed depends on the parameter ""mode"":\n"
+         "-   0: euclidean distance (rounded to the nearest int32)\n"
+         "-   1: approximate quadratic euclidean distance (Danielsson)\n"
+         "-   2: chamfer distance ([5,7] in 2D; [4,5,6] in 3D)\n"
+         "-   3: exact quadratic euclidean distance (int32)\n"
+         "-   4: 4-distance in 2d\n"
+         "-   5: exact euclidean distance (float)\n"
+         "-   8: 8-distance in 2d\n"
+         "-   6: 6-distance in 3d\n"
+         "-  18: 18-distance in 3d\n"
+         "-  26: 26-distance in 3d\n"
+         "-  40: 4-distance in 2d (byte coded ouput)\n"
+         "-  80: 8-distance in 2d (byte coded ouput)\n"
+         "-  60: 6-distance in 3d (byte coded ouput)\n"
+         "- 180: 18-distance in 3d (byte coded ouput)\n"
+         "- 260: 26-distance in 3d (byte coded ouput)\n"
+         "\n"
+         "The parameter connex indicates the connectivity of the binary object.\n"
+         "Possible choices are 4, 8 in 2d and 6, 26 in 3d.\n"
+         "If a binary image inhibitimage is provided and non null,\n"
+         "then the points of this image will be left unchanged. \n"
+         "If an integer parameter ""inhibit"" is given,\n"
+         "then the points which correspond to this priority value will be left unchanged. \n"
+         "\n"
+         "Let X be the set corresponding to the input image imagein.\n"
+         "Let P be the function corresponding to the priority image.\n"
+         "Let I be the set corresponding to the inhibit image inhibimage, if given, or the empty\n"
+         "set otherwise.\n"
+         "The algorithm is the following:\n"
+         "\n"
+         "Repeat until stability\n"
+         "Select a point x in X \ I such that P[x] is minimal\n"
+         "If x is simple for X then\n"
+         "X = X \ {x}\n"
+         "Result: X\n"
+         "\n"
+         "Reference: \n"
+         "[BC07] G. Bertrand and M. Couprie: \n"
+         "Transformations topologiques discretes.\n"
+         "in Geometrie discrete et images numeriques\n"
+         "D. Coeurjolly and A. Montanvert and J.M. Chassery, \n"
+         "pp. 187-209, Hermess, 2007.\n"
+         "http://www.esiee.fr/~coupriem/Pdf/chapitre_topo.pdf\n"
+         "\n"
+	 "Types supported: byte 2d, byte 3d\n");
+
+struct xvimage* skeletonprio2(struct xvimage *imagein, struct xvimage *prio, int32_t connex, struct xvimage *inhibimage=NULL);
+
+
+struct xvimage* skeletondist2(struct xvimage *imagein, int32_t mode, int32_t connex, struct xvimage *inhibimage);
+
+struct xvimage* skeletonprio1(struct xvimage *imagein, struct xvimage *prio, int32_t connex, int32_t inhibit);
+
+struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t connex, int32_t inhibit);

@@ -3,27 +3,41 @@
 #include <sys/types.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "pinkswig.h"
 
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <mcgeo.h>
+#include <mcutil.h>
 
-#include <lwshedtopo.h>
-#include <lminima.h>
-#include <lmaxima.h>
+#include <lseuil.h>
+#include <lcrop.h>
+#include <larith.h>
+#include <lborder.h>
+
+#include <ldist.h>
+
+#include <lskeletons.h>
+
 #include <ldilateros.h>
 #include <ldilateros3d.h>
 #include <lsym.h>
 #include <lgeodesic.h>
-#include <lseuil.h>
-#include <ldist.h>
-#include <lcrop.h>
-#include <larith.h>
-#include <lborder.h>
+
+#include <lminima.h>
+#include <lmaxima.h>
+
 #include <lattribheight.h>
 #include <lattribarea.h>
 #include <lattribvol.h>
+
+#include <lwshedtopo.h>
+
+
+
+
 
 /* ==================================== */
 // Helper function to use with numpy (dataInt should be uintptr_t)
@@ -942,5 +956,271 @@ struct xvimage* volminima(struct xvimage *imagein, int32_t param, int32_t connex
     return NULL;
   }
   invert(image);
+  return image;
+}
+
+struct xvimage* dist(struct xvimage *image, int32_t mode)
+{
+  index_t N, i;
+  uint8_t *F;
+  struct xvimage *result = NULL;
+    
+  static char *name="dist";
+  if (image == NULL)
+  {
+    fprintf(stderr, "%s: NULL image - this is a problem.\n", name);
+    return NULL;
+
+  }
+  
+  if ((mode != 0) && (mode != 1) && (mode != 2) && (mode != 3) && (mode != 5) &&
+      (mode != 4) && (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26) &&
+      (mode != 40) && (mode != 80) && (mode != 60) && (mode != 180) && (mode != 260))
+    {
+      fprintf(stderr, "usage: %s mode is not correct.\n", name);
+      fprintf(stderr, "       mode = 0 (dist. eucl. trunc), 1 (dist. eucl. quad.), 2 (chamfrein),\n");
+      fprintf(stderr, "              3 (exact eucl. quad.), 5 (exact eucl.), 4, 8 (2D), 6, 18, 26 (3D)\n");
+      fprintf(stderr, "                40, 80 (2D), 60, 180, 260 (3D)\n");
+      return NULL;
+    }
+  
+  if (mode < 40)
+    result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
+  else
+    result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
+  if (result == NULL) {
+    fprintf(stderr, "%s: allocimage failed\n", name);
+    return NULL;
+  }
+
+  N = rowsize(image) * colsize(image) * depth(image);
+  F = UCHARDATA(image);;
+  if (mode == 1)
+  {
+    if (depth(image) == 1)
+    {
+      if (! ldistquad(image, result))
+      {
+        fprintf(stderr, "%s: ldistquad failed\n", name);
+        return NULL;
+      }
+    }
+    else
+    {
+      if (! ldistquad3d(image, result))
+      {
+        fprintf(stderr, "%s: ldistquad3d failed\n", name);
+        return NULL;
+      }
+    }
+  }
+  else if (mode == 2)
+  {
+    if (! lchamfrein(image, result))
+    {
+      fprintf(stderr, "%s: lchamfrein failed\n", name);
+      return NULL;
+    }
+  }
+  else if ((mode == 0) || (mode == 3) || (mode == 5))
+  {
+    for (i = 0; i < N; i++) // inverse l'image
+      if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
+    if (! lsedt_meijster(image, result))
+    {
+      fprintf(stderr, "%s: lsedt_meijster failed\n", name);
+      return NULL;
+    }
+    if (mode == 0)
+    {
+      double d;
+      uint32_t *R = ULONGDATA(result);
+      for (i = 0; i < N; i++) 
+      {
+	
+	d = sqrt((double)(R[i]));
+	R[i] = (uint32_t)arrondi(d);
+      }
+    }
+    else if (mode == 5)
+    {
+      float *D;
+      convertfloat(&result);
+      D = FLOATDATA(result);
+      for (i = 0; i < N; i++) D[i] = (float)sqrt(D[i]);
+    }
+  }
+  else if (mode < 40)
+  {
+    if (! ldist(image, mode, result))
+    {
+      fprintf(stderr, "%s: ldist failed\n", name);
+      return NULL;
+    }
+  }
+  else
+  {
+    if (! ldistbyte(image, mode, result))
+    {
+      fprintf(stderr, "%s: ldist failed\n", name);
+      return NULL;
+    }
+  }
+
+  return result;
+}
+  
+struct xvimage* skeletonprio2(struct xvimage *imagein, struct xvimage *prio, int32_t connex, struct xvimage *inhibimage)
+{
+  static char *name="skeletonprio2";
+  if (prio == NULL) {
+    fprintf(stderr, "%s: Priority image is NULL - This is a problem.", name);
+    return NULL;
+  }
+  if (!EqualSize(imagein, prio)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    return NULL;
+  }
+  if (inhibimage)
+    if (!EqualSize(imagein, inhibimage)) {
+      fprintf(stderr, "%s: image not of the same size\n", name);
+      return NULL;
+    }
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+
+  if (depth(image) == 1)
+  {
+    if (! lskelubp2(image, prio, connex, inhibimage))
+      {
+        fprintf(stderr, "%s: lskelubp2 failed\n", name);
+	freeimage(image);
+        return NULL;
+      }
+  }
+  else
+  {
+    if (! lskelubp3d2(image, prio, connex, inhibimage))
+      {
+        fprintf(stderr, "%s: lskelubp3d2 failed\n", name);
+	freeimage(image);
+        return NULL;
+      }
+  }
+
+  return image;
+}
+
+struct xvimage* skeletondist2(struct xvimage *imagein, int32_t mode, int32_t connex, struct xvimage *inhibimage)
+{
+  static char *name="skeletondist2";
+
+  if (inhibimage)
+    if (!EqualSize(imagein, inhibimage)) {
+      fprintf(stderr, "%s: image not of the same size\n", name);
+      return NULL;
+    }
+  struct xvimage* prio = dist(imagein, mode);
+  if (prio == NULL) {
+    fprintf(stderr, "%s: ditance failed - Priority image is NULL - This is a problem.", name);
+    return NULL;
+  }
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+
+  if (depth(image) == 1)
+  {
+    if (! lskelubp2(image, prio, connex, inhibimage))
+      {
+        fprintf(stderr, "%s: lskelubp2 failed\n", name);
+	freeimage(image);
+        return NULL;
+      }
+  }
+  else
+  {
+    if (! lskelubp3d2(image, prio, connex, inhibimage))
+      {
+        fprintf(stderr, "%s: lskelubp3d2 failed\n", name);
+	freeimage(image);
+        return NULL;
+      }
+  }
+
+  return image;
+}
+
+struct xvimage* skeletonprio1(struct xvimage *imagein, struct xvimage *prio, int32_t connex, int32_t inhibvalue)
+{
+  static char *name="skeletonprio1";
+  if (prio == NULL) {
+    fprintf(stderr, "%s: Priority image is NULL - This is a problem.", name);
+    return NULL;
+  }
+  if (!EqualSize(imagein, prio)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    return NULL;
+  }
+
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+
+  if (depth(image) == 1)
+  {
+    if (! lskelubp(image, prio, connex, inhibvalue))
+      {
+        fprintf(stderr, "%s: lskelubp failed\n", name);
+	freeimage(image);
+        return NULL;
+      }
+  }
+  else
+  {
+    if (! lskelubp3d(image, prio, connex, inhibvalue))
+      {
+        fprintf(stderr, "%s: lskelubp3d failed\n", name);
+	freeimage(image);
+        return NULL;
+      }
+  }
+
+  return image;
+}
+
+struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t connex, int32_t inhibvalue)
+{
+  static char *name="skeletondist1";
+
+  struct xvimage* prio = dist(imagein, mode);
+  if (prio == NULL) {
+    fprintf(stderr, "%s: ditance failed - Priority image is NULL - This is a problem.", name);
+    return NULL;
+  }
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+
+  if (depth(image) == 1)
+  {
+    if (! lskelubp(image, prio, connex, inhibvalue))
+      {
+        fprintf(stderr, "%s: lskelubp failed\n", name);
+	freeimage(image);
+        return NULL;
+      }
+  }
+  else
+  {
+    if (! lskelubp3d(image, prio, connex, inhibvalue))
+      {
+        fprintf(stderr, "%s: lskelubp3d failed\n", name);
+	freeimage(image);
+        return NULL;
+      }
+  }
+
   return image;
 }
