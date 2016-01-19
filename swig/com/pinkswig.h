@@ -31,6 +31,7 @@ static "C" {
  struct xvimage* erosion(struct xvimage *image, struct xvimage *elem, int32_t x, int32_t y, int32_t z);
  struct xvimage* opening(struct xvimage *image, struct xvimage *elem, int32_t x, int32_t y, int32_t z);
  struct xvimage* closing(struct xvimage *image, struct xvimage *elem, int32_t x, int32_t y, int32_t z);
+ struct xvimage* asfbin(struct xvimage *imagein, int32_t radiusmax, int32_t radiusmin);
  struct xvimage* geodilat(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter);
  struct xvimage* geoeros(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter);
  struct xvimage* threshold(struct xvimage *imagein, double seuil, double seuil2);
@@ -52,7 +53,11 @@ static "C" {
  struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t connex, int32_t inhibivalue);
  struct xvimage* skeletonprio2(struct xvimage *imagein, struct xvimage *prio, int32_t connex, struct xvimage *inhibimage);
  struct xvimage* skeletondist2(struct xvimage *imagein, int32_t mode, int32_t connex, struct xvimage *inhibimage);
-
+ struct xvimage* ptisolated(struct xvimage *imagein, int32_t connex);
+ struct xvimage* ptjunction(struct xvimage *imagein, int32_t connex);
+ struct xvimage* ptcurve(struct xvimage *imagein, int32_t connex);
+ struct xvimage* ptend(struct xvimage *imagein, int32_t connex);
+ 
 #ifdef __cplusplus
 }
 #endif

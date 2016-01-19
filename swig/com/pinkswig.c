@@ -20,6 +20,7 @@
 #include <ldist.h>
 
 #include <lskeletons.h>
+#include <lseltopo.h>
 
 #include <ldilateros.h>
 #include <ldilateros3d.h>
@@ -1221,6 +1222,196 @@ struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t con
         return NULL;
       }
   }
+
+  return image;
+}
+
+struct xvimage* ptisolated(struct xvimage *imagein, int32_t connex)
+{
+  static char *name="ptisolated";
+  
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+
+  if (! lptisolated(image, connex))
+  {
+    fprintf(stderr, "%s: function lptisolated failed\n", name);
+    return NULL;
+  }
+  
+  return image;
+}
+
+struct xvimage* ptjunction(struct xvimage *imagein, int32_t connex)
+{
+  static char *name="ptjunction";
+  
+  if (datatype(imagein) == VFF_TYP_4_BYTE)
+  {
+    struct xvimage * res = allocimage(NULL, rowsize(imagein), colsize(imagein), depth(imagein), VFF_TYP_1_BYTE);
+    if (res == NULL)
+    {
+      fprintf(stderr, "%s: allocimage failed\n", name);
+      return NULL;
+    }
+    if (! lptjunctionlab(imagein, connex, res))
+    {
+      fprintf(stderr, "%s: function lptjunctionlab failed\n", name);
+      freeimage(res);
+      return NULL;
+    }
+    
+    return res;
+  } else {
+    struct xvimage *image = checkAllocCopy(imagein, name);
+    if (image == NULL)
+      return NULL;
+    
+    if (! lptjunction(image, connex))
+      {
+	fprintf(stderr, "%s: function lptjunction failed\n", name);
+	return NULL;
+      }
+    
+    return image;
+  }
+}
+
+struct xvimage* ptcurve(struct xvimage *imagein, int32_t connex)
+{
+  static char *name="ptcurve";
+  
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+
+  if (! lptcurve(image, connex))
+  {
+    fprintf(stderr, "%s: function lptcurve failed\n", name);
+    return NULL;
+  }
+  
+  return image;
+}
+
+struct xvimage* ptend(struct xvimage *imagein, int32_t connex)
+{
+  static char *name="ptend";
+  
+  if (datatype(imagein) == VFF_TYP_4_BYTE)
+  {
+    struct xvimage * res = allocimage(NULL, rowsize(imagein), colsize(imagein), depth(imagein), VFF_TYP_1_BYTE);
+    if (res == NULL)
+    {
+      fprintf(stderr, "%s: allocimage failed\n", name);
+      return NULL;
+    }
+    if (! lptendlab(imagein, connex, res))
+    {
+      fprintf(stderr, "%s: function lptendlab failed\n", name);
+      freeimage(res);
+      return NULL;
+    }
+    
+    return res;
+  } else {
+    struct xvimage *image = checkAllocCopy(imagein, name);
+    if (image == NULL)
+      return NULL;
+    
+    if (! lptend(image, connex))
+      {
+	fprintf(stderr, "%s: function lptend failed\n", name);
+	return NULL;
+      }
+    
+    return image;
+  }
+}
+
+struct xvimage* asfbin(struct xvimage *imagein, int32_t radiusmax, int32_t radiusmin)
+{
+  static char *name="asfbin";
+  int32_t radius;
+  int32_t FERMETURE_EN_1 = 0;
+
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+ 
+  if (radiusmin == 0) 
+    {
+      radiusmin = 1;
+      FERMETURE_EN_1 = 1;
+    }
+
+  for (radius = radiusmin; radius <= radiusmax; radius++)
+    {
+#ifdef VERBOSE
+      fprintf(stderr, "%s: radius = %d\n", name, radius);
+#endif
+      
+      if (FERMETURE_EN_1)
+	{
+	  /* fermeture par l'element structurant */
+	  if (! ldilatball(image, radius, 0))
+	    {
+	      fprintf(stderr, "%s: function ldilatball failed\n", name);
+	      freeimage(image);
+	      return NULL;
+	    }
+	  if (! lerosball(image, radius, 0))
+	    {
+	      fprintf(stderr, "%s: function lerosball failed\n", name);
+	      freeimage(image);
+	      return NULL;
+	    }
+	  /* ouverture par l'element structurant */
+	  if (! lerosball(image, radius, 0))
+	    {
+	      fprintf(stderr, "%s: function lerosball failed\n", name);
+	      freeimage(image);
+	      return NULL;
+	    }
+	  if (! ldilatball(image, radius, 0))
+	    {
+	      fprintf(stderr, "%s: function ldilatball failed\n", name);
+	      freeimage(image);
+	      return NULL;
+	    }
+	}
+      else
+	{
+	  /* ouverture par l'element structurant */
+	  if (! lerosball(image, radius, 0))
+	    {
+	      fprintf(stderr, "%s: function lerosball failed\n", name);
+	      freeimage(image);
+	      return NULL;
+	    }
+	  if (! ldilatball(image, radius, 0))
+	    {
+	      fprintf(stderr, "%s: function ldilatball failed\n", name);
+	      freeimage(image);
+	      return NULL;
+	    }
+	  /* fermeture par l'element structurant */
+	  if (! ldilatball(image, radius, 0))
+	    {
+	      fprintf(stderr, "%s: function ldilatball failed\n", name);
+	      freeimage(image);
+	      return NULL;
+	    }
+	  if (! lerosball(image, radius, 0))
+	    {
+	      fprintf(stderr, "%s: function lerosball failed\n", name);
+	      freeimage(image);
+	      return NULL;
+	    }
+	}
+      
+    } /* for (radius = 1; radius <= radiusmax; radius++) */
 
   return image;
 }

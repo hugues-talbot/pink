@@ -386,6 +386,25 @@ struct xvimage* erosball(struct xvimage *imagein, int r, int dist=0);
 struct xvimage* dilatball(struct xvimage *imagein, int r, int dist=0);
 
 %feature("docstring",
+         "<B>Description:</B>\n"
+         "Alternate sequential filter for binary images. \n"
+         "\n"
+         "Disc-shaped structuring elements of increasing radius,\n"
+         "ranging from 1 (or ""radiusmin"" if this parameter is specified) to ""radiusmax"",\n"
+         "are generated. \n"
+         "\n"
+         "Let D_1,...,D_n be these structuring elements, sorted by increasing radius.\n"
+         "Let F_0 = imagein, the ith intermediate result F_i is obtained by the closing of\n"
+         "the opening of F_{i-1} by the structuring element D_i. \n"
+         "The resulting image contains the final result F_n.\n"
+         "Giving a value 0 for the optional parameter radiusmin has the effect of beginning \n"
+         "by a closing instead of an opening.\n"
+         "\n"
+         "Types supported: byte 2d, byte 3d\n");
+struct xvimage* asfbin(struct xvimage *imagein, int32_t radiusmax, int32_t radiusmin=1);
+
+
+%feature("docstring",
 	 "Generates an image with a white border and a black interior\n\n"
 	 "Description:\n"
 	 "The resulting image has the same size as the input image. Its border is set to 255,\n"
@@ -548,9 +567,9 @@ struct xvimage* dist(struct xvimage *image, int32_t mode);
          "The algorithm is the following:\n"
          "\n"
          "Repeat until stability\n"
-         "Select a point x in X \ I such that P[x] is minimal\n"
-         "If x is simple for X then\n"
-         "X = X \ {x}\n"
+         "  Select a point x in X \ I such that P[x] is minimal\n"
+         "  If x is simple for X then\n"
+         "    X = X \ {x}\n"
          "Result: X\n"
          "\n"
          "Reference: \n"
@@ -558,7 +577,7 @@ struct xvimage* dist(struct xvimage *image, int32_t mode);
          "Transformations topologiques discretes.\n"
          "in Geometrie discrete et images numeriques\n"
          "D. Coeurjolly and A. Montanvert and J.M. Chassery, \n"
-         "pp. 187-209, Hermess, 2007.\n"
+         "pp. 187-209, Hermes, 2007.\n"
          "http://www.esiee.fr/~coupriem/Pdf/chapitre_topo.pdf\n"
          "\n"
 	 "Types supported: byte 2d, byte 3d\n");
@@ -571,3 +590,52 @@ struct xvimage* skeletondist2(struct xvimage *imagein, int32_t mode, int32_t con
 struct xvimage* skeletonprio1(struct xvimage *imagein, struct xvimage *prio, int32_t connex, int32_t inhibit);
 
 struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t connex, int32_t inhibit);
+
+
+%feature("docstring",
+         "Detects isolated points in a binary image\n"
+         "Description:\n"
+         "An isolated point is a white point, all the n-neighbours of which are black\n"
+         "(n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter \b connex)\n"
+         "Types supported: byte 2d, byte 3d\n");
+struct xvimage* ptisolated(struct xvimage *imagein, int32_t connex);
+
+%feature("docstring",
+         "Detects junction points in 2d or 3d binary images\n"
+         "\n"
+         "Description:\n"
+         "Detects junction points in the 2d or 3d binary image imagein, which is supposed to contain a skeleton.\n"
+         "A junction point is a white point x such that\n #(Nn[x] inter X) > 2,\n"
+         "where Nn[x] stands for the n-neighborhood of x (excluding x),\n"
+         "and n = 4, 8 in 2D or n = 6, 18, 26 in 3D, as set by the parameter ""connex"".\n"
+         "\n"
+         "When the type of imagein is 4_BYTE, the image is treated as a label image,\n"
+         "where each label is processed as a separate binary image\n"
+         "(all other labels are considered as background).\n"
+         "\n"
+         "Types supported: byte 2D, byte 3D, long 3D\n");
+struct xvimage* ptjunction(struct xvimage *imagein, int32_t connex);
+
+%feature("docstring",
+         "Detects curve points in a binary image\n"
+         "Description:\n"
+         "An curve point is a white point, which has exactly 2 white n-neighbours \n"
+         "that are not n-neighbours to each other. In other words, Tn = 2 and \n"
+         "each neighboring n-connected component is made of exactly one point\n"
+         "(n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter ""connex"").\n"
+         "\n"
+         "Types supported: byte 2d, byte 3d\n");
+struct xvimage* ptcurve(struct xvimage *imagein, int32_t connex);
+
+%feature("docstring",
+         "Detects end points in a binary image\n"
+         "Description:\n"
+         "An end point is a white point, which has exactly 1 white n-neighbour\n"
+         "(n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter ""connex"")\n"
+         "\n"
+         "When the type of imagein is 4_BYTE, the image is treated as a label image,\n"
+         "where each label is processed as a separate binary image\n"
+         "(all other labels are considered as background).\n"
+         "\n"
+         "Types supported: byte 2D, byte 3D, long 3D\n");
+struct xvimage* ptend(struct xvimage *imagein, int32_t connex);

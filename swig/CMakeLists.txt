@@ -64,8 +64,6 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/lib/lcrop.c
 	     ../src/lib/larith.c
 	     ../src/lib/lborder.c
-	     ../src/lib/mctopo.c
-	     ../src/lib/mctopo3d.c
 	     ../src/lib/lattribheight.c
 	     ../src/lib/lattribarea.c
 	     ../src/lib/lattribvol.c
@@ -74,7 +72,12 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/lib/mctopo.c
 	     ../src/lib/mctopo3d.c
 	     ../src/lib/mcrbt.c
-	     ../src/lib/lskeletons.c
+	     ../src/lib/lseltopo.c
+	     ../src/lib/mckhalimsky3d.c
+	     ../src/bdd/bdd1.alphacube.c
+	     ../src/bdd/bdd2.alpha.c
+	     ../src/bdd/bdd2.beta.c
+	     ../src/bdd/bdd3.c
 	     )
 
 SET_SOURCE_FILES_PROPERTIES(pinkswig.i PROPERTIES C ON)
