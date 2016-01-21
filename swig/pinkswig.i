@@ -38,6 +38,10 @@
 #define VFF_TYP_COMPLEX		7	/* pixels are complex (single precision)*/
 #define VFF_TYP_DCOMPLEX	8	/* pixels are complex (double precision)*/
 
+%newobject createimage;
+%newobject ptend;
+
+
 /**
    \brief The image class for the C functions.
 
@@ -112,22 +116,15 @@ typedef struct xvimage {
   void save(char *name) {
     writeimage($self, name);
   }
-/*
-  uint8_t getpixel(index_t x, index_t y, index_t z=0) {
-    return voxel($self,x,y,z);
-  }
-  void setpixel(int8_t value, index_t x, index_t y, index_t z=0) {
-    ((uint8_t*)(($self)->image_data))[((z)*colsize($self)+(y))*rowsize($self)+(x)] = value;
-  }
-*/
-}} xvimage;
 
+}} xvimage;
 
 %pythoncode{
 import ctypes
+
 def fromnumpy(mat):
     if mat.flags['C_CONTIGUOUS'] == False:
-      print "fromnumpy: Memory is not contiguous."
+      print "fromnumpy: Memory is not C contiguous."
       print "fromnumpy: Please use ""numpy.ascontiguousarray""."
       print "fromnumpy: and do not forget to keep a reference"
       print "fromnumpy: to the Numpy array thus created."
@@ -140,7 +137,9 @@ def fromnumpy(mat):
     type = mat.dtype.name
     translate = {'uint8' : 1, 'uint16' : 2, 'uint32' : 4, 'float32' : 5, 'float64' : 6}
     if type in translate:
-      return createimage(row, col, depth, translate[type], mat.ctypes.data)
+      im = createimage(row, col, depth, translate[type], mat.ctypes.data)
+      im.owndata = False
+      return im
     else:
       print "Type:", type, "is not supported"
       return None
@@ -151,8 +150,6 @@ def fromnumpy(mat):
 
 import ctypes
 	      
-
-    
 def getdata(self):
     if self.depth_size == 1: 
       data = getattr(self.ctypes,self.getctype()) *self.row_size*self.col_size
@@ -160,6 +157,9 @@ def getdata(self):
       data = getattr(self.ctypes,self.getctype()) *self.row_size*self.col_size*self.depth_size
     data = data.from_address(int(self.image_data))
     return data
+
+def tonumpy():
+      return np.ctypeslib.as_array(im.getdata())
 
 def getpixel(self, x, y, z=0):
     data = self.getdata()

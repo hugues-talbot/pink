@@ -34,7 +34,7 @@ INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../include)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_CURRENT_SOURCE_DIR}/../src/liar/)
 
 #include_directories(../include)
     
@@ -78,6 +78,7 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/bdd/bdd2.alpha.c
 	     ../src/bdd/bdd2.beta.c
 	     ../src/bdd/bdd3.c
+#	     ../src/lib/liar_line.cpp
 	     )
 
 SET_SOURCE_FILES_PROPERTIES(pinkswig.i PROPERTIES C ON)
@@ -86,3 +87,12 @@ SWIG_ADD_MODULE(pinkswig python pinkswig.i com/pinkswig.c)
 
 SWIG_LINK_LIBRARIES(pinkswig ${PYTHON_LIBRARIES} pinklib)
 
+SET_SOURCE_FILES_PROPERTIES(imview.i PROPERTIES C ON)
+SET_SOURCE_FILES_PROPERTIES(imview.i PROPERTIES SWIG_FLAGS "-includeall")
+SWIG_ADD_MODULE(imview python imview.i
+		       com/imview.c
+		       ../src/liar/imclient.c
+		       ../src/liar/liarwrap.c
+	       )
+
+SWIG_LINK_LIBRARIES(imview ${PYTHON_LIBRARIES})
