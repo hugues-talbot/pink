@@ -15,17 +15,15 @@ Readimage
 reads an image in the PNM format
 
 """
-
-
-    
+import pink
 
 
 
 def readimage( path ):
     """
         Reads an image in the PNM format
-
     """
+
     try:
         image=pink.cpp.readimage(path)
         return pink.pink2numpy(image)
