@@ -287,7 +287,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lskew.h"
 #include "lsquel.h"
 #include "lsquelbin.h"
-#include "lsquelval.h"
+//#include "lsquelval.h"
 #include "lstat.h"
 #include "lstretch.h"
 #include "lsym.h"
