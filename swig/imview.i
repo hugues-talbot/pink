@@ -10,13 +10,7 @@
 #include <mccodimage.h>
 
 #include <com/imview.h>
-void LIAREnableDebug(void);
-void LIARDisableDebug(void);
-/*  
-#include <liarp.h>
-#include <liarwrap.h>
-#include <imclient.h>
-*/
+
 %}
 
 %feature("autodoc", "1");
@@ -24,36 +18,34 @@ void LIARDisableDebug(void);
 
 %pythoncode{
   
-def __namestr__(obj, namespace):
-    return [name for name in namespace if namespace[name] is obj]
-  
-def imview(images,debug=False):
+def imview(images,imagename="image",debug=False):
     """A function to display an image in Pink/Python. It works on
-    images and lists of images:
-    pink.imview(I)
-    pink.imview([I,J])
+    images and lists of images.  
+    An optional name can be provided for the window title.
+    The function returns an Imview object.
+    Examples:
+    viewer = imview.imview(I)
+    imview.imview([I,J])
+    imview.imview(I, ""A beautiful image"")
     """
     if not isinstance(images, list):
+        viewer = Imview(images, imagename)
 	if (debug):
-	    __LiarEnableDebug__()
-	port = __init__()
-        conn = __login__("", "", port)
-        imagename = __namestr__(images,locals())[0]
-        up = __putimage__(images,imagename,conn)
-        return None
+	  viewer.debug(True)
+        return viewer
     else:
 	num = 0
-	viewer = Imview(images[0])
+        viewer = Imview(images[0],imagename+"-"+str(0))
 	for q in range(1, len(images)):
-	    viewer.show(images[q], str(q))
+	    viewer.show(images[q], imagename+"-"+str(q))
         return viewer
 
 class Imview:
     """A class to display images in Pink/Python"""
-    def __init__(self, image):
+    def __init__(self, image, imagename="image"):
 	self.port = __init__()
         self.conn = __login__("","",self.port)
-        self.imagename = __namestr__(image, locals())[0]
+        self.imagename = imagename
         self.up = __putimage__(image,self.imagename,self.conn)
     def debug(self,d=False):
         self.debugstatus = __setdebug__(d)
@@ -70,13 +62,9 @@ class Imview:
 %rename(__putimage__) putimage;
 %rename(__setdebut__) setdebug;
 %rename(__sendcommand__) sendcommand;
-%rename(__LIAREnableDebug__) LIAREnableDebug;
-%rename(__LIARDisableDebug__) LIARDisableDebug;
 
 int init(void);
 int login(char *user, char *hostname, int port);
 int putimage(struct xvimage *realdata, const char *name, int conn_id);
 int setdebug(int debug);
 int sendcommand(char *command, int connid);
-void LIAREnableDebug(void);
-void LIARDisableDebug(void);
