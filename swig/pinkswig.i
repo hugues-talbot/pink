@@ -10,6 +10,8 @@
 #include "com/pinkswig.h"
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <jccodimage.h>
+#include <jcimage.h>
 
 %}
 
@@ -37,6 +39,10 @@
 #define VFF_TYP_DOUBLE		6	/* pixels are float (double precision)*/
 #define VFF_TYP_COMPLEX		7	/* pixels are complex (single precision)*/
 #define VFF_TYP_DCOMPLEX	8	/* pixels are complex (double precision)*/
+
+#define VFF_TYP_GABYTE          12      /* graphe d'arete code sur 1 octet */
+#define VFF_TYP_GAFLOAT         13      /* graphe d'arete code en float */
+#define VFF_TYP_GADOUBLE        14      /* graphe d'arete code en double */
 
 %newobject createimage;
 %newobject ptend;
@@ -72,6 +78,9 @@ typedef struct xvimage {
     case VFF_TYP_4_BYTE: sprintf(type, "int32_t"); break;
     case VFF_TYP_FLOAT: sprintf(type, "float"); break;
     case VFF_TYP_DOUBLE: sprintf(type, "double"); break;
+    case VFF_TYP_GABYTE: sprintf(type, "uint8_t Edge Graph"); break;
+    case VFF_TYP_GAFLOAT: sprintf(type, "float Edge Graph"); break;
+    case VFF_TYP_GADOUBLE: sprintf(type, "double Edge Graph"); break;
     default: sprintf(type,"other");
     }
     if (depth($self)==1)
@@ -639,3 +648,91 @@ struct xvimage* ptcurve(struct xvimage *imagein, int32_t connex);
          "\n"
          "Types supported: byte 2D, byte 3D, long 3D\n");
 struct xvimage* ptend(struct xvimage *imagein, int32_t connex);
+
+
+%rename(computeEdgeGraph) ComputeEdgeGraphGrey;
+%rename(computeEdgeGraph) ComputeEdgeGraphColor;
+		  
+%feature("docstring",
+	 "Computes a GA (an edge-weighted graph) from an image. The values of an\n"
+	 "edge linking two pixels {x,y} is computed according to the parameter\n"
+	 "\n"
+	 "If the input image is greyscale, then\n"
+	 "  If param == 0, the absolute difference of intensity between x and y is used.\n"
+	 "  If param == 1, the maximum between the intensities of x and y is used.\n"
+	 "  If param == 2, the minimum between the intensities of x and y is used.\n"
+	 "  If param == 3, a Deriche-like gradient is used, the optional parameter\n"
+	 "    alpha specifies the spatial extention of the filter (by default alpha\n"
+	 "   is set to  1]),\n"
+	 "If the input image is color (input images are the red, green and blue channels), then\n"
+	 "  If param == 0, the absolute difference of intensity between x and y is used.\n"
+	 "  If param == 1, the Euclidean distance between x and y is used.\n"
+	 "  If param == 2, the Fuzzy Affinity between x and y is used.\n"
+	 "\n"
+	 "If the input image is a 2D (resp. 3D) image, then the output image is a 2D (resp\n"
+	 "3D edge graph), that is a 2D 4-connected edge-weighted graph (resp. a 3D\n"
+	 "6-connected edge-weighted graph).\n"
+         "\n"
+         "Types supported: byte 2D, float 2D, byte 3D\n");
+struct xvimage* ComputeEdgeGraphGrey(struct xvimage* im, int32_t param=0, double alpha=1.);
+struct xvimage* ComputeEdgeGraphColor(struct xvimage* r, struct xvimage* g, struct xvimage* b, int32_t param=0);
+
+			  
+%include "typemaps.i"
+%typemap(in, numinputs=0) xvimage ** (xvimage *temp) {
+  $1 = &temp;
+}
+%typemap(argout) xvimage ** {
+  if (!PyList_Check($result)) {
+    PyObject* temp = $result;
+    $result = PyList_New(1);
+    PyList_SetItem($result, 0, temp);
+  }
+  PyObject* temp = SWIG_NewPointerObj(*$1, SWIGTYPE_p_xvimage, 0);
+  PyList_Append($result, temp);
+  Py_DECREF(temp);
+}
+
+%feature("autodoc", "watershedcut(edge-weighted-image, labeled-markers) -> [wc, labels]") watershedcut;
+%feature("docstring",
+	 "Compute a watershed cut of an edge-weighted image from a set of labeled markers,\n"
+	 "using a minimum spanning forest algorithm.\n"
+	 "Description:\n"
+	 "Compute a minimum spanning forest of the edge weighted input images\n"
+	 "(an edge-weighted graph that is 4-connected in 2D or 6-connected 3D)\n"
+	 "relative to the labeled image of markers.\n"
+	 "Return a list of both an edge-weighted image whose non-zero edges form the induced watershed cut\n"
+	 "and a labeled image that represents the vertex partition induced by the watershed cut.\n"
+	 "\n"
+	 "See [COUSTYetAl-PAMI2009] and [COUSTYetAl-PAMI2010] for more details.\n"
+	 "Types supported: edge-weighted byte 2D, edge-weighted byte 3D\n");
+void watershedcut(struct xvimage* image, struct xvimage* markers,  xvimage** wc, xvimage** labels);
+
+			  
+%feature("docstring",
+	 "Convert an edge-weighted image into its\n"
+	 "representation in the Khalimsky grid\n"
+	 "Description:\n"
+	 "Convert a 4-connected (6-connected, in 3D) edge-weighted graph\n"
+	 "into its Khalimsky grid representation (depending on the parameter ""type"").\n"
+	 "The vertices of the graph are associated to the\n"
+	 "square of the Khalimsky grid, and the edges of the graphs are\n"
+	 "associated to the line segments.\n"
+	 "\n"
+	 "If type == 0, then the closure of the set of weighted-edges is used\n"
+	 "(usefull for representing contours).\n"
+	 "\n"
+	 "If type == 1, then the dual of the closure of the set of weighted edges\n"
+	 "is used (usefull for representing regions).\n"
+	 "Types supported: edge-weighted byte 2D, edge-weighted byte 3D\n");
+struct xvimage* EWG2Khalimsky(struct xvimage *edgeWeightedImage, int32_t type=0);
+
+%feature("docstring",
+	 "\brief labeling of the foreground components of a binary image\n"
+	 "Description:\n"
+	 "Each connected component of the input image is labeled with a unique integer, starting from 1.\n"
+	 "The background points are labeled by 0.\n"
+	 "The argument ""connex"" selects the connectivity (4, 8 in 2D; 6, 18, 26 in 3D).\n"
+	 "The resulting output image has the type ""int32_t"".\n"
+	 "<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d\n");
+struct xvimage* labelfgd(struct xvimage *imagein, int32_t connex=4);

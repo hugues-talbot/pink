@@ -48,9 +48,14 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <jcimage.h>
 
 
+// LNA: the following lines seem to be WRONG
+// LNA --- Start here ---
 // ! jcimage remplace mcimage!
 // Les deux deux fichiers ne peuvent pas etre utilisé en meme temps car
 // l'intersection est non vide
+// LNA --- end here ---
+// LNA: I would say: jcimage is a complement to mcimage
+// LNA: jcimage can only be used with mcimage the converse being not true
 
 #define BUFFERSIZE 10000
 

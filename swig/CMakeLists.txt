@@ -78,6 +78,13 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/bdd/bdd2.alpha.c
 	     ../src/bdd/bdd2.beta.c
 	     ../src/bdd/bdd3.c
+	     ../src/lib/jcimage.c
+	     ../src/lib/jccodimage.c
+	     ../src/lib/lderiche.c
+	     ../src/lib/lppm2GA.c
+	     ../src/lib/lMSF.c
+	     ../src/lib/lga2khalimsky.c
+	     ../src/lib/llabelextrema.c
 #	     ../src/lib/liar_line.cpp
 	     )
 

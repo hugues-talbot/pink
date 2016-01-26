@@ -36,9 +36,13 @@
 
 #include <lwshedtopo.h>
 
+#include <jccodimage.h>
+#include <jcimage.h>
+#include <lppm2GA.h>
+#include <lMSF.h>
 
-
-
+#include <lga2khalimsky.h>
+#include <llabelextrema.h>
 
 /* ==================================== */
 // Helper function to use with numpy (dataInt should be uintptr_t)
@@ -1414,4 +1418,188 @@ struct xvimage* asfbin(struct xvimage *imagein, int32_t radiusmax, int32_t radiu
     } /* for (radius = 1; radius <= radiusmax; radius++) */
 
   return image;
+}
+
+struct xvimage* ComputeEdgeGraphGrey(struct xvimage* im, int32_t param, double alpha)
+{
+  static char *name="pgm2GA";
+  struct xvimage *ga;
+  
+  if (im == NULL) {
+    fprintf(stderr, "%s: input image is NULL\n", name);
+    return NULL;
+  }
+  switch(datatype(im)){
+  case VFF_TYP_1_BYTE:
+    if( (ga = allocGAimage(NULL, im->row_size , im->col_size, depth(im), VFF_TYP_GABYTE )) == NULL )
+      {
+	fprintf(stderr, "%s: edge graph not allocated\n", name);
+	return NULL;
+      }
+    break;
+  case VFF_TYP_FLOAT:
+    if( (ga = allocGAimage(NULL, im->row_size , im->col_size, depth(im), VFF_TYP_GAFLOAT )) == NULL )
+      {
+	fprintf(stderr, "%s: edge graph not allocated\n", name);
+	return NULL;
+      }
+    break;
+  default:
+    {
+      fprintf(stderr,"%s: image type not valid (not yet implemented)\n", name);
+      return NULL;
+    }
+  }
+
+  if(depth(im) == 1)
+    {
+      switch(datatype(im)){
+      case VFF_TYP_1_BYTE:
+	//fprintf(stderr,"Type de l'image vaut 1\n");
+	if( lpgm2ga(im, ga, param, alpha) != 1 )
+	{
+	  fprintf(stderr, "%s: lppm2ga failed\n", name);
+	  freeimage(ga);
+	  return NULL;
+	}
+	break;
+      case VFF_TYP_FLOAT:
+	if( lpgm2gafloat(im, ga, param, alpha) != 1 )
+	{
+	  fprintf(stderr, "%s: lppm2gafloat failed\n", name);
+	  freeimage(ga);
+	  return NULL;
+	}
+	break;
+      }
+    }
+  else
+    if( lpgm2ga3d(im,ga,param) != 1 )
+    {
+      fprintf(stderr, "%s: lppm2ga failed\n", name);
+      freeimage(ga);
+      return NULL;
+    }
+  
+  return ga;
+}
+
+struct xvimage* ComputeEdgeGraphColor(struct xvimage* r, struct xvimage* v, struct xvimage* b, int32_t param)
+{
+  static char *name="pgm2GA";
+  struct xvimage *ga;
+  if ((r == NULL) || (v == NULL) || (b == NULL)) {
+    fprintf(stderr, "%s: input image is NULL\n", name);
+    return NULL;
+  }
+  if( (ga = allocGAimage(NULL, r->row_size , r->col_size, depth(r), VFF_TYP_GABYTE )) == NULL )
+    {
+      fprintf(stderr, "%s: edge graph not allocated\n", name);
+      return NULL;
+    }
+
+  if(depth(r) == 1)
+    {
+      if( lppm2ga(r,v,b,ga,param) != 1 )
+      {
+	fprintf(stderr, "%s: lppm2ga failed\n", name);
+	freeimage(ga);
+	return NULL;
+      }
+    }
+  else
+    {
+	fprintf(stderr, "%s: 3D color images not yet implemented\n", name);
+	freeimage(ga);
+	return NULL;
+    }
+  return ga;
+}
+
+// markers should be labeled
+// wc and labels are the returned images - they are allocated here
+void watershedcut(struct xvimage* image, struct xvimage* markers,  struct xvimage** wc, struct xvimage** labels)
+{
+  static char *name="watershedcut";
+
+  *wc = *labels = NULL;
+  
+  struct xvimage *ga = checkAllocCopy(image, name);
+  if (ga == NULL)
+    return;
+  struct xvimage *labeling = checkAllocCopy(markers, name);
+  if (labeling == NULL)
+    return;
+
+  int msf = MSF(ga,labeling);
+  if (! msf){
+    fprintf(stderr, "%s: MSF failed\n", name);
+    freeimage(ga);
+    freeimage(labeling);
+    ga = labeling = NULL;
+    return;
+  }
+
+  *wc = ga;
+  *labels = labeling;
+  return;
+}
+
+struct xvimage* EWG2Khalimsky(struct xvimage *ga, int32_t bar)
+{
+  static char *name="EWG2Khalimsky";
+  struct xvimage * out = NULL;
+  
+  if(datatype(ga) != VFF_TYP_GABYTE)
+  {
+    fprintf(stderr, "%s : input image of a bad format\n", name); 
+    return NULL;
+  }
+  if(depth(ga) == 1){
+    out = allocimage("", rowsize(ga)*2, colsize(ga)*2, 1, VFF_TYP_1_BYTE);
+    if (out == NULL) {
+      fprintf(stderr, "%s : malloc failed.\n", name); 
+      return NULL;
+    }
+    if(!lga2khalimsky(ga, out, bar))
+    {
+      fprintf(stderr, "%s : lga2khalimsky failed.\n", name); 
+      freeimage(out);
+      return NULL;
+    }
+  }
+  else
+  {
+    out = allocimage("", rowsize(ga)*2, colsize(ga)*2, depth(ga)*2, VFF_TYP_1_BYTE);
+    if (out == NULL) {
+      fprintf(stderr, "%s : malloc failed.\n", name); 
+      return NULL;
+    }
+    if(!lga2khalimsky3d(ga, out, bar))
+    {
+      fprintf(stderr, "%s : lga2khalimsky3d failed.\n", name); 
+      freeimage(out);
+      return NULL;
+    }
+  }
+  return out;
+}
+
+struct xvimage* labelfgd(struct xvimage *image, int32_t connex)
+{
+  static char *name="labelfgd";
+  struct xvimage *result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
+  if (result == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", name);
+    return NULL;
+  }
+
+  if (! llabelfgd(image, connex, result))
+  {
+    fprintf(stderr, "%s: llabelfgd failed\n", name);
+    freeimage(result);
+    return NULL;
+  }
+  return result;
 }
