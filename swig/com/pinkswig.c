@@ -16,6 +16,7 @@
 #include <lcrop.h>
 #include <larith.h>
 #include <lborder.h>
+#include <ldraw.h>
 
 #include <ldist.h>
 
@@ -48,11 +49,12 @@
 // Helper function to use with numpy (dataInt should be uintptr_t)
 xvimage *  createimage(index_t x, index_t y, index_t z, int32_t type, long int dataInt) {
 /* ==================================== */
-  xvimage *im;
+  xvimage *im=NULL;
   void *data = (void*) dataInt;
-  if (data == NULL) 
-    im = allocimage(NULL, x, y, z, type);
-  else {
+  if (data == NULL) {
+    //im = allocimage(NULL, x, y, z, type);
+    fprintf(stderr, "createimage: cannot create an image from NULL data\n");
+  } else {
     // data is a pointer to an already allocated zone of memory
     im = allocheader(NULL, x, y, z, type);
     im->image_data = (void *)data;
@@ -1588,6 +1590,12 @@ struct xvimage* EWG2Khalimsky(struct xvimage *ga, int32_t bar)
 struct xvimage* labelfgd(struct xvimage *image, int32_t connex)
 {
   static char *name="labelfgd";
+
+  if (datatype(image) != VFF_TYP_1_BYTE) {
+    fprintf(stderr, "%s: image should be of type VFF_TYP_1_BYTE.\n", name);
+    return NULL;
+  }
+  
   struct xvimage *result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
   if (result == NULL)
   {   
@@ -1602,4 +1610,38 @@ struct xvimage* labelfgd(struct xvimage *image, int32_t connex)
     return NULL;
   }
   return result;
+}
+
+struct xvimage* genball(double radius, int32_t dim)
+{
+  static char *name="genball";
+
+  struct xvimage *image = NULL;
+  int32_t cen = (int32_t)ceil(radius);
+  int32_t size = 2* cen + 1;
+
+  if (dim == 3)
+  {
+    image = allocimage(NULL, size, size, size, VFF_TYP_1_BYTE);
+    if (image == NULL) {
+      fprintf(stderr, "%s: memory can not be allocated", name);
+      return NULL;
+    }
+    ldrawball(image, radius, cen, cen, cen);
+  }
+  else if (dim == 2)
+  {
+    image = allocimage(NULL, size, size, 1, VFF_TYP_1_BYTE);
+    if (image == NULL) {
+      fprintf(stderr, "%s: memory can not be allocated", name);
+      return NULL;
+    }
+    ldrawdisc(image, radius, cen, cen);
+  }
+  else
+  {
+    fprintf(stderr, "%s: dimension should be 2 or 3\n", name);
+    return NULL;
+  }
+  return image;
 }

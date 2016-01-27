@@ -18,7 +18,7 @@
 
 %pythoncode{
   
-def imview(images,imagename="image",debug=False):
+def imview(images,name="",debug=False):
     """A function to display an image in Pink/Python. It works on
     images and lists of images.  
     An optional name can be provided for the window title.
@@ -29,28 +29,27 @@ def imview(images,imagename="image",debug=False):
     imview.imview(I, ""A beautiful image"")
     """
     if not isinstance(images, list):
-        viewer = Imview(images, imagename)
+        viewer = Imview(images, name)
 	if (debug):
 	  viewer.debug(True)
         return viewer
     else:
-	num = 0
-        viewer = Imview(images[0],imagename+"-"+str(0))
+        viewer = Imview(images[0], name+"-"+str(0))
 	for q in range(1, len(images)):
-	    viewer.show(images[q], imagename+"-"+str(q))
+	    viewer.show(images[q], name+"-"+str(q))
         return viewer
 
 class Imview:
     """A class to display images in Pink/Python"""
-    def __init__(self, image, imagename="image"):
+    def __init__(self, image, viewername=""):
 	self.port = __init__()
         self.conn = __login__("","",self.port)
-        self.imagename = imagename
-        self.up = __putimage__(image,self.imagename,self.conn)
+        self.viewername = viewername
+        self.up = __putimage__(image,self.viewername+"-"+image.name(),self.conn)
     def debug(self,d=False):
         self.debugstatus = __setdebug__(d)
-    def show(self,image, name="image"):
-	self.up = __putimage__(image,name,self.conn)
+    def show(self,image, name=""):
+        self.up = __putimage__(image,name+"-"+image.name(),self.conn)
 	if (self.up > 0):
 	    self.__init__(image)
 
@@ -60,7 +59,7 @@ class Imview:
 %rename(__init__) init;
 %rename(__login__) login;
 %rename(__putimage__) putimage;
-%rename(__setdebut__) setdebug;
+%rename(__setdebug__) setdebug;
 %rename(__sendcommand__) sendcommand;
 
 int init(void);

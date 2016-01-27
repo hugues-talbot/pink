@@ -49,7 +49,8 @@ static "C" {
  struct xvimage* threshold(struct xvimage *imagein, double seuil, double seuil2);
  struct xvimage* frame(struct xvimage *imagein, int width);
  struct xvimage* inverse(struct xvimage *imagein);
-struct xvimage* border(struct xvimage *imagein, int connex);
+ struct xvimage* border(struct xvimage *imagein, int connex);
+ struct xvimage* genball(double radius, int32_t dim);
 
  struct xvimage* min(struct xvimage *imagein1, struct xvimage *imagein2);
  struct xvimage* max(struct xvimage *imagein1, struct xvimage *imagein2);

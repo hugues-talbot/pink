@@ -103,7 +103,7 @@ extern "C" {
 */  
   struct xvimage {
 
-    /** \brief Dummy - not used anymore. */
+    /** \brief Name of the image. */
     char *name;  
 
     /** \brief Size of a row (number of columns) */
@@ -143,6 +143,9 @@ extern "C" {
     /** \brief Region of interest: z coordinates */
     index_t zmin, zmax;                  
 
+    /** \brief True/False: whether or not the memory image_data has been allocated by Pink */
+    int8_t memoryOwned;
+    
     /** \brief Pointer on raw data */
     void * image_data;                   
 };

@@ -44,8 +44,6 @@
 #define VFF_TYP_GAFLOAT         13      /* graphe d'arete code en float */
 #define VFF_TYP_GADOUBLE        14      /* graphe d'arete code en double */
 
-%newobject createimage;
-%newobject ptend;
 
 
 /**
@@ -54,21 +52,43 @@
    This class holds the image data for the C functions of Pink.
 */ 
 typedef struct xvimage {
-    /** \brief Size of a row (number of columns) */
-    index_t row_size;                    
-
-    /** \brief Size of a column (number of rows) */
-    index_t col_size;
-
-    /** \brief Number of planes (for 3d images) */
-    index_t depth_size;                  
-
-    /** \brief Number of (2d or 3d) images */
-    index_t time_size;
-
-    void * image_data;
 
 %extend {
+  int colsize() {
+    return colsize($self);
+  }
+  int rowsize() {
+    return rowsize($self);
+  }
+  int depth() {
+    return depth($self);
+  }
+  int datatype() {
+    return datatype($self);
+  }
+  void *__imagedata__() {
+    return $self->image_data;
+  }
+  
+  void name(const char*name)
+  {
+    if ($self->name != NULL)
+      free($self->name);
+    $self->name = (char *)calloc(1,strlen(name)+1);
+    if ($self->name == NULL){
+      fprintf(stderr,"%s: malloc failed for name\n", "xvimage");
+      return;
+    }
+    sprintf((char *)($self->name), name);
+  }
+  const char* name()
+  {
+    if ($self->name == NULL)
+      return "";
+    else
+      return $self->name;
+  }
+  
   char *__str__() {
     static char tmp[1024];
     static char type[100];
@@ -105,7 +125,7 @@ typedef struct xvimage {
 
 
   xvimage(index_t x, index_t y, index_t z=1, int32_t type=VFF_TYP_1_BYTE) {
-    return createimage(x,y,z,type, 0);
+    return allocimage(NULL, x,y,z,type);
   }
   
   xvimage(char *name) {
@@ -159,7 +179,7 @@ def fromnumpy(mat):
     type = mat.dtype.name
     translate = {'uint8' : 1, 'uint16' : 2, 'uint32' : 4, 'float32' : 5, 'float64' : 6}
     if type in translate:
-      im = createimage(row, col, depth, translate[type], mat.ctypes.data)
+      im = __createimage__(row, col, depth, translate[type], mat.ctypes.data)
       im.owndata = False
       return im
     else:
@@ -174,14 +194,14 @@ import ctypes
 	      
 def getdata(self):
     if self.depth_size == 1: 
-      data = getattr(self.ctypes,self.getctype()) *self.row_size*self.col_size
+      data = getattr(self.ctypes,self.getctype()) *self.rowsize()*self.colsize()
     else:
-      data = getattr(self.ctypes,self.getctype()) *self.row_size*self.col_size*self.depth_size
-    data = data.from_address(int(self.image_data))
+      data = getattr(self.ctypes,self.getctype()) *self.rowsize()*self.colsize()*self.depth()
+      data = data.from_address(int(self.__imagedata__()))
     return data
 
 def tonumpy():
-      return np.ctypeslib.as_array(im.getdata())
+      return np.ctypeslib.as_array(self.getdata())
 
 def getpixel(self, x, y, z=0):
     data = self.getdata()
@@ -231,8 +251,10 @@ def __mul__(self,other):
 %rename(__writeimage__) writeimage;
 %rename(__readGAimage__) readGAimage;
 %rename(__writeGAimage__) writerawGAimage;
+%newobject readimage;
 struct xvimage * readimage(const char *filename);
 int writeimage(struct xvimage * image,  const char *filename);
+%newobject readGAimage;
 struct xvimage * readGAimage(char *filename);
 int writerawGAimage(struct xvimage * image,  char *filename);
 %pythoncode{
@@ -240,18 +262,29 @@ int writerawGAimage(struct xvimage * image,  char *filename);
     ret = __readimage__(name)
     if ret == None:
       ret = __readGAimage__(name)
+    if ret != None:
+      from os.path import basename
+      ret.name(str.split(basename(name),'.')[0])	
     return ret
-  def writeimage(name):
-    ret = __writeimage__(name)
-    if ret == 0:
-      ret = __writeGAimage__(name)
+
+  def writeimage(im, name):
+    if im.datatype()<VFF_TYP_GABYTE:
+      ret = __writeimage__(im,name)
+    else:
+      ret = __writeGAimage__(im,name)
     return ret	
 }
 
+%rename(__createimage__) createimage;
+%newobject createimage;
 struct xvimage* createimage(index_t x, index_t y, index_t z, int32_t type, long int data);
+			 
 struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2);
+%newobject sub;
 struct xvimage* sub(struct xvimage *imagein1, struct xvimage *imagein2);
+%newobject mult;
 struct xvimage* mult(struct xvimage *imagein1, struct xvimage *imagein2);
+%newobject divide;
 struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2);
 
 %feature("docstring",
@@ -260,6 +293,7 @@ struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2);
 	 "Selects the regional minima of a grayscale image with connexity connex.\n"
 	 "connex should be 0[min. absolus], or 4, 8 (in 2D) or 6, 18, 26 (in 3D) \n"
 	 "Types supported: byte 2d, int32_t 2d, byte 3d, int32_t 3d\n");
+%newobject minima;
 struct xvimage* minima(struct xvimage *image, int connex);
 
 %feature("docstring",
@@ -268,6 +302,7 @@ struct xvimage* minima(struct xvimage *image, int connex);
 	 "Selects the regional maxima of a grayscale image with connexity connex.\n"
 	 "connex should be 0[min. absolus], or 4, 8 (in 2D) or 6, 18, 26 (in 3D) \n"
 	 "Types supported: byte 2d, int32_t 2d, byte 3d, int32_t 3d\n");
+%newobject maxima;
 struct xvimage* maxima(struct xvimage *image, int connex);
 
 %feature("docstring",
@@ -283,6 +318,7 @@ struct xvimage* maxima(struct xvimage *image, int connex);
 	 "                   Journal of Mathematical Imaging and Vision,\n"
 	 "                   Vol. 22, No. 2-3, pp. 231-249, 2005.\n"
 	 "Types supported: byte 2d, byte 3d\n");
+%newobject wshedtopo;
 struct xvimage* wshedtopo(struct xvimage *image, int connex, int inverse=1);
 
 %feature("docstring",
@@ -299,6 +335,7 @@ struct xvimage* wshedtopo(struct xvimage *image, int connex, int inverse=1);
 	 "                   Journal of Mathematical Imaging and Vision,\n"
 	 "                   Vol. 22, No. 2-3, pp. 231-249, 2005.\n"
 	 "Types supported: byte 2d, byte 3d\n");
+%newobject watershed;
 struct xvimage* watershed(struct xvimage *image, struct xvimage *mark, int connex, int inverse=1);
 
 
@@ -311,6 +348,7 @@ struct xvimage* watershed(struct xvimage *image, struct xvimage *mark, int conne
 	 "If x==-1 (resp. y==-1, z==-1), then the center is in the middle of elem,\n"
 	 "i.e., x=rowsize(elem)/2 (resp. y=colsize(elem)/2, z=depth(elem).\n"
 	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+%newobject dilation;
 struct xvimage* dilation(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
 
 %feature("docstring",
@@ -322,6 +360,7 @@ struct xvimage* dilation(struct xvimage *image, struct xvimage *elem, int32_t x=
 	 "If x==-1 (resp. y==-1, z==-1), then the center is in the middle of elem,\n"
 	 "i.e., x=rowsize(elem)/2 (resp. y=colsize(elem)/2, z=depth(elem).\n"
 	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+%newobject erosion;
 struct xvimage* erosion(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
 
 %feature("docstring",
@@ -333,6 +372,7 @@ struct xvimage* erosion(struct xvimage *image, struct xvimage *elem, int32_t x=-
 	 "If x==-1 (resp. y==-1, z==-1), then the center is in the middle of elem,\n"
 	 "i.e., x=rowsize(elem)/2 (resp. y=colsize(elem)/2, z=depth(elem).\n"
 	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+%newobject opening;
 struct xvimage* opening(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
 
 %feature("docstring",
@@ -344,6 +384,7 @@ struct xvimage* opening(struct xvimage *image, struct xvimage *elem, int32_t x=-
 	 "If x==-1 (resp. y==-1, z==-1), then the center is in the middle of elem,\n"
 	 "i.e., x=rowsize(elem)/2 (resp. y=colsize(elem)/2, z=depth(elem).\n"
 	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+%newobject closing;
 struct xvimage* closing(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
 
 %feature("docstring",
@@ -357,6 +398,7 @@ struct xvimage* closing(struct xvimage *image, struct xvimage *elem, int32_t x=-
 	 "The parameter niter sets the number of iterations. If niter == -1,\n"
 	 "then the iterations continue until stability.\n"
 	 "Types supported: byte 2d, byte 3d, short 2d, short 3d, long 2d, long 3d.\n");
+%newobject geodilat;
 struct xvimage* geodilat(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter=-1);
 
 %feature("docstring",
@@ -370,14 +412,16 @@ struct xvimage* geodilat(struct xvimage *image1, struct xvimage *image2, int32_t
 	 "The parameter niter sets the number of iterations. If niter == -1,\n"
 	 "then the iterations continue until stability.\n"
 	 "Types supported: byte 2d, byte 3d, short 2d, short 3d, long 2d, long 3d.\n");
+%newobject geoeros;
 struct xvimage* geoeros(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter=-1);
 
 %feature("docstring",
 	 "Simple threshold\n"
-	 "<B>Description:</B>\n"
+	 "Description:\n"
 	 "If th2<=0, for each pixel x, out[x] = if (in[x] < th1) then 0 else 255\n"
 	 "If th2>0, for each pixel x, out[x] = if (th1 <= in[x] < th2) then 255 else 0\n"
 	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+%newobject threshold;
 struct xvimage* threshold(struct xvimage *imagein, double th1, double th2=0.);
 
 %feature("docstring",
@@ -397,6 +441,7 @@ struct xvimage* threshold(struct xvimage *imagein, double th1, double th2=0.);
 	 "- 26: 26-distance in 3d\n"
 	 "\n"
 	 "Warning: The input image imagein must be a binary image. No test is done.\n");
+%newobject erosball;
 struct xvimage* erosball(struct xvimage *imagein, int r, int dist=0);
 
 %feature("docstring",
@@ -416,10 +461,11 @@ struct xvimage* erosball(struct xvimage *imagein, int r, int dist=0);
 	 "- 26: 26-distance in 3d\n"
 	 "\n"
 	 "Warning: The input image imagein must be a binary image. No test is done.\n");
+%newobject dilatball;
 struct xvimage* dilatball(struct xvimage *imagein, int r, int dist=0);
 
 %feature("docstring",
-         "<B>Description:</B>\n"
+         "Description:\n"
          "Alternate sequential filter for binary images. \n"
          "\n"
          "Disc-shaped structuring elements of increasing radius,\n"
@@ -434,6 +480,7 @@ struct xvimage* dilatball(struct xvimage *imagein, int r, int dist=0);
          "by a closing instead of an opening.\n"
          "\n"
          "Types supported: byte 2d, byte 3d\n");
+%newobject asfbin;
 struct xvimage* asfbin(struct xvimage *imagein, int32_t radiusmax, int32_t radiusmin=1);
 
 
@@ -444,7 +491,20 @@ struct xvimage* asfbin(struct xvimage *imagein, int32_t radiusmax, int32_t radiu
 	 "all other pixels are set to \n"
 	 "If the optional parameter width is given, then the border has thickness 'width'.\n"
          "Types supported: byte 2d, byte 3d\n");
+%newobject frame;
 struct xvimage* frame(struct xvimage *imagein, int width=1);
+
+%feature("docstring",
+	 "Generates a binary euclidean ball\n"
+	 "\n"
+	 "Description:\n"
+	 "Draws a binary euclidean ball in the resulting image.\n"
+	 "The parameter radius specifies the radius of the ball. \n"
+	 "The parameter ""dim"" specifies the dimension: 2 (default) or 3.\n"
+	 "The center of the ball is designated as the origin (for use as structuring element).\n"
+         "Types supported: byte 2d, byte 3d\n");
+%newobject genball;
+struct xvimage* genball(double radius, int32_t dim=2);
 
 %feature("docstring",
 	 "Computes the pixelwise inverse of an image\n\n"
@@ -452,6 +512,7 @@ struct xvimage* frame(struct xvimage *imagein, int width=1);
 	 "Byte images: for each pixel x, out[x] = 255 - in[x].<br>\n"
 	 "Long or float images: for each pixel x, out[x] = VMAX - in[x], where VMAX = max{in[x]}.\n"
 	 "Types supported: byte 2d, byte 3d, long 2d, long 3d, float 2d, float 3d\n");
+%newobject inverse;
 struct xvimage* inverse(struct xvimage *imagein);
 
 %feature("docstring",
@@ -470,6 +531,7 @@ struct xvimage* min(struct xvimage *imagein1, struct xvimage *imagein2);
 	 "Images must be of the same type and same dimensions.\n"
 	 "Otherwise, a conversion to the more general type is performed.\n"
 	 "Types supported: byte 2d, byte 3d, long 2d, long 3d, float 2d, float 3d\n");
+%newobject max;
 struct xvimage* max(struct xvimage *imagein1, struct xvimage *imagein2);
 
 
@@ -484,6 +546,7 @@ struct xvimage* max(struct xvimage *imagein1, struct xvimage *imagein2);
 	 "B(X) = {x in X, (Gamma_nk(x) inter Xbar) not empty}\n"
 	 "where nk is the complementary connectivity for k.\n"
 	 "Types supported: byte 2d, byte 3d\n");
+%newobject border;
 struct xvimage* border(struct xvimage *imagein, int connex=4);
 
 %feature("docstring",
@@ -491,6 +554,7 @@ struct xvimage* border(struct xvimage *imagein, int connex=4);
 	 "Description:\n"
 	 "h-maxima with connexity connex and depth ""depth"".\n"
 	 "Types supported: byte 2d, byte 3d\n");
+%newobject heightmaxima;
 struct xvimage* heightmaxima(struct xvimage *imagein, int32_t depth, int32_t connex=4);
 
 %feature("docstring",
@@ -498,6 +562,7 @@ struct xvimage* heightmaxima(struct xvimage *imagein, int32_t depth, int32_t con
 	 "Description:\n"
 	 "h-minima with connexity connex and depth ""depth"".\n"
 	 "Types supported: byte 2d, byte 3d\n");
+%newobject heightminima;
 struct xvimage* heightminima(struct xvimage *imagein, int32_t depth, int32_t connex=4);
 
 %feature("docstring",
@@ -505,6 +570,7 @@ struct xvimage* heightminima(struct xvimage *imagein, int32_t depth, int32_t con
 	 "Description:\n"
 	 "Area opening with connexity connex and parameter area+1.\n"
 	 "Types supported: byte 2d, byte 3d\n");
+%newobject areaopening;
 struct xvimage* areaopening(struct xvimage *imagein, int32_t area, int32_t connex=4);
 
 %feature("docstring",
@@ -512,6 +578,7 @@ struct xvimage* areaopening(struct xvimage *imagein, int32_t area, int32_t conne
 	 "Description:\n"
 	 "Area closing with connexity connex and parameter area+1.\n"
 	 "Types supported: byte 2d, byte 3d\n");
+%newobject areaclosing;
 struct xvimage* areaclosing(struct xvimage *imagein, int32_t area, int32_t connex=4);
 
 %feature("docstring",
@@ -519,6 +586,7 @@ struct xvimage* areaclosing(struct xvimage *imagein, int32_t area, int32_t conne
 	 "Description:\n"
 	 "Maxima-Volume-based filtering with connexity connex and volume vol."
 	 "Types supported: byte 2d, byte 3d\n");
+%newobject volmaxima;
 struct xvimage* volmaxima(struct xvimage *imagein, int32_t vol, int32_t connex=4);
 
 
@@ -527,6 +595,7 @@ struct xvimage* volmaxima(struct xvimage *imagein, int32_t vol, int32_t connex=4
 	 "Description:\n"
 	 "Minima-Volume-based filtering with connexity connex and volume vol."
 	 "Types supported: byte 2d, byte 3d\n");
+%newobject volminima;
 struct xvimage* volminima(struct xvimage *imagein, int32_t vol, int32_t connex=4);
 
 %feature("docstring",
@@ -555,6 +624,7 @@ struct xvimage* volminima(struct xvimage *imagein, int32_t vol, int32_t connex=4
          "The output is of type int32_t for modes < 40, of type float for mode==5,of type byte for other modes.\n"
          "\n"
 	 "Types supported: byte 2d, byte 3d\n");
+%newobject dist;
 struct xvimage* dist(struct xvimage *image, int32_t mode);
 
 %rename(skeleton) skeletonprio2;
@@ -615,13 +685,16 @@ struct xvimage* dist(struct xvimage *image, int32_t mode);
          "\n"
 	 "Types supported: byte 2d, byte 3d\n");
 
+%newobject skeletonprio2;
 struct xvimage* skeletonprio2(struct xvimage *imagein, struct xvimage *prio, int32_t connex, struct xvimage *inhibimage=NULL);
 
-
+%newobject skeletondist2;
 struct xvimage* skeletondist2(struct xvimage *imagein, int32_t mode, int32_t connex, struct xvimage *inhibimage);
 
+%newobject skeletonprio1;
 struct xvimage* skeletonprio1(struct xvimage *imagein, struct xvimage *prio, int32_t connex, int32_t inhibit);
 
+%newobject skeletondist1;
 struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t connex, int32_t inhibit);
 
 
@@ -631,6 +704,7 @@ struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t con
          "An isolated point is a white point, all the n-neighbours of which are black\n"
          "(n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter \b connex)\n"
          "Types supported: byte 2d, byte 3d\n");
+%newobject ptisolated;
 struct xvimage* ptisolated(struct xvimage *imagein, int32_t connex);
 
 %feature("docstring",
@@ -647,6 +721,7 @@ struct xvimage* ptisolated(struct xvimage *imagein, int32_t connex);
          "(all other labels are considered as background).\n"
          "\n"
          "Types supported: byte 2D, byte 3D, long 3D\n");
+%newobject ptjunction;
 struct xvimage* ptjunction(struct xvimage *imagein, int32_t connex);
 
 %feature("docstring",
@@ -658,6 +733,7 @@ struct xvimage* ptjunction(struct xvimage *imagein, int32_t connex);
          "(n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter ""connex"").\n"
          "\n"
          "Types supported: byte 2d, byte 3d\n");
+%newobject ptcurve;
 struct xvimage* ptcurve(struct xvimage *imagein, int32_t connex);
 
 %feature("docstring",
@@ -671,6 +747,8 @@ struct xvimage* ptcurve(struct xvimage *imagein, int32_t connex);
          "(all other labels are considered as background).\n"
          "\n"
          "Types supported: byte 2D, byte 3D, long 3D\n");
+//%newobject createimage;
+%newobject ptend;
 struct xvimage* ptend(struct xvimage *imagein, int32_t connex);
 
 
@@ -698,7 +776,9 @@ struct xvimage* ptend(struct xvimage *imagein, int32_t connex);
 	 "6-connected edge-weighted graph).\n"
          "\n"
          "Types supported: byte 2D, float 2D, byte 3D\n");
+%newobject ComputeEdgeGraphGrey;
 struct xvimage* ComputeEdgeGraphGrey(struct xvimage* im, int32_t param=0, double alpha=1.);
+%newobject ComputeEdgeGraphColor;
 struct xvimage* ComputeEdgeGraphColor(struct xvimage* r, struct xvimage* g, struct xvimage* b, int32_t param=0);
 
 			  
@@ -713,7 +793,7 @@ struct xvimage* ComputeEdgeGraphColor(struct xvimage* r, struct xvimage* g, stru
     $result = PyList_New(1);
     PyList_SetItem($result, 0, temp);
   }
-  PyObject* temp = SWIG_NewPointerObj(*$1, SWIGTYPE_p_xvimage, 0);
+  PyObject* temp = SWIG_NewPointerObj(*$1, SWIGTYPE_p_xvimage, SWIG_POINTER_OWN |  0);
   PyList_Append($result, temp);
   Py_DECREF(temp);
 }
@@ -750,6 +830,7 @@ void watershedcut(struct xvimage* image, struct xvimage* markers,  xvimage** wc,
 	 "If type == 1, then the dual of the closure of the set of weighted edges\n"
 	 "is used (usefull for representing regions).\n"
 	 "Types supported: edge-weighted byte 2D, edge-weighted byte 3D\n");
+%newobject EWG2Khalimsky;
 struct xvimage* EWG2Khalimsky(struct xvimage *edgeWeightedImage, int32_t type=0);
 
 %feature("docstring",
@@ -759,5 +840,6 @@ struct xvimage* EWG2Khalimsky(struct xvimage *edgeWeightedImage, int32_t type=0)
 	 "The background points are labeled by 0.\n"
 	 "The argument ""connex"" selects the connectivity (4, 8 in 2D; 6, 18, 26 in 3D).\n"
 	 "The resulting output image has the type ""int32_t"".\n"
-	 "<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d\n");
+	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d\n");
+%newobject labelfgd;
 struct xvimage* labelfgd(struct xvimage *imagein, int32_t connex=4);

@@ -178,6 +178,7 @@ struct xvimage *allocimage(
     return NULL;
   }
 
+  g->memoryOwned = 1;
   g->image_data = (void *)calloc(1, N * es);
   if (g->image_data == NULL)
   {   
@@ -259,6 +260,7 @@ struct xvimage *allocmultimage(
     return NULL;
   }
 
+  g->memoryOwned = 1;
   g->image_data = (void *)calloc(1, N * es);
   if (g->image_data == NULL)
   {   
@@ -365,6 +367,8 @@ struct xvimage *allocheader(
   nbands(g)=1;
   g->xdim = g->ydim = g->zdim = 0.0;
 
+  g->memoryOwned = 0; // by default, memory is not owned
+  
   return g;
 } /* allocheader() */
 
@@ -483,8 +487,9 @@ int32_t showheader(char * name)
 void freeimage(struct xvimage *image)
 /* ==================================== */
 {
-  if (image->name != NULL) free(image->name); 
-  free(image->image_data);
+  if (image->name != NULL) free(image->name);
+  if (image->memoryOwned)
+    free(image->image_data);
   free(image);
 }
 

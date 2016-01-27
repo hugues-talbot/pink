@@ -89,6 +89,7 @@ struct xvimage *allocGAimage(
       return NULL;
   }
 
+  g->memoryOwned = 1;
   g->image_data = (void*)calloc(1, N*ts);
   if (g->image_data == NULL) {
     fprintf(stderr,"%s: malloc failed (%d bytes)\n", F_NAME, ((N*ts-1)));

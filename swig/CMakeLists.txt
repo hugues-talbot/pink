@@ -85,6 +85,8 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/lib/lMSF.c
 	     ../src/lib/lga2khalimsky.c
 	     ../src/lib/llabelextrema.c
+	     ../src/lib/ldraw.c
+	     ../src/lib/lbresen.c
 #	     ../src/lib/liar_line.cpp
 	     )
 
