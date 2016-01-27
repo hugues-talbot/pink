@@ -126,9 +126,17 @@ typedef struct xvimage {
   }
 
   int save(char *name) {
-    if (datatype($self)>=VFF_TYP_GABYTE)
-      return writerawGAimage($self, name);
-    else return writeimage($self, name);
+    int ret;
+    if (datatype($self)>=VFF_TYP_GABYTE) {
+      ret = writerawGAimage($self, name);
+      if (ret == 0)
+	fprintf(stderr, "%s: Error writing edge_weigthed image %s\n", "xvimage::save", name);
+    } else {
+      ret = writeimage($self, name);
+      if (ret == 0)
+	fprintf(stderr, "%s: Error writing image %s\n", "xvimage::save", name);
+    }
+    return ret;
   }
 
 }} xvimage;
@@ -219,15 +227,26 @@ def __mul__(self,other):
 
 }};
 
-struct xvimage * readimage(
-  const char *filename
-);
-
-void writeimage(
-  struct xvimage * image,
-  const char *filename
-);
-
+%rename(__readimage__) readimage;
+%rename(__writeimage__) writeimage;
+%rename(__readGAimage__) readGAimage;
+%rename(__writeGAimage__) writerawGAimage;
+struct xvimage * readimage(const char *filename);
+int writeimage(struct xvimage * image,  const char *filename);
+struct xvimage * readGAimage(char *filename);
+int writerawGAimage(struct xvimage * image,  char *filename);
+%pythoncode{
+  def readimage(name):
+    ret = __readimage__(name)
+    if ret == None:
+      ret = __readGAimage__(name)
+    return ret
+  def writeimage(name):
+    ret = __writeimage__(name)
+    if ret == 0:
+      ret = __writeGAimage__(name)
+    return ret	
+}
 
 struct xvimage* createimage(index_t x, index_t y, index_t z, int32_t type, long int data);
 struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2);
@@ -684,6 +703,7 @@ struct xvimage* ComputeEdgeGraphColor(struct xvimage* r, struct xvimage* g, stru
 
 			  
 %include "typemaps.i"
+//Thanks to: http://jim-jotting.blogspot.co.il/2014/08/swig-python-and-opaque-structs.html
 %typemap(in, numinputs=0) xvimage ** (xvimage *temp) {
   $1 = &temp;
 }
