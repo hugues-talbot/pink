@@ -112,8 +112,11 @@ typedef struct xvimage {
     xvimage *im;
     im = readimage(name);
     if (im == NULL) {
-      fprintf(stderr, "%s: readimage failed\n", "xvimage");
-      return NULL;
+      im = readGAimage(name);
+      if (im == NULL) {
+	fprintf(stderr, "%s: readimage failed\n", "xvimage");
+	return NULL;
+      }
     }
     return im;  
   }
@@ -122,8 +125,10 @@ typedef struct xvimage {
     freeimage($self);
   }
 
-  void save(char *name) {
-    writeimage($self, name);
+  int save(char *name) {
+    if (datatype($self)>=VFF_TYP_GABYTE)
+      return writerawGAimage($self, name);
+    else return writeimage($self, name);
   }
 
 }} xvimage;
@@ -698,7 +703,7 @@ struct xvimage* ComputeEdgeGraphColor(struct xvimage* r, struct xvimage* g, stru
 	 "Compute a watershed cut of an edge-weighted image from a set of labeled markers,\n"
 	 "using a minimum spanning forest algorithm.\n"
 	 "Description:\n"
-	 "Compute a minimum spanning forest of the edge weighted input images\n"
+	 "Compute a minimum spanning forest of the edge weighted input image\n"
 	 "(an edge-weighted graph that is 4-connected in 2D or 6-connected 3D)\n"
 	 "relative to the labeled image of markers.\n"
 	 "Return a list of both an edge-weighted image whose non-zero edges form the induced watershed cut\n"

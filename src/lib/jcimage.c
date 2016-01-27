@@ -119,7 +119,7 @@ struct xvimage *allocGAimage(
  
 
 /* ==================================== */
-void writerawGAimage(struct xvimage * image, char *filename)
+int writerawGAimage(struct xvimage * image, char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writerawGAimage"
@@ -142,7 +142,7 @@ void writerawGAimage(struct xvimage * image, char *filename)
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
-    exit(0);
+    return(0);
   }
   switch(datatype(image)){
   case VFF_TYP_GABYTE:
@@ -159,7 +159,7 @@ void writerawGAimage(struct xvimage * image, char *filename)
     if (ret != ts*N)
     {
       fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
-      exit(0);
+      return(0);
     }
     break;
   case VFF_TYP_GAFLOAT:
@@ -175,15 +175,16 @@ void writerawGAimage(struct xvimage * image, char *filename)
     if (ret != ts*N)
     {
       fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
-      exit(0);
+      return(0);
     }
     break;
   default:
     fprintf(stderr,"%s: bad datatype, ne traite que les GAs : %d\n", F_NAME, datatype(image));
-    exit(0);
+    return(0);
   }//switch
 
   fclose(fd);
+  return 1;
 } /* writerawGAimage() */
 
 /* ==================================== */

@@ -995,7 +995,7 @@ double * image2list(struct xvimage * image, index_t *n)
 } // image2list()
 
 /* ==================================== */
-void writeimage(struct xvimage * image, const char *filename)
+int writeimage(struct xvimage * image, const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writeimage"
@@ -1012,14 +1012,14 @@ void writeimage(struct xvimage * image, const char *filename)
        (datatype(image) == VFF_TYP_COMPLEX) || (datatype(image) == VFF_TYP_DCOMPLEX)))
   {
     fprintf(stderr,"%s: writing image in ASCII mode\n", F_NAME);
-    writeascimage(image, filename); 
+    return writeascimage(image, filename); 
   }
   else
-    writerawimage(image, filename); 
+    return writerawimage(image, filename); 
 } /* writeimage() */
 
 /* ==================================== */
-void writerawimage(struct xvimage * image, const char *filename)
+int writerawimage(struct xvimage * image, const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writerawimage"
@@ -1040,7 +1040,7 @@ void writerawimage(struct xvimage * image, const char *filename)
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
-    exit(0);
+    return(0);
   }
 
   if (datatype(image) == VFF_TYP_1_BYTE)
@@ -1099,7 +1099,7 @@ void writerawimage(struct xvimage * image, const char *filename)
 #else
 	fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
 #endif
-	exit(0);
+	return(0);
       }
     }
   }
@@ -1181,7 +1181,7 @@ void writerawimage(struct xvimage * image, const char *filename)
 #else
       fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
 #endif
-      exit(0);
+      return(0);
     }
   }
   else if (datatype(image) == VFF_TYP_FLOAT)
@@ -1219,7 +1219,7 @@ void writerawimage(struct xvimage * image, const char *filename)
 #else
       fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
 #endif
-      exit(0);
+      return(0);
     }
   }
   else if (datatype(image) == VFF_TYP_DOUBLE)
@@ -1257,7 +1257,7 @@ void writerawimage(struct xvimage * image, const char *filename)
 #else
       fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
 #endif
-      exit(0);
+      return(0);
     }
   }
   else if (datatype(image) == VFF_TYP_COMPLEX)
@@ -1295,19 +1295,20 @@ void writerawimage(struct xvimage * image, const char *filename)
 #else
       fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
 #endif
-      exit(0);
+      return(0);
     }
   }
   else
   {   fprintf(stderr,"%s: bad datatype: %d\n", F_NAME, datatype(image));
-      exit(0);
+      return(0);
   }
 
   fclose(fd);
+  return(1);
 } /* writerawimage() */
 
 /* ==================================== */
-void writese(struct xvimage * image, const char *filename, index_t x, index_t y, index_t z)
+int writese(struct xvimage * image, const char *filename, index_t x, index_t y, index_t z)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writese"
@@ -1327,7 +1328,7 @@ void writese(struct xvimage * image, const char *filename, index_t x, index_t y,
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
-    exit(0);
+    return(0);
   }
 
   if (datatype(image) == VFF_TYP_1_BYTE)
@@ -1385,20 +1386,21 @@ void writese(struct xvimage * image, const char *filename, index_t x, index_t y,
 #else
 	fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
 #endif
-	exit(0);
+	return(0);
       }
     }
   }
   else
   {   fprintf(stderr,"%s: bad datatype: %d\n", F_NAME, datatype(image));
-      exit(0);
+      return(0);
   }
 
   fclose(fd);
+  return 1;
 } /* writese() */
 
 /* ==================================== */
-void writeascimage(struct xvimage * image, const char *filename)
+int writeascimage(struct xvimage * image, const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writeascimage"
@@ -1412,7 +1414,7 @@ void writeascimage(struct xvimage * image, const char *filename)
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
-    exit(0);
+    return(0);
   }
 
   rs = rowsize(image);
@@ -1656,9 +1658,10 @@ void writeascimage(struct xvimage * image, const char *filename)
   }
   else
   {   fprintf(stderr,"%s: bad datatype: %d\n", F_NAME, datatype(image));
-      exit(0);
+      return(0);
   }
   fclose(fd);
+  return 1;
 }
 
 /* ==================================== */
@@ -1693,7 +1696,7 @@ void printimage(struct xvimage * image)
 }
 
 /* ==================================== */
-void writergbimage(
+int writergbimage(
   struct xvimage * redimage,
   struct xvimage * greenimage,
   struct xvimage * blueimage,
@@ -1712,7 +1715,7 @@ void writergbimage(
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
-    exit(0);
+    return(0);
   }
 
   rs = redimage->row_size;
@@ -1721,7 +1724,7 @@ void writergbimage(
       (blueimage->row_size != rs) || (blueimage->col_size != cs))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
+    return(0);
   }
   
   N = rs * cs;
@@ -1745,10 +1748,11 @@ void writergbimage(
   } /* for i */
 
   fclose(fd);
+  return 1;
 } // writergbimage()
 
 /* ==================================== */
-void writergbascimage(
+int writergbascimage(
   struct xvimage * redimage,
   struct xvimage * greenimage,
   struct xvimage * blueimage,
@@ -1767,7 +1771,7 @@ void writergbascimage(
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
-    exit(0);
+    return(0);
   }
 
   rs = redimage->row_size;
@@ -1776,7 +1780,7 @@ void writergbascimage(
       (blueimage->row_size != rs) || (blueimage->col_size != cs))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
+    return(0);
   }
   
   //N = rs * cs;
@@ -1803,10 +1807,11 @@ void writergbascimage(
   } /* for j */
 
   fclose(fd);
+  return 1;
 } // writergbascimage()
 
 /* ==================================== */
-void writelongimage(struct xvimage * image,  const char *filename)
+int writelongimage(struct xvimage * image,  const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writelongimage"
@@ -1824,7 +1829,7 @@ void writelongimage(struct xvimage * image,  const char *filename)
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
-    exit(0);
+    return(0);
   }
 
   rs = rowsize(image);
@@ -1857,10 +1862,11 @@ void writelongimage(struct xvimage * image,  const char *filename)
 #else
     fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
 #endif
-    exit(0);
+    return(0);
   }
 
   fclose(fd);
+  return 1;
 } /* writelongimage() */
 
 #ifdef HAVE_TIFF_LIB
@@ -1949,7 +1955,7 @@ struct xvimage *readtiffimage(const char *filename)
 
 
 /* ==================================== */
-void writetiffimage(struct xvimage * image, const char *filename)
+int writetiffimage(struct xvimage * image, const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writetiffimage"
@@ -1993,23 +1999,23 @@ void writetiffimage(struct xvimage * image, const char *filename)
         tiffimage->pt = IM_DOUBLE;
         datasize = 8;
         break;
-        default:
-            fprintf(stderr, "Unhandled data type %d\n ", (int)tiffimage->pt);
-        break;
+    default:
+        fprintf(stderr, "Unhandled data type %d\n ", (int)tiffimage->pt);
+	return 0;
     }
 
     // exclude some types of data we cannot save yet
     do {
         if (datasize == 0) {
-            break;
+            return 0;
         }
         if (tiffimage->nc > 1) {
             fprintf(stderr, "Multi-component TIFF not supported yet\n");
-            break;
+	    return 0;
         }
         if (tiffimage->nt > 1) {
             fprintf(stderr, "Time-series TIFF not supported yet\n");
-            break;
+            return 0;
         }
     //   now we should only have at most grey-level 3D images
         for (slice = 0 ; slice < tiffimage->nz ; ++slice) {
@@ -2050,12 +2056,14 @@ void writetiffimage(struct xvimage * image, const char *filename)
                           filename,  /* output file name  */
                           TIFF_CMP_NONE);  /* compression scheme */
 
-                if (retval != 0)
+                if (retval != 0) {
                     fprintf(stderr, "TIFF writing failed with error %d\n", retval);
+		    return 0;
+		}
         }
     } while (0);
 
-    return;
+    return 1;
 }
 
 
@@ -2102,7 +2110,7 @@ struct xvimage * readimage( const char *filename )
   if (!read)
   {
     fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   /* HT: TIFF */

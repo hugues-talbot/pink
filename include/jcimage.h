@@ -44,7 +44,7 @@ extern "C" {
 
 extern struct xvimage4D *allocimage4D(int32_t ss);
 extern struct xvimage *allocGAimage(char * name, int32_t rs, int32_t cs, int32_t d, int32_t t);
-extern void writerawGAimage(struct xvimage * image, char *filename);
+extern int writerawGAimage(struct xvimage * image, char *filename);
 extern struct xvimage * readGAimage(char *filename);
 extern struct xvimage4D *readimage4D(char *prefix, int32_t first, int32_t last);     
 extern void freeimage4D(struct xvimage4D  *im);

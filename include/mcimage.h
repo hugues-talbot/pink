@@ -145,28 +145,28 @@ extern double * image2list(struct xvimage * image, index_t *n);
 \param image The pointer to the image
 \param filename The file to write the image at. 
 */  
-extern void writeimage(
+extern int writeimage(
   struct xvimage * image,
   const char *filename
 );
 
-extern void writese(
+extern int writese(
   struct xvimage * image,
   const char *filename,
   index_t x, index_t y, index_t z
 );
 
-extern void writelongimage(
+extern int writelongimage(
   struct xvimage * image,
   const char *filename
 );
 
-extern void writerawimage(
+extern int writerawimage(
   struct xvimage * image,
   const char *filename
 );
 
-extern void writeascimage(
+extern int writeascimage(
   struct xvimage * image,
   const char *filename
 );
@@ -175,14 +175,14 @@ extern void printimage(
   struct xvimage * image
 );
 
-extern void writergbimage(
+extern int writergbimage(
   struct xvimage * redimage,
   struct xvimage * greenimage,
   struct xvimage * blueimage,
   const char *filename
 );
 
-extern void writergbascimage(
+extern int writergbascimage(
   struct xvimage * redimage,
   struct xvimage * greenimage,
   struct xvimage * blueimage,
