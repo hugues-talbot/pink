@@ -12,6 +12,8 @@
 #include <mcgeo.h>
 #include <mcutil.h>
 
+#include <lconvert.h>
+
 #include <lseuil.h>
 #include <lcrop.h>
 #include <larith.h>
@@ -1644,4 +1646,38 @@ struct xvimage* genball(double radius, int32_t dim)
     return NULL;
   }
   return image;
+}
+
+struct xvimage* selectcomp(struct xvimage *imagein, int32_t x, int32_t y, int32_t z, int32_t connex)
+{
+  static char *name="selectcomp";
+
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+
+  if (datatype(image) == VFF_TYP_1_BYTE) {
+    if (! lselectcomp(image, connex, x, y, z))  {
+      fprintf(stderr, "%s: function lselectcomp failed\n", name);
+      freeimage(image);
+      return NULL;
+    }
+  } else {
+    fprintf(stderr, "%s: bad data type\n", name);
+    freeimage(image);
+    return NULL;
+  }
+  return image;
+}
+
+struct xvimage* long2byte(struct xvimage *imagelong, int32_t mode, int32_t nbnewval)
+{
+  static char *name="long2byte";
+  
+  struct xvimage*imagebyte = llong2byte(imagelong, mode, nbnewval);
+
+  if (imagebyte == NULL)
+    fprintf(stderr, "%s: llong2byte failed\n", name);
+
+  return imagebyte;
 }

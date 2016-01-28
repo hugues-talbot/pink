@@ -1,5 +1,5 @@
 /*
-Copyright ESIEE (2009) 
+Copyright ESIEE (2016) 
 
 m.couprie@esiee.fr
 
@@ -36,16 +36,9 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
   
-extern int32_t Partitionner(int32_t *A, int32_t p, int32_t r);
-extern int32_t PartitionStochastique(int32_t *A, int32_t p, int32_t r);
-extern void TriRapide (int32_t * A, int32_t p, int32_t r);
-extern void TriRapideStochastique (int32_t * A, int32_t p, int32_t r);
-extern int32_t SelectionStochastique (int32_t * A, int32_t p, int32_t r, int32_t i);
-extern int32_t ElimineDupliques(int32_t *A, int32_t n);
-extern int32_t i_Partitionner(int32_t *A, int32_t *T, int32_t p, int32_t r);
-extern int32_t i_PartitionStochastique(int32_t *A, int32_t *T, int32_t p, int32_t r);
-extern void i_TriRapideStochastique (int32_t * A, int32_t *T, int32_t p, int32_t r);
+  struct xvimage* llong2byte(struct xvimage*imagelong, int32_t mode, int32_t nbnewval);
 
+  
 #ifdef __cplusplus
 }
 #endif

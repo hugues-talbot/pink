@@ -87,6 +87,9 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/lib/llabelextrema.c
 	     ../src/lib/ldraw.c
 	     ../src/lib/lbresen.c
+	     ../src/lib/mcsort.c
+	     ../src/lib/lhisto.c
+	     ../src/lib/lconvert.c
 #	     ../src/lib/liar_line.cpp
 	     )
 

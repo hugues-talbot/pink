@@ -52,6 +52,8 @@ static "C" {
  struct xvimage* border(struct xvimage *imagein, int connex);
  struct xvimage* genball(double radius, int32_t dim);
 
+ struct xvimage* long2byte(struct xvimage *imagelong, int32_t mode, int32_t nbnewval);
+
  struct xvimage* min(struct xvimage *imagein1, struct xvimage *imagein2);
  struct xvimage* max(struct xvimage *imagein1, struct xvimage *imagein2);
 
@@ -72,7 +74,8 @@ static "C" {
  struct xvimage* ptjunction(struct xvimage *imagein, int32_t connex);
  struct xvimage* ptcurve(struct xvimage *imagein, int32_t connex);
  struct xvimage* ptend(struct xvimage *imagein, int32_t connex);
- 
+ struct xvimage* selectcomp(struct xvimage *imagein, int32_t x, int32_t y, int32_t z, int32_t connex);
+
 #ifdef __cplusplus
 }
 #endif

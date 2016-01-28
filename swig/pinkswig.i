@@ -843,3 +843,34 @@ struct xvimage* EWG2Khalimsky(struct xvimage *edgeWeightedImage, int32_t type=0)
 	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d\n");
 %newobject labelfgd;
 struct xvimage* labelfgd(struct xvimage *imagein, int32_t connex=4);
+
+%feature("docstring",
+	 "Description:\n"
+	 "The connected component of the binary input image\n"
+	 "(according to the connectivity ""connex"")\n"
+	 "which contains the point (x,y,z)\n"
+	 "is copied in the resulting output image. All other points are ignored.\n"
+	 "Possible values for ""connex ""are 4, 8 (2D), 6, 18, 26, 60, 260 (3D).\n"
+	 "Values 60 and 260 correspond to restrictions of 6 and 26 connectivities to the \n"
+	 "current xy plane.\n"
+	 "Types supported: byte 2d, byte 3d\n");
+%newobject selectcomp;
+struct xvimage* selectcomp(struct xvimage *imagein, int32_t x, int32_t y, int32_t z, int32_t connex=4);
+
+%feature("docstring",
+	 "\brief converts an ""int32_t"" image to a ""byte"" image\n"
+	 "Description:\n"
+	 "Depending on the value given for the (optional) parameter ""mode"":\n"
+	 "-   mode == 0 (default) : for all x, out[x] = min(255, in[x]).\n"
+	 "-   mode == 1 : for all x, out[x] = in[x] modulo 256.\n"
+	 "-   mode == 2 : scales values in the range 0-255.\n"
+	 "-   mode == 3 : sorts the values by decreasing number of occurence in the image.\n"
+	 "                Replaces the values by their order.\n"
+	 "                Only the ""nbfirst"" (default 255) first values are kept.\n"
+	 "                Useful for label images.\n"
+	 "-   mode == 4 : truncation of the square root in the range 0-255.\n"
+	 "-   mode == 5 : truncation of the log in the range 0-255.\n"
+	 "Types supported: int32_t 2d, int32_t 3d\n");
+%newobject long2byte;
+struct xvimage* long2byte(struct xvimage *imagelong, int32_t mode=0, int32_t nbfirst=255);
+

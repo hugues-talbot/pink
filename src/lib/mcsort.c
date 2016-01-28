@@ -86,6 +86,45 @@ int32_t mcsort_PartitionStochastique(int32_t *A, int32_t p, int32_t r)
 } /* mcsort_PartitionStochastique() */
 
 /* =============================================================== */
+int32_t i_Partitionner(int32_t *A, int32_t *T, int32_t p, int32_t r)
+/* =============================================================== */
+/*
+  partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
+  en deux groupes : les elements q tq T[A[q]] <= T[A[p]] et les autres.
+*/
+{
+  int32_t t;
+  int32_t x = T[A[p]];
+  int32_t i = p - 1;
+  int32_t j = r + 1;
+  while (1)
+  {
+    do j--; while (T[A[j]] > x);
+    do i++; while (T[A[i]] < x);
+    if (i < j) { t = A[i]; A[i] = A[j]; A[j] = t; }
+    else return j;
+  } /* while (1) */   
+} /* i_Partitionner() */
+
+/* =============================================================== */
+int32_t i_PartitionStochastique(int32_t *A, int32_t *T, int32_t p, int32_t r)
+/* =============================================================== */
+/*
+  partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
+  en deux groupes : les elements k tels que T[A[k]] <= T[A[q]] et les autres, 
+  avec q tire au hasard dans [p,r].
+*/
+{
+  int32_t t, q;
+
+  q = p + (rand() % (r - p + 1));
+  t = A[p];         /* echange A[p] et A[q] */
+  A[p] = A[q]; 
+  A[q] = t;
+  return i_Partitionner(A, T, p, r);
+} /* i_PartitionStochastique() */
+ 
+/* =============================================================== */
 void TriRapide (int32_t * A, int32_t p, int32_t r)
 /* =============================================================== */
 /* 
@@ -118,6 +157,23 @@ void TriRapideStochastique (int32_t * A, int32_t p, int32_t r)
     TriRapideStochastique (A, q+1, r) ;
   }
 } /* TriRapideStochastique() */
+
+/* =============================================================== */
+void i_TriRapideStochastique (int32_t * A, int32_t *T, int32_t p, int32_t r)
+/* =============================================================== */
+/* 
+  trie les valeurs du tableau A de l'indice p (compris) a l'indice r (compris) 
+  par ordre croissant 
+*/
+{
+  int32_t q; 
+  if (p < r)
+  {
+    q = i_PartitionStochastique(A, T, p, r);
+    i_TriRapideStochastique (A, T, p, q) ;
+    i_TriRapideStochastique (A, T, q+1, r) ;
+  }
+} /* i_TriRapideStochastique() */
 
 /* =============================================================== */
 int32_t mcsort_SelectionStochastique (int32_t * A, int32_t p, int32_t r, int32_t i)
