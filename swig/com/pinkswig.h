@@ -53,6 +53,7 @@ static "C" {
  struct xvimage* genball(double radius, int32_t dim);
 
  struct xvimage* long2byte(struct xvimage *imagelong, int32_t mode, int32_t nbnewval);
+ struct xvimage* float2byte(struct xvimage *imagefloat, int32_t mode);
 
  struct xvimage* min(struct xvimage *imagein1, struct xvimage *imagein2);
  struct xvimage* max(struct xvimage *imagein1, struct xvimage *imagein2);

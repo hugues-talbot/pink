@@ -37,6 +37,7 @@ extern "C" {
 #endif
   
   struct xvimage* llong2byte(struct xvimage*imagelong, int32_t mode, int32_t nbnewval);
+  struct xvimage* lfloat2byte(struct xvimage*imagefloat, int32_t mode);
 
   
 #ifdef __cplusplus

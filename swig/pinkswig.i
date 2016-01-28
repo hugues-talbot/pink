@@ -874,3 +874,16 @@ struct xvimage* selectcomp(struct xvimage *imagein, int32_t x, int32_t y, int32_
 %newobject long2byte;
 struct xvimage* long2byte(struct xvimage *imagelong, int32_t mode=0, int32_t nbfirst=255);
 
+%feature("docstring",
+	 "Converts a ""float"" image to a ""byte"" image\n"
+	 "Description:\n"
+	 "Depending on the value given for the (optional) parameter ""mode"":\n"
+	 "-   mode == 0 (default) : for all x, out[x] = min(255, arrondi(in[x])).\n"
+	 "-   mode == 1 : for all x, out[x] = arrondi(in[x]) modulo 256.\n"
+	 "-   mode == 2 : scales values in the range 0-255.\n"
+	 "-   mode == 4 : truncation of the square root in the range 0-255.\n"
+	 "-   mode == 5 : truncation of the log in the range 0-255.\n"
+	 "Types supported: float 2d, float 3d\n");
+%newobject float2byte;
+struct xvimage* float2byte(struct xvimage *imagefloat, int32_t mode=0);
+

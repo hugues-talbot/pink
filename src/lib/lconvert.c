@@ -24,7 +24,7 @@ struct xvimage* llong2byte(struct xvimage*imagelong, int32_t mode, int32_t nbnew
   int32_t nbval;
   int32_t *index;
   double t;
-  index_t x, rs, cs, d, N;
+  index_t x, rs, cs, ds, N;
   
   if (imagelong == NULL)
   {
@@ -41,11 +41,11 @@ struct xvimage* llong2byte(struct xvimage*imagelong, int32_t mode, int32_t nbnew
 
   rs = rowsize(imagelong);
   cs = colsize(imagelong);
-  d = depth(imagelong);
-  N = rs * cs * d;
+  ds = depth(imagelong);
+  N = rs * cs * ds;
   L = SLONGDATA(imagelong);
   
-  struct xvimage *imagebyte = allocimage(imagelong->name, rs, cs, d, VFF_TYP_1_BYTE);
+  struct xvimage *imagebyte = allocimage(imagelong->name, rs, cs, ds, VFF_TYP_1_BYTE);
   if (imagebyte == NULL)
   {
     fprintf(stderr, "%s: allocimage failed\n", name);
@@ -53,9 +53,6 @@ struct xvimage* llong2byte(struct xvimage*imagelong, int32_t mode, int32_t nbnew
   }
 
   B = UCHARDATA(imagebyte);
-  imagebyte->xdim = imagelong->xdim;
-  imagebyte->ydim = imagelong->ydim;
-  imagebyte->zdim = imagelong->zdim;
 
   switch(mode)
   {
@@ -121,6 +118,106 @@ struct xvimage* llong2byte(struct xvimage*imagelong, int32_t mode, int32_t nbnew
     default:
       fprintf(stderr, "usage: %s(imagelong, mode=0, nbfirst=255)\n", name);
       fprintf(stderr, "mode = 0 (trunc) | 1 (modulo 256) | 2 (scale) | 3 (trunchisto)\n");
+      fprintf(stderr, "       4 (square root) | 5 (log)\n");
+      freeimage(imagebyte);
+      return NULL;
+  } /* switch(mode) */
+
+  return imagebyte;
+}
+
+struct xvimage* lfloat2byte(struct xvimage*imagefloat, int32_t mode)
+{
+  static char *name="lfloat2byte";
+
+  float *L;
+  uint8_t *B;
+  int32_t tmp;
+  float Min, Max, t;
+  double T;
+  index_t x, rs, cs, ds, N;
+
+  if (imagefloat == NULL)
+  {
+    fprintf(stderr, "%s: image is NULL.\n", name);
+    return NULL;
+  }
+
+  if (datatype(imagefloat) != VFF_TYP_FLOAT)
+  {
+    fprintf(stderr, "%s: image type must be float\n", name);
+    fprintf(stderr, "type found: %d\n", datatype(imagefloat));
+    return NULL;
+  }
+
+  rs = rowsize(imagefloat);
+  cs = colsize(imagefloat);
+  ds = depth(imagefloat);
+  N = rs * cs * ds;
+  L = FLOATDATA(imagefloat);
+  
+  struct xvimage *imagebyte = allocimage(imagefloat->name, rs, cs, ds, VFF_TYP_1_BYTE);
+  if (imagebyte == NULL)
+  {
+    fprintf(stderr, "%s: allocimage failed\n", name);
+    return NULL;
+  }
+
+  B = UCHARDATA(imagebyte);
+  imagebyte->xdim = imagefloat->xdim;
+  imagebyte->ydim = imagefloat->ydim;
+  imagebyte->zdim = imagefloat->zdim;
+
+  switch(mode)
+  {
+    case 0:
+      for (x = 0; x < N; x++)
+      {
+        tmp = arrondi(L[x]);
+        B[x] = (uint8_t)mcmin(tmp,255);
+      }
+      break;
+    case 1:
+      for (x = 0; x < N; x++)
+      {
+        tmp = arrondi(L[x]);
+        B[x] = (uint8_t)(tmp % 256);
+      }
+      break;
+    case 2:
+      Min = Max = L[0];
+      for (x = 0; x < N; x++) 
+        if (L[x] > Max) Max = L[x]; else if (L[x] < Min) Min = L[x];
+      for (x = 0; x < N; x++) 
+      {
+        t = ((L[x]-Min) * 255.0) / (float)(Max-Min);
+        tmp = arrondi(t);
+        B[x] = (uint8_t)mcmin(255,tmp);
+      }
+      break;
+    case 4:
+      for (x = 0; x < N; x++)
+      {
+        T = sqrt((double)(L[x]));
+        tmp = arrondi(T);
+        tmp = mcmin(255,tmp);
+        tmp = mcmax(0,tmp);
+        B[x] = (uint8_t)tmp;
+      }
+      break;
+    case 5:
+      for (x = 0; x < N; x++)
+      {
+        T = log((double)(L[x]));
+        tmp = arrondi(T);
+        tmp = mcmin(255,tmp);
+        tmp = mcmax(0,tmp);
+        B[x] = (uint8_t)tmp;
+      }
+      break;
+    default:
+      fprintf(stderr, "usage: %s(imagefloat, mode=0)\n", name);
+      fprintf(stderr, "mode = 0 (trunc) | 1 (modulo) | 2 (scale) | \n");
       fprintf(stderr, "       4 (square root) | 5 (log)\n");
       freeimage(imagebyte);
       return NULL;

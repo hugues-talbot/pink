@@ -1681,3 +1681,15 @@ struct xvimage* long2byte(struct xvimage *imagelong, int32_t mode, int32_t nbnew
 
   return imagebyte;
 }
+
+struct xvimage* float2byte(struct xvimage *imagefloat, int32_t mode)
+{
+  static char *name="float2byte";
+  
+  struct xvimage*imagebyte = lfloat2byte(imagefloat, mode);
+
+  if (imagebyte == NULL)
+    fprintf(stderr, "%s: lfloat2byte failed\n", name);
+
+  return imagebyte;
+}
