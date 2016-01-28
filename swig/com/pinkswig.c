@@ -108,19 +108,21 @@ void copyinvert(struct xvimage*result, struct xvimage * image)
 
 struct xvimage* checkAllocCopy(struct xvimage* imagein, char *name)
 {
-  if (imagein == NULL)
-    {
-      fprintf(stderr, "%s:  NULL image - can not process\n", name);
-      return NULL;
-    }
+  if (imagein == NULL) {
+    fprintf(stderr, "%s:  NULL image - can not process\n", name);
+    return NULL;
+  }
   
   struct xvimage * image=allocimage(NULL, rowsize(imagein), colsize(imagein), depth(imagein), datatype(imagein));
-  if (image == NULL)
-    {
-      fprintf(stderr, "%s:  malloc failed\n", name);
-      return NULL;
-    }
-  copy(image,imagein);
+  if (image == NULL)  {
+    fprintf(stderr, "%s:  malloc failed\n", name);
+    return NULL;
+  }
+  if (!copy2image(image, imagein)) {
+    fprintf(stderr, "%s:  copy2image failed\n", name);
+    free(image);
+    return NULL;
+  }
   return image;
 }
 
@@ -130,6 +132,11 @@ struct xvimage* wshedtopo(struct xvimage *image, int connex, int inverse)
   if (image == NULL)
     {
       fprintf(stderr, "%s:  NULL image - can not process\n", name);
+      return NULL;
+    }
+  if (datatype(image) != VFF_TYP_1_BYTE)
+    {
+      fprintf(stderr, "%s:  only byte images are supported for the moment.\n", name);
       return NULL;
     }
   struct xvimage * result=allocimage(NULL, rowsize(image), colsize(image), depth(image), datatype(image));
@@ -167,7 +174,12 @@ struct xvimage* watershed(struct xvimage *image, struct xvimage *mark, int conne
   if (!EqualSize(image, mark) ) {
       fprintf(stderr, "%s:  Images not of the same size - can not process\n", name);
       return NULL;
-  }    
+  }
+  if (datatype(image) != VFF_TYP_1_BYTE)
+    {
+      fprintf(stderr, "%s:  only byte images are supported for the moment.\n", name);
+      return NULL;
+    }
   struct xvimage * result=allocimage(NULL, rowsize(image), colsize(image), depth(image), datatype(image));
   if (result == NULL)
     {
@@ -226,8 +238,10 @@ struct xvimage* maxima(struct xvimage *image, int connex)
 
 struct xvimage* dilation(struct xvimage *image, struct xvimage *elem, int32_t x, int32_t y, int32_t z)
 {
-  struct xvimage * result=allocimage(NULL, rowsize(image), colsize(image), depth(image), datatype(image));
-  copy(result,image);
+  static char *name="dilation";
+  struct xvimage * result=checkAllocCopy(image, name);
+  if (result == NULL)
+    return NULL;
 
   if (x==-1)
     x = rowsize(elem)/2;
@@ -241,14 +255,14 @@ struct xvimage* dilation(struct xvimage *image, struct xvimage *elem, int32_t x,
   if (depth(image) == 1) {
     if (! ldilateros_ldilat(result, elem, x, y))
       {
-	fprintf(stderr, "%s: function ldilat failed\n", "dilation");
+	fprintf(stderr, "%s: function ldilat failed\n", name);
 	freeimage(result);
 	return(NULL);
       }
   } else {
     if (! ldilat3d(result, elem, x, y, z))
       {
-	fprintf(stderr, "%s: function ldilat3d failed\n", "dilation");
+	fprintf(stderr, "%s: function ldilat3d failed\n", name);
 	freeimage(result);
 	return(NULL);
       }
@@ -259,8 +273,11 @@ struct xvimage* dilation(struct xvimage *image, struct xvimage *elem, int32_t x,
 
 struct xvimage* erosion(struct xvimage *image, struct xvimage *elem, int32_t x, int32_t y, int32_t z)
 {
-  struct xvimage * result=allocimage(NULL, rowsize(image), colsize(image), depth(image), datatype(image));
-  copy(result,image);
+  static char *name="erosion";
+  struct xvimage * result=checkAllocCopy(image, name);
+  if (result == NULL)
+    return NULL;
+
 
   if (x==-1)
     x = rowsize(elem)/2;
@@ -274,14 +291,14 @@ struct xvimage* erosion(struct xvimage *image, struct xvimage *elem, int32_t x, 
   if (depth(image) == 1) {
     if (! ldilateros_leros(result, elem, x, y))
       {
-	fprintf(stderr, "%s: function ldilat failed\n", "erosion");
+	fprintf(stderr, "%s: function ldilat failed\n", name);
 	freeimage(result);
 	return(NULL);
       }
   } else {
     if (! leros3d(result, elem, x, y, z))
       {
-	fprintf(stderr, "%s: function ldilat3d failed\n", "erosion");
+	fprintf(stderr, "%s: function ldilat3d failed\n", name);
 	freeimage(result);
 	return(NULL);
       }
@@ -291,8 +308,10 @@ struct xvimage* erosion(struct xvimage *image, struct xvimage *elem, int32_t x, 
 
 struct xvimage* opening(struct xvimage *image, struct xvimage *elem, int32_t x, int32_t y, int32_t z)
 {
-  struct xvimage * result=allocimage(NULL, rowsize(image), colsize(image), depth(image), datatype(image));
-  copy(result,image);
+  static char *name="opening";
+  struct xvimage * result=checkAllocCopy(image, name);
+  if (result == NULL)
+    return NULL;
 
   if (x==-1)
     x = rowsize(elem)/2;
@@ -353,8 +372,10 @@ struct xvimage* opening(struct xvimage *image, struct xvimage *elem, int32_t x, 
 
 struct xvimage* closing(struct xvimage *image, struct xvimage *elem, int32_t x, int32_t y, int32_t z)
 {
-  struct xvimage * result=allocimage(NULL, rowsize(image), colsize(image), depth(image), datatype(image));
-  copy(result,image);
+  static char *name="closing";
+  struct xvimage * result=checkAllocCopy(image, name);
+  if (result == NULL)
+    return NULL;
 
   if (x==-1)
     x = rowsize(elem)/2;
@@ -416,8 +437,10 @@ struct xvimage* closing(struct xvimage *image, struct xvimage *elem, int32_t x, 
 
 struct xvimage* geodilat(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter)
 {
-  struct xvimage * result=allocimage(NULL, rowsize(image1), colsize(image1), depth(image1), datatype(image1));
-  copy(result,image1);
+  static char *name="geodilat";
+  struct xvimage * result=checkAllocCopy(image1, name);
+  if (result == NULL)
+    return NULL;
 
   if ((connex!=4)&&(connex!=8)&&(connex!=6)&&(connex!=18)&&(connex!=26))
   {
@@ -439,9 +462,11 @@ struct xvimage* geodilat(struct xvimage *image1, struct xvimage *image2, int32_t
 
 struct xvimage* geoeros(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter)
 {
-  struct xvimage * result=allocimage(NULL, rowsize(image1), colsize(image1), depth(image1), datatype(image1));
-  copy(result,image1);
-
+  static char *name="geoeros";
+  struct xvimage * result=checkAllocCopy(image1, name);
+  if (result == NULL)
+    return NULL;
+  
   if ((connex!=4)&&(connex!=8)&&(connex!=6)&&(connex!=18)&&(connex!=26))
   {
     fprintf(stderr, "%s: bad connexity - use one of the following:\n", "geoeros");
@@ -470,27 +495,17 @@ struct xvimage* geoeros(struct xvimage *image1, struct xvimage *image2, int32_t 
 }
 
 // threshold(image, seuil1, seuil2)
-// if seuil2<=0, then only the first seuil is used
+// if seuil2<=seuil, then only the first seuil is used
 // Always return a single-byte image
 struct xvimage* threshold(struct xvimage *imagein, double seuil, double seuil2)
 {
-
-  if (imagein == NULL)
-  {
-    fprintf(stderr, "%s:  NULL image - can not process\n", "threshold");
-    return NULL;
-  }
-
-  struct xvimage * image=allocimage(NULL, rowsize(imagein), colsize(imagein), depth(imagein), datatype(imagein));
+  static char *name="threshold";
+  struct xvimage * image=checkAllocCopy(imagein, name);
   if (image == NULL)
-  {
-    fprintf(stderr, "%s:  malloc failed\n", "threshold");
     return NULL;
-  }
-  copy(image,imagein);
 
 
-  if (seuil2 <= 0.)
+  if (seuil2 <= seuil)
   {
     if (! lseuil(image, seuil))
       {
@@ -550,8 +565,8 @@ struct xvimage* threshold(struct xvimage *imagein, double seuil, double seuil2)
       freeimage(imagebin);
       return NULL;
     }
-    return imagebin;
     freeimage(image);
+    return imagebin;
   }
   return image;
 }

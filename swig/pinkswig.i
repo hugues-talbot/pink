@@ -214,7 +214,7 @@ def fromnumpy(mat):
 import ctypes
 	      
 def getdata(self):
-    if self.depth_size == 1: 
+    if self.depth() == 1: 
       data = getattr(self.ctypes,self.getctype()) *self.rowsize()*self.colsize()
     else:
       data = getattr(self.ctypes,self.getctype()) *self.rowsize()*self.colsize()*self.depth()
@@ -226,14 +226,14 @@ def tonumpy():
 
 def getpixel(self, x, y, z=0):
     data = self.getdata()
-    if self.depth_size == 1:
+	if self.depth() == 1:
       return data[x][y]
     else:
       return data[x][y][z]
 
 def setpixel(self, value, x, y, z=0):
     data = self.getdata()
-    if self.depth_size == 1:
+    if self.depth() == 1:
       data[x][y] = value
     else:
       data[x][y][z] = value
@@ -439,8 +439,8 @@ struct xvimage* geoeros(struct xvimage *image1, struct xvimage *image2, int32_t 
 %feature("docstring",
 	 "Simple threshold\n"
 	 "Description:\n"
-	 "If th2<=0, for each pixel x, out[x] = if (in[x] < th1) then 0 else 255\n"
-	 "If th2>0, for each pixel x, out[x] = if (th1 <= in[x] < th2) then 255 else 0\n"
+	 "If th2<=th1, for each pixel x, out[x] = if (in[x] < th1) then 0 else 255\n"
+	 "If th2>th1, for each pixel x, out[x] = if (th1 <= in[x] < th2) then 255 else 0\n"
 	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
 %newobject threshold;
 struct xvimage* threshold(struct xvimage *imagein, double th1, double th2=0.);
@@ -908,14 +908,16 @@ struct xvimage* long2float(struct xvimage *imagelong);
 struct xvimage* byte2float(struct xvimage *imagebyte);
 
 %feature("docstring",
-	 "converts a ""byte"" image to a ""long"" image.\n"
+	 "converts a ""byte"" image to a ""int32_t"" image.\n"
 	 "Types supported: uint8_t 2d, uint8_t 3d\n");
 %newobject byte2long;
 struct xvimage* byte2long(struct xvimage *imagebyte);
 
 %feature("docstring",
-	 "converts a ""float"" image to a ""long"" image.\n"
-	 "Types supported: uint8_t 2d, uint8_t 3d\n");
+	 "converts a ""float"" image to a ""int32_t"" image.\n"
+	 "Applies the following tranformation to each value x in the input image :\n"
+	 "X = round(offset + factor * x)\n"
+	 "Types supported: float 2d, float 3d\n");
 %newobject float2long;
 struct xvimage* float2long(struct xvimage*imagefloat, double offset=0., double factor=1.);
 

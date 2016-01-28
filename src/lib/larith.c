@@ -118,8 +118,9 @@ int32_t ladd(
   else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
   {
     FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
-    for (i = 0; i < N; i++, FPT1++, FPT2++)
+    for (i = 0; i < N; i++, FPT1++, FPT2++) {
       *FPT1 = *FPT1 + *FPT2;
+    }
   }
   else if ((datatype(image1) == VFF_TYP_DOUBLE) && (datatype(image2) == VFF_TYP_DOUBLE))
   {
