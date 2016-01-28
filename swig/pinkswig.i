@@ -124,8 +124,29 @@ typedef struct xvimage {
   }
 
 
-  xvimage(index_t x, index_t y, index_t z=1, int32_t type=VFF_TYP_1_BYTE) {
-    return allocimage(NULL, x,y,z,type);
+  xvimage(index_t x, index_t y, index_t z=1, int32_t color=0, int32_t type=VFF_TYP_1_BYTE) {
+    struct xvimage *image=allocimage(NULL, x,y , z, type);
+    if (image == NULL) {
+      fprintf(stderr, "%s: cannot allocate image\n", "xvimage");
+      return NULL;
+    }
+    int32_t N = x * y * z;
+    for (int i=0; i<N; i++)
+      switch(datatype(image)) {
+      case VFF_TYP_1_BYTE: UCHARDATA(image)[i] = (int8_t)color;
+	break;
+      case VFF_TYP_4_BYTE: ULONGDATA(image)[i] = (int32_t)color;
+	break;
+      case VFF_TYP_FLOAT: FLOATDATA(image)[i] = (float)color;
+	break;
+      case VFF_TYP_DOUBLE: DOUBLEDATA(image)[i] = (double)color;
+	break;
+      default:
+	fprintf(stderr, "Setting color for this type not implemented.\n");
+	fprintf(stderr, "It will be random colors.\n");
+	return image;
+      }
+    return image;
   }
   
   xvimage(char *name) {
@@ -875,6 +896,30 @@ struct xvimage* selectcomp(struct xvimage *imagein, int32_t x, int32_t y, int32_
 struct xvimage* long2byte(struct xvimage *imagelong, int32_t mode=0, int32_t nbfirst=255);
 
 %feature("docstring",
+	 "converts a ""long"" image to a ""float"" image.\n"
+	 "Types supported: int32_t 2d, int32_t 3d\n");
+%newobject long2float;
+struct xvimage* long2float(struct xvimage *imagelong);
+
+%feature("docstring",
+	 "converts a ""byte"" image to a ""float"" image.\n"
+	 "Types supported: uint8_t 2d, uint8_t 3d\n");
+%newobject byte2float;
+struct xvimage* byte2float(struct xvimage *imagebyte);
+
+%feature("docstring",
+	 "converts a ""byte"" image to a ""long"" image.\n"
+	 "Types supported: uint8_t 2d, uint8_t 3d\n");
+%newobject byte2long;
+struct xvimage* byte2long(struct xvimage *imagebyte);
+
+%feature("docstring",
+	 "converts a ""float"" image to a ""long"" image.\n"
+	 "Types supported: uint8_t 2d, uint8_t 3d\n");
+%newobject float2long;
+struct xvimage* float2long(struct xvimage*imagefloat, double offset=0., double factor=1.);
+
+%feature("docstring",
 	 "Converts a ""float"" image to a ""byte"" image\n"
 	 "Description:\n"
 	 "Depending on the value given for the (optional) parameter ""mode"":\n"
@@ -886,4 +931,17 @@ struct xvimage* long2byte(struct xvimage *imagelong, int32_t mode=0, int32_t nbf
 	 "Types supported: float 2d, float 3d\n");
 %newobject float2byte;
 struct xvimage* float2byte(struct xvimage *imagefloat, int32_t mode=0);
+
+%feature("docstring",
+	 "Converts a ""double"" image to a ""byte"" image\n"
+	 "Description:\n"
+	 "Depending on the value given for the (optional) parameter ""mode"":\n"
+	 "-   mode == 0 (default) : for all x, out[x] = min(255, arrondi(in[x])).\n"
+	 "-   mode == 1 : for all x, out[x] = arrondi(in[x]) modulo 256.\n"
+	 "-   mode == 2 : scales values in the range 0-255.\n"
+	 "-   mode == 4 : truncation of the square root in the range 0-255.\n"
+	 "-   mode == 5 : truncation of the log in the range 0-255.\n"
+	 "Types supported: double 2d, double 3d\n");
+%newobject double2byte;
+struct xvimage* double2byte(struct xvimage *imagedouble, int32_t mode=0);
 

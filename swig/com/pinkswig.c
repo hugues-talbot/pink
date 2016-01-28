@@ -1682,6 +1682,42 @@ struct xvimage* long2byte(struct xvimage *imagelong, int32_t mode, int32_t nbnew
   return imagebyte;
 }
 
+struct xvimage* long2float(struct xvimage *imagelong)
+{
+  static char *name="long2float";
+  
+  struct xvimage*imagefloat = llong2float(imagelong);
+
+  if (imagefloat == NULL)
+    fprintf(stderr, "%s: llong2float failed\n", name);
+
+  return imagefloat;
+}
+
+struct xvimage* byte2float(struct xvimage *imagebyte)
+{
+  static char *name="byte2float";
+  
+  struct xvimage*imagefloat = lbyte2float(imagebyte);
+
+  if (imagefloat == NULL)
+    fprintf(stderr, "%s: lbyte2float failed\n", name);
+
+  return imagefloat;
+}
+
+struct xvimage* byte2long(struct xvimage *imagebyte)
+{
+  static char *name="byte2long";
+  
+  struct xvimage*imagelong = lbyte2long(imagebyte);
+
+  if (imagelong == NULL)
+    fprintf(stderr, "%s: lbyte2long failed\n", name);
+
+  return imagelong;
+}
+
 struct xvimage* float2byte(struct xvimage *imagefloat, int32_t mode)
 {
   static char *name="float2byte";
@@ -1690,6 +1726,30 @@ struct xvimage* float2byte(struct xvimage *imagefloat, int32_t mode)
 
   if (imagebyte == NULL)
     fprintf(stderr, "%s: lfloat2byte failed\n", name);
+
+  return imagebyte;
+}
+
+struct xvimage* float2long(struct xvimage*imagefloat, double offset, double factor)
+{
+  static char *name="float2long";
+  
+  struct xvimage*imagelong = lfloat2long(imagefloat, offset, factor);
+
+  if (imagelong == NULL)
+    fprintf(stderr, "%s: lfloat2long failed\n", name);
+
+  return imagelong;
+}
+
+struct xvimage* double2byte(struct xvimage *imagedouble, int32_t mode)
+{
+  static char *name="double2byte";
+  
+  struct xvimage*imagebyte = ldouble2byte(imagedouble, mode);
+
+  if (imagebyte == NULL)
+    fprintf(stderr, "%s: ldouble2byte failed\n", name);
 
   return imagebyte;
 }
