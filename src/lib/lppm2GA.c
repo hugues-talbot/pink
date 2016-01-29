@@ -162,7 +162,7 @@ int32_t dericheDerivateurGA(struct xvimage *image, struct xvimage *ga, double al
   if (depth(image) != 1) 
   {
     fprintf(stderr, "lderiche: cette version ne traite pas les images volumiques\n");
-    exit(0);
+    return(0);
   }
 
   Im1 = (double *)malloc(N * sizeof(double));
@@ -347,8 +347,31 @@ int32_t lpgm2gafloat(struct xvimage *im, struct xvimage *ga, int32_t param, doub
     break;
   case 3:
     fprintf(stderr,"Deriche float: not yet implemented\n");
-    exit(0);
+    return(0);
     break;
+  case 4: // zero crossing
+    for(j = 0; j < cs; j++)
+      for(i = 0; i < rs - 1; i++) {
+	float min, max;
+	min = mcmin( (float)(F[j*rs+i]), (float)(F[j*rs+i+1]));
+	max = mcmax( (float)(F[j*rs+i]), (float)(F[j*rs+i+1]));
+	if ((min <= 0.0) && (max >= 0)) 
+	  GA[j * rs + i] = (float) (max - min);
+	else
+	  GA[j * rs + i] = 0.;
+      }
+    for(j = 0; j < cs-1; j++)
+      for(i = 0; i < rs; i++)
+      {
+	float min, max;
+	min = mcmin((float)(F[j*rs+i]), (float)(F[j*rs+i+rs]));
+	max = mcmax((float)(F[j*rs+i]), (float)(F[j*rs+i+rs]));
+	if ((min <= 0.0) && (max >= 0)) 	
+	  GA[N + j * rs + i] =(float)(max - min);
+	else
+	  GA[N + j * rs + i] = 0.;
+      }
+    
   }
   return 1;  
 }

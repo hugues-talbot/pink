@@ -3274,7 +3274,7 @@ do /* repetition de toute la procedure jusqu'a stabilite */
   }
   else
   {
-    printf("connex = %d NYI \n", connex);
+    fprintf(stderr, "connex = %d not yet implemented.\n", connex);
     return 0;
   }
 

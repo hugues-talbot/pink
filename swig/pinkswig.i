@@ -340,7 +340,7 @@ struct xvimage* maxima(struct xvimage *image, int connex);
 	 "                   Vol. 22, No. 2-3, pp. 231-249, 2005.\n"
 	 "Types supported: byte 2d, byte 3d\n");
 %newobject wshedtopo;
-struct xvimage* wshedtopo(struct xvimage *image, int connex, int inverse=1);
+struct xvimage* wshedtopo(struct xvimage *image, int connex=8, int inverse=1);
 
 %feature("docstring",
 	 "Topological binary watershed.\n"
@@ -809,6 +809,7 @@ struct xvimage* ComputeEdgeGraphColor(struct xvimage* r, struct xvimage* g, stru
   $1 = &temp;
 }
 %typemap(argout) xvimage ** {
+  if (*$1 != NULL) {
   if (!PyList_Check($result)) {
     PyObject* temp = $result;
     $result = PyList_New(1);
@@ -817,7 +818,7 @@ struct xvimage* ComputeEdgeGraphColor(struct xvimage* r, struct xvimage* g, stru
   PyObject* temp = SWIG_NewPointerObj(*$1, SWIGTYPE_p_xvimage, SWIG_POINTER_OWN |  0);
   PyList_Append($result, temp);
   Py_DECREF(temp);
-}
+}}
 
 %feature("autodoc", "watershedcut(edge-weighted-image, labeled-markers) -> [wc, labels]") watershedcut;
 %feature("docstring",
@@ -947,3 +948,84 @@ struct xvimage* float2byte(struct xvimage *imagefloat, int32_t mode=0);
 %newobject double2byte;
 struct xvimage* double2byte(struct xvimage *imagedouble, int32_t mode=0);
 
+%feature("docstring",
+	 "Grayscale ultimate homotopic thinning\n"
+	 "Description:\n"
+	 "Grayscale ultimate homotopic thinning (refs. [BEC97, CBB01]).\n"
+	 "The parameter ""connex"" gives the connectivity used for the minima;\n"
+	 "possible choices are 4, 8 in 2D and 6, 26 in 3D.\n"
+	 "Let F be the function corresponding to the input image .\n"
+	 "Let G be the function corresponding to the optional condition image \n"
+	 """imcond"", or the null function if imcond is not provided.\n"
+	 "The algorithm is the following:\n"
+	 "Repeat until stability:\n"
+	 "  select p destructible for F such that F(p) is minimal\n"
+	 "  F(p) = max{ delta-(p,F), G(p) }    \n"
+	 "Result: F\n"
+	 "References: \n"
+	 "[BEC97] G. Bertrand, J. C. Everat and M. Couprie: \n"
+	 "Image segmentation through operators based upon topology\n"
+	 "Journal of Electronic Imaging, Vol. 6, No. 4, pp. 395-405, 1997.\n"
+	 "[CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: \n"
+	 "Topological operators for grayscale image processing\n"
+	 "Journal of Electronic Imaging, Vol. 10, No. 4, pp. 1003-1015, 2001.\n"
+	 "\n"
+	 "Types supported: byte 2d, byte 3d\n");
+%newobject htkern;
+struct xvimage* htkern(struct xvimage *imagebyte, int32_t connex=4, struct xvimage* imagecond=NULL);
+
+%feature("docstring",
+	 "Grayscale filtered topological skeleton\n"
+	 "Description:\n"
+	 "Filtered topological skeleton for 2D grayscale images. \n"
+	 "The connectivity used for the minima is 4;\n"
+	 "The parameter ""lambda"" is a contrast parameter (positive integer).\n"
+	 "Let F be the function corresponding to the input image \b in.pgm.\n"
+	 "The (optional) image ""imagecond"" is a constraint function G.\n"
+	 "If G is not provided by the user, then it is the null function.\n"
+	 "The algorithm is the following:\n"
+	 "\n"
+	 "Repeat until stability:\n"
+	 "  Select a point p which is lambda-destructible for F or a peak\n"
+	 "      such that F(p) > G(p) and such that F(p) is minimal\n"
+	 "    F(p) = alpha-(p,F)\n"
+	 "Result: F\n"
+	 "\n"
+	 "Reference: \n"
+	 "[CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: \n"
+	 "Topological operators for grayscale image processing\n"
+	 "Journal of Electronic Imaging, Vol. 10, No. 4, pp. 1003-1015, 2001.\n"
+	 "\n"
+	 "Types supported: byte 2d, byte 3d\n");
+%newobject lambdaskel;
+struct xvimage* lambdasekl(struct xvimage *imagebyte, int32_t lambda, struct xvimage* imagecond=NULL);
+
+%feature("docstring",
+	 "Crest restoration algorithm \n"
+	 "Description:\n"
+	 "Crest restoration algorithm, as described in ref. CBB01.\n"
+	 "The input image must be a ""thin"" grayscale image, as\n"
+	 "the output of the operator ""hthin"".\n"
+	 "For the moment, only the 4-connectivity is implemented, meaning that \n"
+	 "the connectivity 4 is used for the minimal regions.\n"
+	 "The parameter ""niter"" gives the number of iterations.\n"
+	 "The optional parameter ""imcond"" is a binary image (a set C) which indicates the points\n"
+	 "in the neighborhood of which the extensible points will be searched.\n"
+	 "The points which are modified by the algorithm will be dynamically added to C.\n"
+	 "If imcond is provided, then an image containing the final state of the \n"
+	 "set C is also returned.\n"
+	 "\n"
+	 "Reference:<BR> \n"
+	 "[CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand\n"
+	 "Topological operators for grayscale image processing\n"
+	 "Journal of Electronic Imaging, Vol. 10, No. 4, pp. 1003-1015, 2001.\n"
+	 "\n"
+	 "Types supported: byte 2D\n");
+%newobject crestrestoration;
+struct xvimage* crestrestoration(struct xvimage *imagebyte, int32_t niter, struct xvimage* imcond=NULL, xvimage** condout=NULL);
+
+%feature("docstring",
+	 "TO DO\n"
+	 "Types supported: float 2D\n");
+%newobject zerocrossing;
+struct xvimage* zerocrossing(struct xvimage *imagefloat, int32_t bar);

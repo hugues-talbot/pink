@@ -25,6 +25,10 @@
 #include <lskeletons.h>
 #include <lseltopo.h>
 
+#include <lhtkern.h>
+#include <lhtkern3d.h>
+#include <llambdakern.h>
+
 #include <ldilateros.h>
 #include <ldilateros3d.h>
 #include <lsym.h>
@@ -1767,4 +1771,233 @@ struct xvimage* double2byte(struct xvimage *imagedouble, int32_t mode)
     fprintf(stderr, "%s: ldouble2byte failed\n", name);
 
   return imagebyte;
+}
+
+struct xvimage* crestrestoration(struct xvimage *imagebyte, int32_t niter, struct xvimage* imcond, struct xvimage** condout)
+{
+  static char *name="crestrestoration";
+  static int32_t connex=4; // For the moment, lcrestrestoration works only with connex==4
+  
+  if (imagebyte == NULL)  {
+    fprintf(stderr, "%s : input image should not be empty\n", name);
+    return NULL;
+  }
+  if (datatype(imagebyte) != VFF_TYP_1_BYTE) {
+    fprintf(stderr, "%s : input image should be of type byte\n", name);
+    return NULL;
+  }
+    
+  struct xvimage* image=checkAllocCopy(imagebyte, name);
+  if (image == NULL)
+    return NULL;
+
+  struct xvimage * imagecond=NULL;
+  if (imcond != NULL) {
+    imagecond = checkAllocCopy(imcond, name);
+    if (imagecond == NULL)
+      return NULL;
+  }
+  
+  if (! lcrestrestoration(image, imagecond, niter, connex))
+  {
+    fprintf(stderr, "%s: lcrestrestoration failed\n", name);
+    freeimage(image);
+    return NULL;
+  }
+
+  if (imcond == NULL)
+    *condout = NULL;
+  else
+    *condout = imagecond;
+  return image;
+}
+
+struct xvimage* htkern(struct xvimage *imagebyte, int32_t connex, struct xvimage* imagecond)
+{
+  static char *name="htkern";
+
+  if (imagebyte == NULL)  {
+    fprintf(stderr, "%s : input image should not be empty\n", name);
+    return NULL;
+  }
+  if (datatype(imagebyte) != VFF_TYP_1_BYTE) {
+    fprintf(stderr, "%s : input image should be of type byte\n", name);
+    return NULL;
+  }
+
+  if ((connex != 4) && (connex != 8) && (connex != 6) && (connex != 26))
+  {
+    fprintf(stderr, "%s : connex = <4|8|6|26>\n", name);
+    return NULL;
+  }
+
+  struct xvimage* image=checkAllocCopy(imagebyte, name);
+  if (image == NULL)
+    return NULL;
+  
+  if ((connex == 4) || (connex == 8))
+  {
+    if (! lhtkern(image, imagecond, connex))
+    {
+      fprintf(stderr, "%s: lhtkern failed\n", name);
+      freeimage(image);
+      return NULL;
+    }
+  }
+  else
+  {
+    if (! mctopo3d_lhtkern3d(image, imagecond, connex))
+    {
+      fprintf(stderr, "%s: lhtkern3d failed\n", name);
+      freeimage(image);
+      return NULL;
+    }
+  }
+
+  return image;
+}
+
+struct xvimage* lambdasekl(struct xvimage *imagebyte, int32_t lambda, struct xvimage* imagecond)
+{
+  static char *name="lambdaskel";
+  static int32_t connex = 4; // Only one to be implemented (yet)
+  
+  if (imagebyte == NULL)  {
+    fprintf(stderr, "%s : input image should not be empty\n", name);
+    return NULL;
+  }
+
+  if (datatype(imagebyte) != VFF_TYP_1_BYTE) {
+    fprintf(stderr, "%s : input image should be of type byte\n", name);
+    return NULL;
+  }
+
+  struct xvimage* image=checkAllocCopy(imagebyte, name);
+  if (image == NULL)
+    return NULL;
+
+  if (! llambdakern(image, imagecond, connex, lambda))
+  {
+    fprintf(stderr, "%s: llambdakern failed\n", name);
+    freeimage(image);
+    return NULL;
+  }
+
+  return image;
+}
+
+struct xvimage* zerocrossing(struct xvimage *imagefloat, int32_t bar)
+{
+  static char *name="zerocrossing";
+
+  if (imagefloat == NULL)
+    fprintf(stderr, "%s: NULL input image\n", name);
+
+  struct xvimage* ga = ComputeEdgeGraphGrey(imagefloat, 4, 0.);
+  if (ga == NULL)
+    fprintf(stderr, "%s: computeEdgeGraphGrey failed\n", name);
+
+  struct xvimage* out=allocimage(NULL, rowsize(imagefloat)*2, colsize(imagefloat)*2, depth(imagefloat),
+				 VFF_TYP_4_BYTE);
+  if (out == NULL) {
+    fprintf(stderr, "%s: allocimage failed\n", name);
+    freeimage(ga);
+    return NULL;
+  }
+  
+  int32_t i,j,k;                              /* index muet */
+  int32_t x,w;                                /* un pixel et son voisin */
+  uint32_t tmp;
+  int32_t rs = rowsize(ga);                   /* taille ligne */ 
+  int32_t cs = colsize(ga);                   /* taille colone */
+  int32_t N = rs * cs;                        /* taille image */
+  float *GA = FLOATDATA(ga);      
+  uint32_t *F = ULONGDATA(out);      
+  /* on alloue les elmts 1D ds khalimsky ie les aretes du ga */
+  if(bar == 0)
+  {
+    for(j = 0; j < cs; j++)
+      for(i = 0; i < rs -1; i++)
+      {
+	F[4*j* rs+2*i+1] = (uint32_t)GA[j*rs+i];
+      }
+    for(j = 0; j < cs-1; j++)
+      for(i = 0; i < rs; i++)
+      {
+	F[(4*j+2)*rs +2*i] = (uint32_t)GA[N+j*rs+i];
+      }
+    cs = 2*cs;
+    rs = 2*rs;
+    N = rs*cs;
+    for(j = 0; j < cs; j++)
+      for(i = 0; i < rs; i++)
+	if( !(i%2) && !(j%2)) /* si l'on est sur une elmt 2D de khal */
+	{
+	  x = j*rs+i;
+	  tmp = 255;
+	  for(k = 0; k < 8; k+=2)
+	  {
+	    w = voisin(x,k,rs,N);
+	    if( (w > -1) && (F[w] < tmp)) tmp = F[w];
+	  }
+	  F[x] = tmp;  /* on conserve le min des elmts 1D contenu ds l'elmt 2D*/
+	}
+	else
+	  if((i%2) && (j%2)) /* si l'on est sur un elmt 0D de khal */
+	  {
+	    x = j*rs+i;
+	    tmp = 0;
+	    for(k = 0; k < 8; k+=2)
+	    {
+	      w = voisin(x,k,rs,N);
+	      if((w > -1) && (F[w] > tmp)) tmp = F[w];
+	    }
+	    F[x] = tmp;   /* on conserve le max des elmts 1D contenant l'elmt 0D */
+	  }
+  }
+  else
+  {
+    for(j = 0; j < cs; j++)
+      for(i = 0; i < rs -1; i++)
+      {
+	F[ 4*j* rs + 2*i+1] = (uint32_t)GA[j*rs+i];
+      }
+    for(j = 0; j < cs-1; j++)
+      for(i = 0; i < rs; i++)
+      {
+	F[(4*j+2)*rs +2*i] = (uint32_t)GA[N+j*rs+i];
+      }
+   
+    cs = 2*cs;
+    rs = 2*rs;
+    N = rs*cs;
+    for(j = 0; j < cs; j++)
+      for(i = 0; i < rs; i++)
+	if(!(i%2) && !(j%2)) /* si l'on est sur une elmt 2D de khal */
+	{
+	  x = j*rs+i;
+	  tmp = 0;
+	  for(k = 0; k < 8; k+=2)
+	  {
+	    w = voisin(x,k,rs,N);
+	    if( (w > - 1)  && (F[w] > tmp) ) tmp = F[w];
+	  }
+	  F[x] = tmp;  /* on conserve le max des elmts 1D contenu ds l'elmt 2D*/
+	}
+	else
+	  if((i%2) && (j%2)) /* si l'on est sur un elmt 0D de khal */
+	  {
+	    x = j*rs+i;
+	    tmp = 255;
+	    for(k = 0; k < 8; k+=2)
+	    {
+	      w = voisin(x,k,rs,N);
+	      if( (w > -1) && (F[w] < tmp)) tmp = F[w];
+	    }
+	    F[x] = tmp;   /* on conserve le min des elmts 1D contenant l'elmt 0D */
+	  }
+  }
+
+  freeimage(ga);
+  return out;
 }

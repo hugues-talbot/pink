@@ -25,6 +25,7 @@ static "C" {
  // real Com functions start here
  struct xvimage* ComputeEdgeGraphGrey(struct xvimage* im, int32_t param, double alpha);
  struct xvimage* ComputeEdgeGraphColor(struct xvimage* r, struct xvimage* g, struct xvimage* b, int32_t param);
+ struct xvimage* zerocrossing(struct xvimage *imagefloat, int32_t bar);
 
  struct xvimage* EWG2Khalimsky(struct xvimage *imagein, int32_t bar);
  struct xvimage* labelfgd(struct xvimage *imagein, int32_t connex);
@@ -82,6 +83,10 @@ static "C" {
  struct xvimage* ptend(struct xvimage *imagein, int32_t connex);
  struct xvimage* selectcomp(struct xvimage *imagein, int32_t x, int32_t y, int32_t z, int32_t connex);
 
+ struct xvimage* htkern(struct xvimage *imagebyte, int32_t connex, struct xvimage* imagecond);
+ struct xvimage* lambdasekl(struct xvimage *imagebyte, int32_t lambda, struct xvimage* imagecond);
+ struct xvimage* crestrestoration(struct xvimage *imagebyte, int32_t niter, struct xvimage* imcond, struct xvimage** condout);
+ 
 #ifdef __cplusplus
 }
 #endif

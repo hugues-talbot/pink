@@ -90,6 +90,9 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/lib/mcsort.c
 	     ../src/lib/lhisto.c
 	     ../src/lib/lconvert.c
+	     ../src/lib/lhtkern.c
+	     ../src/lib/lhtkern3d.c
+	     ../src/lib/llambdakern.c
 #	     ../src/lib/liar_line.cpp
 	     )
 
