@@ -147,6 +147,7 @@ extern int32_t lptextensible(
 
 extern int32_t ldynrecons(struct xvimage *image, struct xvimage *imagecond, int32_t connex);
   
+extern int32_t lhtkern_lhtkernu(struct xvimage *image, struct xvimage *imagecond, int32_t connex);
   
 #ifdef __cplusplus
 }

@@ -86,6 +86,8 @@ static "C" {
 
  struct xvimage* htkern(struct xvimage *imagebyte, int32_t connex, struct xvimage* imagecond);
  struct xvimage* lambdasekl(struct xvimage *imagebyte, int32_t lambda, struct xvimage* imagecond);
+ struct xvimage* tuf(struct xvimage *imagebyte, int32_t connexmin, int32_t radius);
+ struct xvimage* tlf(struct xvimage *imagebyte, int32_t connexmin, int32_t radius);
  struct xvimage* crestrestoration(struct xvimage *imagebyte, int32_t niter, struct xvimage* imcond, struct xvimage** condout);
  
 #ifdef __cplusplus

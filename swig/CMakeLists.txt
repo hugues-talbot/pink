@@ -94,6 +94,7 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/lib/lhtkern3d.c
 	     ../src/lib/llambdakern.c
 	     ../src/lib/lfiltreordre.c
+	     ../src/lib/lfiltrestopo.c
 #	     ../src/lib/liar_line.cpp
 	     )
 

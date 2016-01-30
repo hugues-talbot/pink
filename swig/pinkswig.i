@@ -1018,6 +1018,26 @@ struct xvimage* htkern(struct xvimage *imagebyte, int32_t connex=4, struct xvima
 struct xvimage* lambdasekl(struct xvimage *imagebyte, int32_t lambda, struct xvimage* imagecond=NULL);
 
 %feature("docstring",
+	 "topological lower filter\n"
+	 "Description:\n"
+	 "Topological upper filter. Performs the homotopic thinning controlled by\n"
+	 "a radius ""radius"", followed by a peak deletion, and a homotopic reconstruction under\n"
+	 "the original image.\n"
+	 "Types supported: byte 2d\n");
+%newobject tuf;
+struct xvimage* tuf(struct xvimage *imagebyte, int32_t connexmin, int32_t radius);
+
+%feature("docstring",
+	 "topological lower filter\n"
+	 "Description:\n"
+	 "Topological lower filter. Performs the homotopic thickening controlled by\n"
+	 "a radius ""radius"", followed by a well deletion, and a homotopic reconstruction over\n"
+	 "the original image.\n"
+	 "Types supported: byte 2d\n");
+%newobject tlf;
+struct xvimage* tlf(struct xvimage *imagebyte, int32_t connexmin, int32_t radius);
+
+%feature("docstring",
 	 "Crest restoration algorithm \n"
 	 "Description:\n"
 	 "Crest restoration algorithm, as described in ref. CBB01.\n"

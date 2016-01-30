@@ -28,6 +28,7 @@
 #include <lhtkern.h>
 #include <lhtkern3d.h>
 #include <llambdakern.h>
+#include <lfiltrestopo.h>
 
 #include <ldilateros.h>
 #include <ldilateros3d.h>
@@ -1943,6 +1944,38 @@ struct xvimage* lambdasekl(struct xvimage *imagebyte, int32_t lambda, struct xvi
     return NULL;
   }
 
+  return image;
+}
+
+struct xvimage* tuf(struct xvimage *imagebyte, int32_t connexmin, int32_t radius)
+{
+  static char *name="tuf";
+  struct xvimage* image=checkAllocCopy(imagebyte, name);
+  if (image == NULL)
+    return NULL;
+
+  if (! ltuf(image, connexmin, radius))
+  {
+    fprintf(stderr, "%s: function ltuf failed\n", name);
+    freeimage(image);
+    return NULL;
+  }
+  return image;
+}
+
+struct xvimage* tlf(struct xvimage *imagebyte, int32_t connexmin, int32_t radius)
+{
+  static char *name="tlf";
+  struct xvimage* image=checkAllocCopy(imagebyte, name);
+  if (image == NULL)
+    return NULL;
+
+  if (! ltlf(image, connexmin, radius))
+  {
+    fprintf(stderr, "%s: function ltlf failed\n", name);
+    freeimage(image);
+    return NULL;
+  }
   return image;
 }
 
