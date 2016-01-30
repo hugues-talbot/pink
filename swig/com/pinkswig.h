@@ -46,7 +46,8 @@ static "C" {
  struct xvimage* geoeros(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter);
  struct xvimage* erosball(struct xvimage *imagein, int r, int mode);
  struct xvimage* dilatball(struct xvimage *imagein, int r, int mode);
-
+ struct xvimage* rankfilter(struct xvimage *image, float r, struct xvimage *elem, int32_t x, int32_t y, int32_t z);
+ 
  struct xvimage* threshold(struct xvimage *imagein, double seuil, double seuil2);
  struct xvimage* frame(struct xvimage *imagein, int width);
  struct xvimage* inverse(struct xvimage *imagein);

@@ -53,7 +53,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define EN_FAHP       0
 #define EN_LIFO      1
 #define PARANO
-#define VERBOSE
+//#define VERBOSE
 /*
 #define DEBUG
 */

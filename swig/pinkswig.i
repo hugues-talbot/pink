@@ -409,6 +409,23 @@ struct xvimage* opening(struct xvimage *image, struct xvimage *elem, int32_t x=-
 struct xvimage* closing(struct xvimage *image, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
 
 %feature("docstring",
+	 "Rank filter\n"
+	 "Description:\n"
+	 "Let F be the input image, G be the output image, and E the structuring\n"
+	 "element. Let n be the number of elements of E, and R be the product n.r,\n"
+	 "then for each pixel p, G[p] is the Rth element of the sorted list (by \n"
+	 "increasing order) of the pixel values in the set { F[q], q in E[p] }.\n"
+	 "\n"
+	 "Particular cases are the median filter (r = 0.5), the erosion (r = 0),\n"
+	 "and the dilation (r = 1).\n"
+	 "The origin of the structuring element is given by the parameters x, y and z. \n"
+	 "If x==-1 (resp. y==-1, z==-1), then the center is in the middle of elem,\n"
+	 "i.e., x=rowsize(elem)/2 (resp. y=colsize(elem)/2, z=depth(elem).\n"
+	 "Types supported: byte 2d, byte 3d\n");
+%newobject rankfilter;
+struct xvimage* rankfilter(struct xvimage *image, float r, struct xvimage *elem, int32_t x=-1, int32_t y=-1, int32_t z=-1);
+
+%feature("docstring",
 	 "Geodesic (grayscale or binary) dilation\n"
 	 "Description:\n"
 	 "Geodesic dilation of image1 under image2.\n"

@@ -33,6 +33,7 @@
 #include <ldilateros3d.h>
 #include <lsym.h>
 #include <lgeodesic.h>
+#include <lfiltreordre.h>
 
 #include <lminima.h>
 #include <lmaxima.h>
@@ -438,6 +439,41 @@ struct xvimage* closing(struct xvimage *image, struct xvimage *elem, int32_t x, 
   return result;
 }
 
+struct xvimage* rankfilter(struct xvimage *image, float r, struct xvimage *elem, int32_t x, int32_t y, int32_t z)
+{
+  static char *name="rankfilter";
+
+  if ((r < 0.0) || (r > 1.0))
+  {
+    fprintf(stderr, "%s: r = %g ; we should have 0 <= r <= 1\n", name, r);
+    return NULL;
+  }
+
+  struct xvimage * result=checkAllocCopy(image, name);
+  if (result == NULL)
+    return NULL;
+
+  if (depth(result) == 1)
+  {
+    if (! lfiltreordre(result, elem, x, y, r))
+    {
+      fprintf(stderr, "%s: function lfiltreordre failed\n", name);
+      freeimage(result);
+      return NULL;
+    }
+  }
+  else
+  {
+    if (! lfiltreordre3d(result, elem, x, y, z, r))
+    {
+      fprintf(stderr, "%s: function lfiltreordre failed\n", name);
+      freeimage(result);
+      return NULL;
+    }
+  }
+  
+  return result;
+}
 
 struct xvimage* geodilat(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter)
 {
@@ -659,11 +695,6 @@ struct xvimage* min(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="min";
 
-  if (!EqualSize(imagein1, imagein2)) {
-    fprintf(stderr, "%s: image not of the same size\n", name);
-    return NULL;
-  }
-  
   struct xvimage *image1 = checkAllocCopy(imagein1, name);
   if (image1 == NULL)
     return NULL;
@@ -673,6 +704,13 @@ struct xvimage* min(struct xvimage *imagein1, struct xvimage *imagein2)
     return NULL;
   }
   
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
+    
   if (! convertgen(&image1, &image2))
   {
     fprintf(stderr, "%s: function convertgen failed\n", name);
@@ -696,11 +734,6 @@ struct xvimage* min(struct xvimage *imagein1, struct xvimage *imagein2)
 struct xvimage* max(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="max";
-  
-  if (!EqualSize(imagein1, imagein2)) {
-    fprintf(stderr, "%s: image not of the same size\n", name);
-    return NULL;
-  }
 
   struct xvimage *image1 = checkAllocCopy(imagein1, name);
   if (image1 == NULL)
@@ -710,7 +743,14 @@ struct xvimage* max(struct xvimage *imagein1, struct xvimage *imagein2)
     freeimage(image1);
     return NULL;
   }
-  
+    
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
+
   if (! convertgen(&image1, &image2))
   {
     fprintf(stderr, "%s: function convertgen failed\n", name);
@@ -752,10 +792,7 @@ struct xvimage* border(struct xvimage *imagein, int connex)
 struct xvimage* sub(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="sub";
-  if (!EqualSize(imagein1, imagein2)) {
-    fprintf(stderr, "%s: image not of the same size\n", name);
-    return NULL;
-  }
+
   struct xvimage *image1 = checkAllocCopy(imagein1, name);
   if (image1 == NULL)
     return NULL;
@@ -764,7 +801,12 @@ struct xvimage* sub(struct xvimage *imagein1, struct xvimage *imagein2)
     freeimage(image1);
     return NULL;
   }
-
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
   if (! convertgen(&image1, &image2))
   {
     fprintf(stderr, "%s: function convertgen failed\n", name);
@@ -788,16 +830,20 @@ struct xvimage* sub(struct xvimage *imagein1, struct xvimage *imagein2)
 struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="add";
-  if (!EqualSize(imagein1, imagein2)) {
-    fprintf(stderr, "%s: image not of the same size\n", name);
-    return NULL;
-  }
+
   struct xvimage *image1 = checkAllocCopy(imagein1, name);
   if (image1 == NULL)
     return NULL;
   struct xvimage *image2 = checkAllocCopy(imagein2, name);
   if (image2 == NULL) {
     freeimage(image1);
+    return NULL;
+  }
+
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    freeimage(image1);
+    freeimage(image2);
     return NULL;
   }
 
@@ -824,10 +870,7 @@ struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2)
 struct xvimage* mult(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="mult";
-  if (!EqualSize(imagein1, imagein2)) {
-    fprintf(stderr, "%s: image not of the same size\n", name);
-    return NULL;
-  }
+ 
   struct xvimage *image1 = checkAllocCopy(imagein1, name);
   if (image1 == NULL)
     return NULL;
@@ -836,7 +879,12 @@ struct xvimage* mult(struct xvimage *imagein1, struct xvimage *imagein2)
     freeimage(image1);
     return NULL;
   }
-
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
   if (! convertgen(&image1, &image2))
   {
     fprintf(stderr, "%s: function convertgen failed\n", name);
@@ -860,10 +908,7 @@ struct xvimage* mult(struct xvimage *imagein1, struct xvimage *imagein2)
 struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="div";
-  if (!EqualSize(imagein1, imagein2)) {
-    fprintf(stderr, "%s: image not of the same size\n", name);
-    return NULL;
-  }
+
   struct xvimage *image1 = checkAllocCopy(imagein1, name);
   if (image1 == NULL)
     return NULL;
@@ -872,7 +917,12 @@ struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2)
     freeimage(image1);
     return NULL;
   }
-
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
   if (! convertgen(&image1, &image2))
   {
     fprintf(stderr, "%s: function convertgen failed\n", name);
@@ -1101,22 +1151,25 @@ struct xvimage* dist(struct xvimage *image, int32_t mode)
 struct xvimage* skeletonprio2(struct xvimage *imagein, struct xvimage *prio, int32_t connex, struct xvimage *inhibimage)
 {
   static char *name="skeletonprio2";
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
   if (prio == NULL) {
     fprintf(stderr, "%s: Priority image is NULL - This is a problem.", name);
+    freeimage(image);
     return NULL;
   }
   if (!EqualSize(imagein, prio)) {
     fprintf(stderr, "%s: image not of the same size\n", name);
+    freeimage(image);
     return NULL;
   }
   if (inhibimage)
     if (!EqualSize(imagein, inhibimage)) {
       fprintf(stderr, "%s: image not of the same size\n", name);
+      freeimage(image);
       return NULL;
     }
-  struct xvimage *image = checkAllocCopy(imagein, name);
-  if (image == NULL)
-    return NULL;
 
   if (depth(image) == 1)
   {
@@ -1144,19 +1197,22 @@ struct xvimage* skeletondist2(struct xvimage *imagein, int32_t mode, int32_t con
 {
   static char *name="skeletondist2";
 
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+
   if (inhibimage)
     if (!EqualSize(imagein, inhibimage)) {
       fprintf(stderr, "%s: image not of the same size\n", name);
+      freeimage(image);
       return NULL;
     }
   struct xvimage* prio = dist(imagein, mode);
   if (prio == NULL) {
     fprintf(stderr, "%s: ditance failed - Priority image is NULL - This is a problem.", name);
+    freeimage(image);
     return NULL;
   }
-  struct xvimage *image = checkAllocCopy(imagein, name);
-  if (image == NULL)
-    return NULL;
 
   if (depth(image) == 1)
   {
@@ -1164,6 +1220,7 @@ struct xvimage* skeletondist2(struct xvimage *imagein, int32_t mode, int32_t con
       {
         fprintf(stderr, "%s: lskelubp2 failed\n", name);
 	freeimage(image);
+	freeimage(prio);
         return NULL;
       }
   }
@@ -1173,6 +1230,7 @@ struct xvimage* skeletondist2(struct xvimage *imagein, int32_t mode, int32_t con
       {
         fprintf(stderr, "%s: lskelubp3d2 failed\n", name);
 	freeimage(image);
+	freeimage(prio);
         return NULL;
       }
   }
@@ -1187,14 +1245,14 @@ struct xvimage* skeletonprio1(struct xvimage *imagein, struct xvimage *prio, int
     fprintf(stderr, "%s: Priority image is NULL - This is a problem.", name);
     return NULL;
   }
-  if (!EqualSize(imagein, prio)) {
-    fprintf(stderr, "%s: image not of the same size\n", name);
-    return NULL;
-  }
-
   struct xvimage *image = checkAllocCopy(imagein, name);
   if (image == NULL)
     return NULL;
+  if (!EqualSize(imagein, prio)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    freeimage(image);
+    return NULL;
+  }
 
   if (depth(image) == 1)
   {
@@ -1222,21 +1280,22 @@ struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t con
 {
   static char *name="skeletondist1";
 
+
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL) 
+    return NULL;
   struct xvimage* prio = dist(imagein, mode);
   if (prio == NULL) {
     fprintf(stderr, "%s: ditance failed - Priority image is NULL - This is a problem.", name);
     return NULL;
   }
-  struct xvimage *image = checkAllocCopy(imagein, name);
-  if (image == NULL)
-    return NULL;
-
   if (depth(image) == 1)
   {
     if (! lskelubp(image, prio, connex, inhibvalue))
       {
         fprintf(stderr, "%s: lskelubp failed\n", name);
 	freeimage(image);
+	freeimage(prio);
         return NULL;
       }
   }
@@ -1245,6 +1304,7 @@ struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t con
     if (! lskelubp3d(image, prio, connex, inhibvalue))
       {
         fprintf(stderr, "%s: lskelubp3d failed\n", name);
+	freeimage(prio);
 	freeimage(image);
         return NULL;
       }
