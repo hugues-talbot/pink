@@ -868,6 +868,56 @@ struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2)
   return image1;
 }
 
+struct xvimage* addconst(struct xvimage *imagein1, double constante)
+{
+  static char *name="addconst";
+ 
+  struct xvimage *image1 = checkAllocCopy(imagein1, name);
+  if (image1 == NULL)
+    return NULL;
+  
+  if (datatype(image1) == VFF_TYP_FLOAT)  {
+     if (! laddconst2(image1, (float)constante))  {
+       fprintf(stderr, "%s: function laddconst failed\n", name);
+       freeimage(image1);
+       return NULL;
+    }
+  } else  {
+     if (! laddconst(image1, (int32_t)constante))  {
+	 fprintf(stderr, "%s: function laddconst failed\n", name);
+	 freeimage(image1);
+	 return NULL;
+    }
+  }
+
+  return image1;
+}
+
+struct xvimage* subconst(struct xvimage *imagein1, double constante)
+{
+  static char *name="addconst";
+ 
+  struct xvimage *image1 = checkAllocCopy(imagein1, name);
+  if (image1 == NULL)
+    return NULL;
+  
+  if (datatype(image1) == VFF_TYP_FLOAT)  {
+     if (! laddconst2(image1, -(float)constante))  {
+       fprintf(stderr, "%s: function laddconst failed\n", name);
+       freeimage(image1);
+       return NULL;
+    }
+  } else  {
+     if (! laddconst(image1, -(int32_t)constante))  {
+	 fprintf(stderr, "%s: function laddconst failed\n", name);
+	 freeimage(image1);
+	 return NULL;
+    }
+  }
+
+  return image1;
+}
+
 struct xvimage* mult(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="mult";
@@ -905,6 +955,45 @@ struct xvimage* mult(struct xvimage *imagein1, struct xvimage *imagein2)
   freeimage(image2);
   return image1;
 }
+
+struct xvimage* multconst(struct xvimage *imagein1, double constante)
+{
+  static char *name="multconst";
+ 
+  struct xvimage *image1 = checkAllocCopy(imagein1, name);
+  if (image1 == NULL)
+    return NULL;
+  
+  if (! lscale(image1, (float)constante))  {
+    fprintf(stderr, "%s: function lscale failed\n", name);
+    freeimage(image1);
+    return NULL;
+  }
+
+  return image1;
+}
+
+struct xvimage* divideconst(struct xvimage *imagein1, double constante)
+{
+  static char *name="divconst";
+
+  if (constante == 0.) {
+    fprintf(stderr, "%s: can not divide by 0.\n", name);
+    return NULL;
+  }
+  struct xvimage *image1 = checkAllocCopy(imagein1, name);
+  if (image1 == NULL)
+    return NULL;
+  
+  if (! lscale(image1, (float)(1./constante)))  {
+    fprintf(stderr, "%s: function lscale failed\n", name);
+    freeimage(image1);
+    return NULL;
+  }
+
+  return image1;
+}
+
 
 struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2)
 {

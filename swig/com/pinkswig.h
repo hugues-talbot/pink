@@ -18,9 +18,13 @@ static "C" {
 
  // Arithmetic
  struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2);
+ struct xvimage* addconst(struct xvimage *imagein1, double constante);
  struct xvimage* sub(struct xvimage *imagein1, struct xvimage *imagein2);
+ struct xvimage* subconst(struct xvimage *imagein1, double constante);
  struct xvimage* mult(struct xvimage *imagein1, struct xvimage *imagein2);
+ struct xvimage* multconst(struct xvimage *imagein1, double constante);
  struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2);
+ struct xvimage* divideconst(struct xvimage *imagein1, double constante);
   
  // real Com functions start here
  struct xvimage* ComputeEdgeGraphGrey(struct xvimage* im, int32_t param, double alpha);

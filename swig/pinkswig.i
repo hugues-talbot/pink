@@ -257,6 +257,9 @@ def __setitem__(self, tup, value):
 def __add__(self,other):
      return add(self, other)
 
+def __radd__(self,other):
+     return add(self, other)
+
 def __sub__(self,other):
      return sub(self, other)
 
@@ -264,6 +267,9 @@ def __div__(self,other):
      return divide(self, other)
 
 def __mul__(self,other):
+     return mult(self, other)
+
+def __rmul__(self,other):
      return mult(self, other)
 
 }};
@@ -299,14 +305,29 @@ int writerawGAimage(struct xvimage * image,  char *filename);
 %rename(__createimage__) createimage;
 %newobject createimage;
 struct xvimage* createimage(index_t x, index_t y, index_t z, int32_t type, long int data);
-			 
+
+
+%rename(add) addconst;
+%rename(sub) subconst;
+%rename(mult) multconst;
+%rename(divide) divideconst;
+
+%newobject add;
 struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2);
+%newobject addconst;
+struct xvimage* addconst(struct xvimage *imagein1, double const);
 %newobject sub;
 struct xvimage* sub(struct xvimage *imagein1, struct xvimage *imagein2);
+%newobject subconst;
+struct xvimage* subconst(struct xvimage *imagein1, double constante);
 %newobject mult;
 struct xvimage* mult(struct xvimage *imagein1, struct xvimage *imagein2);
+%newobject multconst;
+struct xvimage* multconst(struct xvimage *imagein1, double constante);
 %newobject divide;
 struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2);
+%newobject divideconst;
+struct xvimage* divideconst(struct xvimage *imagein1, double constante);
 
 %feature("docstring",
 	 "Regional minima \n"
