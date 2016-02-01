@@ -3187,6 +3187,80 @@ int32_t colextensible4(
 } /* colextensible4() */
 
 /* ==================================== */
+int32_t extensible8(
+  uint8_t *F,            /* pointeur base image */
+  int32_t x,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t N)                       /* taille image */
+/* ==================================== */
+/*
+   Le point x est extensible au niveau nivext si : 
+     i) x est separant
+     ii) x possede dans son voisinage un point y verifiant :
+         F[y] = nivext
+         y separant pour le niveau F[x]
+         y non separant pour tout niveau > F[x]
+         y marque COND_TRUE
+
+   La fonction retourne 0 si non extensible, nivext sinon.
+*/
+{
+  int32_t k, y;
+  int32_t nivext = 0;
+
+  if (!separant8(F, x, rs, N)) return 0;
+
+  for (k = 0; k < 8; k += 1)
+  {
+    y = voisin(x, k, rs, N);
+    if ((y != -1) && (IsSet(y,COND_TRUE)))
+    {
+      if ((F[y] > F[x]) && 
+          hseparant8(F,y,F[x]-1,rs,N) && !hseparant8(F,y,F[x],rs,N)) 
+        if (F[y] > nivext) nivext = F[y]; 
+    }
+  }
+
+  return nivext;
+} /* extensible8() */
+
+/* ==================================== */
+int32_t colextensible8(
+  uint8_t *F,            /* pointeur base image */
+  int32_t x,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t N)                       /* taille image */
+/* ==================================== */
+{
+  int32_t k, y;
+  int32_t nbplus = 0;
+
+  for (k = 0; k < 8; k += 1)
+  {
+    y = voisin(x, k, rs, N);
+    if (y != -1)
+    {
+#ifdef EXTENSIBLE_TOPO
+      if ((F[y] > F[x]) && !hseparant8(F, y, F[x], rs, N)) nbplus++; 
+#endif
+#ifdef EXTENSIBLE_GEO
+      if ((F[y] > F[x]) && (nbvoiss4(F, y, F[x]+1, rs, N) <= 1)) nbplus++;
+#endif
+#ifdef EXTENSIBLE_MARK
+      if ((F[y] > F[x]) && IsSet(y,COND_TRUE)) nbplus++;
+#endif
+    }
+  }
+
+#ifdef COL2
+  return (nbplus == 2);
+#endif
+#ifdef COLMULTI
+  return (nbplus >= 2);
+#endif
+} /* colextensible8() */
+
+/* ==================================== */
 int32_t lcrestrestoration(struct xvimage *image, struct xvimage *imcond, int32_t nitermax, int32_t connex)
 /* ==================================== */
 #undef F_NAME
@@ -3274,8 +3348,15 @@ do /* repetition de toute la procedure jusqu'a stabilite */
   }
   else
   {
-    fprintf(stderr, "connex = %d not yet implemented.\n", connex);
-    return 0;
+    for (x = 0; x < N; x++) 
+      if ((a = extensible8(F,x,rs,N)))
+      {
+#ifdef DEBUG
+        printf("INIT: Push x = %d,%d ; F[x] = %d ; a = %d\n", 
+                x%rs, x/rs, F[x], a);
+#endif
+        LifoPush(LIFO1, ENCODE(x,a));
+      }
   }
 
   /* ================================================ */
@@ -3390,8 +3471,92 @@ do /* repetition de toute la procedure jusqu'a stabilite */
   } /* if (connex == 4) */
   else
   { /* if (connex == 8) */
+    while (!LifoVide(LIFO1) && (niter < nitermax))
+    {
+      niter++;
 
-  } /* if (connex == 8) */
+#ifdef VERBOSE
+  fprintf(stderr, "%s: niter = %d\n", F_NAME, niter);
+#endif
+
+  /* --------------------------------------------------------- */
+  /* 1ere demi iteration : on eleve les points constructibles et les points selle */
+  /* --------------------------------------------------------- */
+
+      while (!LifoVide(LIFO1))
+      {
+        y = LifoPop(LIFO1);
+        x = DECODEX(y);
+        a = DECODEA(y);
+        UnSet(x,EN_LIFO);
+#ifdef DEBUG
+        printf("Pop x = %d,%d ; F[x] = %d ; a = %d\n", x%rs, x/rs, F[x], a);
+#endif
+        if (pconstr8(F, x, rs, N))
+	{
+          F[x] = mcmin(delta8p(F,x,rs,N),a);
+          Set(x,COND_TRUE);
+          stable = 0;
+          LifoPush(LIFO2, x);
+#ifdef DEBUG
+          printf("========> ELEVE constr : %d\n", F[x]);
+#endif
+        } /* if (pconstr8(F, x, rs, N)) */
+#ifdef COL2
+        else if ((saddle8(F, x, rs, N) == 2) && colextensible8(F, x, rs, N))
+#else
+#ifdef COLMULTI
+        else if ((saddle8(F, x, rs, N) >= 2) && colextensible8(F, x, rs, N))
+#else
+        else if (saddle8(F, x, rs, N))
+#endif
+#endif
+	{
+          F[x] = alpha4p(F, x, rs, N);
+          Set(x,COND_TRUE);
+          stable = 0;
+          LifoPush(LIFO2, x);
+#ifdef DEBUG
+          printf("========> ELEVE col : %d\n", F[x]);
+#endif
+        } /* if (saddle8(F, x, rs, N)) */
+      } /* while (!LifoVide(LIFO1)) */
+
+  /* --------------------------------------------------------- */
+  /* 2eme demi iteration : on empile les voisins extensibles   */
+  /* --------------------------------------------------------- */
+
+      while (!LifoVide(LIFO2))
+      {
+        x = LifoPop(LIFO2);
+        if ((! IsSet(x,EN_LIFO)) && (a = extensible8(F, x, rs, N)))
+        {
+          LifoPush(LIFO1, ENCODE(x,a));
+          Set(x,EN_LIFO);
+#ifdef DEBUG
+          printf("Push x = %d,%d ; F[x] = %d ; a = %d\n", 
+                  x%rs, x/rs, F[x], a);
+#endif
+	}
+        for (k = 0; k < 8; k += 1)             /* parcourt les voisins */
+        {                                      /* pour empiler les voisins */
+          y = voisin(x, k, rs, N);             /* non deja empiles */
+          if ((y != -1) && (! IsSet(y,EN_LIFO)) && (a = extensible8(F,y,rs,N)))
+          {
+            LifoPush(LIFO1, ENCODE(y,a));
+            Set(y,EN_LIFO);
+#ifdef DEBUG
+          printf("Push y = %d,%d ; F[y] = %d ; a = %d\n", 
+                  y%rs, y/rs, F[y], a);
+#endif
+          } /* if y */
+        } /* for k */      
+      } /* while (!LifoVide(LIFO2)) */
+
+
+    } /* while (! (LifoVide(LIFO1) ...)) */
+
+   } /* if (connex == 8) */
 
 #ifdef SATURE
 } while (stable == 0);

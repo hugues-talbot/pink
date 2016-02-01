@@ -48,6 +48,7 @@ Michel Couprie 1996
 02 juin 1999: fonction deltaNm et deltaNp, avec N = 4,8
 29 juin 2001: typetopobin et typetopobin8
 Update sep. 2009 : ajout des tests is_on_frame()
+Update fev. 2016 : ajout de hseparant8()
 */
 
 #include <sys/types.h>
@@ -3534,6 +3535,36 @@ int32_t hseparant4(  /* teste si un point est h-separant - minima 4-connexes
   }	
   return 0;
 } /* hseparant4() */
+
+/* ==================================== */
+int32_t hseparant8(  /* teste si un point est h-separant - minima 8-connexes
+	         ie- s'il est separant pour une coupe c telle que h < c <= img[p] */
+  uint8_t *img,          /* pointeur base image */
+  index_t p,                       /* index du point */
+  int32_t h,                       /* parametre */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
+/* ==================================== */
+{	
+  int32_t t8mm, t8m, t4p, t4pp;
+  index_t k, q;
+
+  if ((p%rs==rs-1)||(p<rs)||(p%rs==0)||(p>=N-rs)) /* point de bord */
+     return 0;
+  if (img[p] <= h) return 0;
+  nbtopo2(img, p, rs, N, &t8mm, &t8m, &t4p, &t4pp);
+  if (t8mm >= 2) return 1;
+  for (k = 0; k < 8; k += 1)
+  {
+    q = voisin(p, k, rs, N);
+    if ((q != -1) && (img[q] > h) && (img[q] < img[p]))
+    {
+      nbtopoh2(img, p, img[q], rs, N, &t8mm, &t8m, &t4p, &t4pp);
+      if (t8mm >= 2) return 1;
+    }
+  }	
+  return 0;
+} /* hseparant8() */
 
 /* ==================================== */
 int32_t separant8(  /* teste si un point est separant - minima 8-connexes

@@ -196,6 +196,12 @@ extern int32_t hseparant4(
   int32_t h,                       /* parametre */
   index_t rs,                      /* taille rangee */
   index_t N);                      /* taille image */
+extern int32_t hseparant8(
+  uint8_t *img,          /* pointeur base image */
+  index_t p,                       /* index du point */
+  int32_t h,                       /* parametre */
+  index_t rs,                      /* taille rangee */
+  index_t N);                      /* taille image */
 extern int32_t separant8(
   uint8_t *img,          /* pointeur base image */
   index_t p,                       /* index du point */

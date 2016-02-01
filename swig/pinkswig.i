@@ -218,15 +218,16 @@ def getdata(self):
       data = getattr(self.ctypes,self.getctype()) *self.rowsize()*self.colsize()
     else:
       data = getattr(self.ctypes,self.getctype()) *self.rowsize()*self.colsize()*self.depth()
-      data = data.from_address(int(self.__imagedata__()))
+    data = data.from_address(int(self.__imagedata__()))
     return data
 
-def tonumpy():
+def tonumpy(self):
+      import numpy as np
       return np.ctypeslib.as_array(self.getdata())
 
 def getpixel(self, x, y, z=0):
     data = self.getdata()
-	if self.depth() == 1:
+    if self.depth() == 1:
       return data[x][y]
     else:
       return data[x][y][z]
@@ -271,6 +272,18 @@ def __mul__(self,other):
 
 def __rmul__(self,other):
      return mult(self, other)
+
+def __xor__(self,other):
+     return xor(self, other)
+
+def __or__(self,other):
+     return max(self, other)
+
+def __and__(self,other):
+     return min(self, other)
+
+def __invert__(self):
+     return inverse(self)
 
 }};
 
@@ -328,6 +341,18 @@ struct xvimage* multconst(struct xvimage *imagein1, double constante);
 struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2);
 %newobject divideconst;
 struct xvimage* divideconst(struct xvimage *imagein1, double constante);
+%newobject xor;
+struct xvimage* xor(struct xvimage *imagein1, struct xvimage *imagein2);
+
+%feature("docstring",
+	 "Normalization of grayscale values.\n"
+	 "Description: \n"
+	 "Grayscale values of the input image are normalized to span the range of [nmin...nmax].\n"
+	 "The parameters ""nmin"" and ""nmax"" are optional.\n"
+	 "The default values are nmin == 0 and nmax == 255.\n"
+	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+%newobject normalize;
+struct xvimage* normalize(struct xvimage *imagein, double nmin=0, double nmax=255);
 
 %feature("docstring",
 	 "Regional minima \n"
@@ -1036,7 +1061,7 @@ struct xvimage* htkern(struct xvimage *imagebyte, int32_t connex=4, struct xvima
 	 "\n"
 	 "Types supported: byte 2d, byte 3d\n");
 %newobject lambdaskel;
-struct xvimage* lambdasekl(struct xvimage *imagebyte, int32_t lambda, struct xvimage* imagecond=NULL);
+struct xvimage* lambdaskel(struct xvimage *imagebyte, int32_t lambda, struct xvimage* imagecond=NULL);
 
 %feature("docstring",
 	 "topological lower filter\n"
@@ -1064,23 +1089,22 @@ struct xvimage* tlf(struct xvimage *imagebyte, int32_t connexmin, int32_t radius
 	 "Crest restoration algorithm, as described in ref. CBB01.\n"
 	 "The input image must be a ""thin"" grayscale image, as\n"
 	 "the output of the operator ""hthin"".\n"
-	 "For the moment, only the 4-connectivity is implemented, meaning that \n"
-	 "the connectivity 4 is used for the minimal regions.\n"
 	 "The parameter ""niter"" gives the number of iterations.\n"
+	 "The parameter ""connex"" indicates the connectivity used for the minimal regions (4 or 8, default is 4).\n"
 	 "The optional parameter ""imcond"" is a binary image (a set C) which indicates the points\n"
 	 "in the neighborhood of which the extensible points will be searched.\n"
 	 "The points which are modified by the algorithm will be dynamically added to C.\n"
 	 "If imcond is provided, then an image containing the final state of the \n"
 	 "set C is also returned.\n"
 	 "\n"
-	 "Reference:<BR> \n"
+	 "Reference: \n"
 	 "[CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand\n"
 	 "Topological operators for grayscale image processing\n"
 	 "Journal of Electronic Imaging, Vol. 10, No. 4, pp. 1003-1015, 2001.\n"
 	 "\n"
 	 "Types supported: byte 2D\n");
 %newobject crestrestoration;
-struct xvimage* crestrestoration(struct xvimage *imagebyte, int32_t niter, struct xvimage* imcond=NULL, xvimage** condout=NULL);
+struct xvimage* crestrestoration(struct xvimage *imagebyte, int32_t niter, int32_t connex=4, struct xvimage* imcond=NULL, xvimage** condout=NULL);
 
 %feature("docstring",
 	 "TO DO\n"

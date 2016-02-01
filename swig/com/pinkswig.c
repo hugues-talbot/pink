@@ -1033,6 +1033,47 @@ struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2)
   return image1;
 }
 
+struct xvimage* xor(struct xvimage *imagein1, struct xvimage *imagein2)
+{
+  static char *name="xor";
+
+  struct xvimage *image1 = checkAllocCopy(imagein1, name);
+  if (image1 == NULL)
+    return NULL;
+
+  if (imagein2 == NULL) {
+    fprintf(stderr, "%s: NULL image - can not process\n", name);
+    freeimage(image1);
+    return NULL;
+  }
+
+  if (! lxor(image1, imagein2))
+  {
+    fprintf(stderr, "%s: function lxor failed\n", name);
+    freeimage(image1);
+    return NULL;
+  }
+
+  return image1;
+}
+  
+struct xvimage* normalize(struct xvimage *imagein, double nmin, double nmax)
+{
+  static char *name="normalize";
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+
+  if (! lnormalize(image, nmin, nmax))
+  {
+    fprintf(stderr, "%s: function lnormalize failed\n", name);
+    freeimage(image);
+    return NULL;
+  }
+
+  return image;
+}
+
 struct xvimage* heightmaxima(struct xvimage *imagein, int32_t param, int32_t connex)
 {
   static char *name="heightmaxima";
@@ -1923,11 +1964,14 @@ struct xvimage* double2byte(struct xvimage *imagedouble, int32_t mode)
   return imagebyte;
 }
 
-struct xvimage* crestrestoration(struct xvimage *imagebyte, int32_t niter, struct xvimage* imcond, struct xvimage** condout)
+struct xvimage* crestrestoration(struct xvimage *imagebyte, int32_t niter, int32_t connex, struct xvimage* imcond, struct xvimage** condout)
 {
   static char *name="crestrestoration";
-  static int32_t connex=4; // For the moment, lcrestrestoration works only with connex==4
-  
+
+  if ((connex != 4) && (connex != 8)) {
+    fprintf(stderr, "%s : connexity should be 4 or 8.\n", name);
+    return NULL;
+  }
   if (imagebyte == NULL)  {
     fprintf(stderr, "%s : input image should not be empty\n", name);
     return NULL;
@@ -2007,7 +2051,7 @@ struct xvimage* htkern(struct xvimage *imagebyte, int32_t connex, struct xvimage
   return image;
 }
 
-struct xvimage* lambdasekl(struct xvimage *imagebyte, int32_t lambda, struct xvimage* imagecond)
+struct xvimage* lambdaskel(struct xvimage *imagebyte, int32_t lambda, struct xvimage* imagecond)
 {
   static char *name="lambdaskel";
   static int32_t connex = 4; // Only one to be implemented (yet)

@@ -25,6 +25,9 @@ static "C" {
  struct xvimage* multconst(struct xvimage *imagein1, double constante);
  struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2);
  struct xvimage* divideconst(struct xvimage *imagein1, double constante);
+ struct xvimage* xor(struct xvimage *imagein1, struct xvimage *imagein2);
+
+ struct xvimage* normalize(struct xvimage *imagein, double nmin, double nmax);
   
  // real Com functions start here
  struct xvimage* ComputeEdgeGraphGrey(struct xvimage* im, int32_t param, double alpha);
@@ -89,10 +92,10 @@ static "C" {
  struct xvimage* selectcomp(struct xvimage *imagein, int32_t x, int32_t y, int32_t z, int32_t connex);
 
  struct xvimage* htkern(struct xvimage *imagebyte, int32_t connex, struct xvimage* imagecond);
- struct xvimage* lambdasekl(struct xvimage *imagebyte, int32_t lambda, struct xvimage* imagecond);
+ struct xvimage* lambdaskel(struct xvimage *imagebyte, int32_t lambda, struct xvimage* imagecond);
  struct xvimage* tuf(struct xvimage *imagebyte, int32_t connexmin, int32_t radius);
  struct xvimage* tlf(struct xvimage *imagebyte, int32_t connexmin, int32_t radius);
- struct xvimage* crestrestoration(struct xvimage *imagebyte, int32_t niter, struct xvimage* imcond, struct xvimage** condout);
+ struct xvimage* crestrestoration(struct xvimage *imagebyte, int32_t niter, int32_t connex, struct xvimage* imcond, struct xvimage** condout);
  
 #ifdef __cplusplus
 }
