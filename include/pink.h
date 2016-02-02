@@ -188,7 +188,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "ldilateros3d.h"
 #include "ldilatfast.h"
 #include "ldilatfast3d.h"
-#include "ldilatplan.h"
+//#include "ldilatplan.h"
 #include "ldir.h"
 #include "ldirections.h"
 #include "ldist.h"
