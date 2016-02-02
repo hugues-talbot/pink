@@ -210,7 +210,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lfft.h"
 #include "lfiltreordre.h"
 #include "lfiltrestopo.h"
-#include "lfusreg.h"
+//#include "lfusreg.h"
 #include "lga2khalimsky.h"
 #include "lgeo.h"
 #include "lgeodesic.h"
