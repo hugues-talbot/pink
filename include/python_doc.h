@@ -195,6 +195,11 @@
 "\n"
 
 
+#define doc__lpemeyer3d___notused_c__ "WRITE ME!!!\n"         \
+"\n"
+
+
+#define doc__ptinterior__c__ "  ptinterior.c\n"         \
 #define doc__2dcollapse__c__ "  2dcollapse.c\n"         \
 "\n"         \
 " ultimate constrained collapse guided by a priority image\n"         \
@@ -442,6 +447,7 @@
 "\n"
 
 
+#define doc__3dmakepolygons__c__ "  3dmakepolygons.c\n"         \
 #define doc__2dtopoflow__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -2542,6 +2548,7 @@
 "\n"
 
 
+#define doc__skel_ACK3a__c__ "  skel_ACK3a.c\n"         \
 #define doc__delaunaymask__c__ "  delaunaymask.c\n"         \
 "\n"         \
 " delaunay triangulation\n"         \
@@ -3558,6 +3565,11 @@
 "\n"
 
 
+#define doc__hthickbin__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
+#define doc__3dbeta__c__ "  3dbeta.c\n"         \
 #define doc__drawtriangulation__c__ "  drawtriangulation.c\n"         \
 "\n"         \
 " draw a triangulation\n"         \
@@ -6661,6 +6673,11 @@
 "\n"
 
 
+#define doc__genbicol__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
+#define doc__areaclosing__c__ "  areaclosing.c\n"         \
 #define doc__long2short__cpp__ "  long2byte.c\n"         \
 "\n"         \
 " converts a \"int32_t\" image to a \"ushort\" image\n"         \
@@ -8313,6 +8330,11 @@
 "\n"
 
 
+#define doc__seuilhistolocal__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
+#define doc__fitcircle__c__ "  fitcircle.c\n"         \
 #define doc__pgm2vskel__c__ "  pgm2vskel.c\n"         \
 "\n"         \
 " decomposition of a valuated curvilinear skeleton into isolated points, end points, curves and junctions\n"         \
@@ -12069,6 +12091,11 @@
 "\n"
 
 
+#define doc__CMakeLists__txt__user__ "WRITE ME!!!\n"         \
+"\n"
+
+
+#define doc__skelcurv__c__ "  skelcurv.c\n"         \
 #define doc__ui_any_to_complex__c__ "\n"         \
 "    ui_any_to_complex.cpp\n"         \
 "\n"         \
