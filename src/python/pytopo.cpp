@@ -20,7 +20,7 @@
 #include "lselrect.h"
 #include "lseltopo.h"
 #include "lhthiniso.h"
-#include "llevialdi.h"
+//#include "llevialdi.h"
 #include "lgeodesic.h"
 #include "lrotations.h"
 #include "ltopotypes.h"
@@ -74,13 +74,13 @@ namespace topo
 
 
 // optionally lrao instead of lleviandi
-  UI_WRAP_FUNCTION(
-    "levialdi",
-    llevialdi,
-    (arg("image"), arg("connex"), arg("n")),
-    doc__levialdi__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+//  UI_WRAP_FUNCTION(
+//    "levialdi",
+//    llevialdi,
+//    (arg("image"), arg("connex"), arg("n")),
+//    doc__levialdi__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 
   UI_WRAP_FUNCTION(
