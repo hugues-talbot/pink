@@ -1,6 +1,6 @@
 // This file has been generated automatically by the 
 // python_documenter, part of the PInK package (UjoImro, 2011)
-// the date of generation: 2016-01-15T14:31:10Z
+// the date of generation: 2016-02-02T10:53:19Z
 // warning: DO NOT EDIT. All your changes will be lost at 
 // the next generation
 
@@ -206,33 +206,6 @@
 " convert, geo\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__zoomint__c__ "  zoomint.c\n"         \
-"\n"         \
-" zoom by an integer factor\n"         \
-"\n"         \
-"Usage: zoomint in.pgm  {f | fx fy fz} [nofill] out.pgm\n"         \
-"\n"         \
-"Description: \n"         \
-"The zoom factor(s) can be unique ( f ) of there can be one zoom factor\n"         \
-"per image dimension ( fx,  fy,  fz ). In the case of a 2d image, set  fz\n"         \
-"to 1.\n"         \
-"The zoom parameter may be a positive or negative integer.\n"         \
-"If it is positive, the image is expanded in the corresponding \n"         \
-"direction. The pixels are replicated in order to fill all the space,\n"         \
-"except if the parameter nofill is used.\n"         \
-"If it is negative, the image is shrinked the corresponding \n"         \
-"directions, by undersampling.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie, Christophe Doublier\n"         \
 "\n"         \
 "\n"
 
@@ -537,10 +510,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__squelval__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -3011,10 +2980,6 @@
 "\n"
 
 
-#define doc__shake__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__skel_ACK3a__c__ "  skel_ACK3a.c\n"         \
 "\n"         \
 " parallel 3D binary curvilinear, asymetric skeleton based on thin 1D isthmus\n"         \
@@ -4034,10 +3999,6 @@
 
 
 #define doc__hthickbin__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__zoomrgb__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -6938,10 +6899,6 @@
 "\n"
 
 
-#define doc__test_juliette__cxx__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__areaclosing__c__ "  areaclosing.c\n"         \
 "\n"         \
 " area closing\n"         \
@@ -8720,32 +8677,6 @@
 
 
 #define doc__dilatbin3d__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__watershedMeyer_time___notused_c__ "  watershedMeyer.c\n"         \
-"\n"         \
-" watershed transformation (Meyer's algorithm)\n"         \
-"\n"         \
-"Usage: watershedMeyer in mark   connex out\n"         \
-"\n"         \
-"Description:\n"         \
-"Performs the watershed transformation on the image in, taking the\n"         \
-"set of markers in mark. \n"         \
-"If this parameter is present, bgmark\n"         \
-"is used as a set of markers for the background.\n"         \
-"If this parameter is present, roi\n"         \
-"indicates the region of interest on which the operation is performed.\n"         \
-"The parameter connex gives the adjacency relation (4,8 in 2D; 6,18,26 in 3D) \n"         \
-"for the makers.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: connect\n"         \
-" connect\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -12162,6 +12093,10 @@
 "\n"         \
 " Jean Cousty\n"         \
 "\n"         \
+"\n"
+
+
+#define doc__CMakeLists__txt__user__ "WRITE ME!!!\n"         \
 "\n"
 
 
