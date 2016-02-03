@@ -294,7 +294,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "ltmp1.h"
 #include "ltopotypes.h"
 //#include "lvoronoi.h"
-#include "lwarp.h"
+//#include "lwarp.h" commentaire Manon 3 fevrier
 #include "lwshedtopo.h"
 //#include "lzoom.h"
 //#include "lzoomint.h"
