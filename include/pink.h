@@ -289,12 +289,12 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lsquelbin.h"
 //#include "lsquelval.h"
 #include "lstat.h"
-#include "lstretch.h"
+//#include "lstretch.h" commentaire Manon 3 fevrier 2016
 #include "lsym.h"
 #include "ltmp1.h"
 #include "ltopotypes.h"
 //#include "lvoronoi.h"
-//#include "lwarp.h" commentaire Manon 3 fevrier
+//#include "lwarp.h" commentaire Manon 3 fevrier 2016
 #include "lwshedtopo.h"
 //#include "lzoom.h"
 //#include "lzoomint.h"
