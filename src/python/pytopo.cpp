@@ -343,13 +343,13 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
+/*  UI_WRAP_FUNCTION(
     "boxmin",
     lboxmin,
     (arg("image")),
     doc__boxmin__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
   UI_WRAP_FUNCTION(
     "surrect",
