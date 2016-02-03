@@ -119,13 +119,13 @@ namespace sept
     )
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
+/*  UI_WRAP_FUNCTION(
     "barycentrelab",
     lbarycentrelab,
     (arg("image")),
     doc__barycentrelab__c__
     )
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
   UI_WRAP_FUNCTION(
     "crestrestoration",
