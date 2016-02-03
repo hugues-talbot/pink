@@ -49,13 +49,13 @@ namespace sept
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_MALLOC(
+/*  UI_WRAP_MALLOC(
     "autocrop",
     lautocrop,
     (arg("image"), arg("threshold")),
     doc__autocrop__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
   
   UI_WRAP_RESULT(
     float_image,
