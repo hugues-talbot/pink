@@ -287,13 +287,13 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
+ /* UI_WRAP_FUNCTION(
     "amont",
     lamont,
     ( arg("image"), arg("connexity"), arg("sign") ),
     doc__amont__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
   UI_WRAP_FUNCTION(
     "drawline",
