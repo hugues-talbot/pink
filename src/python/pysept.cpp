@@ -102,14 +102,14 @@ namespace sept
     )
 # include BOOST_PP_UPDATE_COUNTER()
   
-  UI_WRAP_RESULT(
+/*  UI_WRAP_RESULT(
     float_image,
     "bisector_talbot",
     lmedialaxis_lbisector_talbot,
     (arg("image")),
     doc__bisector_talbot__c__
     )
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
   
   UI_WRAP_FUNCTION(
     "disthmus3d",
