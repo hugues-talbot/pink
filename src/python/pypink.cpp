@@ -22,7 +22,7 @@
 #include "lhello.h"
 #include "lsquel.h"
 #include "loffset.h"
-#include "lstretch.h"
+//#include "lstretch.h" commentaire Manon 03 fevrier 2016
 #include "lseltopo.h"
 #include "lsquelbin.h"
 #include "ltopotypes.h"
@@ -297,13 +297,14 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
-UI_WRAP_FUNCTION(
-  "stretch",
-  lstretch,
-  (arg("image")),
-  doc__stretch__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
+// Commentaire Manon 03 fevrier 2016
+//UI_WRAP_FUNCTION(
+//  "stretch",
+//  lstretch,
+//  (arg("image")),
+//  doc__stretch__c__
+//  );
+//#include BOOST_PP_UPDATE_COUNTER()
 
 UI_WRAP_FUNCTION(
   "sym",
