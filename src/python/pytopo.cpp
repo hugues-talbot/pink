@@ -28,7 +28,7 @@
 #include "lmaxdiameter.h"
 #include "lhoughcercles.h"
 //#include "lsegmentlignes.h" commentaire Manon 4 fevrier 2016
-#include "lreconsplateaux.h"
+//#include "lreconsplateaux.h" commentair M4F2016
 
 
 #include <boost/preprocessor/slot/counter.hpp>
@@ -212,13 +212,14 @@ namespace topo
 
 // NOTE: recalagerigide returns a list
 
-  UI_WRAP_FUNCTION(
-    "reconsplateaux",
-    lreconsplateaux,
-    (arg("image1"), arg("image2"), arg("connexity")),
-    doc__reconsplateaux__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire M4F2016
+//  UI_WRAP_FUNCTION(
+//    "reconsplateaux",
+//    lreconsplateaux,
+//    (arg("image1"), arg("image2"), arg("connexity")),
+//    doc__reconsplateaux__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 // Commentaire M4F2016
 //  UI_WRAP_FUNCTION(

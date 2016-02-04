@@ -259,7 +259,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lrecalagerigide.h"
 #include "lrecalagerigide_translateplane.h"
 #include "lrecons.h"
-#include "lreconsplateaux.h"
+//#include "lreconsplateaux.h" commentaire M4F2016
 #include "lregul.h"
 //#include "lremspnoise.h" commentaire M4F2016
 #include "lrotate.h"
