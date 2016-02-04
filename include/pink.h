@@ -256,8 +256,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lppm2GA.h"
 #include "lprofil.h"
 #include "lpropgeo.h"
-#include "lrecalagerigide.h"
-#include "lrecalagerigide_translateplane.h"
+//#include "lrecalagerigide.h" commentaire M4F2016
+//#include "lrecalagerigide_translateplane.h" commentaire M4F2016
 #include "lrecons.h"
 //#include "lreconsplateaux.h" commentaire M4F2016
 #include "lregul.h"
