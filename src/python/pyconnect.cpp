@@ -13,7 +13,7 @@
 
 #include "pink_python.h"
 
-#include "lskelpar3d.h"
+//#include "lskelpar3d.h" commentaire Manon 4 fevrier 2016
 #include "l2dcollapse.h"
 #include "l3dcollapse.h"
 #include "lmedialaxis.h"
