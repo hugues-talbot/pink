@@ -268,13 +268,14 @@ namespace connect
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "skel_ACK3",
-    lskelACK3,
-    (arg("image"), arg("nsteps"), arg("inhibit")),
-    doc__skel_ACK3__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire Manon 04 fevrier 2016
+//  UI_WRAP_FUNCTION(
+//    "skel_ACK3",
+//    lskelACK3,
+//    (arg("image"), arg("nsteps"), arg("inhibit")),
+//    doc__skel_ACK3__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
   
 
