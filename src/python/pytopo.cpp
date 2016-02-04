@@ -17,18 +17,18 @@
 #include "ldraw.h"
 #include "ljones.h"
 #include "lnbvois.h"
-#include "lselrect.h"
+//#include "lselrect.h" commentaire Manon 4 fevrier 2016
 #include "lseltopo.h"
 #include "lhthiniso.h"
 //#include "llevialdi.h"
 #include "lgeodesic.h"
 #include "lrotations.h"
 #include "ltopotypes.h"
-#include "lremspnoise.h"
+//#include "lremspnoise.h" commentaire M4F2016
 #include "lmaxdiameter.h"
 #include "lhoughcercles.h"
-#include "lsegmentlignes.h"
-#include "lreconsplateaux.h"
+//#include "lsegmentlignes.h" commentaire Manon 4 fevrier 2016
+//#include "lreconsplateaux.h" commentair M4F2016
 
 
 #include <boost/preprocessor/slot/counter.hpp>
@@ -212,21 +212,23 @@ namespace topo
 
 // NOTE: recalagerigide returns a list
 
-  UI_WRAP_FUNCTION(
-    "reconsplateaux",
-    lreconsplateaux,
-    (arg("image1"), arg("image2"), arg("connexity")),
-    doc__reconsplateaux__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire M4F2016
+//  UI_WRAP_FUNCTION(
+//    "reconsplateaux",
+//    lreconsplateaux,
+//    (arg("image1"), arg("image2"), arg("connexity")),
+//    doc__reconsplateaux__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "remspnoise",
-    lremspnoise,
-    (arg("image"), arg("g"), arg("k")),
-    doc__remspnoise__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire M4F2016
+//  UI_WRAP_FUNCTION(
+//    "remspnoise",
+//    lremspnoise,
+//    (arg("image"), arg("g"), arg("k")),
+//    doc__remspnoise__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 // NOTE: think about image resizing
 // UI_WRAP_FUNCTION(
@@ -245,14 +247,14 @@ namespace topo
 //   );
 // # include BOOST_PP_UPDATE_COUNTER()
 
-
-  UI_WRAP_FUNCTION(
-    "segmentlines",
-    lsegmentlignes,
-    (arg("image"), arg("connexity"), arg("lower threshold"), arg("higher threshold")),
-    doc__segmentlignes__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire Manon 4 fevrier 2016
+//  UI_WRAP_FUNCTION(
+//    "segmentlines",
+//    lsegmentlignes,
+//    (arg("image"), arg("connexity"), arg("lower threshold"), arg("higher threshold")),
+//    doc__segmentlignes__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 
   UI_WRAP_FUNCTION(
@@ -263,13 +265,14 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "selrect",
-    lselrect,
-    (arg("image"), arg("x"), arg("y"), arg("w"), arg("h")),
-    doc__selrect__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire Manon 4 fevrier 2016
+//  UI_WRAP_FUNCTION(
+//    "selrect",
+//    lselrect,
+//    (arg("image"), arg("x"), arg("y"), arg("w"), arg("h")),
+//    doc__selrect__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
   UI_WRAP_FUNCTION(
     "seltopo",

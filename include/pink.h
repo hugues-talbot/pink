@@ -256,26 +256,26 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lppm2GA.h"
 #include "lprofil.h"
 #include "lpropgeo.h"
-#include "lrecalagerigide.h"
-#include "lrecalagerigide_translateplane.h"
+//#include "lrecalagerigide.h" commentaire M4F2016
+//#include "lrecalagerigide_translateplane.h" commentaire M4F2016
 #include "lrecons.h"
-#include "lreconsplateaux.h"
+//#include "lreconsplateaux.h" commentaire M4F2016
 #include "lregul.h"
-#include "lremspnoise.h"
+//#include "lremspnoise.h" commentaire M4F2016
 #include "lrotate.h"
 #include "lrotations.h"
 #include "lsaliency.h"
 //#include "lsegbi.h"
 #include "lsegment.h"
-#include "lsegment3d.h"
-#include "lsegment3di.h"
-#include "lsegmenti.h"
-#include "lsegmentlignes.h"
-#include "lsegmentnum.h"
-#include "lsegmentnumi.h"
+//#include "lsegment3d.h" commentaire M4F2016
+//#include "lsegment3di.h" commentaire M4F2016
+//#include "lsegmenti.h" commentaire M4F2016
+//#include "lsegmentlignes.h" commentaire Manon 4 fevrier 2016
+//#include "lsegmentnum.h" commentaire Manon 4 fevrier 2016
+//#include "lsegmentnumi.h" commentaire Manon 4 fevrier 2016
 #include "lsegreconsheight.h"
-#include "lselndg.h"
-#include "lselrect.h"
+//#include "lselndg.h" commentaire Manon 4 fevrier 2016
+//#include "lselrect.h" commentaire Manon 4 fevrier 2016
 #include "lseltopo.h"
 #include "lseuil.h"
 #include "lseuili.h"
