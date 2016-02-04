@@ -13,7 +13,7 @@
 
 #include "pink_python.h"
 #include "ldir.h"
-#include "lccv.h"
+//#include "lccv.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lhtkern.h"
 #include "lconvol3.h"
 #include "legalise.h"
@@ -31,13 +31,14 @@ using boost::python::def;
 
 namespace arithmetic
 {
-  UI_WRAP_FUNCTION(
+  // commenté par Sophie, 04 Février 2016
+ /* UI_WRAP_FUNCTION(
     "ccv",
     lccv,
     (arg("image"), arg("elem")),
     doc__ccv__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER()*/
 
   UI_WRAP_FUNCTION(
     "contours",

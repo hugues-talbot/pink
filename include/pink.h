@@ -170,7 +170,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lblob.h"
 #include "lborder.h"
 #include "lbresen.h"
-#include "lccv.h"
+//#include "lccv.h" //commenté par Sophie, 04 Février 2016
 #include "lclick.h"
 //#include "lcomphisto.h"
 #include "lcontours.h"
