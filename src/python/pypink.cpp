@@ -20,7 +20,7 @@
 #include "lsym.h"
 #include "lskew.h"
 #include "lhello.h"
-#include "lsquel.h"
+//#include "lsquel.h" commentaire Manon 04 fevrier 2016
 #include "loffset.h"
 //#include "lstretch.h" commentaire Manon 03 fevrier 2016
 #include "lseltopo.h"
@@ -281,13 +281,14 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
-UI_WRAP_FUNCTION(
-  "squel",
-  lsquel,
-  (arg("image"), arg("threshold"), arg("ni threshold")),
-  doc__squel__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
+// Commentaire Manon 04 fevrier 2016
+//UI_WRAP_FUNCTION(
+//  "squel",
+//  lsquel,
+//  (arg("image"), arg("threshold"), arg("ni threshold")),
+//  doc__squel__c__
+//  );
+//#include BOOST_PP_UPDATE_COUNTER()
 
 UI_WRAP_FUNCTION(
   "squelbin",

@@ -285,7 +285,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lskelpar3d.h"
 #include "lskelpar3d_others.h"
 #include "lskew.h"
-#include "lsquel.h"
+//#include "lsquel.h" commentaire Manon 4 fevrier 2016
 #include "lsquelbin.h"
 //#include "lsquelval.h"
 #include "lstat.h"
