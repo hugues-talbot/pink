@@ -24,7 +24,7 @@
 #include "lgeodesic.h"
 #include "lrotations.h"
 #include "ltopotypes.h"
-#include "lremspnoise.h"
+//#include "lremspnoise.h" commentaire M4F2016
 #include "lmaxdiameter.h"
 #include "lhoughcercles.h"
 //#include "lsegmentlignes.h" commentaire Manon 4 fevrier 2016
@@ -220,13 +220,14 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "remspnoise",
-    lremspnoise,
-    (arg("image"), arg("g"), arg("k")),
-    doc__remspnoise__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire M4F2016
+//  UI_WRAP_FUNCTION(
+//    "remspnoise",
+//    lremspnoise,
+//    (arg("image"), arg("g"), arg("k")),
+//    doc__remspnoise__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 // NOTE: think about image resizing
 // UI_WRAP_FUNCTION(

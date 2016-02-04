@@ -261,7 +261,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lrecons.h"
 #include "lreconsplateaux.h"
 #include "lregul.h"
-#include "lremspnoise.h"
+//#include "lremspnoise.h" commentaire M4F2016
 #include "lrotate.h"
 #include "lrotations.h"
 #include "lsaliency.h"
