@@ -503,13 +503,14 @@ namespace morpho
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "shencastan",
-    lshencastan,
-    (arg("image"), arg("beta")),
-    doc__shencastan__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire Manon 4 fevrier 2016
+//  UI_WRAP_FUNCTION(
+//    "shencastan",
+//    lshencastan,
+//    (arg("image"), arg("beta")),
+//    doc__shencastan__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
   UI_WRAP_FUNCTION(
     "asftmed",
