@@ -275,7 +275,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lsegmentnumi.h"
 #include "lsegreconsheight.h"
 #include "lselndg.h"
-#include "lselrect.h"
+//#include "lselrect.h" commentaire Manon 4 fevrier 2016
 #include "lseltopo.h"
 #include "lseuil.h"
 #include "lseuili.h"

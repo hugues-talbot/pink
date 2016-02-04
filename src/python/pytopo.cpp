@@ -17,7 +17,7 @@
 #include "ldraw.h"
 #include "ljones.h"
 #include "lnbvois.h"
-#include "lselrect.h"
+//#include "lselrect.h" commentaire Manon 4 fevrier 2016
 #include "lseltopo.h"
 #include "lhthiniso.h"
 //#include "llevialdi.h"
@@ -263,13 +263,14 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "selrect",
-    lselrect,
-    (arg("image"), arg("x"), arg("y"), arg("w"), arg("h")),
-    doc__selrect__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire Manon 4 fevrier 2016
+//  UI_WRAP_FUNCTION(
+//    "selrect",
+//    lselrect,
+//    (arg("image"), arg("x"), arg("y"), arg("w"), arg("h")),
+//    doc__selrect__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
   UI_WRAP_FUNCTION(
     "seltopo",
