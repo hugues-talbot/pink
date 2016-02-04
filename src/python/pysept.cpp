@@ -119,6 +119,7 @@ namespace sept
     )
 # include BOOST_PP_UPDATE_COUNTER()
 
+    //commenté par Sophie, 03 Fevrier 2016
 /*  UI_WRAP_FUNCTION(
     "barycentrelab",
     lbarycentrelab,
