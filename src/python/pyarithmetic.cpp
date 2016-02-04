@@ -17,7 +17,7 @@
 #include "lhtkern.h"
 #include "lconvol3.h"
 #include "legalise.h"
-#include "lcontours.h"
+//#include "lcontours.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lhtkern3d.h"
 #include "lhistscal.h"
 #include "ldirections.h"
@@ -40,13 +40,14 @@ namespace arithmetic
     );
 # include BOOST_PP_UPDATE_COUNTER()*/
 
-  UI_WRAP_FUNCTION(
+    // commenté par Sophie, 04 Fevrier 2016
+/*  UI_WRAP_FUNCTION(
     "contours",
     lcontours,
     (arg("image"), arg("higher threshold"), arg("lower threshold")),
     doc__contours__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER()*/
 
   UI_WRAP_FUNCTION(
     "convol3",

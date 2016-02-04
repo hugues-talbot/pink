@@ -173,7 +173,7 @@ knowledge of the CeCILL license and that you accept its terms.
 //#include "lccv.h" //commenté par Sophie, 04 Février 2016
 #include "lclick.h"
 //#include "lcomphisto.h"
-#include "lcontours.h"
+//#include "lcontours.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lconvexhull.h"
 #include "lconvol.h"
 #include "lconvol3.h"
