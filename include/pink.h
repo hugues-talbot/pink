@@ -271,8 +271,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lsegment3di.h"
 #include "lsegmenti.h"
 #include "lsegmentlignes.h"
-#include "lsegmentnum.h"
-#include "lsegmentnumi.h"
+//#include "lsegmentnum.h" commentaire Manon 4 fevrier 2016
+//#include "lsegmentnumi.h" commentaire Manon 4 fevrier 2016
 #include "lsegreconsheight.h"
 //#include "lselndg.h" commentaire Manon 4 fevrier 2016
 //#include "lselrect.h" commentaire Manon 4 fevrier 2016
