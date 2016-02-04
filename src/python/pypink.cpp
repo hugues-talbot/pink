@@ -18,7 +18,7 @@
 #endif /* PINK_DEVELOPMENT */
 
 #include "lsym.h"
-#include "lskew.h"
+//#include "lskew.h" commentaire Manon 04 fevrier 2016
 #include "lhello.h"
 //#include "lsquel.h" commentaire Manon 04 fevrier 2016
 #include "loffset.h"
@@ -273,13 +273,14 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
-UI_WRAP_FUNCTION(
-  "skew",
-  lskew,
-  (arg("image"), arg("skew")),
-  doc__skew__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
+// Commentaire Manon 04 fevrier 2016
+//UI_WRAP_FUNCTION(
+//  "skew",
+//  lskew,
+//  (arg("image"), arg("skew")),
+//  doc__skew__c__
+//  );
+//#include BOOST_PP_UPDATE_COUNTER()
 
 // Commentaire Manon 04 fevrier 2016
 //UI_WRAP_FUNCTION(
