@@ -170,13 +170,13 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lblob.h"
 #include "lborder.h"
 #include "lbresen.h"
-#include "lccv.h"
+//#include "lccv.h" //commenté par Sophie, 04 Février 2016
 #include "lclick.h"
 //#include "lcomphisto.h"
-#include "lcontours.h"
-#include "lconvexhull.h"
+//#include "lcontours.h" //commenté par Sophie, 04 Fevrier 2016
+//#include "lconvexhull.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lconvol.h"
-#include "lconvol3.h"
+//#include "lconvol3.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lcrop.h"
 #include "lderiche.h"
 #include "ldetectcercles.h"
