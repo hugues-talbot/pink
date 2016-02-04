@@ -27,7 +27,7 @@
 #include "lremspnoise.h"
 #include "lmaxdiameter.h"
 #include "lhoughcercles.h"
-#include "lsegmentlignes.h"
+//#include "lsegmentlignes.h" commentaire Manon 4 fevrier 2016
 #include "lreconsplateaux.h"
 
 
@@ -245,14 +245,14 @@ namespace topo
 //   );
 // # include BOOST_PP_UPDATE_COUNTER()
 
-
-  UI_WRAP_FUNCTION(
-    "segmentlines",
-    lsegmentlignes,
-    (arg("image"), arg("connexity"), arg("lower threshold"), arg("higher threshold")),
-    doc__segmentlignes__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire Manon 4 fevrier 2016
+//  UI_WRAP_FUNCTION(
+//    "segmentlines",
+//    lsegmentlignes,
+//    (arg("image"), arg("connexity"), arg("lower threshold"), arg("higher threshold")),
+//    doc__segmentlignes__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 
   UI_WRAP_FUNCTION(
