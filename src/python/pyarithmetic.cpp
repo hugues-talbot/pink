@@ -15,7 +15,7 @@
 #include "ldir.h"
 //#include "lccv.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lhtkern.h"
-#include "lconvol3.h"
+//#include "lconvol3.h" //commenté par Sophie 04 Fevrier 2016
 #include "legalise.h"
 //#include "lcontours.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lhtkern3d.h"
@@ -49,13 +49,14 @@ namespace arithmetic
     );
 # include BOOST_PP_UPDATE_COUNTER()*/
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 04 Fevrier 2016
+ /* UI_WRAP_FUNCTION(
     "convol3",
     lconvol3,
     (arg("image"), arg("mask"), arg("")),
     doc__convol3__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER()*/
 
   UI_WRAP_FUNCTION(
     "detectcercles",
