@@ -1,6 +1,6 @@
 // This file has been generated automatically by the 
 // python_documenter, part of the PInK package (UjoImro, 2011)
-// the date of generation: 2016-02-05T11:22:10Z
+// the date of generation: 2016-02-05T11:39:33Z
 // warning: DO NOT EDIT. All your changes will be lost at 
 // the next generation
 
@@ -1823,6 +1823,32 @@
 
 
 #define doc__comptreetime__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
+#define doc__convexhull__c__ "  convexhull.c\n"         \
+"\n"         \
+" convex hull of a set of points in the 2D plane\n"         \
+"\n"         \
+"Usage: convewhull in.pgm mode out\n"         \
+"\n"         \
+"Description: Computes the convex hull of the set of non-null points\n"         \
+"in the image in.pgm, by the Jarvis's algorithm as described in \n"         \
+"\"Introduction to algorithms\", T. Cormen, C. Leiserson, R. Rivest, MIT Press.\n"         \
+"\n"         \
+"The parameter  mode selects the format of the result: \n"         \
+" 0: list of the support points of the convex hull\n"         \
+" 1: support points of the convex hull, embedded in the image frame\n"         \
+" 2: contour of the convex hull, embedded in the image frame\n"         \
+" 3: full convex hull, embedded in the image frame\n"         \
+"\n"         \
+"Types supported: byte 2D\n"         \
+"\n"         \
+"Category: geo\n"         \
+"  geo\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
 "\n"
 
 
