@@ -154,21 +154,23 @@ namespace sept
     )
 # include BOOST_PP_UPDATE_COUNTER()*/
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 05 Fevrier 2016
+  /*UI_WRAP_FUNCTION(
     "despuits",
     ldespuits,
     (arg("image"), arg("mask"), arg("connexmin")),
     doc__despuits__c__
     )
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER()*/
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 05 Fevrier 2016
+ /* UI_WRAP_FUNCTION(
     "despuits3d",
     ldespuits3d,
     (arg("image"), arg("mask"), arg("connexmin")),
     doc__despuits3d__c__
     )
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER()*/
 
   UI_WRAP_FUNCTION(
     "detectcircles",
