@@ -135,14 +135,15 @@ namespace sept
     doc__crestrestoration__c__
     )
 # include BOOST_PP_UPDATE_COUNTER()
-
-  UI_WRAP_FUNCTION(
+    
+    //commenté par Sophie, 05 Fevrier 2016
+  /*UI_WRAP_FUNCTION(
     "despics2d",
     ldespics,
     (arg("image"), arg("mask"), arg("connexmin")),
     doc__despics__c__
     )
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
   
   UI_WRAP_FUNCTION(
     "despics3d",
