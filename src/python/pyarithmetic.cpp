@@ -21,7 +21,7 @@
 #include "lhtkern3d.h"
 #include "lhistscal.h"
 #include "ldirections.h"
-#include "ldetectcercles.h"
+//#include "ldetectcercles.h" //commenté par Sophie, 05 Fevrier 2016
 
 #include <boost/preprocessor/slot/counter.hpp>
 
@@ -58,13 +58,14 @@ namespace arithmetic
     );
 # include BOOST_PP_UPDATE_COUNTER()*/
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 05 Fevrier 2016
+  /*UI_WRAP_FUNCTION(
     "detectcercles",
     ldetectcercles,
     (arg("image"), arg("radius")),
     doc__detectcercles__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
 //NOTE: consider directionalfilter because of the converfloat
 

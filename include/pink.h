@@ -179,7 +179,7 @@ knowledge of the CeCILL license and that you accept its terms.
 //#include "lconvol3.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lcrop.h"
 #include "lderiche.h"
-#include "ldetectcercles.h"
+//#include "ldetectcercles.h" //commenté par Sophie, 05 Fevrier 2016
 #include "ldiZenzo.h"
 #include "ldilat.h"
 #include "ldilatbin.h"
