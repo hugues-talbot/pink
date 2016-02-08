@@ -239,7 +239,7 @@ knowledge of the CeCILL license and that you accept its terms.
 //#include "llevialdi.h"
 #include "llinapprox.h"
 #include "lline.h"
-#include "llocalextrema.h"
+//#include "llocalextrema.h" commentaire M8F2016
 #include "llpeGA.h"
 #include "llpemeyer.h"
 #include "llpemeyer4d.h"
