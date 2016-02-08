@@ -253,7 +253,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lnbvois.h"
 #include "loffset.h"
 #include "lpoint.h"
-#include "lppm2GA.h"
+//#include "lppm2GA.h" commentaire M8F2016
 #include "lprofil.h"
 //#include "lpropgeo.h" commentaire M8F2016
 //#include "lrecalagerigide.h" commentaire M4F2016
