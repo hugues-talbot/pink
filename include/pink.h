@@ -189,7 +189,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "ldilatfast.h"
 #include "ldilatfast3d.h"
 //#include "ldilatplan.h"
-#include "ldir.h"
+//#include "ldir.h" //commenté par Sophie, 08 Fevrier 2016
 #include "ldirections.h"
 #include "ldist.h"
 #include "ldistgeo.h"

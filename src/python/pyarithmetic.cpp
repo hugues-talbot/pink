@@ -12,7 +12,7 @@
 // The pink python wrapper core file
 
 #include "pink_python.h"
-#include "ldir.h"
+//#include "ldir.h" //commenté par Sophie, 08 Fevrier 2016
 //#include "lccv.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lhtkern.h"
 //#include "lconvol3.h" //commenté par Sophie 04 Fevrier 2016
@@ -69,13 +69,14 @@ namespace arithmetic
 
 //NOTE: consider directionalfilter because of the converfloat
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 08 Fevrier 2016
+ /* UI_WRAP_FUNCTION(
     "dir",
     ldir,
     (arg("image"), arg("dir")),
     doc__dir__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
   UI_WRAP_FUNCTION(
     "directions",
