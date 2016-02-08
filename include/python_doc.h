@@ -1,33 +1,11 @@
 // This file has been generated automatically by the 
 // python_documenter, part of the PInK package (UjoImro, 2011)
-// the date of generation: 2016-02-08T16:45:32Z
+// the date of generation: 2016-02-08T22:21:13Z
 // warning: DO NOT EDIT. All your changes will be lost at 
 // the next generation
 
 #ifndef PINK__PYTHON__DOCUMENTER__HPP__
 #define PINK__PYTHON__DOCUMENTER__HPP__
-#define doc__ptcurve__c__ "  ptcurve.c\n"         \
-"\n"         \
-" detects curve points in a binary image\n"         \
-"\n"         \
-"Usage: ptcurve in.pgm connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"An curve point is a white point, which has exactly 2 white n-neighbours \n"         \
-"that are not n-neighbours to each other. In other words, Tn = 2 and \n"         \
-"each neighboring n-connected component is made of exactly one point\n"         \
-"(n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter  connex)\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2002\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__diZenzo__c__ "  diZenzo.c\n"         \
 "\n"         \
 " diZenzo gradient pour les images couleurs\n"         \
@@ -492,31 +470,6 @@
 "\n"
 
 
-#define doc__pca__c__ "  pca.c\n"         \
-"\n"         \
-" principal component analysis\n"         \
-"\n"         \
-"Usage: pca in.list out.list\n"         \
-"\n"         \
-"Description:\n"         \
-"Computes the main directions (2D or 3D vectors) of a set of points in 2D or 3D space, by the method of Pricipal Component Analysis (PCA).\n"         \
-"\n"         \
-"The output is a file in the list \"b\" or \"B\" format that contains the following information:\n"         \
-" center of mass (point)\n"         \
-" first principal direction (vector) \n"         \
-" second principal direction (vector) \n"         \
-" for 3D images, third principal direction (vector) \n"         \
-"\n"         \
-"Types supported: list 2D, list 3D\n"         \
-"\n"         \
-"Category: stats\n"         \
-" stats\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__geoeros__c__ "  geoeros.c\n"         \
 "\n"         \
 " geodesic (grayscale or binary) erosion\n"         \
@@ -568,31 +521,6 @@
 
 
 #define doc__erosbin3d__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__medianfilter__c__ "  medianfilter.c\n"         \
-"\n"         \
-" median filter \n"         \
-"\n"         \
-"Usage: medianfilter in.pgm el.pgm out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Let F be the input image, G be the output image, and E the structuring\n"         \
-"element. \n"         \
-"then for each pixel p, G[p] is the median element of the sorted list (by \n"         \
-"increasing order) of the pixel values in the set { F[q], q in E[p] }.\n"         \
-"\n"         \
-"The median filter is a particular case of rank filter (see rankfilter.c), \n"         \
-"with rank = 0.5 .\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: morpho\n"         \
-" morpho\n"         \
-"\n"         \
-" Michel Couprie 1997\n"         \
-"\n"         \
 "\n"
 
 
@@ -779,40 +707,6 @@
 "\n"         \
 "\n"         \
 " development Development\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__pgm2vskel__c__ "  pgm2vskel.c\n"         \
-"\n"         \
-" decomposition of a valuated curvilinear skeleton into isolated points, end points, curves and junctions\n"         \
-"\n"         \
-"Usage: pgm2vskel in.pgm val.pgm connex out.skel\n"         \
-"\n"         \
-"Description:\n"         \
-"The skeleton found in  in.pgm is decomposed into isolated points, \n"         \
-"end points, curves and junctions ;\n"         \
-"and its description is stored in  out.skel . \n"         \
-"Each point of the skeleton is valuated by the corresponding value\n"         \
-"found in  val.pgm .\n"         \
-"The parameter  connex sets the adjacency relation used for the object\n"         \
-"(4, 8 (2d) or 6, 18, 26 (3d)).\n"         \
-"\n"         \
-" No verification is done to check that the input image  in.pgm \n"         \
-"contains indeed a curvilinear skeleton.\n"         \
-"In the contrary case, the result would be meaningless.\n"         \
-"\n"         \
-" IMPORTANT LIMITATION: different junctions in the original image \n"         \
-"must not be in direct contact with each other\n"         \
-"(i.e., connected) otherwise they will be considered as a single junction. \n"         \
-"To prevent this to occur, one can increase image resolution. \n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2004\n"         \
 "\n"         \
 "\n"
 
@@ -1064,10 +958,6 @@
 "\n"
 
 
-#define doc__MSF4d__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__rankfilter__c__ "  rankfilter.c\n"         \
 "\n"         \
 " rank filter \n"         \
@@ -1214,40 +1104,6 @@
 "\n"
 
 
-#define doc__meanfilter__c__ "  meanfilter.c\n"         \
-"\n"         \
-" Mean filter operator\n"         \
-"\n"         \
-"Usage: meanfilter in.pgm roi.pgm niter [inhibit.pgm] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Let F be the function stored in image  in.pgm.\n"         \
-"Let R be the function stored in image  roi.pgm (region of interest).\n"         \
-"Let I be the function stored in image  inhibit.pgm (if any).\n"         \
-"The algorithm is the following:\n"         \
-"\n"         \
-"\n"         \
-"Repeat niter times\n"         \
-"  G = F\n"         \
-"  For each image point x\n"         \
-"    If R[x] and not I[x] then\n"         \
-"      S = G[x]; C = 1;\n"         \
-"      For each neighbour y of x\n"         \
-"        If R[y] then S = S + G[y]; C = C + 1;\n"         \
-"      F[x] = S / C;\n"         \
-"Result: F\n"         \
-"\n"         \
-"\n"         \
-"Types supported: byte 2d, int32_t 2d, float 2d, byte 3d, int32_t 3d, float 3d\n"         \
-"\n"         \
-"Category: signal\n"         \
-"  signal\n"         \
-"\n"         \
-" Marcin Janaszewski, Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__cadre__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -1361,59 +1217,6 @@
 "\n"
 
 
-#define doc__lvkern__c__ "  lvkern.c\n"         \
-"\n"         \
-" grayscale ultimate leveling thinning\n"         \
-"\n"         \
-"Usage: lvkern in.pgm {imcond.pgm|null} connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Grayscale ultimate leveling thinning (refs. [BEC97, CBB01]).\n"         \
-"The parameter  connex gives the connectivity used for the minima;\n"         \
-"possible choices are 4, 8 in 2D and 6, 26 in 3D.\n"         \
-"Let F be the function corresponding to the input image  in.pgm.\n"         \
-"Let G be the function corresponding to the input image \n"         \
-" imcond.pgm, or the null function if the keyword  null is used.\n"         \
-"The algorithm is the following:\n"         \
-"\n"         \
-"\n"         \
-"Repeat until stability:\n"         \
-"    select p such that T--(p,F) = 1 and such that F(p) is minimal\n"         \
-"    F(p) = max{ delta-(p,F), G(p) }    \n"         \
-"Result: F\n"         \
-"\n"         \
-"\n"         \
-"References: \n"         \
-"[BEC97] G. Bertrand, J. C. Everat and M. Couprie: \"Image segmentation through operators based upon topology\",  Journal of Electronic Imaging, Vol.&nbsp;6, No.&nbsp;4, pp.&nbsp;395-405, 1997.\n"         \
-"[CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: \"Topological operators for\n"         \
-"grayscale image processing\",  Journal of Electronic Imaging, Vol.&nbsp;10, No.&nbsp;4, pp.&nbsp;1003-1015, 2001.\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D.\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"Example:\n"         \
-"\n"         \
-"lvkern ur1 null 4 ur1_lvkern\n"         \
-"minima ur1_lvkern 4 ur1_lvkern_m\n"         \
-"\n"         \
-"\n"         \
-"  \n"         \
-"      \n"         \
-"      \n"         \
-"  \n"         \
-"  ur1\n"         \
-"      ur1_lvkern\n"         \
-"      ur1_lvkern_m\n"         \
-"  \n"         \
-"\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__detectcercles__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -1434,27 +1237,6 @@
 "  arith, geo\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__pthseparatinggray__c__ "  pthseparatinggray.c\n"         \
-"\n"         \
-" detects h-separating points in a grayscale image\n"         \
-"\n"         \
-"Usage: pthseparatinggray in.pgm connex h out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"An h-separating point for an image F is a point p, \n"         \
-"such that there exists c verifying F(p)-h \n"         \
-"#CC(X inter N(p)) > 1, with X = {x | F(x) \n"         \
-"\n"         \
-"Types supported: byte 2d, byte 2d\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
-"\n"         \
-" Michel Couprie 2010\n"         \
 "\n"         \
 "\n"
 
@@ -1606,30 +1388,6 @@
 "\n"
 
 
-#define doc__meshaddnoise__c__ "  meshaddnoise.c\n"         \
-"\n"         \
-" adds gaussian noise to the positions of the vertices of a mesh\n"         \
-"\n"         \
-"Usage: meshaddnoise in alpha out\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Adds gaussian noise to the positions of the vertices of a mesh.\n"         \
-"The mean of the gaussian is 0.\n"         \
-"The standard deviation of the gaussian is given by alpha. \n"         \
-"Available input formats: mcm, ifs, vtk, ac.\n"         \
-"Available output formats: mcm, vtk.\n"         \
-"\n"         \
-"Types supported: mesh 3d\n"         \
-"\n"         \
-"Category: mesh3d\n"         \
-"  mesh3d\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__dror__cxx__ "  im2line.c\n"         \
 "\n"         \
 " find line into an image using bresenham definition\n"         \
@@ -1761,10 +1519,6 @@
 "\n"
 
 
-#define doc__ppm2bmp__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__GAwatershed__c__ "  GAwatershed.c\n"         \
 "\n"         \
 " Compute the watershed of a 4-connected edge-weighted graph (a GA)\n"         \
@@ -1804,47 +1558,7 @@
 "\n"
 
 
-#define doc__projsphere__c__ "  projsphere.c\n"         \
-"\n"         \
-" projection on a sphere\n"         \
-"\n"         \
-"Usage: projsphere in.pgm out.pgm\n"         \
-"\n"         \
-"Description: Projection on a sphere.\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__despics__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__maxdiameter__c__ "  maxdiameter.c\n"         \
-"\n"         \
-" maximal diameter of a binary image\n"         \
-"\n"         \
-"Usage: maxdiameter in connex out\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Find two points x, y in a set X (binary image in) such that \n"         \
-"d(x,y) is greater or equal to d(v,w) for any two points v, w in X.\n"         \
-"The distance d is the Euclidean distance.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Gu Jun\n"         \
-"\n"         \
 "\n"
 
 
@@ -2017,10 +1731,6 @@
 "\n"
 
 
-#define doc__proj3d__c__new__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__hfilling__c__ "  hfilling.c\n"         \
 "\n"         \
 " homotopic filling (pseudo closing) by a ball\n"         \
@@ -2077,10 +1787,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__proj3d__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -2192,31 +1898,6 @@
 
 
 #define doc__CMakeLists__txt__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__meshconvert__c__ "  meshconvert.c\n"         \
-"\n"         \
-" mesh format conversion\n"         \
-"\n"         \
-"Usage: meshconvert in [resolution] out\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Mesh format conversion. \n"         \
-"Available input formats: mcm, ifs, vtk.\n"         \
-"Available output formats: mcm, vtk, pgm (points only).\n"         \
-"If the output format is pgm, then the optional argument resolution \n"         \
-"gives the resolution of the grid (homogeneous in x, y and z dimensions). The \n"         \
-"default value is 1.0.\n"         \
-"\n"         \
-"Types supported: mesh 3d\n"         \
-"\n"         \
-"Category: mesh3d, convert\n"         \
-"  mesh3d, convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -2500,26 +2181,6 @@
 "\n"
 
 
-#define doc__pgmrawmode__c__ "  pgmrawmode.c\n"         \
-"\n"         \
-" converts a pgm file to raw mode\n"         \
-"\n"         \
-"Usage: pgmrawmode filename [outfilename]\n"         \
-"\n"         \
-"Description: Converts a pgm file to raw mode.\n"         \
-"If only parameter  filename is given, then the result\n"         \
-"is also named  filename .\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__alpha__c__ "  alpha.c\n"         \
 "\n"         \
 " computes the connecivity number alpha for each image voxel\n"         \
@@ -2540,27 +2201,6 @@
 "\n"         \
 "[CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: \"Topological operators for\n"         \
 "grayscale image processing\",  Journal of Electronic Imaging, Vol.&nbsp;10, No.&nbsp;4, pp.&nbsp;1003-1015, 2001.\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__ppm2pgm__c__ "  ppm2pgm.c\n"         \
-"\n"         \
-" converts a color ppm image into 3 grayscale pgm images\n"         \
-"\n"         \
-"Usage: ppm2pgm in.ppm r.pgm g.pgm b.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Converts a color ppm image  in.ppm into 3 grayscale pgm images\n"         \
-"r.pgm, g.pgm and b.pgm which are the red, \n"         \
-"green and blue color planes of the original color image.\n"         \
-"\n"         \
-"Types supported: byte color 2d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -2683,33 +2323,7 @@
 "\n"
 
 
-#define doc__mcmbuild__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__egalise__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__meshoffset__c__ "  meshoffset.c\n"         \
-"\n"         \
-" applies an offset to all points of a mesh (translation)\n"         \
-"\n"         \
-"Usage: meshoffset in [ox oy oz] out\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Applies an offset to all points of a mesh (translation). \n"         \
-"Available input formats: vtk.\n"         \
-"Available output formats: vtk.\n"         \
-"\n"         \
-"Types supported: mesh 3d\n"         \
-"\n"         \
-"Category: mesh3d\n"         \
-"  mesh3d\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -2759,77 +2373,6 @@
 " connect\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__mcube_tmp__c__ "  mcube.c\n"         \
-"\n"         \
-" topologically correct \"marching cubes\"-like algorithm\n"         \
-"\n"         \
-"Usage: mcube in.pgm threshold nregul obj_id format [connex] out\n"         \
-"\n"         \
-"Description:\n"         \
-"Generates a 3d mesh from the binary or grayscale image  in.pgm .\n"         \
-"\n"         \
-"The original image is first thresholded (parameter  threshold, values 0 and 1\n"         \
-"both fit for a binary image). Then the method described in [Lac96] is applied to\n"         \
-"generate the 3d mesh. The resulting mesh is then smoothed by  nregul steps of \n"         \
-"laplacian smoothing. The parameter  obj_id is used to tag the generated mesh.\n"         \
-"\n"         \
-"The parameter  format indicate the format of the output file \n"         \
-"(choices are POV, POVB, COL, MCM, AC, GL, VTK, RAW).\n"         \
-"The keyword POVB corresponds to a bare Povray mesh: \n"         \
-"a header and a footer must be catenated in order to make a full Povray scene. \n"         \
-"The keyword RAW is the exchange format for the \"mesh\" software: see http://mesh.berlios.de/\n"         \
-"\n"         \
-"The optional parameter  connex indicates the connexity used for the object.\n"         \
-"Possible values are 6 and 26 (default).\n"         \
-"\n"         \
-"[Lac96] J.-O. Lachaud, \"Topologically defined iso-surfaces\", DGCI'96, LNCS 1176 (245--256), Springer Verlag, 1996.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: mesh3d\n"         \
-"  mesh3d\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__pgm2skel2__c__ "  pgm2skel2.c\n"         \
-"\n"         \
-" decomposition of a curvilinear skeleton into isolated points,\n"         \
-"end points, curves and junctions\n"         \
-"\n"         \
-"Usage: pgm2skel in.pgm junc.pgm connex out.skel\n"         \
-"\n"         \
-"Description: \n"         \
-"The skeleton found in  in.pgm is decomposed into isolated points,\n"         \
-"end points, curves and junctions ; and its description is stored in \n"         \
-" out.skel .\n"         \
-"\n"         \
-"The parameter  connex sets the adjacency relation used for the object\n"         \
-"(4, 8 (2d) or 6, 18, 26 (3d)).\n"         \
-"\n"         \
-"The image given as parameter junc.pgm contains curve points that\n"         \
-"will artificially considered as junction points.\n"         \
-"\n"         \
-" Points at the border of the image will be ignored.\n"         \
-"\n"         \
-" IMPORTANT LIMITATION: \n"         \
-"different junctions in the original image must not be in direct\n"         \
-"contact with each other (i.e., connected) otherwise they will be\n"         \
-"considered as a single junction. To prevent this to occur, one can\n"         \
-"increase image resolution.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2009\n"         \
 "\n"         \
 "\n"
 
@@ -3197,35 +2740,6 @@
 "\n"
 
 
-#define doc__pgm2GA4d__c__ "  pgm2GA4d.c\n"         \
-"\n"         \
-" Create a 4D edge-weighted graph from a series of 3D images\n"         \
-"\n"         \
-"\n"         \
-"Usage: pgm2GA4d prefix_in first last mode GA4d_out.ga\n"         \
-"\n"         \
-"Description: Create a 4D GA (edge-weighted graph) from the 4D\n"         \
-"image obtained by concatenation of the series of 3D images \n"         \
-"prefix_inxxxx.pgm | xxxx is a four digit decimal integer of the\n"         \
-"interval [ first , last]  . The values of the edges\n"         \
-"are computed according to the parameter mode. If mode is\n"         \
-"set to 0, then the value of an edge { x,y } is the absolute diference\n"         \
-"of intensity between the pixels x and y and if mode is set to 1\n"         \
-"the maximum of intensity between x and y is used. The output\n"         \
-"GA4d_out.ga is a 4D GA, that is a 4D, 8-connected,\n"         \
-"edge-weighted grah, (i.e. the adjacency is the direct adjacency in\n"         \
-"dimension 4).\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, byte 4d\n"         \
-"\n"         \
-"Category: convert\n"         \
-" convert\n"         \
-"\n"         \
-" Jean Cousty - janvier 2006\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__rgb2hls__c__ "  rgb2hls.c\n"         \
 "\n"         \
 " converts a ppm color file to hls representation\n"         \
@@ -3333,32 +2847,6 @@
 "\n"
 
 
-#define doc__pgm2vtk__c__ "  pgm2vtk.c\n"         \
-"\n"         \
-" generates a vtk file from a 3D image\n"         \
-"\n"         \
-"Usage: pgm2vtk in.pgm mode out.vtk\n"         \
-"\n"         \
-"Description:\n"         \
-"Create a vtk image from a 3D pgm image.\n"         \
-"If mode = \n"         \
-"     1: surfels (2-faces) from a binary khalimsky grid\n"         \
-"     2: triangulated surfels (2-faces) from a binary khalimsky grid\n"         \
-"     3: voxels (cubes) from a binary image in Z3\n"         \
-"     4: minimal grid from a binary image in Z3\n"         \
-"     5: voxels (octaedrons) from a binary image in Z3\n"         \
-"     6: linels (1-faces) from a binary khalimsky grid\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie (2005)\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__lfclose3d_rect__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -3383,41 +2871,6 @@
 "\n"
 
 
-#define doc__ppm2GA__c__ "  ppm2GA.c\n"         \
-"\n"         \
-" Computes an edge-weighted graph from an color .ppm image\n"         \
-"\n"         \
-"Usage: ppm2GA im.ppm param out.ga \n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Computes a GA (an edge-weighted graph) from a color image. The values\n"         \
-"of an edge linking two pixels {x,y} is computed according to the\n"         \
-"parameter param.\n"         \
-" \n"         \
-"If param = 0, the maximum, over the RGB chanels, of absolute\n"         \
-"differences of intensities between x and y is used.\n"         \
-"\n"         \
-"If param = 1, the Euclidean distance between the values of x and y is\n"         \
-"used.\n"         \
-"\n"         \
-"If param = 2, fuzzy affinity between x and y is used.\n"         \
-"\n"         \
-"If im.ppm is a 2D (resp. 3D) image, then out.ga is a 2D (resp\n"         \
-"3D GA), that is a 2D 4-connected edge-weighted graph (resp. a 2D\n"         \
-"6-connected edge-weighted graph).\n"         \
-"\n"         \
-"\n"         \
-"Types supported: ppm 2D\n"         \
-"\n"         \
-"Category: \n"         \
-"  GA\n"         \
-"\n"         \
-" Jean Cousty\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__fits2pgm__c__ "  fits2pgm.c\n"         \
 "\n"         \
 " converts from fits format into pgm format\n"         \
@@ -3431,65 +2884,6 @@
 "\n"         \
 "Category: convert\n"         \
 " convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__pol2car__c__ "  pol2car.c\n"         \
-"\n"         \
-" converts a 2d image from polar to cartesian coordinates\n"         \
-"\n"         \
-"Usage: in_pol in_car x_center y_center out\n"         \
-"\n"         \
-"Description:\n"         \
-"Converts a 2d image from polar to cartesian coordinates.\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__meshregul__c__ "  meshregul.c\n"         \
-"\n"         \
-" mesh smoothing\n"         \
-"\n"         \
-"Usage: meshregul in mode [param1 [param2]] out\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Mesh smoothing. \n"         \
-"The possible choices for parameter mode are:\n"         \
-" 0: Laplacian smoothing (param1 = number of iterations, default value 5)\n"         \
-" 1: Hamam method [HC07] (SOWA, param1 = theta, default value 1.0)\n"         \
-" 2: Vollmer, Mencl and Mueller method [VMM] (param1 = alpha, param2 = beta, default values 0.1 and 0.6 resp.)\n"         \
-" 3: Hamam method [HC07], variant: matrix A used instead of AA (FOWA, param1 = theta, default value 1.0)\n"         \
-" 4: Hamam method [HC07], variant: theta = infty (SOWA, param1 = number of iterations, default value 5)\n"         \
-" 5: Hamam method [HC07], conjugate gradient algorithm (SOWA, param1 = theta, default value 1.0)\n"         \
-" 6: Taubin method [Tau95] (param1 = lambda, param2 = mu, param3 = N, default values 0.33 and -0.34 and 60)\n"         \
-" 7: Laplacian smoothing for a 2D polygon, with border edges preservation (param1 = number of iterations, default value 10)\n"         \
-"\n"         \
-"[HC07] Y. Hamam and M. Couprie, \"An optimisation-based approach to mesh smoothing: reformulation and extensions\", to appear, 2007.\n"         \
-"\n"         \
-"[VMM99] J. Vollmer and R. Mencl and H. Muller,\n"         \
-"\"Improved Laplacian Smoothing of Noisy Surface Meshes\",\n"         \
-"Computer Graphics Forum, Vol. 18, N. 3, pp. 131-138, 1999.\n"         \
-"\n"         \
-"[Tau95] G. Taubin, \n"         \
-"\"Curve and surface smoothing without shrinkage\"\n"         \
-"Proceedings of the Fifth International Conference on Computer Vision,\n"         \
-"pp. 852-857, 1995.\n"         \
-"\n"         \
-"Types supported: mesh 3d\n"         \
-"\n"         \
-"Category: mesh3d\n"         \
-"  mesh3d\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -3675,41 +3069,6 @@
 "\n"
 
 
-#define doc__mcube__c__ "  mcube.c\n"         \
-"\n"         \
-" topologically correct \"marching cubes\"-like algorithm\n"         \
-"\n"         \
-"Usage: mcube in.pgm threshold nregul obj_id format [connex] out\n"         \
-"\n"         \
-"Description:\n"         \
-"Generates a 3d mesh from the binary or grayscale image  in.pgm .\n"         \
-"\n"         \
-"The original image is first thresholded (parameter  threshold, values 0 and 1\n"         \
-"both fit for a binary image). Then the method described in [Lac96] is applied to\n"         \
-"generate the 3d mesh. The resulting mesh is then smoothed by  nregul steps of \n"         \
-"laplacian smoothing. The parameter  obj_id is used to tag the generated mesh.\n"         \
-"\n"         \
-"The parameter  format indicate the format of the output file \n"         \
-"(choices are POV, POVB, COL, MCM, AC, GL, VTK, RAW).\n"         \
-"The keyword POVB corresponds to a bare Povray mesh: \n"         \
-"a header and a footer must be catenated in order to make a full Povray scene. \n"         \
-"The keyword RAW is the exchange format for the \"mesh\" software: see http://mesh.berlios.de/\n"         \
-"\n"         \
-"The optional parameter  connex indicates the connexity used for the object.\n"         \
-"Possible values are 6 and 26 (default).\n"         \
-"\n"         \
-"[Lac96] J.-O. Lachaud, \"Topologically defined iso-surfaces\", DGCI'96, LNCS 1176 (245--256), Springer Verlag, 1996.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: mesh3d\n"         \
-"  mesh3d\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__3dthin__c__ "  3dthin.c\n"         \
 "\n"         \
 " homotopic thinning of a 3d Khalimsky image\n"         \
@@ -3806,27 +3165,6 @@
 "\n"
 
 
-#define doc__ptend__c__ "  ptend.c\n"         \
-"\n"         \
-" detects end points in a binary image\n"         \
-"\n"         \
-"Usage: ptend in.pgm connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"An end point is a white point, which has exactly 1 white n-neighbour (n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter  connex)\n"         \
-"\n"         \
-"When the type of  in.pgm is 4_BYTE, the image is treated as a label image, where each label is processed as a separate binary image (all other labels are considered as background).\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D, long 3D\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2002\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__erosbin__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -3860,31 +3198,6 @@
 "  signal\n"         \
 "\n"         \
 " Michel Couprie 2003\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__pgm2ppm__c__ "  pgm2ppm.c\n"         \
-"\n"         \
-" constructs a ppm color image from 3 pgm grayscale image or from a pgm image and a lookup table\n"         \
-"\n"         \
-"Usage: pgm2ppm {r.pgm g.pgm b.pgm|in.pgm in.lut} out.ppm\n"         \
-"\n"         \
-"Description:\n"         \
-"1st mode (3 arguments): combines three grayscale images: r.pgm, g.pgm and\n"         \
-"b.pgm as the red, green and blue color planes of the color image out.ppm\n"         \
-"\n"         \
-"2nd mode (2 arguments): generates a color ppm image from the image in.pgm and the \n"         \
-"lookup table in.lut\n"         \
-"\n"         \
-"A lookup table is represented by a special ppm image with 1 row. \n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
 "\n"         \
 "\n"
 
@@ -4422,74 +3735,6 @@
 "\n"
 
 
-#define doc__pgm2closedcurve__c__ "  pgm2closedcurve.c\n"         \
-"\n"         \
-" extracts a curve from a binary image\n"         \
-"\n"         \
-"Usage: pgm2closedcurve image.pgm connex [x y [z]] out.curve\n"         \
-"\n"         \
-"Description:\n"         \
-"Extracts a closed curve from a binary image, that is, a curve with the\n"         \
-"same starting and ending point.\n"         \
-"The parameter  connex is the connexity of the curve.\n"         \
-"It may be equal to 4 or 8 in 2D, and to 6, 18 or 26 in 3D.\n"         \
-"If given, the point (x, y, z) (2D) or (x, y, z) (3D) \n"         \
-"is taken as the starting point of the curve, and must be a curve point. \n"         \
-"The output is the text file  out.curve, with the following format:\n"         \
-"b nbpoints\n"         \
-"x1 y1\n"         \
-"x2 y2\n"         \
-"...\n"         \
-"or (3D): \n"         \
-"B nbpoints\n"         \
-"x1 y1 z1\n"         \
-"x2 y2 z2\n"         \
-"...\n"         \
-"\n"         \
-"The points of the curve may also be valued. This is must be indicated by \n"         \
-"a value of 40, 80, 60, 180 or 260 for the parameter  connex, instead\n"         \
-"of 4, 8, 6, 18 or 26 respectively. In this case,\n"         \
-"the output is the text file  out.curve, with the following format:\n"         \
-"n nbpoints\n"         \
-"x1 y1 v1\n"         \
-"x2 y2 v2\n"         \
-"...\n"         \
-"or (3D): \n"         \
-"N nbpoints\n"         \
-"x1 y1 z1 v1\n"         \
-"x2 y2 z2 v2\n"         \
-"...\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: convert geo\n"         \
-"  convert geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__ombre__c__ "  ombre.c\n"         \
-"\n"         \
-" binary shadow of a grayscale function\n"         \
-"\n"         \
-"Usage: ombre in.pgm out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"The shadow of a 1D grayscale image is a 2D binary image.\n"         \
-"The shadow of a 2D grayscale image is a 3D binary image.\n"         \
-"\n"         \
-"Types supported: byte 1d, byte 2d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__longestplateau__c__ "  longestplateau.c\n"         \
 "\n"         \
 " finds the location of the longest plateau in 1D sequence\n"         \
@@ -4663,32 +3908,6 @@
 "\n"
 
 
-#define doc__GA2pgm__c__ "  GA2pgm.c\n"         \
-"\n"         \
-" Convert a 4-connected edge-weighted graph (a GA) into a pgm image \n"         \
-"\n"         \
-"Usage: GA2pgm graph.ga param out.pgm \n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Convert a 4-connected edge-weighted graph (graph.ga) into a pgm\n"         \
-"image (out.pgm) where each pixel represents a vertex of the\n"         \
-"input graph and the gray level of a pixel is obtained from the values\n"         \
-"of its incident edges by means of an operation depending of the\n"         \
-"parameter param.\n"         \
-"\n"         \
-"If param = 1, then max is used, and if param = 2, min is used.\n"         \
-"\n"         \
-"Types supported: ga 2d, ga 3d\n"         \
-"\n"         \
-"Category: GA\n"         \
-" GA\n"         \
-"\n"         \
-" Jean Cousty\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__comptreetime__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -4717,53 +3936,6 @@
 
 
 #define doc__dir__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__pgm2curve__c__ "  pgm2curve.c\n"         \
-"\n"         \
-" extracts a curve from a binary image\n"         \
-"\n"         \
-"Usage: pgm2curve image.pgm connex [x y [z]] out.curve\n"         \
-"\n"         \
-"Description:\n"         \
-"Extracts a curve from a binary image. \n"         \
-"The parameter  connex is the connexity of the curve.\n"         \
-"It may be equal to 4 or 8 in 2D, and to 6, 18 or 26 in 3D.\n"         \
-"If given, the point (x, y, z) (2D) or (x, y, z) (3D) \n"         \
-"is the beginning of the curve, and must be an end point. \n"         \
-"The output is the text file  out.curve, with the following format:\n"         \
-"b nbpoints\n"         \
-"x1 y1\n"         \
-"x2 y2\n"         \
-"...\n"         \
-"or (3D): \n"         \
-"B nbpoints\n"         \
-"x1 y1 z1\n"         \
-"x2 y2 z2\n"         \
-"...\n"         \
-"\n"         \
-"The points of the curve may also be valued. This is must be indicated by \n"         \
-"a value of 40, 80, 60, 180 or 260 for the parameter  connex, instead\n"         \
-"of 4, 8, 6, 18 or 26 respectively. In this case,\n"         \
-"the output is the text file  out.curve, with the following format:\n"         \
-"n nbpoints\n"         \
-"x1 y1 v1\n"         \
-"x2 y2 v2\n"         \
-"...\n"         \
-"or (3D): \n"         \
-"N nbpoints\n"         \
-"x1 y1 z1 v1\n"         \
-"x2 y2 z2 v2\n"         \
-"...\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: convert geo\n"         \
-"  convert geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -5575,27 +4747,6 @@
 "\n"
 
 
-#define doc__planarity__c__ "  planarity.c\n"         \
-"\n"         \
-" computes a planarity measure for each connected component\n"         \
-"\n"         \
-"Usage: planarity in.pgm connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Labels each connected component with its planarity value.\n"         \
-"Argument  connex defines the connectivity.\n"         \
-"The result is a floating point image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__grid__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -5654,71 +4805,11 @@
 "\n"
 
 
-#define doc__lvkernu__c__ "  lvkernu.c\n"         \
-"\n"         \
-" grayscale ultimate leveling thickening\n"         \
-"\n"         \
-"Usage: lvkernu in.pgm {imcond.pgm|null} connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Grayscale ultimate leveling thickening (refs. [BEC97, CBB01]).\n"         \
-"The parameter  connex gives the connectivity used for the minima;\n"         \
-"possible choices are 4, 8 in 2D and 6, 26 in 3D.\n"         \
-"Let F be the function corresponding to the input image  in.pgm.\n"         \
-"Let G be the function corresponding to the input image \n"         \
-" imcond.pgm, or the blanck function (constant 255) if the keyword  null is used.\n"         \
-"The algorithm is the following:\n"         \
-"\n"         \
-"\n"         \
-"Repeat until stability:\n"         \
-"    select p such that T++(p,F) = 1 and such that F(p) is maximal\n"         \
-"    F(p) = min{ delta+(p,F), G(p) }    \n"         \
-"Result: F\n"         \
-"\n"         \
-"\n"         \
-"References: \n"         \
-"[BEC97] G. Bertrand, J. C. Everat and M. Couprie: \"Image segmentation through operators based upon topology\",  Journal of Electronic Imaging, Vol.&nbsp;6, No.&nbsp;4, pp.&nbsp;395-405, 1997.\n"         \
-"[CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: \"Topological operators for\n"         \
-"grayscale image processing\",  Journal of Electronic Imaging, Vol.&nbsp;10, No.&nbsp;4, pp.&nbsp;1003-1015, 2001.\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D.\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__ecarttype__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
 #define doc__dev_conventions__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__matchrect__c__ "  matchrect.c\n"         \
-"\n"         \
-" matches (rounded) rectangles to the contours of objects\n"         \
-"\n"         \
-"Usage: matchrect in.pgm connex [rounded|axis] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Matches (rounded) rectangles to the contours of objects.\n"         \
-"Objects are connected components according to the connectivity\n"         \
-"given by  connex .\n"         \
-"Option  rounded is used to match rounded rectangles.\n"         \
-"Option  axis is used to output only the big axis of the matched rectangle.\n"         \
-"\n"         \
-"Types supported: byte 2D\n"         \
-"\n"         \
-"Category:  geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -5966,115 +5057,6 @@
 "\n"
 
 
-#define doc__pgm2list__c__ "  pgm2list.c\n"         \
-"\n"         \
-" converts from pgm format to list format\n"         \
-"\n"         \
-"Usage: pgm2list image.pgm {e|s|b|n|B|N} out.list\n"         \
-"\n"         \
-"Description:\n"         \
-"Converts from pgm format to list format:\n"         \
-" e: set of points\n"         \
-" s: 1d digital signal\n"         \
-" b: binary 2D image\n"         \
-" n: grayscale 2D image\n"         \
-" B: binary 3D image\n"         \
-" N: grayscale 3D image\n"         \
-"\n"         \
-"In formats  e,  b and  B, only the points with non-null values are \n"         \
-"considered.\n"         \
-"\n"         \
-"In formats  s,  n and  N, all the points (even those having a \n"         \
-"null value) are considered.\n"         \
-"\n"         \
-"Summary of list formats:\n"         \
-"  \n"         \
-"  e &lt;n&gt;       s &lt;n&gt;         b &lt;n&gt;         n &lt;n&gt;            B &lt;n&gt;            N &lt;n&gt;    \n"         \
-"  x1          x1 v1         x1 y1         x1 y1 v1         x1 y1 z1         x1 y1 z1 v1\n"         \
-"  x2    or    x2 v2   or    x2 y2   or    x2 y2 v2   or    x2 y2 z2   or    z2 x2 y2 v2\n"         \
-"  ...         ...           ...           ...              ...              ...\n"         \
-"  xn          xn vn         xn yn         xn yn vn         xn yn z3         z3 xn yn vn\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D, int32_t 2D, int32_t 3D, float 2D, float 3D\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__points2spline__c__ "  points2spline.c\n"         \
-"\n"         \
-" converts a sequence of control points into a spline\n"         \
-"\n"         \
-"Usage: points2spline points.txt spline.txt\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Let S be the sequence of control points in points.txt. This program computes\n"         \
-"a parametric curve P defined by two (in 2D) or three (in 3D) splines \n"         \
-"that interpolates the points of the sequence S.\n"         \
-"\n"         \
-"If the last point equals the first point, then a closed spline is generated.\n"         \
-"\n"         \
-"The result is given in the form of the list of control points, followed by\n"         \
-"the set of coefficients for each spline segment. \n"         \
-"\n"         \
-"The input file  points.txt contains a list of points under the format:\n"         \
-"\n"         \
-"b nbpoints  \n"         \
-"x1 y1\n"         \
-"x2 y2\n"         \
-"x3 y3\n"         \
-"...\n"         \
-"\n"         \
-"or:\n"         \
-"\n"         \
-"B nbpoints  \n"         \
-"x1 y1 z1\n"         \
-"x2 y2 z2\n"         \
-"x3 y3 z3\n"         \
-"...\n"         \
-"\n"         \
-"The output file format is the following for 2D:\n"         \
-"\n"         \
-"c n+1 (where n+1 denotes the number of control points)\n"         \
-"x1 y1\n"         \
-"...\n"         \
-"xn+1 yn+1\n"         \
-"C0X1 C0Y1 C1X1 C1Y1 C2X1 C2Y1 C3X1 C3Y1\n"         \
-"...\n"         \
-"C0Xn C0Yn C1Xn C1Yn C2Xn C2Yn C3Xn C3Yn\n"         \
-"\n"         \
-"and in the 3D case:\n"         \
-"\n"         \
-"C n+1 (where n+1 denotes the number of control points)\n"         \
-"x1 y1 z1\n"         \
-"...\n"         \
-"xn+1 yn+1 zn+1\n"         \
-"C0X1 C0Y1 C0Z1 C1X1 C1Y1 C1Z1 C2X1 C2Y1 C2Z1 C3X1 C3Y1 C3Z1\n"         \
-"...\n"         \
-"C0Xn C0Yn C0Zn C1Xn C1Yn C1Zn C2Xn C2Yn C2Zn C3Xn C3Yn C3Zn\n"         \
-"\n"         \
-"The ith segment (starting from i=0) of the parametric curve P is then defined by:\n"         \
-"\n"         \
-"x(t) = C3Xi * t^3 + C2Xi * t^2 + C1Xi * t + C0Xi\n"         \
-"y(t) = C3Yi * t^3 + C2Yi * t^2 + C1Yi * t + C0Yi\n"         \
-"z(t) = C3Zi * t^3 + C2Zi * t^2 + C1Zi * t + C0Zi\n"         \
-"with t in [i,i+1]\n"         \
-"\n"         \
-"Types supported: list 2D, list 3D\n"         \
-"\n"         \
-"Category: draw geo\n"         \
-"  draw geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__asfr__c__ "  asfr.c\n"         \
 "\n"         \
 " alternate sequential filter by reconstruction\n"         \
@@ -6265,26 +5247,6 @@
 "\n"
 
 
-#define doc__pgm2graph__c__ "  pgm2graph.c\n"         \
-"\n"         \
-" converts a binary image into a simple graph\n"         \
-"\n"         \
-"Usage: pgm2graph in.pgm connex out.graph\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"The vertices of the graph are the object pixels of the binary image  in.pgm, and there is an edge between each pair of adjacent pixels (according to  connex).  \n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2010\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__dist__c__ "  dist.c\n"         \
 "\n"         \
 " distance transform (external)\n"         \
@@ -6388,55 +5350,6 @@
 
 
 #define doc__gradill__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__pgm2ps__c__ "  pgm2ps.c\n"         \
-"\n"         \
-" converts from pgm to ps for illustrating small image configurations\n"         \
-"\n"         \
-"Usage: pgm2ps in.pgm mode {label.pgm|null} {marker.pgm|null} coord maxval out.ps\n"         \
-"\n"         \
-"Description:\n"         \
-"Produces a Postscript file from a binary or grayscale image.\n"         \
-"If mode = \n"         \
-"     b: binary image\n"         \
-"     c: grayscale image (levels not printed)\n"         \
-"     n: grayscale image (levels printed as numbers on a colored background)\n"         \
-"     m: grayscale image (levels printed as numbers on a colored background)\n"         \
-"     d: grayscale image (idem n - levels are square-rooted)\n"         \
-"     i: grayscale image (levels printed as numbers on an inverted colored background)\n"         \
-"     p: grayscale image (levels printed as numbers)\n"         \
-"     a: grayscale image (levels printed as letters: a=1, b=2...)\n"         \
-"     g: grayscale image (levels showed as colored items)\n"         \
-"     v: vector image\n"         \
-"     B: binary khalimsky grid\n"         \
-"     N: grayscale khalimsky grid (levels printed as numbers)\n"         \
-"     G: grayscale khalimsky grid (levels showed as colored items)\n"         \
-"     C: binary khalimsky grid (dual of B)\n"         \
-"     M: grayscale khalimsky grid (dual of N)\n"         \
-"     H: grayscale khalimsky grid (dual of G)\n"         \
-"\n"         \
-"If an image  label.pgm is present and the mode is n, the level number will be replaced by a letter for each pixel not null in the label image.\n"         \
-"\n"         \
-"If an image  label.pgm is present and the mode is m, the printed number will\n"         \
-"taken in the image  label.pgm while the color will be taken from  in.pgm .\n"         \
-"\n"         \
-"If an image  marker.pgm is present, a circle will be drawn on each point not null in the marker image.\n"         \
-"\n"         \
-"The parameter  coord is a int32_t (0 or 1) which commands the inclusion of axis coordinates in the\n"         \
-"figure. \n"         \
-"\n"         \
-"The parameter  maxval is an integer which indicates the maximum grayscale value of the figure\n"         \
-"(not necessarily the maximum value of the input image).\n"         \
-"\n"         \
-"Types supported: byte 2d, int32_t 2d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -6634,10 +5547,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__moyenne__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -6914,10 +5823,6 @@
 "\n"
 
 
-#define doc__pgm2list1d__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__hthin__c__ "  hthin.c\n"         \
 "\n"         \
 " grayscale homotopic thinning\n"         \
@@ -6973,26 +5878,6 @@
 "      ur1_hthin_m\n"         \
 "  \n"         \
 "\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__printstats__c__ "  printstats.c\n"         \
-"\n"         \
-" prints some stats of an image or a region\n"         \
-"\n"         \
-"Usage: printstats in.pgm [mask.pgm]\n"         \
-"\n"         \
-"Description:\n"         \
-"Calculates the histogram of  im.pgm (masked by the binary image\n"         \
-" mask.pgm, if given) and prints it on the screen.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d\n"         \
-"\n"         \
-"Category: histo\n"         \
-"  histo\n"         \
-"\n"         \
-" Laurent Najman\n"         \
 "\n"         \
 "\n"
 
@@ -7069,43 +5954,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__pgm2pov__c__ "  pgm2pov.c\n"         \
-"\n"         \
-" generates a povray file from a 3D image\n"         \
-"\n"         \
-"Usage: pgm2pov in.pgm mode out.pov\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"mode = \n"         \
-"   0 (none)\n"         \
-"   1 (between points)\n"         \
-"   2 (everywhere)\n"         \
-"   3 (6-links)\n"         \
-"   4 (26-links)\n"         \
-"   5 (cubes)\n"         \
-"   6 (triangles)\n"         \
-"   10-14: idem 0-4, khalimsky grid\n"         \
-"   15: colored khalimsky \n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__pgm2slc__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__mcm2vtk__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -7293,43 +6141,6 @@
 "  morpho\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__pgm2GA__c__ "  pgm2GA.c\n"         \
-"\n"         \
-" Computes an edge-weighted graph from an image\n"         \
-"\n"         \
-"Usage: pgm2GA im.pgm param [alpha] out.ga \n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Computes a GA (an edge-weighted graph) from an image. The values of an\n"         \
-"edge linking two pixels {x,y} is computed according to the parameter\n"         \
-"param.\n"         \
-"\n"         \
-"If param = 0, the absolute difference of intensity between x and y is used.\n"         \
-"\n"         \
-"If param = 1, the maximum between the intensities of x and y is used.\n"         \
-"\n"         \
-"If param = 2, the minimum between the intensities of x and y is used.\n"         \
-"\n"         \
-"If param = 3, a Deriche-like gradient is used, the optional parameter\n"         \
-"alpha specifies the spatial extention of the filter (by default alpha\n"         \
-"is set to  1]),\n"         \
-"\n"         \
-"If im.pgm is a 2D (resp. 3D) image, then out.ga is a 2D (resp\n"         \
-"3D GA), that is a 2D 4-connected edge-weighted graph (resp. a 2D\n"         \
-"6-connected edge-weighted graph).\n"         \
-"\n"         \
-"\n"         \
-"Types supported: GA byte 2D, GA byte 3D, GA float 2D\n"         \
-"\n"         \
-"Category: \n"         \
-"  GA\n"         \
-"\n"         \
-" Jean Cousty\n"         \
 "\n"         \
 "\n"
 
@@ -7643,10 +6454,6 @@
 "\n"
 
 
-#define doc__matchellipse__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__3dmakecomplex__c__ "  3dmakecomplex.c\n"         \
 "\n"         \
 " makes a cellular complex from the given set\n"         \
@@ -7709,10 +6516,6 @@
 " André Vital Saude, Michel Couprie jan 2005\n"         \
 "\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__genbini__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -7994,24 +6797,6 @@
 "\n"
 
 
-#define doc__meshflatten__c__ "  meshflatten.c\n"         \
-"\n"         \
-"   mesh flattening\n"         \
-"\n"         \
-"Usage: meshflatten in out\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Types supported: mesh 3d\n"         \
-"\n"         \
-"Category: mesh3d\n"         \
-"  mesh3d\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__toposhrinkgray__c__ "  toposhrinkgray.c\n"         \
 "\n"         \
 " topologically controled grayscale shrinking (one step)\n"         \
@@ -8240,28 +7025,6 @@
 "\n"
 
 
-#define doc__pgmascmode__c__ "  pgmascmode.c\n"         \
-"\n"         \
-" converts a pgm file to ascii mode\n"         \
-"\n"         \
-"Usage: pgmascmode filename [outfilename | \"wh\" outfilename]\n"         \
-"\n"         \
-"Description: Converts a pgm file to ascii mode.\n"         \
-"If only parameter  filename is given, then the result\n"         \
-"is also named  filename .\n"         \
-"If the keyword \"wh\" is used as second parameter (stands for \"without header\"), then \n"         \
-"an ascii file without header is produced.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__average1__c__ "  average1.c\n"         \
 "\n"         \
 " return the average of the pixel values of an image\n"         \
@@ -8285,10 +7048,6 @@
 
 
 #define doc__2dtopoflow__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__pgm2bmp__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -8448,26 +7207,6 @@
 "\n"         \
 "Category: draw\n"         \
 "  draw\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__ppmascmode__c__ "  ppmascmode.c\n"         \
-"\n"         \
-" converts a ppm file to ascii mode\n"         \
-"\n"         \
-"Usage: ppmascmode filename [outfilename]\n"         \
-"\n"         \
-"Description: Converts a ppm file to ascii mode.\n"         \
-"If only parameter  filename is given, then the result\n"         \
-"is also named  filename .\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -8908,63 +7647,6 @@
 "\n"
 
 
-#define doc__lthin__c__ "  lthin.c\n"         \
-"\n"         \
-" grayscale leveling thinning\n"         \
-"\n"         \
-"Usage: lthin in.pgm {imcond.pgm|null} connex niter out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Grayscale leveling thinning (refs. [BEC97, CBB01]).\n"         \
-"The parameter  connex gives the connectivity used for the minima;\n"         \
-"possible choices are 4, 8 in 2D and 6, 26 in 3D.\n"         \
-"Let F be the function corresponding to the input image  in.pgm.\n"         \
-"Let G be the function corresponding to the input image \n"         \
-" imcond.pgm, or the null function if the keyword  null is used.\n"         \
-"The algorithm is the following:\n"         \
-"\n"         \
-"\n"         \
-"Repeat niter times:\n"         \
-"    L = {(p,a) such that T--(p,F) = 1 and a = alpha-(p,F)}\n"         \
-"    While L not empty\n"         \
-"       extract a couple (p,a) from L\n"         \
-"       F(p) = max{ a, alpha-(p,F), G(p) }    \n"         \
-"Result: F\n"         \
-"\n"         \
-"\n"         \
-"If  niter is set to -1, then the operator iterates until stability.\n"         \
-"\n"         \
-"References: \n"         \
-"[BEC97] G. Bertrand, J. C. Everat and M. Couprie: \"Image segmentation through operators based upon topology\",  Journal of Electronic Imaging, Vol.&nbsp;6, No.&nbsp;4, pp.&nbsp;395-405, 1997.\n"         \
-"[CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: \"Topological operators for\n"         \
-"grayscale image processing\",  Journal of Electronic Imaging, Vol.&nbsp;10, No.&nbsp;4, pp.&nbsp;1003-1015, 2001.\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D.\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"Example:\n"         \
-"\n"         \
-"lthin ur1 null 4 -1 ur1_lthin\n"         \
-"minima ur1_lthin 4 ur1_lthin_m\n"         \
-"\n"         \
-"\n"         \
-"  \n"         \
-"      \n"         \
-"      \n"         \
-"  \n"         \
-"  ur1\n"         \
-"      ur1_lthin\n"         \
-"      ur1_lthin_m\n"         \
-"  \n"         \
-"\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__graph2pgm__c__ "  graph2pgm.c\n"         \
 "\n"         \
 " converts from graph representation to pgm\n"         \
@@ -9078,35 +7760,6 @@
 "\n"         \
 "Category: convert\n"         \
 " convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__meshregul__c__sav__ "  meshregul.c\n"         \
-"\n"         \
-" mesh smoothing\n"         \
-"\n"         \
-"Usage: meshregul in mode [param1 [param2]] out\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Mesh smoothing. \n"         \
-"The possible choices for parameter mode are:\n"         \
-" 0: Laplacian smoothing (param1 = number of iterations, default value 5)\n"         \
-" 1: Hamam method [HC06] (param1 = theta, default value 1.0)\n"         \
-" 2: Vollmer, Mencl and Mueller method [VMM] (param1 = alpha, param2 = beta, default values 0.1 and 0.6 resp.)\n"         \
-" 3: Hamam method [HC06], variant: matrix A used instead of AA (param1 = theta, default value 1.0)\n"         \
-" 4: Hamam method [HC06], variant: theta = infty (param1 = number of iterations, default value 5)\n"         \
-" 5: Hamam method [HC06], conjugate gradient algorithm (param1 = theta, default value 1.0)\n"         \
-"\n"         \
-"[HC06] Y. Hamam \"\", to appear, 2006\n"         \
-"\n"         \
-"Types supported: mesh 3d\n"         \
-"\n"         \
-"Category: mesh3d\n"         \
-"  mesh3d\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -9269,58 +7922,6 @@
 "\n"
 
 
-#define doc__pgm2raw__c__ "  pgm2raw.c\n"         \
-"\n"         \
-" suppress the header from a pgm file\n"         \
-"\n"         \
-"Usage: pgm2raw in.pgm out.raw\n"         \
-"\n"         \
-"Description: suppress the header from a pgm file\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, short 2d, short 3d, long 2d, long 3d, float 2d, float 3d, double 2d, double 3d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__propgeo__c__ "  propgeo.c\n"         \
-"\n"         \
-" geodesic propagation of image values\n"         \
-"\n"         \
-"Usage: propgeo in.pgm mask.pgm connex mode out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Propagates certain values of the original image in.pgm, \n"         \
-"geodesicaly wrt the connected components of the binary image mask.pgm.\n"         \
-"The connexity is specified by the parameter connex.\n"         \
-"The mode is one of the following ones:\n"         \
-" 0 | min   : propagates the minimal value of the component\n"         \
-" 1 | max   : propagates the maximal value of the component\n"         \
-" 2 | moy   : propagates the mean grayscale value of the component\n"         \
-" 3 | min1  : selects one point the value of which is equal to the min\n"         \
-" 4 | max1  : selects one point the value of which is equal to the max\n"         \
-" 5 | moy1  : selects one point the value of which is nearest to the mean\n"         \
-" 6 | minb  : propagates the minimal value of the external border of the component\n"         \
-" 7 | maxb  : propagates the maximal value of the external border of the component\n"         \
-" 8 | moyb  : propagates the mean value of the external border of the component\n"         \
-" 9 | randb : fills the component with random values, with a normal distribution centered around the value computed as for moyb\n"         \
-"\n"         \
-"Only modes min, max and moy are available for int32_t images.\n"         \
-"\n"         \
-"Types supported: byte 2d, int32_t 2d byte 3d, int32_t 3d\n"         \
-"\n"         \
-"Category: connect\n"         \
-" connect\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__crestsegment__c__ "  crestsegment.c\n"         \
 "\n"         \
 " measures the height of crests in a thinned grayscale image\n"         \
@@ -9385,36 +7986,6 @@
 "  arith\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__MSF__c__ "  MSF.c\n"         \
-"\n"         \
-" \n"         \
-"Compute a minimum spanning forest of a GA from a set of markers\n"         \
-"\n"         \
-"Usage: MSF GAin.ga marqueurs.pgm typeResul Result.?? \n"         \
-"\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Compute a minimum spanning forest of GAin.ga (a 4-connected 2D\n"         \
-"or 6-connected 3D edge-weighted graph) relative to the connected\n"         \
-"components of the non-zero pixels of marqueurs.pgm. If\n"         \
-"TypeResult = 0, then Result.?? is a GA whose non-zero edges form the\n"         \
-"induced MSF cut, otherwise Result.?? is a label image that represents\n"         \
-"the vertex partition induced by the MSF (the connected components of\n"         \
-"the MSF are marked with distinct labels).\n"         \
-"\n"         \
-"See [COUSTYetAl-PAMI2009] and [COUSTYetAl-PAMI2010] for more details.\n"         \
-"\n"         \
-"Types supported: GA byte 2D, GA byte 3D\n"         \
-"\n"         \
-"Category: \n"         \
-"  GA\n"         \
-"\n"         \
-" Jean Cousty\n"         \
 "\n"         \
 "\n"
 
@@ -9508,10 +8079,6 @@
 "\n"
 
 
-#define doc__mcm2ac__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__gradient_abs__cpp__ "\n"         \
 "    gradient_abs.cpp\n"         \
 "\n"         \
@@ -9544,35 +8111,6 @@
 
 
 #define doc__lpetoporeg__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__ptextensible__c__ "  ptextensible.c\n"         \
-"\n"         \
-" detects extensible points in a grayscale image\n"         \
-"\n"         \
-"Usage: ptextensible im.pgm {imcond.pgm|null} connex fileout.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Extensible point detection.\n"         \
-"The input image  im.pgm must be a \"thin\" grayscale image, as\n"         \
-"the output of the operator  hthin.\n"         \
-"The parameter  connex indicates the cconnectivity used for the minimal \n"         \
-"regions.\n"         \
-"The optional parameter  imcond.pgm is a binary image which indicates the points\n"         \
-"in the neighborhood of which the extensible points will be searched.\n"         \
-"\n"         \
-"Reference: \n"         \
-"M. Couprie, F.N. Bezerra, Gilles Bertrand: \"Topological operators for\n"         \
-"grayscale image processing\",  Journal of Electronic Imaging, Vol.&nbsp;10, No.&nbsp;4, pp.&nbsp;1003-1015, 2001.\n"         \
-"\n"         \
-"Types supported: byte 2D\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -9655,24 +8193,6 @@
 "  connect\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__GAwatershedDouble__c__ "  GAwatershedDouble.c\n"         \
-"\n"         \
-" Compute the watershed of a 4-connected edge-weighted graph (a GA) where the weights are doubles.\n"         \
-"\n"         \
-"Usage: \n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Types supported: GA byte 2D \n"         \
-"\n"         \
-"Category: \n"         \
-"  \n"         \
-"\n"         \
-" Jean Cousty\n"         \
 "\n"         \
 "\n"
 
@@ -10065,36 +8585,6 @@
 "  topogray\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__minimalsimplepair__c__ "  minimalsimplepair.c\n"         \
-"\n"         \
-" detects minimal simple pairs in a 3D binary image\n"         \
-"\n"         \
-"Usage: minimalsimplepair in.pgm [all] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Detects minimal simple pairs in a 3D binary image. \n"         \
-"If the optional parameter  all is used, then all \n"         \
-"minimal simple pairs are searched.\n"         \
-"Otherwise, only one pair (if any) is given.\n"         \
-"\n"         \
-"If the input image contains no simple point, consider using \"simplepair\" (faster)\n"         \
-"instead of \"minimalsimplepair\".\n"         \
-"\n"         \
-"Reference: \n"         \
-"[PCB08] Nicolas Passat, Michel Couprie, and Gilles Bertrand:\n"         \
-"\"Minimal simple pairs in the 3D cubic grid\", in\n"         \
-"Journal of Mathematical Imaging and Vision, 32 (3), pp.&nbsp;239â€“249, November 2008.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2008\n"         \
 "\n"         \
 "\n"
 
