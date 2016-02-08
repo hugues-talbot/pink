@@ -193,14 +193,15 @@ namespace morpho
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_RESULT(
-    int_image,
-    "planarity",
-    lplanarity,
-    ( arg("image"), arg("connex") ),
-    doc__planarity__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire Manon 8 fevrier 2016
+//  UI_WRAP_RESULT(
+//    int_image,
+//    "planarity",
+//    lplanarity,
+//    ( arg("image"), arg("connex") ),
+//    doc__planarity__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 // // NOTE: affine's using copyimage
 // UI_WRAP_RESULT(
