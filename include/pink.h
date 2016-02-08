@@ -159,7 +159,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "l2dcollapse.h"
 #include "l3dcollapse.h"
 #include "l3dkhalimsky.h"
-#include "lMSF.h"
+//#include "lMSF.h" commentaire M8F2016
 #include "larith.h"
 #include "lasft.h"
 #include "lattribarea.h"
