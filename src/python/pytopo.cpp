@@ -109,13 +109,14 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "matchrect",
-    lmatchrect,
-    (arg("image"), arg("connex"), arg("mode")),
-    doc__matchrect__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "matchrect",
+//    lmatchrect,
+//    (arg("image"), arg("connex"), arg("mode")),
+//    doc__matchrect__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 // Commentaire M8F2016
 //  UI_WRAP_FUNCTION(
