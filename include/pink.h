@@ -180,7 +180,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lcrop.h"
 #include "lderiche.h"
 //#include "ldetectcercles.h" //commenté par Sophie, 05 Fevrier 2016
-#include "ldiZenzo.h"
+//#include "ldiZenzo.h" // commenté par Sophie, 08 Fevrier 2016 
 #include "ldilat.h"
 #include "ldilatbin.h"
 #include "ldilatbin3d.h"
