@@ -86,13 +86,14 @@ namespace arithmetic
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 08 Fevrier 2016
+/*  UI_WRAP_FUNCTION(
     "dynrecons",
     ldynrecons,
     (arg("image"), arg("cond image"), arg("connexity")),
     doc__dynrecons__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
   UI_WRAP_FUNCTION(
     "egalise",
