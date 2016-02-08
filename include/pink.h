@@ -198,7 +198,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "ldynamique_grimaud.h"
 //#include "legalise.h" //commenté par Sophie, 08 Fevrier 2016
 #include "lellipsefit.h"
-#include "lellipseincl.h"
+//#include "lellipseincl.h" //commenté par Sophie, 08 Fevrier 2016
 #include "lepaisgeo.h"
 #include "leros.h"
 #include "lerosbin.h"
