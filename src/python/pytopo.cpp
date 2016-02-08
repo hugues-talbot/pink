@@ -100,14 +100,14 @@ namespace topo
 //   );
 // # include BOOST_PP_UPDATE_COUNTER()
 
-
-  UI_WRAP_FUNCTION(
-    "matchellipse",
-    lmatchellipse,
-    (arg("image"), arg("connex")),
-    doc__matchellipse__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "matchellipse",
+//    lmatchellipse,
+//    (arg("image"), arg("connex")),
+//    doc__matchellipse__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 // Commentaire M8F2016
 //  UI_WRAP_FUNCTION(
