@@ -308,7 +308,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lhello.h"
 #include "llong2byte.h"
 #include "mcrlifo.h"
-#include "lmcube.h"
+//#include "lmcube.h" commentaire M8F2016
 #include "ssexport.h"
 
 #undef encode

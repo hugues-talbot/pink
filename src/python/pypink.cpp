@@ -172,7 +172,9 @@ void generate_rgb_image_export(); void closing_export(); /*void closeball_export
 /*void dilatball_export();*/ void asfbin_export();
 void skelcurv_export(); void distc_export();
 void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
-/*void openball_export();*/ void gradmorph_export(); void mcube_export(); void minima_export();
+/*void openball_export();*/ void gradmorph_export(); 
+//void mcube_export(); M8F2016
+void minima_export();
 void complex_export(); void fft_export(); void mult_export(); void pymaxflow();
 
 // juliette
@@ -449,7 +451,9 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   closing_export(); /* closeball_export();*/  minmax_export();  /* dilatball_export();*/
   asfbin_export();  skelcurv_export();
   readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
-  htkern_export();  /*openball_export();*/    gradmorph_export(); mcube_export(); minima_export();
+  htkern_export();  /*openball_export();*/    gradmorph_export(); 
+  //mcube_export(); commentaire M8f2016
+  minima_export();
   complex_export(); fft_export();  mult_export();  numpy_export();
 
 
