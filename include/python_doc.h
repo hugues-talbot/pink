@@ -1,6 +1,6 @@
 // This file has been generated automatically by the 
 // python_documenter, part of the PInK package (UjoImro, 2011)
-// the date of generation: 2016-02-05T11:39:33Z
+// the date of generation: 2016-02-08T11:39:15Z
 // warning: DO NOT EDIT. All your changes will be lost at 
 // the next generation
 
@@ -2153,6 +2153,104 @@
 "\n"         \
 " Michel Couprie\n"         \
 " Paulin Sanselme\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__delaunay__c__ "  delaunay.c\n"         \
+"\n"         \
+" delaunay triangulation\n"         \
+"\n"         \
+"Usage: delaunay in.list [mask.pgm] out.list\n"         \
+"\n"         \
+"Description:\n"         \
+"Reads a point list in file in.list under the following format:\n"         \
+"  \n"         \
+"    b &lt;n&gt;         n &lt;n&gt;    \n"         \
+"    x1 y1         x1 y1 v1\n"         \
+"    x2 y2   ou    x2 y2 v2\n"         \
+"    ...           ...\n"         \
+"    xn yn         xn yn vn\n"         \
+"  \n"         \
+"\n"         \
+"Computes a Delaunay triangulation and stores the resulting graph \n"         \
+"into file out.graph under the following format:\n"         \
+"\n"         \
+"    G &lt;n&gt;\n"         \
+"    x1 y1 v1 ec1 ns1 s11 s12 ... s1ns1\n"         \
+"    x2 y2 v2 ec2 ns2 s21 s22 ... s1ns2\n"         \
+"    ...\n"         \
+"    xn yn vn ecn nsn sn1 sn2 ... s1nsn\n"         \
+"\n"         \
+"  \n"         \
+"where xi, yi are the coordinates of the ith vertex, vi is the associated \n"         \
+"value (if given in the input file), eci is a int32_t which indicates \n"         \
+"whether the vertex i belongs to the convex hull, nsi denotes the number\n"         \
+"of adjacent vertices, and si1 si2 ... sins1 is the list of the indexes of\n"         \
+"the adjacent vertices (counted from 0).\n"         \
+"\n"         \
+"If the optional parameter mask.pgm is given, then it must be a \n"         \
+"binary byte image. Any edge of the triangulation which intersects the\n"         \
+"mask will be discarded.  \n"         \
+"\n"         \
+"Types supported: byte 2D\n"         \
+"\n"         \
+"See also: drawtriangulation.c\n"         \
+"\n"         \
+"Category: geo\n"         \
+"  geo\n"         \
+"\n"         \
+" algorithm in O(n^2)\n"         \
+"\n"         \
+" Michel Couprie, Laurent Mercier\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__delaunaymask__c__ "  delaunaymask.c\n"         \
+"\n"         \
+" delaunay triangulation\n"         \
+"\n"         \
+"\n"         \
+"\n"         \
+"Usage: delaunaymask in.list mask.pgm out.list\n"         \
+"\n"         \
+"\n"         \
+"Description:\n"         \
+"Reads a point list in file in.list under the following format:\n"         \
+"  \n"         \
+"    b &lt;n&gt;         n &lt;n&gt;    \n"         \
+"    x1 y1         x1 y1 v1\n"         \
+"    x2 y2   ou    x2 y2 v2\n"         \
+"    ...           ...\n"         \
+"    xn yn         xn yn vn\n"         \
+"  \n"         \
+"\n"         \
+"Computes a Delaunay triangulation and stores the resulting graph \n"         \
+"\n"         \
+"into file out.graph under the following format:\n"         \
+"\n"         \
+"    G &lt;n&gt;\n"         \
+"    x1 y1 v1 ec1 ns1 s11 s12 ... s1ns1\n"         \
+"    x2 y2 v2 ec2 ns2 s21 s22 ... s1ns2\n"         \
+"    ...\n"         \
+"    xn yn vn ecn nsn sn1 sn2 ... s1nsn\n"         \
+"\n"         \
+"  \n"         \
+"where xi, yi are the coordinates of the ith vertex, vi is the associated \n"         \
+"value (if given in the input file), eci is a int32_t which indicates \n"         \
+"whether the vertex i belongs to the convex hull, nsi denotes the number\n"         \
+"of adjacent vertices, and si1 si2 ... sins1 is the list of the indexes of\n"         \
+"the adjacent vertices (counted from 0).\n"         \
+"\n"         \
+"Types supported: byte 2D\n"         \
+"\n"         \
+"Category: geo\n"         \
+"  geo\n"         \
+"\n"         \
+" algorithm in O(n^2)\n"         \
+"\n"         \
+" Michel Couprie\n"         \
 "\n"         \
 "\n"
 
