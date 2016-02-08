@@ -245,7 +245,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "llpemeyer4d.h"
 #include "llpetopo.h"
 #include "llpetoporeg.h"
-#include "lmaxdiameter.h"
+//#include "lmaxdiameter.h" commentaire M8F2016
 #include "lmedialaxis.h"
 #include "lmeshwarp.h"
 #include "lminima.h"
