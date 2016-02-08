@@ -129,7 +129,8 @@ void vint_object_export(); void vector_int_object_export();void wshedtopo_export
 void skeleton2_export(); // void zoom_export();
 
 void dilation_export(); void erosion_export(); void geodilat_export();
-void geoeros_export(); void opening_export(); void drawcurve2D_export();
+void geoeros_export(); void opening_export();
+//void drawcurve2D_export(); //commenté par Sophie, 08 Fevrier 2016
 void uiSqhool_object_export(); void gradient_export();
 // Fast morpho operators
 void fdilaterect_export();
@@ -402,7 +403,8 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   skeleton2_export();  // zoom_export();
 
   dilation_export(); erosion_export();  geodilat_export();  geoeros_export();
-  opening_export();  drawcurve2D_export();
+  opening_export();
+    //drawcurve2D_export(); //commenté par Sophie, 08 Fevrier 2016
   // liar operator functions
   fdilaterect_export();
   fdilatepoly_export();
