@@ -314,13 +314,14 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 08 Fevrier 2016
+ /* UI_WRAP_FUNCTION(
     "ellipticite",
     lellipticite,
     (arg("image"), arg("connex")),
     doc__ellipticite__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
     //commenté par Sophie, 06 Fevrier 2016
  /* UI_WRAP_FUNCTION(
