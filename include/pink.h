@@ -243,8 +243,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "llpeGA.h"
 #include "llpemeyer.h"
 #include "llpemeyer4d.h"
-#include "llpetopo.h"
-#include "llpetoporeg.h"
+//#include "llpetopo.h" commentaire M8F2016
+//#include "llpetoporeg.h" commentaire M8F2016
 //#include "lmaxdiameter.h" commentaire M8F2016
 #include "lmedialaxis.h"
 #include "lmeshwarp.h"
