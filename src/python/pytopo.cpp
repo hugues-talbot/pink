@@ -134,70 +134,77 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
+// Commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "pthseparatinggray",
+//    lpthseparatinggray,
+//    (arg("image"), arg("connex"), arg("h")),
+//    doc__pthseparatinggray__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "pthseparatinggray",
-    lpthseparatinggray,
-    (arg("image"), arg("connex"), arg("h")),
-    doc__pthseparatinggray__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "ptinterior",
+//    lptinterior,
+//    (arg("image"), arg("connex")),
+//    doc__ptinterior__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "ptinterior",
-    lptinterior,
-    (arg("image"), arg("connex")),
-    doc__ptinterior__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "ptjunction",
+//    lptjunction,
+//    (arg("image"), arg("connex")),
+//    doc__ptjunction__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "ptjunction",
-    lptjunction,
-    (arg("image"), arg("connex")),
-    doc__ptjunction__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "ptmultiple",
+//    lptmultiple,
+//    (arg("image"), arg("connex")),
+//    doc__ptmultiple__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "ptmultiple",
-    lptmultiple,
-    (arg("image"), arg("connex")),
-    doc__ptmultiple__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "ptseparating",
+//    lptseparating,
+//    (arg("image"), arg("connex")),
+//    doc__ptseparating__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "ptseparating",
-    lptseparating,
-    (arg("image"), arg("connex")),
-    doc__ptseparating__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "ptseparatinggray",
+//    lptseparatinggray,
+//    (arg("image"), arg("connex")),
+//    doc__ptseparatinggray__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "ptseparatinggray",
-    lptseparatinggray,
-    (arg("image"), arg("connex")),
-    doc__ptseparatinggray__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "ptsimple",
+//    lptsimple,
+//    (arg("image"), arg("connex")),
+//    doc__ptsimple__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "ptsimple",
-    lptsimple,
-    (arg("image"), arg("connex")),
-    doc__ptsimple__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
-
-  UI_WRAP_FUNCTION(
-    "quasishear",
-    lquasishear,
-    (arg("image"), arg("theta"), arg("x"), arg("y")),
-    doc__quasishear__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "quasishear",
+//    lquasishear,
+//    (arg("image"), arg("theta"), arg("x"), arg("y")),
+//    doc__quasishear__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 
 // NOTE: this function returns a pointer

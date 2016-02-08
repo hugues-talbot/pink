@@ -1,6 +1,6 @@
 // This file has been generated automatically by the 
 // python_documenter, part of the PInK package (UjoImro, 2011)
-// the date of generation: 2016-02-02T10:53:19Z
+// the date of generation: 2016-02-08T16:45:32Z
 // warning: DO NOT EDIT. All your changes will be lost at 
 // the next generation
 
@@ -86,40 +86,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__skel_CKG__c__ "  skel_CKG.c\n"         \
-"\n"         \
-" parallel 2D and 3D binary guided thinning\n"         \
-"\n"         \
-"Usage: skel_CKG in.pgm prio.pgm val out.pgm\n"         \
-"\n"         \
-"Description: Parallel 2D and 3D binary guided thinning based on\n"         \
-"critical kernels. The parameter  in.pgm specifies the set\n"         \
-"(object) to be thinned. The parameter  prio.pgm specifies the priority\n"         \
-"function. The parameter  val is a threshold: any\n"         \
-"pixel having a priority greater than or equal to  val will be preserved\n"         \
-"from deletion.  If  val equals -1, then all points will be\n"         \
-"considered for deletion.\n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__htkern3d___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__reconsplateaux__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -210,30 +176,6 @@
 "\n"
 
 
-#define doc__lpemeyer3d___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__ptinterior__c__ "  ptinterior.c\n"         \
-"\n"         \
-" detects interior points in a binary image\n"         \
-"\n"         \
-"Usage: ptinterior in.pgm connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"An interior point is a white point, all the n-neighbours of which are white\n"         \
-"(n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter  connex)\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2005\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__min1__c__ "  min1.c\n"         \
 "\n"         \
 " return the minimum of the pixel values of an image\n"         \
@@ -253,10 +195,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__bisector_talbot__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -414,10 +352,6 @@
 "\n"
 
 
-#define doc__convol3__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__2dinvariants__c__ "  2dinvariants.c\n"         \
 "\n"         \
 " computes the numbers of connected components,\n"         \
@@ -558,54 +492,6 @@
 "\n"
 
 
-#define doc__delaunaymask__c__ "  delaunaymask.c\n"         \
-"\n"         \
-" delaunay triangulation\n"         \
-"\n"         \
-"\n"         \
-"\n"         \
-"Usage: delaunaymask in.list mask.pgm out.list\n"         \
-"\n"         \
-"\n"         \
-"Description:\n"         \
-"Reads a point list in file in.list under the following format:\n"         \
-"  \n"         \
-"    b &lt;n&gt;         n &lt;n&gt;    \n"         \
-"    x1 y1         x1 y1 v1\n"         \
-"    x2 y2   ou    x2 y2 v2\n"         \
-"    ...           ...\n"         \
-"    xn yn         xn yn vn\n"         \
-"  \n"         \
-"\n"         \
-"Computes a Delaunay triangulation and stores the resulting graph \n"         \
-"\n"         \
-"into file out.graph under the following format:\n"         \
-"\n"         \
-"    G &lt;n&gt;\n"         \
-"    x1 y1 v1 ec1 ns1 s11 s12 ... s1ns1\n"         \
-"    x2 y2 v2 ec2 ns2 s21 s22 ... s1ns2\n"         \
-"    ...\n"         \
-"    xn yn vn ecn nsn sn1 sn2 ... s1nsn\n"         \
-"\n"         \
-"  \n"         \
-"where xi, yi are the coordinates of the ith vertex, vi is the associated \n"         \
-"value (if given in the input file), eci is a int32_t which indicates \n"         \
-"whether the vertex i belongs to the convex hull, nsi denotes the number\n"         \
-"of adjacent vertices, and si1 si2 ... sins1 is the list of the indexes of\n"         \
-"the adjacent vertices (counted from 0).\n"         \
-"\n"         \
-"Types supported: byte 2D\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" algorithm in O(n^2)\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__pca__c__ "  pca.c\n"         \
 "\n"         \
 " principal component analysis\n"         \
@@ -625,37 +511,6 @@
 "\n"         \
 "Category: stats\n"         \
 " stats\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__surfels_triang___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__skelendlab__c__ "  skelendlab.c\n"         \
-"\n"         \
-" homotopic skeleton of a 2d or 3d label image with dynamic detection of end points\n"         \
-"\n"         \
-"Usage: skelendlab in.pgm connex [n] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Homotopic skeletonization by iterative removal of simple, non-end points. \n"         \
-"Each label is treated separately as a binary image.\n"         \
-"Breadth-first strategy.\n"         \
-"During the first  n iterations (default 0), the end points\n"         \
-"are removed as well.\n"         \
-"If  n = -1, the end points are always removed.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" This operator is very sensitive to small contour irregularities. \n"         \
-"See skelcurv for a more robust operator. Useful for reducing quasi-curvilinear objects.\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -713,39 +568,6 @@
 
 
 #define doc__erosbin3d__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__skel_ASK3b__c__ "  skel_ASK3b.c\n"         \
-"\n"         \
-" parallel 3D binary surface, asymetric skeleton based on thin 2D isthmuses\n"         \
-"\n"         \
-"Usage: skel_ASK3b in.pgm nsteps isthmus_persistence [inhibit] out.pgm\n"         \
-"\n"         \
-"Description: Parallel 3D binary thinning or surface,\n"         \
-"asymetric skeleton based on thin 2D isthmuses. The parameter  nsteps\n"         \
-"gives, if positive, the number of parallel thinning steps to be\n"         \
-"processed.  If the value given for  nsteps equals -1, the thinning\n"         \
-"is continued until stability.\n"         \
-"\n"         \
-"When a point x is detected as a 2D isthmus, a counter p(x) is\n"         \
-"associated to this point and initialized with value 1. This counter is\n"         \
-"incremented a each iteration as long as x is still an isthmus. At each\n"         \
-"iteration, the isthmuses x such that p(x) >=  isthmus_persistence are\n"         \
-"stored as a constraint set (see also  inhibit parameter).\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-" The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -995,10 +817,6 @@
 "\n"
 
 
-#define doc__randpoints__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__lfclose3d_line__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -1083,10 +901,6 @@
 "\n"
 
 
-#define doc__skew__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__lintophat__c__ "  lintophat.c\n"         \
 "\n"         \
 " max of morphological black top hats by linear structuring elements\n"         \
@@ -1115,35 +929,6 @@
 "\n"
 
 
-#define doc__rotate3dbin__c__ "  rotate3dbin.c\n"         \
-"\n"         \
-" rotation of an image\n"         \
-"\n"         \
-"Usage: rotate3dbin in.pgm theta axis [c1 c2] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Method: truncated real rotation.\n"         \
-"Rotates the image  in.pgm of the angle  theta (in degrees), \n"         \
-"around the straight line defined by parameters  axis,  c1 and  c2, parallel to one of the main axes x, y, z.\n"         \
-"Parameter  axis may be either x, y or z.\n"         \
-"If  axis = x, then the rotation axis is defined by y =  c1, z =  c2.\n"         \
-"If  axis = y, then the rotation axis is defined by x =  c1, z =  c2.\n"         \
-"If  axis = z, then the rotation axis is defined by x =  c1, y =  c2.\n"         \
-"\n"         \
-"If  in.pgm is not a structuring element, and if parameters  c1 and  c2 are omitted then the default values 0, 0 are assumed and the resulting image size is computed such that no loss of information occur. Otherwise, no resize is made.\n"         \
-"\n"         \
-"If  in.pgm is a structuring element, then parameters  c1 and  c2 are ignored and the coordinates of the rotation axis are taken among the ones of the origin of the structuring element.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__integermedialaxis__c__ "  integermedialaxis.c\n"         \
 "\n"         \
 " integer medial axis transform\n"         \
@@ -1168,10 +953,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__souzabanon__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -1351,68 +1132,6 @@
 "\n"
 
 
-#define doc__skelpar3d_others__cxx__ "  skelpar3d_others.cxx\n"         \
-"\n"         \
-" parallel 3D binary skeleton\n"         \
-"DirectionalSkeletonizer\n"         \
-"Usage: skelpar3d in.pgm algorithm nsteps [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Parallel 3D binary thinning or skeleton. The parameter  nsteps gives,\n"         \
-"if positive, the number of parallel thinning steps to be processed.\n"         \
-"If the value given for  nsteps equals -1, the thinning is continued\n"         \
-"until stability.\n"         \
-"\n"         \
-"The parameter  algorithm is a numerical code\n"         \
-"indicating which method will be used for the thinning.\n"         \
-"The possible choices are:\n"         \
-" 0: Palagyi (curvilinear, 6-subiterations directional, 1998)\n"         \
-" 1: Palagyi (curvilinear, sequential, 2006)\n"         \
-" 2: Palagyi (surface, parallel directional, 2002)\n"         \
-" 3: Palagyi (surface, fully parallel, 2008)\n"         \
-" 4: Raynal  (curvilinear, directional, 2010)\n"         \
-" 5: Raynal  (surface, directional, 2010)\n"         \
-" 6: Lohou-Bertrand  (curvilinear, symmetric, 2007)\n"         \
-" 7: Ma-Wan-Chang (curvilinear, 2 subfields, 2002)\n"         \
-" 8: Tsao-Fu (curvilinear, 6-subiterations directional, 1982)\n"         \
-" 9: Ma-Sonka (curvilinear, fully parallel, does not preserve topology 1996)\n"         \
-" 10: Ma-Wan (curvilinear (18/6) 6 subiterations, CVIU 2000)\n"         \
-" 11: Lohou-Bertrand (curvilinear 6 subiterations, DAM 2005)\n"         \
-" 12: Lohou-Bertrand (curvilinear 12 subiterations, DAM 2004)\n"         \
-" 13: ACK3a - see lskelpar3d.c\n"         \
-" 14: CKSC - see lskeletons.c\n"         \
-" 15: Ma-Wan-Lee (curvilinear, 4 subfields, 2002)\n"         \
-" 16: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 1)\n"         \
-" 17: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 2)\n"         \
-" 18: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 3)\n"         \
-" 19: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 1)\n"         \
-" 20: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 2)\n"         \
-" 21: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 3)\n"         \
-" 22: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 1)\n"         \
-" 23: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 2)\n"         \
-" 24: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 3)\n"         \
-" 25: She et al. (curvilinear, symmetric, DICTA 2009)\n"         \
-" 26: Tsao-Fu (surface, 6-subiterations directional, 1981)\n"         \
-" 27: Tsao-Fu (curvilinear, 6-subiterations directional, 1981)\n"         \
-" 28: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 0)\n"         \
-" 29: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 0)\n"         \
-" 30: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 0)\n"         \
-" 31: Lohou-Bertrand  (surface, symmetric, 2007)\n"         \
-" 32: Manzanera et al. (surface, symmetric, 1999)\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie, Benjamin Raynal, John Chaussard\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__nbcomp__c__ "  nbcomp.c\n"         \
 "\n"         \
 " returning number of connected components of a grayscale or a binary image\n"         \
@@ -1575,26 +1294,6 @@
 "\n"         \
 "Category: arith\n"         \
 "  arith\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__randrgb__c__ "  randrgb.c\n"         \
-"\n"         \
-" generates random colors from gray levels\n"         \
-"\n"         \
-"Usage: randrgb in.pgm out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Generates a color image where each gray level is replaced by a randomly\n"         \
-"chosen color\n"         \
-"\n"         \
-"Types supported: byte 2d, int32_t 2d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -1817,31 +1516,6 @@
 "\n"
 
 
-#define doc__ptselectgray__c__ "  ptselectgray.c\n"         \
-"\n"         \
-" detects points in a 2D or 3D grayscale image corresponding to a given criterion \n"         \
-"\n"         \
-"Usage: ptselectgray in.pgm connex mint+ maxt+ mint-- maxt-- out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Select all points p such that the condition:\n"         \
-"mint+ \n"         \
-"is satisfied.\n"         \
-"\n"         \
-"The parameter  connex gives the connectivity used for the minima;\n"         \
-"possible choices are 4, 8 in 2D and 6, 26 in 3D.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d \n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
-"\n"         \
-" Nicolas Combaret 2006\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__add__c__ "  add.c\n"         \
 "\n"         \
 " pixelwise addition of two images\n"         \
@@ -1909,34 +1583,6 @@
 "\n"
 
 
-#define doc__remspnoise__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__drawcircle_notused_c__ "  drawellipse.c\n"         \
-"\n"         \
-" Draws an ellipse\n"         \
-"\n"         \
-"Usage: drawellipse in.pgm x1 y1 x2 y2 X1 Y1 X2 Y2 [filled] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Draws an  ellipse specified by four points, e.g. the extremities of the small axis \n"         \
-"(x1, y1, x2, y2) and the extremities of the big axis \n"         \
-"(X1, Y1, X2, Y2).\n"         \
-"The ellipse is surimposed to the contents of in.pgm.\n"         \
-"If the (optional) int32_t parameter  filled is set (1), then the ellipse is filled.\n"         \
-"Otherwise it is empty (default).\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: draw geo\n"         \
-"  draw geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__translate__c__ "  translate.c\n"         \
 "\n"         \
 " image translation \n"         \
@@ -1957,10 +1603,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__lambdakern___notused_c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -2040,28 +1682,6 @@
 "  topobin\n"         \
 "\n"         \
 " Michel Couprie 2011\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__ptjunction__c__ "  ptjunction.c\n"         \
-"\n"         \
-" detects junction points in 2d or 3d binary images\n"         \
-"\n"         \
-"Usage: ptjunction in.pgm connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Detects junction points in the 2d or 3d binary image  in.pgm, which is supposed to contain a skeleton.\n"         \
-"A junction point is a white point x such that #(Nn[x] inter X) > 2, where Nn[x] stands for the n-neighborhood of x (excluding x), and n = 4, 8 in 2D or n = 6, 18, 26 in 3D, as set by the parameter  connex.\n"         \
-"\n"         \
-"When the type of  in.pgm is 4_BYTE, the image is treated as a label image, where each label is processed as a separate binary image (all other labels are considered as background).\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D, long 3D\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2010\n"         \
 "\n"         \
 "\n"
 
@@ -2258,10 +1878,6 @@
 "\n"
 
 
-#define doc__ccv__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__laplacian__c__ "  laplacian.c\n"         \
 "\n"         \
 " Laplacian operator\n"         \
@@ -2278,31 +1894,6 @@
 "\n"         \
 "Category: signal\n"         \
 "  signal\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__skel_CK3p__c__ "  skel_CK3p.c\n"         \
-"\n"         \
-" parallel 3D binary curvilinear skeleton based on 1D isthmuses\n"         \
-"\n"         \
-"Usage: skel_CK3p in.pgm pers [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Parallel 3D binary thinning or curvilinear skeleton based on 1D isthmuses, \n"         \
-"with a persistence parameter:  pers.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -2455,10 +2046,6 @@
 "\n"
 
 
-#define doc__squelubp3d___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__lenoir__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -2498,28 +2085,6 @@
 
 
 #define doc__lfopen3d_line__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__autocrop__c__ "  autocrop.c\n"         \
-"\n"         \
-" eliminates null regions at the periphery of an image\n"         \
-"\n"         \
-"Usage: autocrop in.pgm [threshold [out.pgm]]\n"         \
-"\n"         \
-"Description:\n"         \
-"Selects the minimum rectangle (cuboid in 3d) \n"         \
-"that contain all values of the image  in.pgm strictly above the  threshold (default 0).\n"         \
-"\n"         \
-"If  out.pgm is not specified, then out.pgm = in.pgm.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -2630,52 +2195,6 @@
 "\n"
 
 
-#define doc__skel_EK3__c__ "  skel_EK3.c\n"         \
-"\n"         \
-" parallel 3D binary curvilinear skeleton based on ends\n"         \
-"\n"         \
-"Usage: skel_EK3 in.pgm nsteps [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Parallel 3D binary thinning or curvilinear skeleton based on ends. \n"         \
-"The parameter  nsteps gives,\n"         \
-"if positive, the number of parallel thinning steps to be processed.\n"         \
-"If the value given for  nsteps equals -1, the thinning is continued\n"         \
-"until stability.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__seamcarving__c__ "  seamcarving.c\n"         \
-"\n"         \
-" applies the seam carving method to shrink an image\n"         \
-"\n"         \
-"Usage: seamcarving in.ppm energy.pgm w h out.ppm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__meshconvert__c__ "  meshconvert.c\n"         \
 "\n"         \
 " mesh format conversion\n"         \
@@ -2735,54 +2254,11 @@
 "\n"
 
 
-#define doc__relief__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__skel_AK2__c__ "  skel_AK2.c\n"         \
-"\n"         \
-" parallel 2D binary curvilinear skeleton\n"         \
-"\n"         \
-"Usage: skel_AK2 in.pgm nsteps [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Parallel 2D binary thinning or curvilinear skeleton. The parameter  nsteps gives,\n"         \
-"if positive, the number of parallel thinning steps to be processed.\n"         \
-"If the value given for  nsteps equals -1, the thinning is continued\n"         \
-"until stability.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"References:\n"         \
-"[BC08] Gilles Bertrand and Michel Couprie, Two-dimensional thinning algorithms based on critical kernels. Journal of Mathematical Imaging and Vision, 31(1). 2008. pp.35–56.\n"         \
-"http://igm.univ-mlv.fr/LIGM/internal_report/pdf/2006_02.v2.pdf\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__hthinbin__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
 #define doc__lfopen3d_rect__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__yuv2rgb__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__gradcol___notused_c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -2835,25 +2311,6 @@
 "\n"         \
 "Category: \n"         \
 "  \n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__colorize__c__ "  colorize.c\n"         \
-"\n"         \
-" generates a color image from a grayscale image and a lookup table\n"         \
-"\n"         \
-"Usage: colorize in.pgm lut.ppm out.ppm\n"         \
-"\n"         \
-"Description:\n"         \
-"Generates a color image from a grayscale image and a lookup table (see genlut.c).\n"         \
-"\n"         \
-"Types supported: byte 2D, long 2D\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -2974,37 +2431,6 @@
 "\n"         \
 "Category: draw geo\n"         \
 "  draw geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__skel_ACK3a__c__ "  skel_ACK3a.c\n"         \
-"\n"         \
-" parallel 3D binary curvilinear, asymetric skeleton based on thin 1D isthmus\n"         \
-"\n"         \
-"Usage: skel_ACK3a in.pgm nsteps [ndel [inhibit]] out.pgm\n"         \
-"\n"         \
-"Description: Parallel 3D binary thinning or curvilinear,\n"         \
-"asymetric skeleton based on thin 1D isthmus. The parameter  nsteps\n"         \
-"gives, if positive, the number of parallel thinning steps to be\n"         \
-"processed.  If the value given for  nsteps equals -1, the thinning\n"         \
-"is continued until stability.\n"         \
-"\n"         \
-"During the first  ndel steps (default value 0), detected curve points are marked: they are indicated by a value 127 (instead of 255) in the output image.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-" When  ndel is not set to 0, the output image may contain points with value 127.\n"         \
-"\n"         \
-" The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -3265,64 +2691,6 @@
 "\n"
 
 
-#define doc__skel_MK2__c__ "  skel_MK2.c\n"         \
-"\n"         \
-" parallel 2D binary ultimate skeleton, symmetrical\n"         \
-"\n"         \
-"Usage: skel_MK2 in.pgm nsteps [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Parallel 2D binary thinning or ultimate skeleton (symmetrical). The parameter  nsteps gives,\n"         \
-"if positive, the number of parallel thinning steps to be processed.\n"         \
-"If the value given for  nsteps equals -1, the thinning is continued\n"         \
-"until stability.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"References:\n"         \
-"[BC08] Gilles Bertrand and Michel Couprie, Two-dimensional thinning algorithms based on critical kernels. Journal of Mathematical Imaging and Vision, 31(1). 2008. pp.35–56.\n"         \
-"http://igm.univ-mlv.fr/LIGM/internal_report/pdf/2006_02.v2.pdf\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__redt__c__ "  redt.c\n"         \
-"\n"         \
-" reverse euclidean distance transform\n"         \
-"\n"         \
-"Usage: redt in.pgm out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Reverse euclidean distance transform, by the Coeurjolly's algorithm [1].\n"         \
-"The input  in.pgm must be a quadratic euclidean distance map, or \n"         \
-"an image of type int32_t where each non-null value correspond to the quadratic\n"         \
-"radius of a disc or ball. The output is a binary image.\n"         \
-"\n"         \
-"[1] D. Coeurjolly,\n"         \
-"\"d-Dimensional Reverse Euclidean Distance Transformation\n"         \
-"and Euclidean Medial Axis Extraction in Optimal Time\", \n"         \
-"DGCI 2003, LNCS 2886, pp. 327-337, 2003.\n"         \
-"\n"         \
-"Types supported: int32_t 2d, int32_t 3d\n"         \
-"\n"         \
-"Category: morpho\n"         \
-"  morpho\n"         \
-"\n"         \
-" Michel Couprie 2004, Jean Cousty 2005 (3d)\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__meshoffset__c__ "  meshoffset.c\n"         \
 "\n"         \
 " applies an offset to all points of a mesh (translation)\n"         \
@@ -3365,34 +2733,6 @@
 "  topobin\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__skelfindelbows__c__ "  skelfindelbows.c\n"         \
-"\n"         \
-" detection of \"elbows\" in a curvilinear skeleton\n"         \
-"\n"         \
-"Usage: skelfindelbows in.skel thickness sharp out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Find \"elbows\" (points making sharp angles) in the curves of skeleton  in.skel.\n"         \
-"Matching points are written as voxels in the returned image  out.pgm.\n"         \
-"\n"         \
-"\n"         \
-"Let  be the points of a cover of the curve C by digital straight line segments (DSSs). \n"         \
-"Let j be an index between 1 and n-2, if angle(S[j-1]S[j], S[j]S[j+1]) \n"         \
-"\n"         \
-"\n"         \
-"Parameter  thick (thickness for DSS recognition) is given in pixels, parameter  sharp in degrees.\n"         \
-"\n"         \
-"Types supported: skel 2d, skel 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2011\n"         \
 "\n"         \
 "\n"
 
@@ -3455,10 +2795,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__2elisp__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -3780,53 +3116,6 @@
 "\n"
 
 
-#define doc__setorigin__c__ "  setorigin.c\n"         \
-"\n"         \
-" adds origin to file header\n"         \
-"\n"         \
-"Usage: setorigin in.pgm [source_se | xorig yorig zorig] \n"         \
-"\n"         \
-"Description: Adds origin (the one of  se or  xorig  yorig  zorig ) \n"         \
-"to file header of  in.pgm.\n"         \
-"\n"         \
-"Types supported: byte 3d, int32_t 3d\n"         \
-"\n"         \
-"Category: convert\n"         \
-" convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__skel_CKG_map__c__ "  skel_CKG_map.c\n"         \
-"\n"         \
-" topogical map from parallel 2D and 3D binary guided thinning\n"         \
-"\n"         \
-"Usage: skel_CKG_map prio.pgm in.pgm out.pgm\n"         \
-"\n"         \
-"Description: Topological map from parallel 2D and 3D \n"         \
-"binary guided thinning based on critical kernels. \n"         \
-"The parameter  in.pgm specifies the set\n"         \
-"(object) to be thinned. The parameter  prio.pgm specifies the priority\n"         \
-"function. \n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, long 2d, long 3d, float 2d, float 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__worms__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__fits2pgm__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -3970,10 +3259,6 @@
 "\n"
 
 
-#define doc__axones___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__drawtorus__c__ "  drawtorus.c\n"         \
 "\n"         \
 " generates a binary torus\n"         \
@@ -4019,10 +3304,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__shrinkondisk__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -4102,32 +3383,6 @@
 "\n"
 
 
-#define doc__skel_CK3_pers__c__ "  skel_CK3_pers.c\n"         \
-"\n"         \
-" topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning\n"         \
-"\n"         \
-"Usage: skel_CK3_pers in.pgm out.pgm\n"         \
-"\n"         \
-"Description: Topological persistence of 1D isthmuses, based on \n"         \
-"parallel 3D asymetric thinning.\n"         \
-"\n"         \
-"When a point x is detected as a 1D isthmus, a counter p(x) is\n"         \
-"associated to this point and initialized with value 1. This counter is\n"         \
-"incremented a each iteration as long as x is still an isthmus. When this point x is\n"         \
-"eventually deleted, the value of the counter is freezed.\n"         \
-"\n"         \
-" The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__ppm2GA__c__ "  ppm2GA.c\n"         \
 "\n"         \
 " Computes an edge-weighted graph from an color .ppm image\n"         \
@@ -4163,10 +3418,6 @@
 "\n"
 
 
-#define doc__regul___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__fits2pgm__c__ "  fits2pgm.c\n"         \
 "\n"         \
 " converts from fits format into pgm format\n"         \
@@ -4182,56 +3433,6 @@
 " convert\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__delaunay__c__ "  delaunay.c\n"         \
-"\n"         \
-" delaunay triangulation\n"         \
-"\n"         \
-"Usage: delaunay in.list [mask.pgm] out.list\n"         \
-"\n"         \
-"Description:\n"         \
-"Reads a point list in file in.list under the following format:\n"         \
-"  \n"         \
-"    b &lt;n&gt;         n &lt;n&gt;    \n"         \
-"    x1 y1         x1 y1 v1\n"         \
-"    x2 y2   ou    x2 y2 v2\n"         \
-"    ...           ...\n"         \
-"    xn yn         xn yn vn\n"         \
-"  \n"         \
-"\n"         \
-"Computes a Delaunay triangulation and stores the resulting graph \n"         \
-"into file out.graph under the following format:\n"         \
-"\n"         \
-"    G &lt;n&gt;\n"         \
-"    x1 y1 v1 ec1 ns1 s11 s12 ... s1ns1\n"         \
-"    x2 y2 v2 ec2 ns2 s21 s22 ... s1ns2\n"         \
-"    ...\n"         \
-"    xn yn vn ecn nsn sn1 sn2 ... s1nsn\n"         \
-"\n"         \
-"  \n"         \
-"where xi, yi are the coordinates of the ith vertex, vi is the associated \n"         \
-"value (if given in the input file), eci is a int32_t which indicates \n"         \
-"whether the vertex i belongs to the convex hull, nsi denotes the number\n"         \
-"of adjacent vertices, and si1 si2 ... sins1 is the list of the indexes of\n"         \
-"the adjacent vertices (counted from 0).\n"         \
-"\n"         \
-"If the optional parameter mask.pgm is given, then it must be a \n"         \
-"binary byte image. Any edge of the triangulation which intersects the\n"         \
-"mask will be discarded.  \n"         \
-"\n"         \
-"Types supported: byte 2D\n"         \
-"\n"         \
-"See also: drawtriangulation.c\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" algorithm in O(n^2)\n"         \
-"\n"         \
-" Michel Couprie, Laurent Mercier\n"         \
 "\n"         \
 "\n"
 
@@ -4365,27 +3566,6 @@
 "\n"         \
 "Category: draw\n"         \
 "  draw\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__quasishear__c__ "  quasishear.c\n"         \
-"\n"         \
-" quasi shear rotation\n"         \
-"\n"         \
-"Usage: quasishear in.pgm theta [x y] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"rotates the image of the angle  theta (in degrees).\n"         \
-"If a point (x,y) is given, then the result is croped to the original\n"         \
-"image size, otherwise a new image with sufficient size is created.\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -4762,10 +3942,6 @@
 "\n"
 
 
-#define doc__temp___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__min__c__ "  min.c\n"         \
 "\n"         \
 " minimum of 2 images\n"         \
@@ -4821,10 +3997,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__temp3dsimple__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -4968,14 +4140,6 @@
 "\n"
 
 
-#define doc__segmentlignes__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__dilatplan__c_notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__erosball__c__ "  erosball.c\n"         \
 "\n"         \
 " morphological binary erosion by a ball\n"         \
@@ -5020,26 +4184,6 @@
 "  \n"         \
 "\n"         \
 "\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__ptisolated__c__ "  ptisolated.c\n"         \
-"\n"         \
-" detects isolated points in a binary image\n"         \
-"\n"         \
-"Usage: ptisolated in.pgm connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"An isolated point is a white point, all the n-neighbours of which are black\n"         \
-"(n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter  connex)\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2002\n"         \
 "\n"         \
 "\n"
 
@@ -5155,10 +4299,6 @@
 "\n"
 
 
-#define doc__cropondisk__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__drawscene__c__ "  drawscene.c\n"         \
 "\n"         \
 " draw a 3D scene which is specified by a text file into a 3D pgm image\n"         \
@@ -5175,62 +4315,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__deriche3d__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__recalagerigide_num__c__ "  recalagerigide_num.c\n"         \
-"\n"         \
-" rigid registration of two grayscale images\n"         \
-"\n"         \
-"Usage: recalagerigide_num in1 in2 seuil [init] out\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Rigid registration of two grayscale images. \n"         \
-"Let X and Y be two images, given respectively by  in1 and  in2.\n"         \
-"This procedure identifies the parameters of a rigid deformation R such that\n"         \
-"the \"distance\" between R(X) and Y is a local minimum.\n"         \
-"The distance D(Z,Y) between two images Z and Y is defined by:\n"         \
-"\n"         \
-"D(Z,Y) = sum { (Z[i] - Y[i])^2 ; for all i in support(Y) }\n"         \
-"\n"         \
-"The rigid deformation R is defined as the composition (in this order) \n"         \
-"of a zoom, a rotation, and a translation. \n"         \
-"\n"         \
-"In 2d, the parameters are:\n"         \
-" hx : parameter for the scaling in direction x\n"         \
-" hy : parameter for the scaling in direction y\n"         \
-" theta : angle (in degrees) of the rotation around (0,0)\n"         \
-" tx : parameter for the translation in direction x\n"         \
-" ty : parameter for the translation in direction y\n"         \
-"\n"         \
-"The output parameter  out is the name of a text file in which these \n"         \
-"values will be written (type \"e\" list format, see doc/formats.txt).\n"         \
-"\n"         \
-"The parameter  seuil makes it possible to eliminate outliers: \n"         \
-"points i such that (Z[i] - Y[i])^2 > seuil^2 are not taken into account.\n"         \
-"A value 255 for this parameter means no outlier elimination.\n"         \
-"\n"         \
-"The optional parameter  init makes it possible to give, \n"         \
-"in the same format as the output, an initial deformation which is \n"         \
-"\"close\" to the expected one. The default initialisation is the identity\n"         \
-"(parameters 0, 1, 1, 0, 0).\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__text___notused_c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -5463,36 +4547,6 @@
 "\n"
 
 
-#define doc__convexhull__c__ "  convexhull.c\n"         \
-"\n"         \
-" convex hull of a set of points in the 2D plane\n"         \
-"\n"         \
-"Usage: convewhull in.pgm mode out\n"         \
-"\n"         \
-"Description: Computes the convex hull of the set of non-null points\n"         \
-"in the image in.pgm, by the Jarvis's algorithm as described in \n"         \
-"\"Introduction to algorithms\", T. Cormen, C. Leiserson, R. Rivest, MIT Press.\n"         \
-"\n"         \
-"The parameter  mode selects the format of the result: \n"         \
-" 0: list of the support points of the convex hull\n"         \
-" 1: support points of the convex hull, embedded in the image frame\n"         \
-" 2: contour of the convex hull, embedded in the image frame\n"         \
-" 3: full convex hull, embedded in the image frame\n"         \
-"\n"         \
-"Types supported: byte 2D\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__recons___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__threshold__c__ "  threshold.c\n"         \
 "\n"         \
 " simple threshold\n"         \
@@ -5556,27 +4610,6 @@
 "\n"
 
 
-#define doc__delcomp___notused_c__ "  delcomp.c\n"         \
-"\n"         \
-" deletes a connected component\n"         \
-"\n"         \
-"Usage: delcomp in.pgm x y z v out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"The connected component of the binary image in.pgm\n"         \
-"which contains the point (x,y,z)\n"         \
-"is deleted.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: connect, topobin\n"         \
-"  connect, topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__dilation__c__ "  dilation.c\n"         \
 "\n"         \
 " morphological dilation by a plane structuring element\n"         \
@@ -5608,14 +4641,6 @@
 "\n"         \
 "\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__traceellipses__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__skel_NK2__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -5665,32 +4690,6 @@
 
 
 #define doc__comptreetime__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__skel_CK2_pers__c__ "  skel_CK2_pers.c\n"         \
-"\n"         \
-" topological persistence of 1D isthmuses, based on parallel 2D symmetric thinning\n"         \
-"\n"         \
-"Usage: skel_CK2_pers in.pgm out.pgm\n"         \
-"\n"         \
-"Description: Topological persistence of 1D isthmuses, based on \n"         \
-"parallel 2D symmetric thinning.\n"         \
-"\n"         \
-"When a point x is detected as a 1D isthmus, a counter p(x) is\n"         \
-"associated to this point and initialized with value 1. This counter is\n"         \
-"incremented a each iteration as long as x is still an isthmus. When this point x is\n"         \
-"eventually deleted, the value of the counter is freezed.\n"         \
-"\n"         \
-" The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -5917,58 +4916,6 @@
 "\n"
 
 
-#define doc__skel_ACK3__c__ "  skel_ACK3.c\n"         \
-"\n"         \
-" parallel 3D binary curvilinear, asymetric skeleton based on 3D and 2D residuals\n"         \
-"\n"         \
-"Usage: skel_ACK3 in.pgm nsteps [inhibit] out.pgm\n"         \
-"\n"         \
-"Description: Parallel 3D binary thinning or curvilinear,\n"         \
-"asymetric skeleton based on 3D and 2D residuals. The parameter  nsteps\n"         \
-"gives, if positive, the number of parallel thinning steps to be\n"         \
-"processed.  If the value given for  nsteps equals -1, the thinning\n"         \
-"is continued until stability.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__rotatebin__c__ "  rotatebin.c\n"         \
-"\n"         \
-" rotation of an image\n"         \
-"\n"         \
-"Usage: rotatebin in.pgm theta [x y] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"rotates the image  in.pgm of the angle  theta (in degrees).\n"         \
-"Method: truncated real rotation.\n"         \
-"If  x and  y are given, then the center of the rotation is the point \n"         \
-"(x,y) and the image size is left unchanged (hence parts of object \n"         \
-"may be lost). \n"         \
-"Otherwise, the center of the rotation is the point (0,0) and the resulting \n"         \
-"image size is computed such that no loss of information occur.\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__radialopening__c__ "  radialopening.c\n"         \
 "\n"         \
 " radial opening by line\n"         \
@@ -5989,10 +4936,6 @@
 " Andr� Vital Saude jan 2005\n"         \
 "\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__levialdi__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -6037,89 +4980,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__showpoint__c__ "  showpoint.c\n"         \
-"\n"         \
-" prints the value of a given point \n"         \
-"\n"         \
-"Usage: showpoint in.pgm x y z\n"         \
-"\n"         \
-"Description:\n"         \
-"The value of the point (x,y,z)\n"         \
-"is printed in the standard output stream.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__skeletonlab__c__ "  skeletonlab.c\n"         \
-"\n"         \
-" ultimate binary skeleton on label image guided by a priority image (see [BC07])\n"         \
-"\n"         \
-"Usage: skeletonlab in.pgm prio connex [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Ultimate binary skeleton on label image guided by a priority image.\n"         \
-"For simple point testing, each label is treated as if all other labels are turned to 0 (background).\n"         \
-"For computing distance maps, all labels are turned to 1 (foregroung).\n"         \
-"The lowest values of the priority image correspond to the highest priority.\n"         \
-"\n"         \
-"The parameter  prio is either an image (byte, int32_t, float or double), or a numerical code\n"         \
-"indicating that a distance map will be used as a priority image; \n"         \
-"the possible choices are:\n"         \
-" 0: approximate euclidean distance\n"         \
-" 1: approximate quadratic euclidean distance\n"         \
-" 2: chamfer distance\n"         \
-" 3: exact quadratic euclidean distance\n"         \
-" 4: 4-distance in 2d\n"         \
-" 8: 8-distance in 2d\n"         \
-" 6: 6-distance in 3d\n"         \
-" 18: 18-distance in 3d\n"         \
-" 26: 26-distance in 3d\n"         \
-"\n"         \
-"The parameter  connex indicates the connectivity of the binary object.\n"         \
-"Possible choices are 4, 8 in 2d and 6, 26 in 3d.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is an integer different from -1,\n"         \
-"then the points which correspond to this priority value will be left unchanged. \n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-"Let X be the set corresponding to the input image  in.pgm.\n"         \
-"Let P be the function corresponding to the priority image.\n"         \
-"Let I be the set corresponding to the inhibit image, if given, or the empty\n"         \
-"set otherwise.\n"         \
-"The algorithm is the following:\n"         \
-"\n"         \
-"\n"         \
-"Repeat until stability\n"         \
-"    Select a point x in X  I such that P[x] is minimal\n"         \
-"    If x is simple for X then\n"         \
-"        X = X  {x}\n"         \
-"Result: X\n"         \
-"\n"         \
-"\n"         \
-"Reference: \n"         \
-"[BC07] G. Bertrand and M. Couprie: \"Transformations topologiques discretes\", in G&eacute;om&eacute;trie discr&egrave;te et images num&eacute;riques, D. Coeurjolly and A. Montanvert and J.M. Chassery, pp.&nbsp;187-209, Herm&egrave;s, 2007.\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__readgif__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -6350,25 +5210,6 @@
 "\n"
 
 
-#define doc__setvoxdim__c__ "  setvoxdim.c\n"         \
-"\n"         \
-" adds voxel dimensions to file header\n"         \
-"\n"         \
-"Usage: setvoxdim image xdim ydim zdim\n"         \
-"\n"         \
-"Description: Adds voxel dimensions ( xdim  ydim  zdim ) \n"         \
-"to file header.\n"         \
-"\n"         \
-"Types supported: byte 3d, int32_t 3d\n"         \
-"\n"         \
-"Category: convert\n"         \
-" convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__seuil__c__ "  seuil.c\n"         \
 "\n"         \
 " simple threshold\n"         \
@@ -6414,68 +5255,6 @@
 
 
 #define doc__genkernel__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__skelpar3d_others__cxx___ "  skelpar3d_others.cxx\n"         \
-"\n"         \
-" parallel 3D binary skeleton\n"         \
-"DirectionalSkeletonizer\n"         \
-"Usage: skelpar3d in.pgm algorithm nsteps [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Parallel 3D binary thinning or skeleton. The parameter  nsteps gives,\n"         \
-"if positive, the number of parallel thinning steps to be processed.\n"         \
-"If the value given for  nsteps equals -1, the thinning is continued\n"         \
-"until stability.\n"         \
-"\n"         \
-"The parameter  algorithm is a numerical code\n"         \
-"indicating which method will be used for the thinning.\n"         \
-"The possible choices are:\n"         \
-" 0: Palagyi (curvilinear, 6-subiterations directional, 1998)\n"         \
-" 1: Palagyi (curvilinear, sequential, 2006)\n"         \
-" 2: Palagyi (surface, parallel directional, 2002)\n"         \
-" 3: Palagyi (surface, fully parallel, 2008)\n"         \
-" 4: Raynal  (curvilinear, directional, 2010)\n"         \
-" 5: Raynal  (surface, directional, 2010)\n"         \
-" 6: Lohou-Bertrand  (curvilinear, symmetric, 2007)\n"         \
-" 7: Ma-Wan-Chang (curvilinear, 2 subfields, 2002)\n"         \
-" 8: Tsao-Fu (curvilinear, 6-subiterations directional, 1982)\n"         \
-" 9: Ma-Sonka (curvilinear, fully parallel, does not preserve topology 1996)\n"         \
-" 10: Ma-Wan (curvilinear (18/6) 6 subiterations, CVIU 2000)\n"         \
-" 11: Lohou-Bertrand (curvilinear 6 subiterations, DAM 2005)\n"         \
-" 12: Lohou-Bertrand (curvilinear 12 subiterations, DAM 2004)\n"         \
-" 13: ACK3a\n"         \
-" 14: CKSC\n"         \
-" 15: Ma-Wan-Lee (curvilinear, 4 subfields, 2002)\n"         \
-" 16: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 1)\n"         \
-" 17: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 2)\n"         \
-" 18: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 3)\n"         \
-" 19: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 1)\n"         \
-" 20: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 2)\n"         \
-" 21: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 3)\n"         \
-" 22: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 1)\n"         \
-" 23: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 2)\n"         \
-" 24: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 3)\n"         \
-" 25: She et al. (curvilinear, symmetric, DICTA 2009)\n"         \
-" 26: Tsao-Fu (surface, 6-subiterations directional, 1981)\n"         \
-" 27: Tsao-Fu (curvilinear, 6-subiterations directional, 1981)\n"         \
-" 28: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 0)\n"         \
-" 29: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 0)\n"         \
-" 30: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 0)\n"         \
-" 31: Lohou-Bertrand  (surface, symmetric, 2007)\n"         \
-" 32: Manzanera et al. (surface, symmetric, 1999)\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie, Benjamin Raynal, John Chaussard\n"         \
-"\n"         \
 "\n"
 
 
@@ -6636,10 +5415,6 @@
 "\n"
 
 
-#define doc__temp3d___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__lambdathin__c__ "  lambdathin.c\n"         \
 "\n"         \
 " grayscale homotopic and filtered thinning\n"         \
@@ -6660,26 +5435,6 @@
 
 
 #define doc__lfdilat3d_rect__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__boxmin__c__ "  boxmin.c\n"         \
-"\n"         \
-" minimal box including a given set of points\n"         \
-"\n"         \
-"Usage: boxmin in.pgm out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"The result out.pgm has the same size as in.pgm. \n"         \
-"It contains the minimal box including the set of points in  in.pgm \n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie 2002\n"         \
-"\n"         \
 "\n"
 
 
@@ -6767,26 +5522,6 @@
 "\n"
 
 
-#define doc__countvalues__c__ "  countvalues.c\n"         \
-"\n"         \
-" counts the number of distinct values of an image or a region\n"         \
-"\n"         \
-"Usage: countvalues in.pgm [mask.pgm] out.list\n"         \
-"\n"         \
-"Description:\n"         \
-"Counts the number of distinct values of  im.pgm (masked by the binary image\n"         \
-" mask.pgm, if given) and saves it in file  out.list .\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d\n"         \
-"\n"         \
-"Category: histo\n"         \
-"  histo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__drawball__c__ "  drawball.c\n"         \
 "\n"         \
 " generates a binary euclidean ball\n"         \
@@ -6808,90 +5543,7 @@
 "\n"
 
 
-#define doc__selndg__c__ "  selndg.c\n"         \
-"\n"         \
-" selects pixels with values between two thresholds \n"         \
-"\n"         \
-"Usage: selndg in.pgm inf sup out.ppm\n"         \
-"\n"         \
-"Description: \n"         \
-"Selects pixels x such that  inf  \n"         \
-"If the input image is of type byte, the output is a binary image.\n"         \
-"If the input image is of type long, the output is also a long image\n"         \
-"where all pixels whose values are not in the interval, are put to 0.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, long 2d, long 3d\n"         \
-"\n"         \
-"Category: arith\n"         \
-"  arith\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__lfdilat3d_line__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__skel_CK3a__c__ "  skel_CK3a.c\n"         \
-"\n"         \
-" parallel 3D binary curvilinear skeleton based on 1D isthmuses\n"         \
-"\n"         \
-"Usage: skel_CK3a in.pgm nsteps [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Parallel 3D binary thinning or curvilinear skeleton based on 1D isthmuses. \n"         \
-"The parameter  nsteps gives,\n"         \
-"if positive, the number of parallel thinning steps to be processed.\n"         \
-"If the value given for  nsteps equals -1, the thinning is continued\n"         \
-"until stability.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__surfels__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__rankmaxopening__c__ "  rankmaxopening.c\n"         \
-"\n"         \
-" rank-max opening \n"         \
-"\n"         \
-"Usage: rankmaxopening in.pgm el.pgm r out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Let F be the input image, G be the output image, and E the structuring\n"         \
-"element.\n"         \
-"\n"         \
-"The rank-max opening [Ron86]\n"         \
-"of structuring element $E$ and parameter  r in [0...1]\n"         \
-"may be defined by G = min(F,dilation(rankfilter(F,E,1-r),E))\n"         \
-"\n"         \
-"[Ron86] C. Ronse:\n"         \
-"\"Erosion of narrow image features by combination of local low rank and max filters\",\n"         \
-"Proc. 2nd Int. Conf. on Image Processing and int32_t Applications,\n"         \
-"pages 77-81, 1986.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: morpho\n"         \
-" morpho\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -6971,28 +5623,6 @@
 "\n"
 
 
-#define doc__standarddeviation1__c__ "  standarddeviation1.c\n"         \
-"\n"         \
-" return the standard deviation of the pixel values of an image\n"         \
-"\n"         \
-"Usage: standarddeviation1 in.pgm [mask.pgm] out.list\n"         \
-"\n"         \
-"Description:\n"         \
-"This function returns (in the list out.list) \n"         \
-"the standard deviation of the pixel values of the image  in.pgm .\n"         \
-"If the optional parameter  mask.pgm is given, then only the \n"         \
-"values which correspond to non-null points of mask are considered.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n"         \
-"\n"         \
-"Category: arith\n"         \
-"  arith\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__graph2ps__c__ "  graph2ps.c\n"         \
 "\n"         \
 " draws a planar graph into a ps file\n"         \
@@ -7062,29 +5692,6 @@
 
 
 #define doc__ecarttype__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__stretch__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__symse__c__ "  symse.c\n"         \
-"\n"         \
-" inverse of a structuring element\n"         \
-"\n"         \
-"Usage: symse in.pgm out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Inverse of a structuring element.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d.\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -7208,33 +5815,6 @@
 "\n"
 
 
-#define doc__skel_CKSC3__c__ "  skel_CKSC3.c\n"         \
-"\n"         \
-" sequential 3D binary curvilinear skeleton\n"         \
-"\n"         \
-"Usage: skel_CKSC3 in.pgm nsteps [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Sequentl 3D binary thinning or curvilinear skeleton. The parameter  nsteps gives,\n"         \
-"if positive, the number of parallel thinning steps to be processed.\n"         \
-"If the value given for  nsteps equals -1, the thinning is continued\n"         \
-"until stability.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__fermetrous3d__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -7247,45 +5827,11 @@
 "\n"
 
 
-#define doc__shencastan__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__2dflowskeleton__c__foret__ "  void Morsify(graphe * g, boolean * Vh, TYP_VSOM epsilon)\n"         \
 "     g (entrée) : un graphe pondéré sur les sommets.\n"         \
 "     TODO\n"         \
 "     ne s'applique qu'aux graphes sans circuit\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__skelpruning__c__ "  skelpruning.c\n"         \
-"\n"         \
-" pruning of \"short end branches\" in a curvilinear skeleton\n"         \
-"\n"         \
-"Usage: skelpruning in.skel length out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"The skeleton found in  is searched for \"small\" branches which satisfy the following criteria:\n"         \
-" Branch has exactly one end\n"         \
-" Branch length is less than or equal to  length parameter.\n"         \
-"\n"         \
-"Parameter  length is a number pixels.\n"         \
-"\n"         \
-"Matching arcs are written in  out.pgm.\n"         \
-"\n"         \
-"Types supported: skel 2d, skel 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2011\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__comphisto__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -7366,10 +5912,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__saliencyGA__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -7552,32 +6094,6 @@
 "\n"         \
 "Category: morpho\n"         \
 "  morpho\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__skel_SCK3_pers__c__ "  skel_SCK3_pers.c\n"         \
-"\n"         \
-" topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning\n"         \
-"\n"         \
-"Usage: skel_SCK3_pers in.pgm out.pgm\n"         \
-"\n"         \
-"Description: Topological persistence of 1D isthmuses, based on \n"         \
-"parallel 3D asymetric thinning.\n"         \
-"\n"         \
-"When a point x is detected as a 1D isthmus, a counter p(x) is\n"         \
-"associated to this point and initialized with value 1. This counter is\n"         \
-"incremented a each iteration as long as x is still an isthmus. When this point x is\n"         \
-"eventually deleted, the value of the counter is freezed.\n"         \
-"\n"         \
-" The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -7833,24 +6349,6 @@
 "\n"
 
 
-#define doc__circleincl__c__ "  circleincl.c\n"         \
-"\n"         \
-" circle identification and drawing from spare points\n"         \
-"\n"         \
-"Usage: circleincl in.pgm pts.list filled out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" John Chaussard\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__toposhrink__c__ "  toposhrink.c\n"         \
 "\n"         \
 " topologically controled binary shrinking guided by a priority image\n"         \
@@ -7939,29 +6437,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__deframe__c__ "  deframe.c\n"         \
-"\n"         \
-" suppress the frame from an image\n"         \
-"\n"         \
-"Usage: deframe in.pgm out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"suppress the frame from an image.\n"         \
-"\n"         \
-"Types supported: byte 2d, int32_t 2d, float 2d, byte 3d, int32_t 3d, float 3d.\n"         \
-"\n"         \
-"Category: convert, geo\n"         \
-"  convert, geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__hthin3d___notused_c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -8116,28 +6591,6 @@
 "\n"
 
 
-#define doc__correctbias__c__ "  correctbias.c\n"         \
-"\n"         \
-" correction of a luminosity bias expressed by a linear function\n"         \
-"\n"         \
-"Usage: correctbias in.pgm factor type [xc yc] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Let  a be the value of parameter  factor.\n"         \
-"The bias  type can be:\n"         \
-" 0 radial (center  xc,  yc), linear (add -ax to the value of the element of abcissa x).\n"         \
-" 1 radial (center  xc,  yc), parabolic (add -a^2 x to the value of the element of abcissa x).\n"         \
-"\n"         \
-"Types supported: byte 2D\n"         \
-"\n"         \
-"Category: arith\n"         \
-" arith\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__granulometry__c__ "  granulometry.c\n"         \
 "\n"         \
 " granulometry of a binary image\n"         \
@@ -8259,41 +6712,6 @@
 "\n"
 
 
-#define doc__skel_AMK__c__ "  skel_AMK.c\n"         \
-"\n"         \
-" parallel 2D or 3D binary skeleton, ultimate, asymmetric\n"         \
-"\n"         \
-"Usage: skel_AMK in.pgm nsteps [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Parallel 2D or 3D binary ultimate, asymmetric skeleton. The parameter  nsteps gives,\n"         \
-"if positive, the number of parallel thinning steps to be processed.\n"         \
-"If the value given for  nsteps equals -1, the thinning is continued\n"         \
-"until stability.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-"The algorithm used here is indeed a variant of alg. NK2 described in [BC08], which allows for an arbitrary (and even null) constraint set.\n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"References:\n"         \
-"[BC08] Gilles Bertrand and Michel Couprie, Two-dimensional thinning algorithms based on critical kernels. Journal of Mathematical Imaging and Vision, 31(1). 2008. pp.35–56.\n"         \
-"http://igm.univ-mlv.fr/LIGM/internal_report/pdf/2006_02.v2.pdf\n"         \
-"\n"         \
-"[XXXX] TODO: add reference for 3D\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__line__c__ "  line.c\n"         \
 "\n"         \
 " Draws a straight line between the two first points found in image.\n"         \
@@ -8311,10 +6729,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__segmenti__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -8500,33 +6914,6 @@
 "\n"
 
 
-#define doc__skel_CK3__c__ "  skel_CK3.c\n"         \
-"\n"         \
-" parallel 3D binary curvilinear skeleton\n"         \
-"\n"         \
-"Usage: skel_CK3 in.pgm nsteps [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Parallel 3D binary thinning or curvilinear skeleton. The parameter  nsteps gives,\n"         \
-"if positive, the number of parallel thinning steps to be processed.\n"         \
-"If the value given for  nsteps equals -1, the thinning is continued\n"         \
-"until stability.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__pgm2list1d__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -8586,29 +6973,6 @@
 "      ur1_hthin_m\n"         \
 "  \n"         \
 "\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__deletepeaks__c__ "  deletepeaks.c\n"         \
-"\n"         \
-" deletes peaks in a grayscale image \n"         \
-"\n"         \
-"Usage: deletepeaks filein.pgm [mask] connexmin fileout.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Deletes peaks in a grayscale image. A point p is a peak if T+(p) = 0\n"         \
-"(see ref. [BEC97]).\n"         \
-"\n"         \
-"References: \n"         \
-"[BEC97] G. Bertrand, J. C. Everat and M. Couprie: \"Image segmentation through operators based upon topology\",  Journal of Electronic Imaging, Vol.&nbsp;6, No.&nbsp;4, pp.&nbsp;395-405, 1997.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
-"\n"         \
-" Michel Couprie\n"         \
 "\n"         \
 "\n"
 
@@ -8741,37 +7105,6 @@
 "\n"
 
 
-#define doc__curvatures__c__ "  curvatures.c\n"         \
-"\n"         \
-" compute the curvatures of a natural cubic spline\n"         \
-"\n"         \
-"Usage: curvatures spline.txt n out.txt\n"         \
-"\n"         \
-"Description:\n"         \
-"Samples the spline in  spline.txt and compute the curvature at each sample point.\n"         \
-"The file  spline.txt contains a 2D or 3D spline under the format:\n"         \
-"s nbpoints  \n"         \
-"x1 y1\n"         \
-"x2 y2\n"         \
-"x3 y3\n"         \
-"...\n"         \
-"or:\n"         \
-"S nbpoints  \n"         \
-"x1 y1 z1\n"         \
-"x2 y2 z2\n"         \
-"x3 y3 z3\n"         \
-"...\n"         \
-"\n"         \
-"Types supported: 2D, 3D splines\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__mcm2vtk__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -8820,56 +7153,6 @@
 "\n"         \
 "Category: connect\n"         \
 " connect\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__recalagerigide_translateplane__c__ "  recalagerigide.c\n"         \
-"\n"         \
-" rigid registration of two closed contours\n"         \
-"\n"         \
-"Usage: recalagerigide in1 in2 out\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Rigid registration of two closed contours. \n"         \
-"Let X and Y be two point sets, given respectively by  in1 and  in2.\n"         \
-"This procedure identifies the parameters of a rigid deformation R such that\n"         \
-"the \"distance\" between R(X) and Y is a local minimum.\n"         \
-"The distance D(Z,Y) between two sets Z and Y is defined by:\n"         \
-"\n"         \
-"D(Z,Y) = sum { d2(z,Y) ; for all z in Z }\n"         \
-"\n"         \
-"d2(z,Y) = min { d2(z,y) ; for all y in Y }\n"         \
-"\n"         \
-"d2(z,y) = (z - y)^2 ; i.e., the square or the Euclidean distance between z and y.\n"         \
-"\n"         \
-"The rigid deformation R is defined as the composition (in this order) \n"         \
-"of scalings, rotations and translations. \n"         \
-"\n"         \
-"In 2d, the parameters are:\n"         \
-" sx : parameter for the scaling in direction x\n"         \
-" sy : parameter for the scaling in direction y\n"         \
-" theta : angle (in radians) of the rotation around the barycenter of X\n"         \
-" tx : parameter for the translation in direction x\n"         \
-" ty : parameter for the translation in direction y\n"         \
-"\n"         \
-"In 3d, the parameters are:\n"         \
-" sx : parameter for the scaling in direction x\n"         \
-" sy : parameter for the scaling in direction y\n"         \
-" sz : parameter for the scaling in direction z\n"         \
-" theta : angle (in radians) of the rotation around the parallel to the the z axis passing by the barycenter of X\n"         \
-" phi : angle (in radians) of the rotation around the parallel to the the y axis passing by the barycenter of X\n"         \
-" tx : parameter for the translation in direction x\n"         \
-" ty : parameter for the translation in direction y\n"         \
-" tz : parameter for the translation in direction z\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -8932,10 +7215,6 @@
 
 
 #define doc__using_python__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__selrect__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -9055,10 +7334,6 @@
 "\n"
 
 
-#define doc__tempNd__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__3dalpha__c__ "  3dalpha.c\n"         \
 "\n"         \
 " alpha-dilation of a 3d khalimsky order \n"         \
@@ -9102,10 +7377,6 @@
 "\n"         \
 " Jean Cousty - fevrier 2005\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__temp2d___notused_c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -9283,75 +7554,6 @@
 "\n"
 
 
-#define doc__qdistance__cpp__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__skelpar3d__c__ "  skelpar3d.c\n"         \
-"\n"         \
-" parallel 3D binary skeleton\n"         \
-"\n"         \
-"Usage: skelpar3d in.pgm algorithm nsteps [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Parallel 3D binary thinning or skeleton. \n"         \
-"\n"         \
-"The parameter  nsteps gives, if positive, the number of parallel\n"         \
-"thinning steps to be processed.  If the value given for  nsteps\n"         \
-"equals -1, the thinning is continued until stability.\n"         \
-"\n"         \
-"For some algorithms (16 to ?? ), the parameter  nsteps has a\n"         \
-"different meaning which is related to the notion of persistence (see\n"         \
-"[REF A AJOUTER]). It plays the role of a filtering parameter.\n"         \
-"\n"         \
-"The parameter  algorithm is a numerical code\n"         \
-"indicating which method will be used for the thinning.\n"         \
-"The possible choices are:\n"         \
-" 0: ultimate, without constraint (MK3a)\n"         \
-" 1: curvilinear, symmetric, based on 1D isthmus (CK3a)\n"         \
-" 2: medial axis preservation (AK3) - parameter inhibit represents the minimal radius of medial axis balls which are considered\n"         \
-" 3: ultimate (MK3) - if nsteps = -2, returns the topological distance\n"         \
-" 4: curvilinear based on ends (EK3)\n"         \
-" 5: curvilinear based on ends, with end reconstruction (CK3b)\n"         \
-" 6: topological axis (not homotopic)\n"         \
-" 7: curvilinear, based on residual points and 2D isthmus (CK3)\n"         \
-" 8: ultimate, asymmetric (AMK3)\n"         \
-" 9: curvilinear, asymmetric, based on thin 1D isthmus (ACK3a)\n"         \
-" 10: curvilinear, asymmetric, based on 3D and 2D residuals (ACK3)\n"         \
-" 11: surface, symmetric, based on residual points (RK3)\n"         \
-" 12: surface, symmetric, based on 2D isthmuses (SK3)\n"         \
-" 13: ultimate, directional, (DK3)\n"         \
-" 14: surface, directional, based on residual points (DRK3)\n"         \
-" 15: surface, directional, based on 2D isthmuses (DSK3)\n"         \
-" 16: curvilinear, asymmetric, based on thin 1D isthmus with persistence (ACK3p)\n"         \
-" 17: surface, asymmetric, based on thin 2D isthmus with persistence (ASK3p)\n"         \
-" 18: curvilinear, symmetric, based on 1D isthmus with persistence (CK3p)\n"         \
-" 19: surface, symmetric, based on 2D isthmus with persistence (SK3p)\n"         \
-" 20: surface and curvilinear, symmetric, based on 1D and 2D isthmus with persistence (SCK3p)\n"         \
-" 21: surface, symmetric, based on residual points (RK3), variant (uses 26-connectivity to define residual points)\n"         \
-"\n"         \
-"In modes other than 2, if the parameter  inhibit is given and is a\n"         \
-"binary image name, then the points of this image will be left\n"         \
-"unchanged.\n"         \
-"\n"         \
-"The following codes give access to auxiliary functions, for isthmus detection. \n"         \
-"Parameter  nsteps will not be used in this case (any value can be given).\n"         \
-"\n"         \
-" 100: 1D isthmus points\n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__extractplane__c__ "  extractplane.c\n"         \
 "\n"         \
 " extracts a plane normal to one of the directions x,y,z from a 3D image\n"         \
@@ -9379,10 +7581,6 @@
 
 
 #define doc__ellipticite__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__waterfall__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -9446,10 +7644,6 @@
 
 
 #define doc__matchellipse__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__circular_measure__cpp__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -9518,109 +7712,7 @@
 "\n"
 
 
-#define doc__rotse__c__ "  rotse.c\n"         \
-"\n"         \
-" rotation of a structuring element\n"         \
-"\n"         \
-"Usage: rotse in.pgm angle out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Rotation of a structuring element, by an angle of 0, 90, 180 or 270 degrees.\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__amont__c__ "  amont.c\n"         \
-"\n"         \
-" amont of a binary marker in a grayscale image\n"         \
-"\n"         \
-"Usage: amont in.pgm mark.pgm connex [s] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Let F be the function defined by  in.pgm, \n"         \
-"let X be the set defined by  mark.pgm.\n"         \
-"The amont of X in F is defined as the set of points x such that there exists\n"         \
-"an ascending path from X to x for F with connectivity connex.\n"         \
-"If the parameter s is given, then only strictly ascending paths are \n"         \
-"considered.\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: connect\n"         \
-" connect\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__genbini__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__skeleucl__c__ "  skeleucl.c\n"         \
-"\n"         \
-" Euclidean binary skeleton\n"         \
-"\n"         \
-"Usage: skeleucl in.pgm connex [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Euclidean binary skeleton.\n"         \
-"\n"         \
-"The parameter  connex indicates the connectivity of the binary object.\n"         \
-"Possible choices are 4, 8 in 2d and 6, 26 in 3d.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image (constraint set) will be left unchanged. \n"         \
-"\n"         \
-"This operator is usually used with a constraint set (parameter  inhibit) that is a subset of the exact Euclidean medial axis (see operator medialaxis). \n"         \
-"\n"         \
-"Here is an example using the whole medial axis as constraint set:\n"         \
-"\n"         \
-"\n"         \
-"medialaxis test.pgm 3 _1\n"         \
-"threshold _1 1 _2\n"         \
-"skeleucl test.pgm 8 _2 result.pgm\n"         \
-"\n"         \
-"\n"         \
-"Intersesting subsets are obtained by filtering the medial axis, either based on the ball radiuses, or based on the bisector angle (see operator bisector). Below is a script showing how to proceed:\n"         \
-"\n"         \
-"\n"         \
-"#!/bin/sh\n"         \
-"USAGE=\"Usage: $0 in seuilR (in [1..infnty[) seuilA (in [0.001..pi]) out\"\n"         \
-"if [ $# -ne 4 ]\n"         \
-"then\n"         \
-"	echo $USAGE\n"         \
-"        exit\n"         \
-"fi\n"         \
-"medialaxis $1 3 /tmp/skel2_tmp_m\n"         \
-"threshold /tmp/skel2_tmp_m 1 /tmp/skel2_tmp_m1\n"         \
-"skeleucl $1 8 /tmp/skel2_tmp_m1 /tmp/skel2_tmp_s\n"         \
-"threshold /tmp/skel2_tmp_m $2 /tmp/skel2_tmp_ms\n"         \
-"distc $1 3 /tmp/skel2_tmp_d\n"         \
-"bisector /tmp/skel2_tmp_d /tmp/skel2_tmp_ms /tmp/skel2_tmp_a\n"         \
-"threshold /tmp/skel2_tmp_a $3 /tmp/skel2_tmp_i\n"         \
-"skeleton /tmp/skel2_tmp_s /tmp/skel2_tmp_d 8 /tmp/skel2_tmp_i $4\n"         \
-"rm -f /tmp/skel2_tmp_*\n"         \
-"\n"         \
-"\n"         \
-"References: \n"         \
-"[CCZ07] M. Couprie, D. Coeurjolly and R. Zrour: \"Discrete bisector function and Euclidean skeleton in 2D and 3D\", Image and Vision Computing, Vol.&nbsp;25, No.&nbsp;10, pp.&nbsp;1543-1556, 2007.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -9801,30 +7893,6 @@
 "\n"         \
 " Michel Couprie 2006\n"         \
 "\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__proj__c__ "  proj.c\n"         \
-"\n"         \
-" projection parallel to one of the main axes\n"         \
-"\n"         \
-"Usage: proj in.pgm dir mode out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Projection parallel to one of the main axes.\n"         \
-"\n"         \
-"dir = x | y | z\n"         \
-"\n"         \
-"mode = 0 (mean) | 1 (max)\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
 "\n"         \
 "\n"
 
@@ -10042,31 +8110,6 @@
 "\n"
 
 
-#define doc__samplespline__c__ "  samplespline.c\n"         \
-"\n"         \
-" samples a cubic spline according to its curvilinear abcissa\n"         \
-"\n"         \
-"Usage: samplespline in.txt nsamples out.txt\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"This program computes a regular sampling of the spline given in in.txt.\n"         \
-"The result is a list of nsamples points, which are stored in out.txt.\n"         \
-"\n"         \
-"Types supported: list 2D, list 3D\n"         \
-"\n"         \
-"Category: draw geo\n"         \
-"  draw geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__htkernu3d___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__3dseltopo__c__ "  3dseltopo.c\n"         \
 "\n"         \
 " selects points in the 3d khalimsky grid according to a local topological criterion \n"         \
@@ -10101,61 +8144,7 @@
 "\n"
 
 
-#define doc__skel_SK3_pers__c__ "  skel_SK3_pers.c\n"         \
-"\n"         \
-" topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning\n"         \
-"\n"         \
-"Usage: skel_SK3_pers in.pgm out.pgm\n"         \
-"\n"         \
-"Description: Topological persistence of 1D isthmuses, based on \n"         \
-"parallel 3D asymetric thinning.\n"         \
-"\n"         \
-"When a point x is detected as a 1D isthmus, a counter p(x) is\n"         \
-"associated to this point and initialized with value 1. This counter is\n"         \
-"incremented a each iteration as long as x is still an isthmus. When this point x is\n"         \
-"eventually deleted, the value of the counter is freezed.\n"         \
-"\n"         \
-" The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__lpemeyer___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__segmentnum__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__deriche__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__ptseparatinggray__c__ "  ptseparatinggray.c\n"         \
-"\n"         \
-" detects separating points in a grayscale image\n"         \
-"\n"         \
-"Usage: ptseparatinggray in.pgm connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"A separating point is a point p, which is separating (in the binary sense)\n"         \
-"for a section h of F, with h \n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
-"\n"         \
-" Michel Couprie 2002\n"         \
-"\n"         \
 "\n"
 
 
@@ -10225,10 +8214,6 @@
 "\n"
 
 
-#define doc__2latex__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__dynrecons__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -10252,10 +8237,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__catgif__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -10307,10 +8288,6 @@
 "\n"
 
 
-#define doc__fusreg___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__pgm2bmp__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -10350,30 +8327,6 @@
 
 
 #define doc__erosfast__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__sceneconvert__c__ "  sceneconvert.c\n"         \
-"\n"         \
-" converts a 3D scene into another format\n"         \
-"\n"         \
-"Usage: sceneconvert in.3sc format out\n"         \
-"\n"         \
-"Description:\n"         \
-"The file  scene.3sc contains a scene under the 3Dscene format.\n"         \
-"\n"         \
-"The parameter  format indicate the format of the output file \n"         \
-"(choices are POV, POVB).\n"         \
-"The keyword POVB corresponds to a bare Povray mesh: a header and a footer must be\n"         \
-"catenated in order to make a full Povray scene. \n"         \
-"\n"         \
-"Types supported: 3D scene\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -10501,30 +8454,6 @@
 "\n"
 
 
-#define doc__bruite__c__ "  bruite.c\n"         \
-"\n"         \
-" adds noise to an image\n"         \
-"\n"         \
-"Usage: bruite in.pgm n alpha p out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Adds a uniform or gaussian noise, of mean 0 and standard deviation alpha, \n"         \
-"to a proportion p of the pixels of the image in.pgm .\n"         \
-"\n"         \
-"  OPTIONS\n"         \
-"    n = 0  uniform noise\n"         \
-"    n = 1  gaussian noise\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: signal\n"         \
-"  signal\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__ppmascmode__c__ "  ppmascmode.c\n"         \
 "\n"         \
 " converts a ppm file to ascii mode\n"         \
@@ -10539,29 +8468,6 @@
 "\n"         \
 "Category: convert\n"         \
 "  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__deletewells__c__ "  deletewells.c\n"         \
-"\n"         \
-" deletes wells in a grayscale image \n"         \
-"\n"         \
-"Usage: deletewells filein.pgm [mask] connexmin fileout.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Deletes wells in a grayscale image. A point p is a well if T-(p) = 0\n"         \
-"(see ref. [BEC97]).\n"         \
-"\n"         \
-"References: \n"         \
-"[BEC97] G. Bertrand, J. C. Everat and M. Couprie: \"Image segmentation through operators based upon topology\",  Journal of Electronic Imaging, Vol.&nbsp;6, No.&nbsp;4, pp.&nbsp;395-405, 1997.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -10629,28 +8535,6 @@
 "\n"         \
 "Category: geo\n"         \
 " geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__addconst__c__ "  addconst.c\n"         \
-"\n"         \
-" adds a constant value to an image\n"         \
-"\n"         \
-"Usage: addconst in.pgm const [out.pgm]\n"         \
-"\n"         \
-"Description:\n"         \
-"For each pixel x, out[x] = in[x] + const. If out[x] \n"         \
-"exceeds 255, then out[x] is set to 255.\n"         \
-"\n"         \
-"If  out.pgm is not specified, then out.pgm = in.pgm.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d\n"         \
-"\n"         \
-"Category: arith\n"         \
-"  arith\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -10761,39 +8645,6 @@
 "\n"
 
 
-#define doc__rawthreshold__c__ "  rawthreshold.c\n"         \
-"\n"         \
-" converts from raw format into pgm format and applies a double threshold\n"         \
-"\n"         \
-"Usage: rawthreshold in.raw rs cs ds headersize datatype littleendian thresh1 thresh2 [xdim ydim zdim] out.pgm\n"         \
-"\n"         \
-"Description: Converts from raw format into pgm byte format, and selects only pixels which have values V such that thresh1 \n"         \
-"\n"         \
-"Parameters:\n"         \
-"  in.pgm : source file in raw format\n"         \
-"  rs (int32_t): row size (number of voxels in a row)\n"         \
-"  cs (int32_t): column size (number of voxels in a column)\n"         \
-"  ds (int32_t): number of planes\n"         \
-"  headersize (int32_t): size of the header in bytes (information in the header will be ignored)\n"         \
-"  datatype (int32_t): (1 for byte, 2 for short int, 4 for long int, 5 for float)\n"         \
-"  littleendian (int32_t) 1: littleendian, 0: bigendian. Usual choice is 0.\n"         \
-"  thresh1, thresh2 (float): threshold values\n"         \
-"  xdim (float, optional) : gap (in the real world) between two adjacent voxels in a row.  \n"         \
-"  ydim (float, optional) : gap (in the real world) between two adjacent voxels in a column.  \n"         \
-"  zdim (float, optional) : gap (in the real world) between two adjacent planes.  \n"         \
-"\n"         \
-"This operator does not load the complete image into memory. \n"         \
-"\n"         \
-"Types supported: float\n"         \
-"\n"         \
-"Category: convert\n"         \
-" convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__frame__c__ "  frame.c\n"         \
 "\n"         \
 " generates an image with a white border and a black interior\n"         \
@@ -10867,37 +8718,6 @@
 "\n"
 
 
-#define doc__tracevect__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__skel_MK3__c__ "  skel_MK3.c\n"         \
-"\n"         \
-" parallel 3D binary ultimate skeleton\n"         \
-"\n"         \
-"Usage: skel_MK3 in.pgm nsteps [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Parallel 3D binary thinning or ultimate skeleton. The parameter  nsteps gives,\n"         \
-"if positive, the number of parallel thinning steps to be processed.\n"         \
-"If the value given for  nsteps equals -1, the thinning is continued\n"         \
-"until stability.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__long2float__c__ "  long2float.c\n"         \
 "\n"         \
 " converts a \"long\" image to a \"float\" image\n"         \
@@ -10915,10 +8735,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__dilatfast3d___notused_c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -10972,26 +8788,6 @@
 
 
 #define doc__filtreordre__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__ptseparating__c__ "  ptseparating.c\n"         \
-"\n"         \
-" detects separating points in a 2D or 3D binary image\n"         \
-"\n"         \
-"Usage: ptseparating in.pgm connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"A separating point is a white point x such that Tb_n[x] >= 2\n"         \
-"(n = 4,8 in 2D or n = 6,18,26 in 3D, as set by the parameter  connex)\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d \n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2002\n"         \
-"\n"         \
 "\n"
 
 
@@ -11112,10 +8908,6 @@
 "\n"
 
 
-#define doc__reformat__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__lthin__c__ "  lthin.c\n"         \
 "\n"         \
 " grayscale leveling thinning\n"         \
@@ -11173,10 +8965,6 @@
 "\n"
 
 
-#define doc__segment3d__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__graph2pgm__c__ "  graph2pgm.c\n"         \
 "\n"         \
 " converts from graph representation to pgm\n"         \
@@ -11195,27 +8983,6 @@
 "\n"         \
 "Category: convert\n"         \
 "  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__randimage__c__ "  randimage.c\n"         \
-"\n"         \
-" random image generation\n"         \
-"\n"         \
-"Usage: randimage [in.pgm | rowsize colsize depth] valmax [seed] out.pgm\n"         \
-"\n"         \
-"Description: Generates an image with pixel values uniformly randomly\n"         \
-"distributed between 0 and  valmax (included). \n"         \
-"If given, the parameter  seed is used to \n"         \
-"initialize the random generator, otherwise the clock is used instead.\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D, int32_t 2D, int32_t 3D\n"         \
-"\n"         \
-"Category: signal\n"         \
-"  signal\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -11291,10 +9058,6 @@
 "\n"
 
 
-#define doc__rgb2ppm__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__histscal__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -11344,41 +9107,6 @@
 "\n"         \
 "Category: mesh3d\n"         \
 "  mesh3d\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__volumelignes__c__ "  volumelignes.c\n"         \
-"\n"         \
-" enhances linear structures in a grayscale image\n"         \
-"\n"         \
-"Usage: volumelignes skel.pgm orig.pgm connex radius out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Enhances linear structures in a grayscale image.\n"         \
-"The algorithm is the following:\n"         \
-"\n"         \
-"\n"         \
-"Let F be the original image (\"orig.pgm\")\n"         \
-"Let O be the final result (\"out.pgm\")\n"         \
-"Let r be the value of parameter \"radius\"\n"         \
-"Compute k iterations of homotopic thinning, result S (\"skel.pgm\")\n"         \
-"For each point x of S which is separating\n"         \
-"  O(x) = volume((F-S).Br(x)) \n"         \
-"  where Br(x) is the disc centered on x with radius r\n"         \
-"EndFor\n"         \
-"\n"         \
-"\n"         \
-"References: \n"         \
-"\"Topological operators for the detection of\n"         \
-"curvilinar structures in grayscale images\", in preparation, 2003.\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -11541,31 +9269,6 @@
 "\n"
 
 
-#define doc__contours__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__catpgm__c__ "  catpgm.c\n"         \
-"\n"         \
-" catenates a sequence of 2d (resp. 1d) images into a 3d (resp. 2d) image\n"         \
-"\n"         \
-"Usage: catpgm name_prefix index_begin index_end [xdim ydim zdim] name_out\n"         \
-"\n"         \
-"Description:\n"         \
-"Original file names must be of the form: name_prefixnnnn.pgm, \n"         \
-"where nnnn is a four digit decimal integer. The integers index_begin\n"         \
-"and index_end specify respectively the first and the last index of the series.\n"         \
-"\n"         \
-"Types supported: sequence of byte 1d or 2d images\n"         \
-"\n"         \
-"Category:  convert\n"         \
-"   convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__pgm2raw__c__ "  pgm2raw.c\n"         \
 "\n"         \
 " suppress the header from a pgm file\n"         \
@@ -11716,39 +9419,6 @@
 "\n"
 
 
-#define doc__animscenes__c__ "  animscenes.c\n"         \
-"\n"         \
-" generates intermediate scenes by interpolation\n"         \
-"\n"         \
-"Usage: animscenes prefix_in begin end prefix_out nbsamples\n"         \
-"\n"         \
-"Description:\n"         \
-"The input scenes must be stored in files with names of the form  \n"         \
-" prefix_inXXXX.3sc, where XXXX is an integer between  begin\n"         \
-"and  end. They must all contain the same number of objects, \n"         \
-"and object types must match from one scene to each other (order matters).\n"         \
-"\n"         \
-"Between the scenes of the series, a total number of  nbsamples scenes \n"         \
-"are generated by spline interpolation.\n"         \
-"\n"         \
-"Types supported: scene 3D\n"         \
-"\n"         \
-"Category: draw geo\n"         \
-"  draw geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__concat3d__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__warp__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__maxima__c__ "  maxima.c\n"         \
 "\n"         \
 " regional maxima \n"         \
@@ -11816,32 +9486,6 @@
 "\n"
 
 
-#define doc__skel_ACK3_pers__c__ "  skel_ACK3c.c\n"         \
-"\n"         \
-" topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning\n"         \
-"\n"         \
-"Usage: skel_ACK3c in.pgm out.pgm\n"         \
-"\n"         \
-"Description: Topological persistence of 1D isthmuses, based on \n"         \
-"parallel 3D asymetric thinning.\n"         \
-"\n"         \
-"When a point x is detected as a 1D isthmus, a counter p(x) is\n"         \
-"associated to this point and initialized with value 1. This counter is\n"         \
-"incremented a each iteration as long as x is still an isthmus. When this point x is\n"         \
-"eventually deleted, the value of the counter is freezed.\n"         \
-"\n"         \
-" The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__gammacor__c__ "  gammacor.c\n"         \
 "\n"         \
 " performs gamma correction on image\n"         \
@@ -11861,10 +9505,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__hk_tophat_lin_rotall___notused_c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -11903,41 +9543,7 @@
 "\n"
 
 
-#define doc__projy___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__lpetoporeg__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__shortestpath__c__ "  shortestpath.c\n"         \
-"\n"         \
-" finds a shortest path from x to y in image \n"         \
-"\n"         \
-"Usage: shortestpath in.pgm connex mode S1 S2 [S3] D1 D2 [D3] out.lst\n"         \
-"\n"         \
-"Description:\n"         \
-"A weighted graph G = (V,E) is defined with V = set of pixels of  in.pgm \n"         \
-"and E = {(P,Q) in VxV ; P and Q are  connex- adjacent}. \n"         \
-"Let F(P) be the value of pixel P in the image  in.pgm. \n"         \
-"A weight W(P,Q) is assigned to each edge, according to the value of  mode:\n"         \
-"\n"         \
-" max : W(P,Q) = max{F(P),F(Q)} \n"         \
-" min : W(P,Q) = min{F(P),F(Q)} \n"         \
-" avg : W(P,Q) = (F(P) + F(Q)) / 2 \n"         \
-"\n"         \
-"This operator finds a shortest path from ( S1,  S2) to ( D1,  D2)\n"         \
-"in this graph. The result is given as a list of vertices (pixels) \n"         \
-"in  out.lst.\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: connect\n"         \
-" connect\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -11987,31 +9593,6 @@
 "  topobin\n"         \
 "\n"         \
 " Michel Couprie 2009\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__section__c__ "  section.c\n"         \
-"\n"         \
-" computes a 2d cross section from a 3d image\n"         \
-"\n"         \
-"Usage: section in.pgm x0 y0 z0 x1 y1 z1 x2 y2 z2 out.pgm\n"         \
-"\n"         \
-"Description: \n"         \
-"The points P0 (  x0,  y0,  z0 ), P1 (  x1,  y1,  z1 ) and\n"         \
-"P2 (  x2,  y2,  z2 ) form a basis for a plane in the 3d space. \n"         \
-"The intersection of this plane with the domain of the 3d image  in.pgm\n"         \
-"form the domain of the 2d image  out.pgm .\n"         \
-"The grayscale values of  out.pgm are obtained by trilinear interpolation from\n"         \
-"the grayscale values of  in.pgm .\n"         \
-"The coordinates of the basis for the plane are expressed in \"real world\" dimensions.\n"         \
-"\n"         \
-"Types supported: byte 3d, int32_t 3d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
 "\n"         \
 "\n"
 
@@ -12163,33 +9744,6 @@
 "\n"
 
 
-#define doc__split__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__ptWsimple__c__ "  ptWsimple.c\n"         \
-"\n"         \
-" detects W-simple points in a 2D binary image\n"         \
-"\n"         \
-"Usage: ptWsimple in.pgm connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"The argument  connex selects the connectivity (4, 8 in 2D).\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: connect\n"         \
-"  connect\n"         \
-"\n"         \
-" Jean Cousty (2007)\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__skel_PSG__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__segmentvol__c__ "  segmentvol.c\n"         \
 "\n"         \
 " segmentation by filtering components on a volume criterion\n"         \
@@ -12208,34 +9762,6 @@
 "\n"         \
 "Category: connect\n"         \
 "  connect\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__skel_SK3__c__ "  skel_SK3.c\n"         \
-"\n"         \
-" parallel 3D binary surface skeleton based on 2D isthmuses\n"         \
-"\n"         \
-"Usage: skel_SK3 in.pgm nsteps [inhibit] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Parallel 3D binary thinning or surface skeleton based on 2D isthmuses. \n"         \
-"The parameter  nsteps gives,\n"         \
-"if positive, the number of parallel thinning steps to be processed.\n"         \
-"If the value given for  nsteps equals -1, the thinning is continued\n"         \
-"until stability.\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -12264,10 +9790,6 @@
 "\n"
 
 
-#define doc__changename__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__histopgm__c__ "  histopgm.c\n"         \
 "\n"         \
 " histogram of the gray values\n"         \
@@ -12286,10 +9808,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__ball___notused_c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -12314,27 +9832,6 @@
 "  convert\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__ptmultiple__c__ "  ptmultiple.c\n"         \
-"\n"         \
-" detects multiple points in 2d or 3d binary images\n"         \
-"\n"         \
-"Usage: ptmultiple in.pgm connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Detects multiple points in the 2d or 3d binary image  in.pgm .\n"         \
-"A multiple point is a white point x such that Tn[x] > 2\n"         \
-"(n = 4, 8 in 2D or n = 6, 18, 26 in 3D, as set by the parameter  connex).\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2002\n"         \
 "\n"         \
 "\n"
 
@@ -12409,10 +9906,6 @@
 "\n"
 
 
-#define doc__temp3dthin___notused_c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__areaselnb__c__ "  areaselnb.c\n"         \
 "\n"         \
 " area based segmentation by selection of a given number or components\n"         \
@@ -12434,58 +9927,6 @@
 
 
 #define doc__lfopen_line__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__signal2pgm___notused_c__ "  signal2pgm.c\n"         \
-"\n"         \
-" converts from signal representation to pgm\n"         \
-"\n"         \
-"Usage: signal2pgm in.list [scale] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Reads the file in.list. This file must have one of the following formats:\n"         \
-"  \n"         \
-"    s &lt;n&gt; \n"         \
-"    x1 y1 \n"         \
-"    x2 y2 \n"         \
-"    ...   \n"         \
-"    xn yn \n"         \
-"\n"         \
-"\n"         \
-"The optional parameter  scale allows to scale the y coordinates.\n"         \
-"\n"         \
-"Types supported: signal 1D\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__squel__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__ptsimple__c__ "  ptsimple.c\n"         \
-"\n"         \
-" detects simple points in a binary image\n"         \
-"\n"         \
-"Usage: ptsimple in.pgm connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Detects simple points in a binary image.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie 2003\n"         \
-"\n"         \
 "\n"
 
 
@@ -12545,29 +9986,6 @@
 
 
 #define doc__t8pp__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__surf___notused_c__ "  surf.c\n"         \
-"\n"         \
-" topographic view of a 2D image\n"         \
-"\n"         \
-"Usage: surf in.pgm mode out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Creates a gray-scale image\n"         \
-"with shading view 2D gray-scale image as a\n"         \
-"topographical surface. Useful to view\n"         \
-"distance transforms and results of morphological\n"         \
-"operators.\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Roberto Lotufo\n"         \
-"\n"         \
 "\n"
 
 
@@ -12677,30 +10095,6 @@
 "  topobin\n"         \
 "\n"         \
 " Michel Couprie 2008\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__barycentrelab__c__ "  barycentrelab.c\n"         \
-"\n"         \
-" compute the center of gravity of each labeled region\n"         \
-"\n"         \
-"Usage: barycentrelab in.pgm out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Compute the center of gravity of each labeled region.\n"         \
-"Labels should be consecutive integers. \n"         \
-"Only strictly positive labels are considered. \n"         \
-"The result is an image that contains labelled points. \n"         \
-"More precisely, each barycentre is represented by the nearest grid\n"         \
-"point that is given the same label as the region.\n"         \
-"\n"         \
-"Types supported: long 2d, long 3d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
 "\n"         \
 "\n"
 

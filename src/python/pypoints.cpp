@@ -24,13 +24,14 @@ using boost::python::def;
 
 namespace points
 {
-  UI_WRAP_FUNCTION(
-    "ptisolated",
-    lptisolated,
-    ( arg("image"), arg("connexity") ),
-    doc__ptisolated__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "ptisolated",
+//    lptisolated,
+//    ( arg("image"), arg("connexity") ),
+//    doc__ptisolated__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
   UI_WRAP_FUNCTION(
     "ptend",
@@ -48,14 +49,14 @@ namespace points
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-
-  UI_WRAP_FUNCTION(
-    "ptjunction",
-    lptjunction,
-    ( arg("image"), arg("connexity") ),
-    doc__ptjunction__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "ptjunction",
+//    lptjunction,
+//    ( arg("image"), arg("connexity") ),
+//    doc__ptjunction__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
   UI_WRAP_FUNCTION(
     "selectcomp",
