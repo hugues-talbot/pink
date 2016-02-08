@@ -42,13 +42,14 @@ namespace points
 //    );
 //# include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "ptcurve",
-    lptcurve,
-    ( arg("image"), arg("connexity") ),
-    doc__ptcurve__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "ptcurve",
+//    lptcurve,
+//    ( arg("image"), arg("connexity") ),
+//    doc__ptcurve__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 // commentaire M8F2016
 //  UI_WRAP_FUNCTION(
