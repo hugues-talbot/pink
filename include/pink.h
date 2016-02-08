@@ -235,7 +235,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "llabelplateaux.h"
 #include "llabeltree.h"
 #include "llambdakern.h"
-#include "llenoir.h"
+//#include "llenoir.h" commentaire M8F2016
 //#include "llevialdi.h"
 //#include "llinapprox.h" commentaire M8F2016
 #include "lline.h"
