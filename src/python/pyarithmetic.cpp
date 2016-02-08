@@ -16,7 +16,7 @@
 //#include "lccv.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lhtkern.h"
 //#include "lconvol3.h" //commenté par Sophie 04 Fevrier 2016
-#include "legalise.h"
+//#include "legalise.h" //commenté par Sophie, 08 Fevrier 2016
 //#include "lcontours.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lhtkern3d.h"
 #include "lhistscal.h"
@@ -95,13 +95,14 @@ namespace arithmetic
     );
 # include BOOST_PP_UPDATE_COUNTER() */
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 08 Fevrier 2016
+  /*UI_WRAP_FUNCTION(
     "egalise",
     legalise,
     (arg("image"), arg("n")),
     doc__egalise__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
 // UI_WRAP_FUNCTION(
 //   "fermetrous3d",
