@@ -21,7 +21,7 @@
 #include "l2dkhalimsky.h"
 #include "l3dkhalimsky.h"
 
-#include "ui_extractplane.hpp"
+#include "ui_extractplane.hpp" //commenté par Sophie, 08 Fevrier 2016
 
 #include <boost/preprocessor/slot/counter.hpp>
 
@@ -31,6 +31,7 @@ using boost::python::def;
 
 namespace connect
 {
+    //commenté par Sophie 08 Fevrier 2016
   UI_WRAP_CPP(
     "extractplane",
     pink::extractplane,

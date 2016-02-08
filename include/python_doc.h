@@ -1,6 +1,6 @@
 // This file has been generated automatically by the 
 // python_documenter, part of the PInK package (UjoImro, 2011)
-// the date of generation: 2016-02-08T11:59:35Z
+// the date of generation: 2016-02-08T18:18:29Z
 // warning: DO NOT EDIT. All your changes will be lost at 
 // the next generation
 
@@ -2418,10 +2418,6 @@
 "\n"
 
 
-#define doc__dir__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__directionalfilter__c__ "  directionalfilter.c\n"         \
 "\n"         \
 " directional filter for curvilinear feature extraction\n"         \
@@ -2600,65 +2596,6 @@
 "\n"
 
 
-#define doc__div__c__ "  div.c\n"         \
-"\n"         \
-" pixelwise division of two images\n"         \
-"\n"         \
-"Usage: div in1.pgm in2.pgm out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"For each pixel x such that in2[x] != 0, out[x] = in1[x] / in2[x]. \n"         \
-"For each pixel x such that in2[x] = 0, out[x] = 0. \n"         \
-"Images must be of the same type and same dimensions.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n"         \
-"\n"         \
-"Category: arith\n"         \
-"  arith\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__diZenzo__c__ "  diZenzo.c\n"         \
-"\n"         \
-" diZenzo gradient pour les images couleurs\n"         \
-"\n"         \
-"Usage: diZenzo imageRVB.ppm alpha [mode] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Le gradient de diZenzo est défini par la donnée de p, q, et t:\n"         \
-"\n"         \
-"p = Rx*Rx + Vx*Vx + Bx*Bx\n"         \
-"\n"         \
-"q = Ry*Ry + Vy*Vy + By*By\n"         \
-"\n"         \
-"t = Rx*Ry + Vx*Vy + Bx*By\n"         \
-"\n"         \
-"(ou Rx = dérivée en x de la bande rouge, Ry est la dérivée en y de la bande rouge, etc.)\n"         \
-"\n"         \
-"et le module est donnée par\n"         \
-"\n"         \
-"G = sqrt(1/2*(p+q+sqrt((p+q)*(p+q) -4(pq-t*t))))\n"         \
-"\n"         \
-"La direction est donnée par 1/2*atan(2*t/(p-q))\n"         \
-"\n"         \
-"Si le mode est égale à 0 (valeur défaut) alors l'image de sortie est le gradient, \n"         \
-"sinon l'image de sortie est une int32_t entre 0 et 360.\n"         \
-"\n"         \
-"Les gradients sont calculés par les filtres de Deriche, de paramètre alpha\n"         \
-"\n"         \
-"Types supported: byte 2D\n"         \
-"\n"         \
-"Category: signal\n"         \
-"  signal\n"         \
-"\n"         \
-" Laurent Najman\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__double2byte__c__ "  double2byte.c\n"         \
 "\n"         \
 " converts a \"double\" image to a \"byte\" image\n"         \
@@ -2709,73 +2646,6 @@
 "\n"
 
 
-#define doc__drawcurve__c__ "  drawcurve.c\n"         \
-"\n"         \
-" draw line segments which are specified by a text file\n"         \
-"\n"         \
-"Usage: drawline in.pgm curve.txt out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"The file  curve.txt contains a list of points under the format:\n"         \
-"c nb_points\n"         \
-"x1 y1\n"         \
-"x2 y2\n"         \
-"x3 y3\n"         \
-"...\n"         \
-"\n"         \
-"Types supported: byte 2D\n"         \
-"\n"         \
-"Category: draw\n"         \
-" draw\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__drawellipse__c__ "  drawellipse.c\n"         \
-"\n"         \
-" Draws an ellipse\n"         \
-"\n"         \
-"Usage: drawellipse in.pgm x1 y1 x2 y2 X1 Y1 X2 Y2 [filled] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Draws an  ellipse specified by four points, e.g. the extremities of the small axis \n"         \
-"(x1, y1, x2, y2) and the extremities of the big axis \n"         \
-"(X1, Y1, X2, Y2).\n"         \
-"The ellipse is surimposed to the contents of in.pgm.\n"         \
-"If the (optional) int32_t parameter  filled is set (1), then the ellipse is filled.\n"         \
-"Otherwise it is empty (default).\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: draw geo\n"         \
-"  draw geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__drawfield__c__ "  drawfield.c\n"         \
-"\n"         \
-" draw line segments that represent a vector field\n"         \
-"\n"         \
-"Usage: drawfield in.pgm [len] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"The file  in.pgm contains a vector field. This operator generates a (binary) image where each vector is represented by a straight line segment of length  len (default 10).\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: draw\n"         \
-"  draw\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__drawfieldlists__c__ "  drawfieldlists.c\n"         \
 "\n"         \
 " draw line segments that represent a vector field (represented by two lists)\n"         \
@@ -2786,26 +2656,6 @@
 "The files  in1.pgm,  in2.pgm represent a vector field, with the origins of vectors in  in1.pgm and their directions in  in2.pgm. This operator draws in the image  in.pgm a straight line segment of length  len (default 10) for each vector.\n"         \
 "\n"         \
 "Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: draw\n"         \
-"  draw\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__drawgraph__c__ "  drawline.c\n"         \
-"\n"         \
-" draw a graph in a 2D image\n"         \
-"\n"         \
-"Usage: drawline in.graph in.pgm out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Draws the graph described in file in.graph into the image in.pgm\n"         \
-"\n"         \
-"Types supported: byte 2D\n"         \
 "\n"         \
 "Category: draw\n"         \
 "  draw\n"         \
@@ -2826,247 +2676,6 @@
 "Draws a straight line segment between (x1,y1[,z1]) and (x2,y2[,z2])\n"         \
 "\n"         \
 "Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: draw\n"         \
-"  draw\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__drawlines__c__ "  drawlines.c\n"         \
-"\n"         \
-" draw line segments which are specified by a text file\n"         \
-"\n"         \
-"Usage: drawlines in.pgm vect.txt out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"The file  vect.txt contains a list of line segments under the format:\n"         \
-"l nb_segments\n"         \
-"x11 y11 x12 y12\n"         \
-"x21 y21 x22 y22\n"         \
-"x31 y31 x32 y32\n"         \
-"...\n"         \
-"\n"         \
-"Types supported: byte 2D\n"         \
-"\n"         \
-"Category: draw\n"         \
-"  draw\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__drawrect__c__ "  drawrect.c\n"         \
-"\n"         \
-" Draws a rectangle with sides parallel to the main axes\n"         \
-"\n"         \
-"Usage: drawrect in.pgm x1 y1 z1 x2 y2 z2 out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Draws a rectangle (a box in 3D) with sides parallel to the main axes. \n"         \
-"Two diagonally opposed corners are specified by \n"         \
-"x1, y1, z1 and x2, y2, z2.\n"         \
-"The rectangle is surimposed to the contents of in.pgm.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: draw\n"         \
-"  draw\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__drawscene__c__ "  drawscene.c\n"         \
-"\n"         \
-" draw a 3D scene which is specified by a text file into a 3D pgm image\n"         \
-"\n"         \
-"Usage: drawscene in.pgm scene.3sc out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"The file  scene.3sc contains a scene under the 3Dscene format.\n"         \
-"\n"         \
-"Types supported: byte 3D\n"         \
-"\n"         \
-"Category: draw geo\n"         \
-"  draw geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__drawspline__c__ "  drawspline.c\n"         \
-"\n"         \
-" draw a spline which is specified by its control points\n"         \
-"\n"         \
-"Usage: drawspline in.pgm spline.txt [len] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Draws a spline which is specified by its control points.\n"         \
-"The control points are read in the text file  spline.txt .\n"         \
-"The parameter  in.pgm gives an image into which the spline is to be drawn.\n"         \
-"The file format for  spline.txt is the following for 2D:\n"         \
-"\n"         \
-"c n+1 (where n+1 denotes the number of control points)\n"         \
-"x1 y1\n"         \
-"...\n"         \
-"xn+1 yn+1\n"         \
-"C0X1 C0Y1 C1X1 C1Y1 C2X1 C2Y1 C3X1 C3Y1\n"         \
-"...\n"         \
-"C0Xn C0Yn C1Xn C1Yn C2Xn C2Yn C3Xn C3Yn\n"         \
-"\n"         \
-"and in the 3D case:\n"         \
-"\n"         \
-"C n+1 (where n+1 denotes the number of control points)\n"         \
-"x1 y1 z1\n"         \
-"...\n"         \
-"xn+1 yn+1 zn+1\n"         \
-"C0X1 C0Y1 C0Z1 C1X1 C1Y1 C1Z1 C2X1 C2Y1 C2Z1 C3X1 C3Y1 C3Z1\n"         \
-"...\n"         \
-"C0Xn C0Yn C0Zn C1Xn C1Yn C1Zn C2Xn C2Yn C2Zn C3Xn C3Yn C3Zn\n"         \
-"\n"         \
-"If parameter  len is given and non-zero, the spline is extended on both sides by straight line segments of length  len. \n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: draw geo\n"         \
-"  draw geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__drawsplineorient__c__ "  drawsplineorient.c\n"         \
-"\n"         \
-" draw spline orientations in a vector field\n"         \
-"\n"         \
-"Usage: drawsplineorient in.pgm in.spline out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Draws spline orientations in a vector field. \n"         \
-"The spline is specified by its control points in a text file.\n"         \
-"The parameter  in.pgm gives a vector field into which the spline is to be drawn.\n"         \
-"The file format for  in.spline is the following for 2D:\n"         \
-"\n"         \
-"c n+1 (where n+1 denotes the number of control points)\n"         \
-"x1 y1\n"         \
-"...\n"         \
-"xn+1 yn+1\n"         \
-"C0X1 C0Y1 C1X1 C1Y1 C2X1 C2Y1 C3X1 C3Y1\n"         \
-"...\n"         \
-"C0Xn C0Yn C1Xn C1Yn C2Xn C2Yn C3Xn C3Yn\n"         \
-"\n"         \
-"and in the 3D case:\n"         \
-"\n"         \
-"C n+1 (where n+1 denotes the number of control points)\n"         \
-"x1 y1 z1\n"         \
-"...\n"         \
-"xn+1 yn+1 zn+1\n"         \
-"C0X1 C0Y1 C0Z1 C1X1 C1Y1 C1Z1 C2X1 C2Y1 C2Z1 C3X1 C3Y1 C3Z1\n"         \
-"...\n"         \
-"C0Xn C0Yn C0Zn C1Xn C1Yn C1Zn C2Xn C2Yn C2Zn C3Xn C3Yn C3Zn\n"         \
-"\n"         \
-"Types supported: spline 2D, spline 3D\n"         \
-"\n"         \
-"Category: draw geo\n"         \
-"  draw geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__drawsplines__c__ "  drawsplines.c\n"         \
-"\n"         \
-" draw spline segments which are specified by a text file\n"         \
-"\n"         \
-"Usage: drawsplines in.pgm splines.txt [len] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Draws splines which are specified by control points in a text file.\n"         \
-"The parameter  in.pgm gives an image into which the splines are to be drawn.\n"         \
-"The file format for  splines.txt is the following for 2D:\n"         \
-"\n"         \
-"The file  splines.txt contains a list of splines under the format:\n"         \
-"d nb_splines\n"         \
-"nb_points_spline_1  x11 y11  x12 y12 ...\n"         \
-"nb_points_spline_2  x21 y21  x22 y22 ...\n"         \
-"nb_points_spline_3  x31 y31  x32 y32 ...\n"         \
-"...\n"         \
-"or, in 3D:\n"         \
-"D nb_splines\n"         \
-"nb_points_spline_1  x11 y11 z11  x12 y12 z12 ...\n"         \
-"nb_points_spline_2  x21 y21 z21  x22 y22 z22 ...\n"         \
-"nb_points_spline_3  x31 y31 z31  x32 y32 z32 ...\n"         \
-"...\n"         \
-"\n"         \
-"If parameter  len is given and non-zero, the splines are extended on both sides by straight line segments of length  len. \n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: draw geo\n"         \
-"  draw geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__drawsplinesorient__c__ "  drawsplinesorient.c\n"         \
-"\n"         \
-" draw spline orientations in a vector field (multiple spline version)\n"         \
-"\n"         \
-"Usage: drawsplinesorient in.pgm in.splines out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Draws spline orientations in a vector field. \n"         \
-"The spline is specified by its control points in a text file.\n"         \
-"The parameter  in.pgm gives a vector field into which the spline is to be drawn.\n"         \
-"\n"         \
-"The file  splines.txt contains a list of splines under the format:\n"         \
-"d nb_splines\n"         \
-"nb_points_spline_1  x11 y11  x12 y12 ...\n"         \
-"nb_points_spline_2  x21 y21  x22 y22 ...\n"         \
-"nb_points_spline_3  x31 y31  x32 y32 ...\n"         \
-"...\n"         \
-"or, in 3D:\n"         \
-"D nb_splines\n"         \
-"nb_points_spline_1  x11 y11 z11  x12 y12 z12 ...\n"         \
-"nb_points_spline_2  x21 y21 z21  x22 y22 z22 ...\n"         \
-"nb_points_spline_3  x31 y31 z31  x32 y32 z32 ...\n"         \
-"...\n"         \
-"\n"         \
-"Types supported: spline 2D, spline 3D\n"         \
-"\n"         \
-"Category: draw geo\n"         \
-"  draw geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__drawtorus__c__ "  drawtorus.c\n"         \
-"\n"         \
-" generates a binary torus\n"         \
-"\n"         \
-"Usage: drawtorus {in.pgm|null} r1 r2 xc yc zc out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Draws a binary torus in the image  in.pgm.\n"         \
-"The parameters r1, r2 specify respectively the big \n"         \
-"and the small radius of the torus. \n"         \
-"The parameters xc, yc, zc specify the center of the torus. \n"         \
-"If the first parameter is \"null\", then an image with the\n"         \
-"appropriate size is created.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
 "\n"         \
 "Category: draw\n"         \
 "  draw\n"         \
@@ -3105,58 +2714,6 @@
 "\n"         \
 "Category: geo, draw\n"         \
 "  geo, draw\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__dror__cxx__ "  im2line.c\n"         \
-"\n"         \
-" find line into an image using bresenham definition\n"         \
-"\n"         \
-"Usage:test4.pgm  testfind.pgm\n"         \
-"test4.pgm  testfind.pgm\n"         \
-"test4.pgm  testfind.pgm\n"         \
-" im2line in.fits {w}  out.pgmtest4.pgm  testfind.pgm\n"         \
-"\n"         \
-"\n"         \
-"Description:\n"         \
-"On commence pas netoyer l'image afin de retirer le bruit de fond et d'ameliorer le contraste.\n"         \
-"\n"         \
-"On determine ensuite les points sur le bord de l'image qui correspondent potentiellement Ã  une droite.\n"         \
-"\n"         \
-"Parralellement, on crÃ©e un arbre...\n"         \
-"\n"         \
-"On trace les droites de Bresenham entre les differents points des bords. Pour chacunes des droites on calcule\n"         \
-"le nombre de points non nul present dans le plan sous la droite via l'arbre, puis le nombre de points non nuls pour une droite parralelle.\n"         \
-"On soustrait ces 2 nombres, on obtient ainsi le nombre de pixel non nul contenu dans l'espace entre les 2 plans.\n"         \
-"La droites contenant les plus de points non nul doit correspondre Ã  la trace du satellite.\n"         \
-"\n"         \
-"L'image finale est une image noire, avec une droite blanche correspondant Ã  la trace du sattelite.\n"         \
-"\n"         \
-"Parameters:\n"         \
-"  in.fits : source file in fits format\n"         \
-"\n"         \
-"\n"         \
-" Juliette Charpentier\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__dup__c__ "  dup.c\n"         \
-"\n"         \
-" duplicates an image\n"         \
-"\n"         \
-"Usage: dup in.pgm out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"For each pixel x, out[x] = in[x]\n"         \
-"\n"         \
-"Types supported: all types\n"         \
-"\n"         \
-"Category: arith\n"         \
-"  arith\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -3219,58 +2776,7 @@
 "\n"
 
 
-#define doc__dynrecons__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__ecarttype__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__eden__cxx__ "  eden.cxx\n"         \
-"\n"         \
-" growth and/or shrinking of an 2D binary image - Eden process\n"         \
-"\n"         \
-"Usage: eden in.pgm niter grow shrink topo out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Algorithm is as follows.\n"         \
-"\n"         \
-"For growth:\n"         \
-"   start from known set\n"         \
-"   take pixels from the border into a queue\n"         \
-"   choose randomly one such pixel\n"         \
-"   set it to 1\n"         \
-"   update queues\n"         \
-"   repeat\n"         \
-"\n"         \
-"For shrinking:\n"         \
-"   same thing but set to 0\n"         \
-"\n"         \
-"For adding boundary noise\n"         \
-"   alternate growth and shrinking\n"         \
-"\n"         \
-"With topological constraints\n"         \
-"   make sure the point to add or remove is simple\n"         \
-"\n"         \
-"Parameters:\n"         \
-"   niter (positive integer): number of iterations\n"         \
-"   grow (1/0): perform growing or not\n"         \
-"   shrink (1/0): perform shrinking or not\n"         \
-"   topo (26/6/8/4/0): connectivity for the object - 0: no topological constraint\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: geo\n"         \
-" geo\n"         \
-"\n"         \
-" Hugues Talbot\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__egalise__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -3297,62 +2803,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__ellipseincl__c__ "  ellipseincl.c\n"         \
-"\n"         \
-" ellipse identification and drawing from spare points\n"         \
-"\n"         \
-"Usage: ellipseincl in.pgm pts.list filled out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie and Yskandar Hamam\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__ellipseparams__c__ "  ellipseparams.c\n"         \
-"\n"         \
-" ellipse identification and main parameter computation\n"         \
-"\n"         \
-"Usage: ellipseparams pts.list out.list\n"         \
-"\n"         \
-"Description:\n"         \
-"Identifies the ellipse E which minimizes the sum of the (approximate) distances\n"         \
-"between the points in  pts.list and E. \n"         \
-"The output is a list containing 6 numbers: a1, a2, r1, r2, r3, r4\n"         \
-"where a1 is the half of the big axis length, a2 is the\n"         \
-"the half of the little axis length, and each ri is the mean \"distance\",\n"         \
-"for quadrant i, between intput points and the computed ellipse \n"         \
-"(the expected value for points forming a perfect ellipse is 0)\n"         \
-"\n"         \
-"Ref: \n"         \
-"Andrew W. Fitzgibbon, Maurizio Pilu, and Robert B. Fisher\n"         \
-"Direct least-squares fitting of ellipses,\n"         \
-"IEEE Transactions on Pattern Analysis and Machine Intelligence, 21(5), 476--480, May 1999\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__ellipticite__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__encadre__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -3420,27 +2870,6 @@
 "\n"         \
 "Category: signal\n"         \
 "  signal\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__equal__c__ "  equal.c\n"         \
-"\n"         \
-" equality test\n"         \
-"\n"         \
-"Usage: equal in1.pgm in2.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"This function returns 1 (no error) if for each pixel x, in1[x] == in2[x]; \n"         \
-"otherwise it returns 0.\n"         \
-"Images must be of the same dimensions.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n"         \
-"\n"         \
-"Category: arith\n"         \
-"  arith\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -3658,27 +3087,6 @@
 "\n"         \
 "Category: convert\n"         \
 "  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__extractline__c__ "  extractline.c\n"         \
-"\n"         \
-" extracts a line between two given points from a 3D image\n"         \
-"\n"         \
-"Usage: extractline in.pgm x1 y1 x2 y2 out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"The original 2D image is in.pgm. \n"         \
-"The output 1D image out.pgm contains the line between \n"         \
-"points (x1,y1) and (x2,y2) extracted from in.pgm.\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \

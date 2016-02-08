@@ -332,7 +332,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #  include "uiCutPlane.hpp"
 #  include "ui_convert.hpp"
 #  include "ui_genball.hpp"
-#  include "ui_extractplane.hpp"
+#  include "ui_extractplane.hpp" //commenté par Sophie, 08 Fevrier 2016
 #  include "ui_measure.hpp"
 #  include "ui_any_to_complex.hpp"
 #endif /* __cplusplus */
