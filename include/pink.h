@@ -237,7 +237,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "llambdakern.h"
 #include "llenoir.h"
 //#include "llevialdi.h"
-#include "llinapprox.h"
+//#include "llinapprox.h" commentaire M8F2016
 #include "lline.h"
 //#include "llocalextrema.h" commentaire M8F2016
 #include "llpeGA.h"
