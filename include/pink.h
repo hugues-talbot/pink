@@ -229,7 +229,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lhtkern.h"
 #include "lhtkern3d.h"
 #include "lisometry.h"
-#include "ljones.h"
+//#include "ljones.h" commentaire M8F2016
 #include "lkern.h"
 #include "llabelextrema.h"
 #include "llabelplateaux.h"

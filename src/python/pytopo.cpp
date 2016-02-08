@@ -15,7 +15,7 @@
 #include "lgeo.h"
 #include "lkern.h"
 #include "ldraw.h"
-#include "ljones.h"
+//#include "ljones.h" commentaire M8F2016
 #include "lnbvois.h"
 //#include "lselrect.h" commentaire Manon 4 fevrier 2016
 #include "lseltopo.h"
@@ -56,13 +56,14 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "jones",
-    ljones,
-    (arg("image"), arg("connex")),
-    doc__jones__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire M8F2016
+//  UI_WRAP_FUNCTION(
+//    "jones",
+//    ljones,
+//    (arg("image"), arg("connex")),
+//    doc__jones__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
   UI_WRAP_FUNCTION(
     "kern",
