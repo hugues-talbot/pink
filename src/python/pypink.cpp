@@ -123,7 +123,8 @@ using namespace pink;
 // void xvimage_object_export();
 // void writeimage_export();
 void vint_object_export(); void vector_int_object_export();void wshedtopo_export();
-/*void erosball_export()*/;void medianfilter_export();
+/*void erosball_export()*/;
+//void medianfilter_export(); commentaire M8F2016
 
 // skeleton function
 void skeleton2_export(); // void zoom_export();
@@ -396,7 +397,8 @@ BOOST_PYTHON_MODULE(libcpp_pink)
 
   vint_object_export(); // self explaining
 
-  wshedtopo_export(); /* erosball_export();*/  medianfilter_export();
+  wshedtopo_export(); /* erosball_export();*/  
+  //medianfilter_export(); commentaire M8F2016
 
   // the skeleton function
   skeleton2_export();  // zoom_export();
