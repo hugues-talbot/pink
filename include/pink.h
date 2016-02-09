@@ -281,7 +281,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lseuili.h"
 #include "lskelcurv.h"
 #include "lskeletons.h"
-#include "lskelpar.h"
+//#include "lskelpar.h" commentaire M9F2016
 //#include "lskelpar3d.h" commentaire Manon 4 fevrier 2016
 //#include "lskelpar3d_others.h" commentaire Manon 4 fevrier 2016
 //#include "lskew.h" commentaire Manon 4 fevrier 2016
