@@ -214,7 +214,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lga2khalimsky.h"
 #include "lgeo.h"
 #include "lgeodesic.h"
-#include "lgettree.h"
+//#include "lgettree.h" //commenté par Sophie, 09 Fevrier 2016
 #include "lgradill.h"
 #include "lgradinf.h"
 #include "lgradinf3d.h"
