@@ -351,13 +351,15 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
-UI_WRAP_FUNCTION(
-  "translate",
-  loffset,
-  (arg("image"), arg("ox"), arg("oy"), arg("oz"), arg("mode") =0),
-  doc__translate__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
+
+// Commentaire M9F2016
+//UI_WRAP_FUNCTION(
+//  "translate",
+//  loffset,
+//  (arg("image"), arg("ox"), arg("oy"), arg("oz"), arg("mode") =0),
+//  doc__translate__c__
+//  );
+//#include BOOST_PP_UPDATE_COUNTER()
 
 // NOTE: volume's using &vol
 
