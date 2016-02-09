@@ -86,13 +86,14 @@ void pyconversion()
 {
   CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
 
-  def(
+    //commenté par Sophie, 09 Fevrier 2016
+  /*def(
     "float2byte",
     pink::float2byte,
     ( arg("source image"), arg("mode")=2 ),
     doc__float2byte__c__
     // end of the documenation
-    );
+    ); */
 
   def(
     "double2byte",
