@@ -95,13 +95,14 @@ void pyconversion()
     // end of the documenation
     ); */
 
-  def(
+    //commenté par Sophie, 09 Fevrier 2016
+  /*def(
     "double2byte",
     pink::double2byte,
     ( arg("source image"), arg("mode")=2 ),
     doc__double2byte__c__
     // end of the documenation
-    );
+    ); */
   
   def(
     "long2byte",
