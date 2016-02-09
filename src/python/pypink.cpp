@@ -343,13 +343,14 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
-UI_WRAP_FUNCTION(
-  "tlf",
-  ltlf,
-  (arg("image"), arg("connexmin"), arg("radius")),
-  doc__tlf__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
+// Commentaire M9F2016
+//UI_WRAP_FUNCTION(
+//  "tlf",
+//  ltlf,
+//  (arg("image"), arg("connexmin"), arg("radius")),
+//  doc__tlf__c__
+//  );
+//#include BOOST_PP_UPDATE_COUNTER()
 
 
 // Commentaire M9F2016
