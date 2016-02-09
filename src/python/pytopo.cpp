@@ -365,13 +365,14 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER() */
 
-  UI_WRAP_FUNCTION(
-    "surrect",
-    lrectangleincluant,
-    (arg("image"), arg("connexity")),
-    doc__surrect__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire M9F2016
+//  UI_WRAP_FUNCTION(
+//    "surrect",
+//    lrectangleincluant,
+//    (arg("image"), arg("connexity")),
+//    doc__surrect__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 
   
