@@ -160,13 +160,14 @@ namespace arithmetic
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-  "surfacerestoration",
-  lsurfacerestoration,
-  (arg("image"), arg("number of maximal iterations"), arg("connexity")),
-  doc__surfacerestoration__c__
-  );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire M9F2016
+//  UI_WRAP_FUNCTION(
+//  "surfacerestoration",
+//  lsurfacerestoration,
+//  (arg("image"), arg("number of maximal iterations"), arg("connexity")),
+//  doc__surfacerestoration__c__
+//  );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 
   
