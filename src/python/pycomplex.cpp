@@ -31,14 +31,15 @@ using namespace boost::python;
 
 namespace complex
 {
-  
-  UI_WRAP_CPP(
-    "any2complex",
-    pink::lany2complex,
-    (arg("real part"), arg("imaginary part")),
-    doc__ui_any_to_complex__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+
+// commentaire M9F2016  
+//  UI_WRAP_CPP(
+//    "any2complex",
+//    pink::lany2complex,
+//    (arg("real part"), arg("imaginary part")),
+//    doc__ui_any_to_complex__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
   UI_WRAP_FUNCTION(
     "fft",

@@ -1,6 +1,6 @@
 // This file has been generated automatically by the 
 // python_documenter, part of the PInK package (UjoImro, 2011)
-// the date of generation: 2016-02-08T22:21:13Z
+// the date of generation: 2016-02-09T14:42:28Z
 // warning: DO NOT EDIT. All your changes will be lost at 
 // the next generation
 
@@ -235,48 +235,7 @@
 "\n"
 
 
-#define doc__interpolate__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__t4pp__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__list2pgm__c__ "  list2pgm.c\n"         \
-"\n"         \
-" converts from point list representation to pgm\n"         \
-"\n"         \
-"Usage: list2pgm in.list {in.pgm|r\n"         \
-"\n"         \
-"\n"         \
-"s cs ds} [scale] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Reads the file in.list. This file must have one of the following formats:\n"         \
-"  \n"         \
-"  e &lt;n&gt;       s &lt;n&gt;         b &lt;n&gt;         n &lt;n&gt;            B &lt;n&gt;            N &lt;n&gt;    \n"         \
-"  x1          x1 v1         x1 y1         x1 y1 v1         x1 y1 z1         x1 y1 z1 v1\n"         \
-"  x2    or    x2 v2   or    x2 y2   or    x2 y2 v2   or    x2 y2 z2   or    z2 x2 y2 v2\n"         \
-"  ...         ...           ...           ...              ...              ...\n"         \
-"  xn          xn vn         xn yn         xn yn vn         xn yn zn         zn xn yn vn\n"         \
-"\n"         \
-"The formats e, s, b, n, B, and N, correspond respectively\n"         \
-"to binary 1D, graylevel 1D, binary 2D, graylevel 2D, binary 3D and graylevel 3D images.\n"         \
-"If a file name in.pgm is given, then the points read in in.list are \n"         \
-"inserted (if possible) into the image read in in.pgm. Else, they are inserted in\n"         \
-"a new image, the dimensions of which are rs, cs, and d.\n"         \
-"\n"         \
-"The optional parameter  scale allows to scale the coordinates.\n"         \
-"\n"         \
-"Types supported: list 1D, 2D, 3D\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -323,10 +282,6 @@
 "\n"         \
 "\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__hthick3d__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -489,27 +444,6 @@
 "\n"         \
 "Category: connect, morpho\n"         \
 "  connect, morpho\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__identifyparabola2__c__ "  identifyparabola2.c\n"         \
-"\n"         \
-" identification of a best matching parabola from a set of 2D points\n"         \
-"\n"         \
-"Usage: identifyparabola2 in.list out.list\n"         \
-"\n"         \
-"Description:\n"         \
-"Identifies the parameters (a,b) of the equation of the 2D parabola:\n"         \
-"ax^2+b=y that minimizes the least square error between this parabola \n"         \
-"and the given points. Method: basic linear regression.\n"         \
-"\n"         \
-"Types supported: list 1D, list 2D\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -795,61 +729,6 @@
 "\n"
 
 
-#define doc__lintophat__c__ "  lintophat.c\n"         \
-"\n"         \
-" max of morphological black top hats by linear structuring elements\n"         \
-"\n"         \
-"Usage: lintophat in.pgm length out.pgm\n"         \
-"\n"         \
-"Description: \n"         \
-"Max of morphological black top hats by linear structuring elements, \n"         \
-"in all possible discrete directions.\n"         \
-"Let F be the original image and E be a structuring element, the black\n"         \
-"top hat of F by E is defined by F - closing(F, E).\n"         \
-"The closing deletes dark structures that do not match the \n"         \
-"structuring element, thus the black top hat detects those dark structures.\n"         \
-"For a linear structuring element, the detected structures are those which\n"         \
-"are orthogonal to the se.\n"         \
-"The length if the linear structuring elements is given by  length.\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: morpho\n"         \
-"  morpho\n"         \
-"\n"         \
-" Hildegard Koehler 2003\n"         \
-"\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__integermedialaxis__c__ "  integermedialaxis.c\n"         \
-"\n"         \
-" integer medial axis transform\n"         \
-"\n"         \
-"Usage: integermedialaxis in.pgm [gamma] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Integer medial axis, as defined in [HR05],\n"         \
-"of the binary image  X contained in  in.pgm.\n"         \
-"\n"         \
-"References:\n"         \
-"[HR05] \"Euclidean Skeletons of 3D Data Sets in Linear Time\n"         \
-"by the Integer Medial Axis Transform\",\n"         \
-"W.H. Hesselink and B.T.M. Roerdink,\n"         \
-"Computational Imaging and Vision, Vol. 30,\n"         \
-"Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: morpho\n"         \
-"  morpho\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__3dpardircollapse__c__ "  3dpardircollapse.c\n"         \
 "\n"         \
 " parallel directional constrained collapse\n"         \
@@ -979,41 +858,6 @@
 " morpho\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__lantuejoul__c__ "  lantuejoul.c\n"         \
-"\n"         \
-" Lantuejoul's skeleton\n"         \
-"\n"         \
-"Usage: lantuejoul in.pgm [dist] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Let X be the set in  in.pgm .\n"         \
-"The result is union{Si(X), i in N} where\n"         \
-"Si(X) = erosball(X,i)  openball(erosball(X,i),1). \n"         \
-"Structuring elements are balls defined after a distance.\n"         \
-"The distance used depends on the optional parameter  dist (default is 0) :\n"         \
-" 0: approximate euclidean distance (truncated)\n"         \
-" 1: approximate quadratic euclidean distance\n"         \
-" 2: chamfer distance\n"         \
-" 3: exact quadratic euclidean distance\n"         \
-" 4: 4-distance in 2d\n"         \
-" 8: 8-distance in 2d\n"         \
-" 6: 6-distance in 3d\n"         \
-" 18: 18-distance in 3d\n"         \
-" 26: 26-distance in 3d\n"         \
-"\n"         \
-" The input image  in.pgm must be a binary image. No test is done.\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: morpho\n"         \
-"  morpho\n"         \
-"\n"         \
-" Michel Couprie août 2009\n"         \
-"\n"         \
 "\n"         \
 "\n"
 
@@ -1592,28 +1436,6 @@
 "\n"
 
 
-#define doc__laplacian__c__ "  laplacian.c\n"         \
-"\n"         \
-" Laplacian operator\n"         \
-"\n"         \
-"Usage: laplacian in.pgm alpha out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Deriche's recursive implementation of the Laplacian\n"         \
-"operator. The parameter \n"         \
-" alpha (double) controls the spatial extension of the\n"         \
-"filter: 0 \n"         \
-"\n"         \
-"Types supported: byte 2D\n"         \
-"\n"         \
-"Category: signal\n"         \
-"  signal\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__diffimages__c__ "  diffimages.c\n"         \
 "\n"         \
 " pixelwise absolute value difference of 2 images\n"         \
@@ -1756,10 +1578,6 @@
 "\n"
 
 
-#define doc__lenoir__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__medialaxis__c__ "  medialaxis.c\n"         \
 "\n"         \
 " medial axis transform\n"         \
@@ -1898,44 +1716,6 @@
 
 
 #define doc__CMakeLists__txt__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__lengthsplines__c__ "  lengthsplines.c\n"         \
-"\n"         \
-" computes the lengths of splines which are specified by their control points in a text file\n"         \
-"\n"         \
-"Usage: lengthsplines splines.txt out.list\n"         \
-"\n"         \
-"Description:\n"         \
-"Computes the lengths of splines which are specified by their control points in a text file.\n"         \
-"\n"         \
-"The file format for  splines.txt is the following for 2D:\n"         \
-"\n"         \
-"The file  splines.txt contains a list of splines under the format:\n"         \
-"d nb_splines\n"         \
-"nb_points_spline_1  x11 y11  x12 y12 ...\n"         \
-"nb_points_spline_2  x21 y21  x22 y22 ...\n"         \
-"nb_points_spline_3  x31 y31  x32 y32 ...\n"         \
-"...\n"         \
-"or, in 3D:\n"         \
-"D nb_splines\n"         \
-"nb_points_spline_1  x11 y11 z11  x12 y12 z12 ...\n"         \
-"nb_points_spline_2  x21 y21 z21  x22 y22 z22 ...\n"         \
-"nb_points_spline_3  x31 y31 z31  x32 y32 z32 ...\n"         \
-"...\n"         \
-"\n"         \
-"Types supported: spline 2D, spline 3D\n"         \
-"\n"         \
-"Category: geo\n"         \
-" geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__hthinbin__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -2377,27 +2157,6 @@
 "\n"
 
 
-#define doc__ui_any_to_complex__c__ "\n"         \
-"    ui_any_to_complex.cpp\n"         \
-"\n"         \
-"    Creates a complex image from two images (one representing\n"         \
-"   the real, and the other the imaginary part of the complex image)\n"         \
-"   \n"         \
-"   Usage: !!!!!!!\n"         \
-"   \n"         \
-"   Description: The two images can be of any type, but they need to be of the same time.\n"         \
-"\n"         \
-"   NOTE: If you use complex images, than some information will\n"         \
-"   be lost, as the resulting image will be float-complex anyway. Also\n"         \
-"   if you use integers, some information may dissapear.\n"         \
-"\n"         \
-"    Laszlo Marak, 2011\n"         \
-"\n"         \
-"\n"         \
-" \n"         \
-"\n"
-
-
 #define doc__volmaxima__c__ "  volmaxima.c\n"         \
 "\n"         \
 " volume-based filtering\n"         \
@@ -2525,10 +2284,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__linapprox__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -2716,10 +2471,6 @@
 "\n"
 
 
-#define doc__hthiniso__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__inf__c__ "  inf.c\n"         \
 "\n"         \
 " pixelwise inf predicate\n"         \
@@ -2794,10 +2545,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__hthickbin__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -3027,31 +2774,6 @@
 "\n"
 
 
-#define doc__lambdamedialaxis2auto__c__ "  lambdamedialaxis2.c\n"         \
-"\n"         \
-" discrete lambda-medial axis transform\n"         \
-"\n"         \
-"Usage: lambdamedialaxis2 in.pgm lambda opening.pgm out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"lambda:\n"         \
-" -1: produce lambdamedialaxis map\n"         \
-"  0: automaticly define lambda parameter\n"         \
-"  >0: produce binary image based on defined lambda\n"         \
-" \n"         \
-"Experimental\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: morpho\n"         \
-"  morpho\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__voronoilabelling__c__ "  voronoilabelling.c\n"         \
 "\n"         \
 " voronoi labelling (and squared Euclidean distance transform)\n"         \
@@ -3202,47 +2924,6 @@
 "\n"
 
 
-#define doc__lthick__c__ "  lthick.c\n"         \
-"\n"         \
-" grayscale leveling thickening\n"         \
-"\n"         \
-"Usage: lthick in.pgm {imcond.pgm|null} connex niter out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Grayscale leveling thickening (refs. [BEC97, CBB01]).\n"         \
-"The parameter  connex gives the connectivity used for the minima;\n"         \
-"possible choices are 4, 8 in 2D and 6, 26 in 3D.\n"         \
-"Let F be the function corresponding to the input image  in.pgm.\n"         \
-"Let G be the function corresponding to the input image \n"         \
-" imcond.pgm, or the blanck function (constant 255) if the keyword  null is used.\n"         \
-"The algorithm is the following:\n"         \
-"\n"         \
-"\n"         \
-"Repeat niter times:\n"         \
-"    L = {(p,a) such that T++(p,F) = 1 and a = alpha+(p,F)}\n"         \
-"    While L not empty\n"         \
-"       extract a couple (p,a) from L\n"         \
-"       F(p) = min{ a, alpha+(p,F), G(p) }    \n"         \
-"Result: F\n"         \
-"\n"         \
-"\n"         \
-"If  niter is set to -1, then the operator iterates until stability.\n"         \
-"\n"         \
-"References: \n"         \
-"[BEC97] G. Bertrand, J. C. Everat and M. Couprie: \"Image segmentation through operators based upon topology\",  Journal of Electronic Imaging, Vol.&nbsp;6, No.&nbsp;4, pp.&nbsp;395-405, 1997.\n"         \
-"[CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: \"Topological operators for\n"         \
-"grayscale image processing\",  Journal of Electronic Imaging, Vol.&nbsp;10, No.&nbsp;4, pp.&nbsp;1003-1015, 2001.\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D.\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__3dflowskeleton__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -3346,47 +3027,6 @@
 "\n"
 
 
-#define doc__hthick__c__ "  hthick.c\n"         \
-"\n"         \
-" grayscale homotopic thickening\n"         \
-"\n"         \
-"Usage: hthick in.pgm {imcond.pgm|null} connex niter out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Grayscale homotopic thickening (refs. [BEC97, CBB01]).\n"         \
-"The parameter  connex gives the connectivity used for the minima;\n"         \
-"possible choices are 4, 8 in 2D and 6, 26 in 3D.\n"         \
-"Let F be the function corresponding to the input image  in.pgm.\n"         \
-"Let G be the function corresponding to the input image \n"         \
-" imcond.pgm, or the blanck function (constant 255) if the keyword  null is used.\n"         \
-"The algorithm is the following:\n"         \
-"\n"         \
-"\n"         \
-"Repeat niter times:\n"         \
-"    L = {(p,d) such that p is constructible for F and d = delta+(p,F)}\n"         \
-"    While L not empty\n"         \
-"       extract a couple (p,d) from L\n"         \
-"       F(p) = min{ d, delta+(p,F), G(p) }    \n"         \
-"Result: F\n"         \
-"\n"         \
-"\n"         \
-"If  niter is set to -1, then the operator iterates until stability.\n"         \
-"\n"         \
-"References: \n"         \
-"[BEC97] G. Bertrand, J. C. Everat and M. Couprie: \"Image segmentation through operators based upon topology\",  Journal of Electronic Imaging, Vol.&nbsp;6, No.&nbsp;4, pp.&nbsp;395-405, 1997.\n"         \
-"[CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: \"Topological operators for\n"         \
-"grayscale image processing\",  Journal of Electronic Imaging, Vol.&nbsp;10, No.&nbsp;4, pp.&nbsp;1003-1015, 2001.\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D.\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__raw2pgm__c__ "  raw2pgm.c\n"         \
 "\n"         \
 " converts from raw format into pgm format\n"         \
@@ -3415,36 +3055,6 @@
 " convert\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__hthinpar__c__ "  hthinpar.c\n"         \
-"\n"         \
-" parallel grayscale homotopic thinning\n"         \
-"\n"         \
-"Usage: hthinpar in.pgm {imcond.pgm|null} connex niter out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Parallel grayscale homotopic thinning (refs. [BEC97, CBB01]).\n"         \
-"The parameter  connex gives the connectivity used for the minima;\n"         \
-"possible choices are 4, 8 in 2D and 6, 26 in 3D.\n"         \
-"Let F be the function corresponding to the input image  in.pgm.\n"         \
-"Let G be the function corresponding to the input image \n"         \
-" imcond.pgm, or the null function if the keyword  null is used.\n"         \
-"\n"         \
-"If  niter is set to -1, then the operator iterates until stability.\n"         \
-"\n"         \
-"References:\n"         \
-"\n"         \
-"to appear\n"         \
-"\n"         \
-"Types supported: byte 2D.\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
-"\n"         \
-" Nivando Bezerra\n"         \
 "\n"         \
 "\n"
 
@@ -3735,63 +3345,6 @@
 "\n"
 
 
-#define doc__longestplateau__c__ "  longestplateau.c\n"         \
-"\n"         \
-" finds the location of the longest plateau in 1D sequence\n"         \
-"\n"         \
-"Usage: longestplateau in.list [tolerance] out.list\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Reads the sequence S from the file in.list. \n"         \
-"This file must have the following format:\n"         \
-"  \n"         \
-"  e &lt;n&gt;\n"         \
-"  x1\n"         \
-"  x2\n"         \
-"  ...\n"         \
-"  xn\n"         \
-"\n"         \
-"The tolerance t (float) is given by the parameter tolerance\n"         \
-"(default value is 0).\n"         \
-"A plateau is a subsequence P of S formed by consecutive elements of P, \n"         \
-"between indices i and j, and such that max{P[k];i\n"         \
-"The program returns the base index and length of the first occurence of a plateau with \n"         \
-"maximal length in S.\n"         \
-"\n"         \
-"Types supported: list 1D\n"         \
-"\n"         \
-"Category: signal\n"         \
-" signal\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__lambdapmedialaxis__c__ "  lambdapmedialaxis.c\n"         \
-"\n"         \
-" discrete lambda-medial axis transform (cheaper variant)\n"         \
-"\n"         \
-"Usage: lambdapmedialaxis in.pgm [lambda] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Discrete lambda-medial axis of the binary image  X contained in  in.pgm. \n"         \
-"If the parameter  lambda is given, the output is a binary image. Otherwise, \n"         \
-"it is a float image representing the function x->lambda(x).\n"         \
-"\n"         \
-" Experimental.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: morpho\n"         \
-"  morpho\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__threshold__c__ "  threshold.c\n"         \
 "\n"         \
 " simple threshold\n"         \
@@ -3809,48 +3362,6 @@
 "  arith\n"         \
 "\n"         \
 " Michel Couprie 2010\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__identifyplane__c__ "  identifyplane.c\n"         \
-"\n"         \
-" identification of a best matching plane from a set of 3D points\n"         \
-"\n"         \
-"Usage: identifyplane in.list out.list\n"         \
-"\n"         \
-"Description:\n"         \
-"Identifies the parameters (a, b, c, d) of the equation of the 3D plane:\n"         \
-"ax+by+cz+d=0 that minimizes the least square error between this plane \n"         \
-"and the given points. Method: basic linear regression.\n"         \
-"\n"         \
-"The result is given as a file that contains a list of 5 numbers: a, b, c, d the parameters of the equation, and e the least square error.\n"         \
-"\n"         \
-"Types supported: list 3D\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__localextrema__c__ "  localextrema.c\n"         \
-"\n"         \
-" local extrema \n"         \
-"\n"         \
-"Usage: in.pgm connex minimum out.pgm\n"         \
-"\n"         \
-"Description: \n"         \
-"Selects the local maxima or minima of a grayscale image with connexity connex.\n"         \
-"\n"         \
-"Types supported: byte 2d - byte 3d\n"         \
-"\n"         \
-"Category: connect, topogray\n"         \
-"  connect, topogray\n"         \
-"\n"         \
-" Laurent Najman\n"         \
 "\n"         \
 "\n"
 
@@ -4430,35 +3941,6 @@
 "\n"
 
 
-#define doc__lambdamedialaxisauto__c__ "  lambdamedialaxis.c\n"         \
-"\n"         \
-" discrete lambda-medial axis transform\n"         \
-"\n"         \
-"Usage: lambdamedialaxis in.pgm [lambda] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Discrete lambda-medial axis, as defined in [CCT09], \n"         \
-"of the binary image  X contained in  in.pgm.\n"         \
-"\n"         \
-"By default, the output is a float image representing the function x->lambda(x).\n"         \
-"\n"         \
-"If the parameter  lambda is given (bash interface only, not python), the output is a binary image obtained by thresholding the aforementioned function at the value  lambda .\n"         \
-"\n"         \
-"If the parameter  lambda is given and set to 0, the output is a binary image obtained by thresholding the aforementioned function at the automaticaly defined (k-means) value  lambda . \n"         \
-"\n"         \
-" References: \n"         \
-"[CCT09] John Chaussard, Michel Couprie, and Hugues Talbot. A discrete lambda-medial axis. 15th Discrete Geometry for Computer Imagery (DGCI'09). Lecture Notes in Computer Science.   2009.  pp. 1–12. To appear.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: morpho\n"         \
-"  morpho\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__area__c__ "  area.c\n"         \
 "\n"         \
 " return the number of non-null pixels of an image\n"         \
@@ -4581,25 +4063,6 @@
 "\n"         \
 "Category: convert\n"         \
 "  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__lambdathin__c__ "  lambdathin.c\n"         \
-"\n"         \
-" grayscale homotopic and filtered thinning\n"         \
-"\n"         \
-"Usage: lambdathin in.pgm {imcond.pgm|null} connex niter h out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Homotopic thinning for 2D grayscale images. \n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -4790,10 +4253,6 @@
 "\n"         \
 " Michel Couprie 2009\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__lpetopo__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -5823,65 +5282,6 @@
 "\n"
 
 
-#define doc__hthin__c__ "  hthin.c\n"         \
-"\n"         \
-" grayscale homotopic thinning\n"         \
-"\n"         \
-"Usage: hthin in.pgm {imcond.pgm|null} connex niter out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Grayscale homotopic thinning (refs. [BEC97, CBB01]).\n"         \
-"The parameter  connex gives the connectivity used for the minima;\n"         \
-"possible choices are 4, 8 in 2D and 6, 26 in 3D.\n"         \
-"Let F be the function corresponding to the input image  in.pgm.\n"         \
-"Let G be the function corresponding to the input image \n"         \
-" imcond.pgm, or the null function if the keyword  null is used.\n"         \
-"The algorithm is the following:\n"         \
-"\n"         \
-"\n"         \
-"Repeat niter times:\n"         \
-"    L = {(p,d) such that p is destructible for F and d = delta-(p,F)}\n"         \
-"    While L not empty\n"         \
-"       extract a couple (p,d) from L\n"         \
-"       F(p) = max{ d, delta-(p,F), G(p) }    \n"         \
-"Result: F\n"         \
-"\n"         \
-"\n"         \
-"If  niter is set to -1, then the operator iterates until stability.\n"         \
-"\n"         \
-"References:\n"         \
-"\n"         \
-"[BEC97] G. Bertrand, J. C. Everat and M. Couprie: \"Image segmentation through operators based upon topology\",  Journal of Electronic Imaging, Vol.&nbsp;6, No.&nbsp;4, pp.&nbsp;395-405, 1997.\n"         \
-"\n"         \
-"[CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: \"Topological operators for\n"         \
-"grayscale image processing\",  Journal of Electronic Imaging, Vol.&nbsp;10, No.&nbsp;4, pp.&nbsp;1003-1015, 2001.\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D.\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"Example:\n"         \
-"\n"         \
-"hthin ur1 null 4 10 ur1_hthin\n"         \
-"minima ur1_hthin 4 ur1_hthin_m\n"         \
-"\n"         \
-"\n"         \
-"  \n"         \
-"      \n"         \
-"      \n"         \
-"  \n"         \
-"  ur1\n"         \
-"      ur1_hthin\n"         \
-"      ur1_hthin_m\n"         \
-"  \n"         \
-"\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__moments__c__ "  moments.c\n"         \
 "\n"         \
 " calcul des moments d'ordre 1 et 2 d'une image binaire (nuage de points) \n"         \
@@ -6125,26 +5525,6 @@
 "\n"
 
 
-#define doc__lambdamedialaxis2__c__ "  lambdamedialaxis2.c\n"         \
-"\n"         \
-" discrete lambda-medial axis transform\n"         \
-"\n"         \
-"Usage: lambdamedialaxis2 in.pgm auxlambda lambda out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Experimental\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: morpho\n"         \
-"  morpho\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__3dalpha__c__ "  3dalpha.c\n"         \
 "\n"         \
 " alpha-dilation of a 3d khalimsky order \n"         \
@@ -6294,25 +5674,6 @@
 "\n"         \
 "Category: connect\n"         \
 " connect\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__lambdalthin__c__ "  lambdalthin.c\n"         \
-"\n"         \
-" grayscale filtered leveling\n"         \
-"\n"         \
-"Usage: lambdalthin in.pgm {imcond.pgm|null} connex niter h out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Filtered leveling for 2D grayscale images. \n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: topogray\n"         \
-"  topogray\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -6870,10 +6231,6 @@
 "\n"
 
 
-#define doc__jones__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
 #define doc__curvetangents__cxx__ "  curvetangents.c\n"         \
 "\n"         \
 " computes the tangents of a digital curve\n"         \
@@ -6967,32 +6324,6 @@
 "\n"         \
 "Category: topobin\n"         \
 "  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__isometry__c__ "  isometry.c\n"         \
-"\n"         \
-" basic isometries in 3D \n"         \
-"\n"         \
-"Usage: isometry in MODE out\n"         \
-"\n"         \
-"Description:\n"         \
-"Basic isometries in 2D and 3D.\n"         \
-"Available modes: xzy, yxz, yzx, zxy, zyx, (3D), and\n"         \
-"0: identity,\n"         \
-"1: rotation 90 degrees clockwise,\n"         \
-"2: rotation 180 degrees clockwise,\n"         \
-"3: rotation 270 degrees clockwise,\n"         \
-"4: symmetry / vertical axis,\n"         \
-"5: symmetry / horizontal axis.\n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -7809,44 +7140,6 @@
 "\n"
 
 
-#define doc__lengthspline__c__ "  lengthspline.c\n"         \
-"\n"         \
-" computes the length of a spline which is specified by its control points in a text file\n"         \
-"\n"         \
-"Usage: lengthspline spline.txt [out.list]\n"         \
-"\n"         \
-"Description:\n"         \
-"Computes the length of a spline which is specified by its control points in a text file.\n"         \
-"The file format for  spline.txt is the following for 2D:\n"         \
-"\n"         \
-"c n+1 (where n+1 denotes the number of control points)\n"         \
-"x1 y1\n"         \
-"...\n"         \
-"xn+1 yn+1\n"         \
-"C0X1 C0Y1 C1X1 C1Y1 C2X1 C2Y1 C3X1 C3Y1\n"         \
-"...\n"         \
-"C0Xn C0Yn C1Xn C1Yn C2Xn C2Yn C3Xn C3Yn\n"         \
-"\n"         \
-"and in the 3D case:\n"         \
-"\n"         \
-"C n+1 (where n+1 denotes the number of control points)\n"         \
-"x1 y1 z1\n"         \
-"...\n"         \
-"xn+1 yn+1 zn+1\n"         \
-"C0X1 C0Y1 C0Z1 C1X1 C1Y1 C1Z1 C2X1 C2Y1 C2Z1 C3X1 C3Y1 C3Z1\n"         \
-"...\n"         \
-"C0Xn C0Yn C0Zn C1Xn C1Yn C1Zn C2Xn C2Yn C2Zn C3Xn C3Yn C3Zn\n"         \
-"\n"         \
-"Types supported: spline 2D, spline 3D\n"         \
-"\n"         \
-"Category: geo\n"         \
-" geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__nbvois__c__ "  nbvois.c\n"         \
 "\n"         \
 " number of neighbors for each object point\n"         \
@@ -7942,27 +7235,6 @@
 "\n"         \
 "Category: topogray\n"         \
 "  topogray\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__identifyparabola3__c__ "  identifyparabola3.c\n"         \
-"\n"         \
-" identification of a best matching parabola from a set of 2D points\n"         \
-"\n"         \
-"Usage: identifyparabola3 in.list out.list\n"         \
-"\n"         \
-"Description:\n"         \
-"Identifies the parameters (a,b,c) of the equation of the 2D parabola:\n"         \
-"ax^2+bx+c=y that minimizes the least square error between this parabola \n"         \
-"and the given points. Method: basic linear regression.\n"         \
-"\n"         \
-"Types supported: list 1D, list 2D\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -8107,10 +7379,6 @@
 "\n"         \
 "\n"         \
 " \n"         \
-"\n"
-
-
-#define doc__lpetoporeg__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -8542,25 +7810,6 @@
 "  orders\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__hma__c__ "\n"         \
-" Higher-resolution Medial Axis (HMA) extraction\n"         \
-"\n"         \
-"Usage: hma in.pgm [mode] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Higher-resolution Medial Axis (HMA) of the binary image  Xh, where Xh has\n"         \
-"been obtained by H(X), X being the original object and H, the H-transform.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: morpho\n"         \
-"  morpho\n"         \
-"\n"         \
-" Andre Vital Saude\n"         \
 "\n"         \
 "\n"
 
