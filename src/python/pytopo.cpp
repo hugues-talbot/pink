@@ -282,13 +282,14 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie 09 Fevrier 2016
+  /*UI_WRAP_FUNCTION(
     "alpha",
     lalpha,
     ( arg("image"), arg("connexity"), arg("sign") ),
     doc__alpha__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
  /* UI_WRAP_FUNCTION(
     "amont",
