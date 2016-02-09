@@ -19,7 +19,7 @@
 #include "lnbvois.h"
 //#include "lselrect.h" commentaire Manon 4 fevrier 2016
 #include "lseltopo.h"
-#include "lhthiniso.h"
+//#include "lhthiniso.h" commentaire M9F2016
 //#include "llevialdi.h"
 #include "lgeodesic.h"
 #include "lrotations.h"
@@ -48,13 +48,14 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
-    "hthiniso",
-    lhthiniso,
-    (arg("image"), arg("dmax"), arg("connex"), arg("pixwhratio")),
-    doc__hthiniso__c__
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+// Commentaire M9F2016
+//  UI_WRAP_FUNCTION(
+//    "hthiniso",
+//    lhthiniso,
+//    (arg("image"), arg("dmax"), arg("connex"), arg("pixwhratio")),
+//    doc__hthiniso__c__
+//    );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 // Commentaire M8F2016
 //  UI_WRAP_FUNCTION(

@@ -225,7 +225,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "llut.h"
 #include "lhma.h"
 #include "lhoughcercles.h"
-#include "lhthiniso.h"
+//#include "lhthiniso.h" commentaire M9F2016
 #include "lhtkern.h"
 #include "lhtkern3d.h"
 //#include "lisometry.h" commentaire M8F2016
