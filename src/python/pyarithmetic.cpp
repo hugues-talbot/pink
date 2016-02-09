@@ -19,7 +19,7 @@
 //#include "legalise.h" //commenté par Sophie, 08 Fevrier 2016
 //#include "lcontours.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lhtkern3d.h"
-#include "lhistscal.h"
+//#include "lhistscal.h" //commenté par Sophie, 09 Fevrier 2016
 #include "ldirections.h"
 //#include "ldetectcercles.h" //commenté par Sophie, 05 Fevrier 2016
 
@@ -148,7 +148,8 @@ namespace arithmetic
 //   );
 // # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 09 Fevrier 2016
+  /*UI_WRAP_FUNCTION(
     "histscal",
     lhistscal3,
     (arg("image"), arg("a"), arg("A"), arg("b"), arg("B"), arg("c"), arg("C")),
@@ -162,7 +163,7 @@ namespace arithmetic
     (arg("image"), arg("a"), arg("A"), arg("b"), arg("B")),
     doc__histscal__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
   UI_WRAP_FUNCTION(
   "surfacerestoration",

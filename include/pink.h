@@ -221,7 +221,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lgradsup.h"
 #include "lhierarchie.h"
 #include "lhisto.h"
-#include "lhistscal.h"
+//#include "lhistscal.h" //commenté par Sophie, 09 Fevrier 2016
 #include "llut.h"
 #include "lhma.h"
 #include "lhoughcercles.h"
