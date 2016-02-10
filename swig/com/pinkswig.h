@@ -8,9 +8,9 @@ static "C" {
 #endif
 
   //Some helper functions
- void invert(struct xvimage * image);
- void copy(struct xvimage*result, struct xvimage * image);
- void copyinvert(struct xvimage*result, struct xvimage * image);
+ void invertbyte(struct xvimage * image);
+ void copybyte(struct xvimage*result, struct xvimage * image);
+ void copyinvertbyte(struct xvimage*result, struct xvimage * image);
  int EqualSize(struct xvimage * image1, struct xvimage *image2);
  struct xvimage* checkAllocCopy(struct xvimage* imagein, char *name);
  
@@ -26,13 +26,15 @@ static "C" {
  struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2);
  struct xvimage* divideconst(struct xvimage *imagein1, double constante);
  struct xvimage* xor(struct xvimage *imagein1, struct xvimage *imagein2);
-
+ struct xvimage* absimg(struct xvimage *imagefloat);
  struct xvimage* normalize(struct xvimage *imagein, double nmin, double nmax);
   
  // real Com functions start here
  struct xvimage* ComputeEdgeGraphGrey(struct xvimage* im, int32_t param, double alpha);
  struct xvimage* ComputeEdgeGraphColor(struct xvimage* r, struct xvimage* g, struct xvimage* b, int32_t param);
  struct xvimage* zerocrossing(struct xvimage *imagefloat, int32_t bar);
+
+ struct xvimage* interpolateX2(struct xvimage *imagefloat);
 
  struct xvimage* EWG2Khalimsky(struct xvimage *imagein, int32_t bar);
  struct xvimage* labelfgd(struct xvimage *imagein, int32_t connex);
@@ -57,7 +59,7 @@ static "C" {
  
  struct xvimage* threshold(struct xvimage *imagein, double seuil, double seuil2);
  struct xvimage* frame(struct xvimage *imagein, int width);
- struct xvimage* inverse(struct xvimage *imagein);
+ struct xvimage* invert(struct xvimage *imagein);
  struct xvimage* border(struct xvimage *imagein, int connex);
  struct xvimage* genball(double radius, int32_t dim);
 

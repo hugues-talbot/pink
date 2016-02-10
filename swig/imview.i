@@ -17,6 +17,8 @@
 
 
 %pythoncode{
+
+import numpy as np
   
 def imview(images,name="",debug=False):
     """A function to display an image in Pink/Python. It works on
@@ -45,25 +47,67 @@ class Imview:
 	self.port = __init__()
         self.conn = __login__("","",self.port)
         self.viewername = viewername
-        self.up = __putimage__(image,self.viewername+"-"+image.name(),self.conn)
+        self.show(image,self.viewername+"-"+image.name(),self.conn)
     def debug(self,d=False):
         self.debugstatus = __setdebug__(d)
-    def show(self,image, name=""):
+    def show(self,image, name="", color=False):
+      if hasattr(image, 'tonumpy'): 
         self.up = __putimage__(image,name+"-"+image.name(),self.conn)
-	if (self.up > 0):
-	    self.__init__(image)
+      else:
+	self.__showNumpy__(image, name, color)
 
-	      
+    def __showRGBNumpy__(self, mat, name=""):
+      R = np.ascontiguousarray(mat[...,0])
+      G = np.ascontiguousarray(mat[...,1])
+      B = np.ascontiguousarray(mat[...,2])
+      if len(mat.shape) == 3:
+        row, col, ignore = mat.shape
+        depth = 1
+      else: 
+        row, col, depth, ignore = mat.shape
+      type = mat.dtype.name
+      translate = {'uint8' : 2, 'uint16' : 4, 'uint32' : 6, 'float32' : 9, 'float64' : 10}
+      if type in translate:
+        self.up = __putbufferRGB__(R.ctypes.data, G.ctypes.data, B.ctypes.data,
+                               row, col, depth, translate[type], name, self.conn)
+        return self.up
+      else:
+        print "Type:", type, "is not supported"
+        return 0
+
+    def __showNumpy__(self, mat, name="", color=False):
+      if color == True:
+        return self.__showRGBNumpy__(mat, name)
+      if len(mat.shape) == 2:
+        row, col = mat.shape
+        depth = 1
+      else: 
+        row, col, depth = mat.shape
+      if depth == 3:
+        return self.__showRGBNumpy__(mat, name)
+      type = mat.dtype.name
+      translate = {'uint8' : 2, 'uint16' : 4, 'uint32' : 6, 'float32' : 9, 'float64' : 10}
+      if type in translate:
+        self.up = __putbuffer__(mat.ctypes.data,
+                            row, col, depth, translate[type], name, self.conn)
+        return self.up
+      else:
+        print "Type:", type, "is not supported"
+        return 0	  
 }
 
 %rename(__init__) init;
 %rename(__login__) login;
 %rename(__putimage__) putimage;
+%rename(__putbufferRGB__) putbufferRGB;
+%rename(__putbuffer__) putbuffer;
 %rename(__setdebug__) setdebug;
 %rename(__sendcommand__) sendcommand;
 
 int init(void);
 int login(char *user, char *hostname, int port);
 int putimage(struct xvimage *realdata, const char *name, int conn_id);
+int putbufferRGB(long int dataR, long int dataG, long int dataB, int row, int col, int depth, int datatype, const char *name, int conn_id);
+int putbuffer(long int data, int row, int col, int depth, int datatype, const char *name, int conn_id);
 int setdebug(int debug);
 int sendcommand(char *command, int connid);

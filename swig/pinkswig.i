@@ -206,10 +206,26 @@ def fromnumpy(mat):
     else:
       print "Type:", type, "is not supported"
       return None
+
+def surimp(imgrey, mask):
+    im = imgrey.tonumpy()
+    w, h = im.shape
+    ret = np.empty((w, h, 3), dtype=np.uint8)
+    ret[:, :, 2] =  ret[:, :, 1] =  ret[:, :, 0] =  im
+    red = mask.tonumpy()[:] > 0
+    ret[red]= [255,0,0]
+    return ret
 }
 
 %extend xvimage {
 %pythoncode{
+
+@property
+def shape(self):
+    if self.depth() == 1:
+      return self.colsize(), self.rowsize()
+    else:
+      return self.colsize(), self.rowsize(), self.depth()
 
 import ctypes
 	      
@@ -283,7 +299,7 @@ def __and__(self,other):
      return min(self, other)
 
 def __invert__(self):
-     return inverse(self)
+     return invert(self)
 
 }};
 
@@ -344,6 +360,10 @@ struct xvimage* divideconst(struct xvimage *imagein1, double constante);
 %newobject xor;
 struct xvimage* xor(struct xvimage *imagein1, struct xvimage *imagein2);
 
+%rename(abs) absimg;
+%newobject absimg;
+struct xvimage* absimg(struct xvimage *imagefloat);
+		
 %feature("docstring",
 	 "Normalization of grayscale values.\n"
 	 "Description: \n"
@@ -596,8 +616,8 @@ struct xvimage* genball(double radius, int32_t dim=2);
 	 "Byte images: for each pixel x, out[x] = 255 - in[x].<br>\n"
 	 "Long or float images: for each pixel x, out[x] = VMAX - in[x], where VMAX = max{in[x]}.\n"
 	 "Types supported: byte 2d, byte 3d, long 2d, long 3d, float 2d, float 3d\n");
-%newobject inverse;
-struct xvimage* inverse(struct xvimage *imagein);
+%newobject invert;
+struct xvimage* invert(struct xvimage *imagein);
 
 %feature("docstring",
 	 "Minimum of 2 images\n"
@@ -1111,3 +1131,9 @@ struct xvimage* crestrestoration(struct xvimage *imagebyte, int32_t niter, int32
 	 "Types supported: float 2D\n");
 %newobject zerocrossing;
 struct xvimage* zerocrossing(struct xvimage *imagefloat, int32_t bar);
+
+%feature("docstring",
+	 "TO DO\n"
+	 "Types supported: float 2D\n");
+%newobject interpolateX2;
+struct xvimage* interpolateX2(struct xvimage *imagefloat);

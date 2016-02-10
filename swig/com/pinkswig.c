@@ -84,7 +84,7 @@ int EqualSize(struct xvimage * image1, struct xvimage *image2)
 }
 
 /* ==================================== */
-void invert(struct xvimage * image)
+void invertbyte(struct xvimage * image)
 /* ==================================== */
 {
   int32_t i, N = rowsize(image) * colsize(image) * depth(image);
@@ -94,7 +94,7 @@ void invert(struct xvimage * image)
 } // inverse
 
 /* ==================================== */
-void copy(struct xvimage*result, struct xvimage * image)
+void copybyte(struct xvimage*result, struct xvimage * image)
 /* ==================================== */
 {
   int32_t i, N = rowsize(image) * colsize(image) * depth(image);
@@ -103,7 +103,7 @@ void copy(struct xvimage*result, struct xvimage * image)
     *r = *pt;
 } // copy
 
-void copyinvert(struct xvimage*result, struct xvimage * image)
+void copyinvertbyte(struct xvimage*result, struct xvimage * image)
 /* ==================================== */
 {
   int32_t i, N = rowsize(image) * colsize(image) * depth(image);
@@ -152,9 +152,9 @@ struct xvimage* wshedtopo(struct xvimage *image, int connex, int inverse)
       return NULL;
     }
   if (inverse)
-    copyinvert(result,image);
+    copyinvertbyte(result,image);
   else
-    copy(result,image);
+    copybyte(result,image);
   
   if (! lwshedtopo_lwshedtopo(result, connex))
   {
@@ -164,7 +164,7 @@ struct xvimage* wshedtopo(struct xvimage *image, int connex, int inverse)
   }
   
   if (inverse)
-    invert(result);
+    invertbyte(result);
   
   return result;
 }
@@ -193,9 +193,9 @@ struct xvimage* watershed(struct xvimage *image, struct xvimage *mark, int conne
       return NULL;
     }
   if (inverse)
-    copyinvert(result,image);
+    copyinvertbyte(result,image);
   else
-    copy(result,image);
+    copybyte(result,image);
   
   if (! lwshedtopobin(result, mark, connex))
   {
@@ -205,7 +205,7 @@ struct xvimage* watershed(struct xvimage *image, struct xvimage *mark, int conne
   }
   
   if (inverse)
-    invert(result);
+    invertbyte(result);
   
   return result;
 }
@@ -674,9 +674,9 @@ struct xvimage* frame(struct xvimage *imagein, int width)
   return image;
 }
 
-struct xvimage* inverse(struct xvimage *imagein)
+struct xvimage* invert(struct xvimage *imagein)
 {
-  static char* name="inverse";
+  static char* name="invert";
   struct xvimage *image = checkAllocCopy(imagein, name);
   if (image == NULL)
     return NULL;
@@ -1157,14 +1157,14 @@ struct xvimage* volminima(struct xvimage *imagein, int32_t param, int32_t connex
   struct xvimage *image = checkAllocCopy(imagein, name);
   if (image == NULL)
     return NULL;
-  invert(image);
+  invertbyte(image);
   if (! lvolmaxima(image, connex, param))
   {
     fprintf(stderr, "%s: lvolmaxima failed\n", name);
     freeimage(image);
     return NULL;
   }
-  invert(image);
+  invertbyte(image);
   return image;
 }
 
@@ -2116,8 +2116,10 @@ struct xvimage* zerocrossing(struct xvimage *imagefloat, int32_t bar)
 {
   static char *name="zerocrossing";
 
-  if (imagefloat == NULL)
+  if (imagefloat == NULL) {
     fprintf(stderr, "%s: NULL input image\n", name);
+    return NULL;
+  }
 
   struct xvimage* ga = ComputeEdgeGraphGrey(imagefloat, 4, 0.);
   if (ga == NULL)
@@ -2226,4 +2228,124 @@ struct xvimage* zerocrossing(struct xvimage *imagefloat, int32_t bar)
 
   freeimage(ga);
   return out;
+}
+
+float medianFour(float a, float b, float c, float d)
+{
+  float low1, high1, low2, high2, lowest, middle1,middle2,highest;
+  if (a < b) {
+    low1 = a;
+    high1 = b;
+  } else  {
+    low1 = b;
+    high1 = a;
+  }
+  if (c < d) {
+    low2 = c;
+    high2 = d;
+  } else {
+    low2 = d;
+    high2 = c;
+  }
+  if (low1 < low2) {
+    lowest = low1;
+    middle1 = low2;
+  } else {
+    lowest = low2;
+    middle1 = low1;
+  }
+  if (high1 > high2) {
+    highest = high1;
+    middle2 = high2;
+  } else {
+    highest = high2;
+    middle2 = high1;
+  }
+  /*
+  if (middle1 < middle2)
+    return (lowest,middle1,middle2,highest);
+  else
+    return (lowest,middle2,middle1,highest);
+  */
+  return (middle1+middle2)/2.;
+}
+	  
+struct xvimage* interpolateX2(struct xvimage *imagefloat)
+{
+  static char *name="interpolateX2";
+
+  if (imagefloat == NULL) {
+    fprintf(stderr, "%s: NULL input image\n", name);
+    return NULL;
+  }
+
+  if (datatype(imagefloat) != VFF_TYP_FLOAT) {
+    fprintf(stderr, "%s: input image should be float\n", name);
+    return NULL;
+  }   
+  if (depth(imagefloat) != 1) {
+    fprintf(stderr, "%s: input image should be 2D\n", name);
+    return NULL;
+  }   
+  
+  struct xvimage* out=allocimage(NULL, rowsize(imagefloat)*2-1, colsize(imagefloat)*2-1, depth(imagefloat),
+				 VFF_TYP_FLOAT);
+  if (out == NULL) {
+    fprintf(stderr, "%s: allocimage failed\n", name);
+    return NULL;
+  }
+
+
+#define fpixel(I,x,y)   (((float_t*)((I)->image_data))[(y)*(I)->row_size+(x)])
+#define interpol2(p1,p2) ((p1+p2)/2.)
+#define interpol4(p1,p2,p3,p4) medianFour(p1,p2,p3,p4)
+  
+  float* outpix = FLOATDATA(out);
+  for (int32_t y=0; y<colsize(out); y++) {
+    for (int32_t x=0; x<rowsize(out); x++) {
+      int32_t modx=x%2;
+      int32_t mody=y%2;
+      int32_t xori = x/2; // floor divide
+      int32_t yori = y/2;
+      if ((modx==0) && (mody==0))
+	*outpix=fpixel(imagefloat,xori,yori);
+      else if ((modx==1) && (mody==0))
+	*outpix= interpol2(fpixel(imagefloat,xori,yori),fpixel(imagefloat,xori+1,yori));
+      else if ((modx==1) && (mody==0))
+	*outpix= interpol2(fpixel(imagefloat,xori,yori),fpixel(imagefloat,xori,yori+1));
+      else
+	*outpix= interpol4(fpixel(imagefloat,xori,yori),fpixel(imagefloat,xori+1,yori),
+			  fpixel(imagefloat,xori,yori+1),fpixel(imagefloat,xori+1,yori+1));
+      outpix++;
+    }
+  }
+  return out;
+}
+
+struct xvimage* absimg(struct xvimage *imagefloat)
+{
+  static char *name="absimg";
+
+  if (imagefloat == NULL) {
+    fprintf(stderr, "%s: NULL input image\n", name);
+    return NULL;
+  }
+
+  if (datatype(imagefloat) != VFF_TYP_FLOAT) {
+    fprintf(stderr, "%s: input image should be float\n", name);
+    return NULL;
+  }   
+
+  struct xvimage* image=checkAllocCopy(imagefloat, name);
+  if (image == NULL)
+    return NULL;
+
+  
+  float* outpix = FLOATDATA(image);
+  float* inpix = FLOATDATA(imagefloat);
+  int32_t N = colsize(image)*rowsize(image)*depth(image);
+  for (int i=0; i<N; i++, outpix++, inpix++) {
+    *outpix = fabs(*inpix);
+  }
+  return image;
 }

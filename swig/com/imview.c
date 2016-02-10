@@ -165,6 +165,122 @@ int login(char *user, char *hostname, int port)
   }
 }
 
+int putbufferRGB(long int dataR, long int dataG, long int dataB, int row, int col, int depth, int datatype, const char *name, int conn_id)
+{
+  IMAGE *tbu = (IMAGE *)calloc(1,sizeof(IMAGE)); // TBU = To Be Uploaded
+
+  // hand copy...
+  
+  // this could change
+  tbu->ox = tbu->oy = tbu->oz = tbu->ot = 0;
+  // straightforward I hope
+  tbu->nx = row;
+  tbu->ny = col;
+  tbu->nz = depth;
+  tbu->nc = 3;
+  tbu->nt = 1;
+  tbu->it = IM_RGB;
+
+  tbu->pt = datatype;
+
+  int datasize=0;
+  switch(datatype) {
+  case IM_UINT1:
+    datasize=1;
+    break;
+  case IM_UINT2:
+    datasize=2;
+    break;
+  case IM_UINT4:
+    datasize=4;
+    break;
+  case IM_FLOAT:
+    datasize=4;
+    break;
+  case IM_DOUBLE:
+    datasize=8;
+    break;
+  default:
+    fprintf(stderr, "Input data type not implemented: %d\n", datatype);
+    break;
+  }
+
+  if (datasize > 0) {
+    // at any rate...
+    tbu->buff = calloc(tbu->nc,sizeof(void*));
+    
+    tbu->buff[0] = (uint8_t*)(dataR);
+    tbu->buff[1] = (uint8_t*)(dataG);
+    tbu->buff[2] = (uint8_t*)(dataB);
+  }
+
+  fprintf(stderr, "Uloading data, nx= %d, ny = %d, nz = %d, nt = %d, nc = %d, datasize = %d\n",
+	  tbu->nx, tbu->ny, tbu->nz, tbu->nt, tbu->nc, datasize);
+
+  // away we go
+  //imview_force_socket();
+  int res = imviewputimage(tbu, name, conn_id);
+            
+  return res;
+}
+
+int putbuffer(long int data, int row, int col, int depth, int datatype, const char *name, int conn_id)
+{
+  IMAGE *tbu = (IMAGE *)calloc(1,sizeof(IMAGE)); // TBU = To Be Uploaded
+
+  // hand copy...
+  
+  // this could change
+  tbu->ox = tbu->oy = tbu->oz = tbu->ot = 0;
+  // straightforward I hope
+  tbu->nx = row;
+  tbu->ny = col;
+  tbu->nz = depth;
+  tbu->nc = 1;
+  tbu->nt = 1;
+  tbu->it = IM_RGB;
+
+  tbu->pt = datatype;
+
+  int datasize=0;
+  switch(datatype) {
+  case IM_UINT1:
+    datasize=1;
+    break;
+  case IM_UINT2:
+    datasize=2;
+    break;
+  case IM_UINT4:
+    datasize=4;
+    break;
+  case IM_FLOAT:
+    datasize=4;
+    break;
+  case IM_DOUBLE:
+    datasize=8;
+    break;
+  default:
+    fprintf(stderr, "Input data type not implemented: %d\n", datatype);
+    break;
+  }
+
+  if (datasize > 0) {
+    // at any rate...
+    tbu->buff = calloc(tbu->nc,sizeof(void*));
+    
+    tbu->buff[0] = (uint8_t*)(data);
+  }
+
+  fprintf(stderr, "Uloading data, nx= %d, ny = %d, nz = %d, nt = %d, nc = %d, datasize = %d\n",
+	  tbu->nx, tbu->ny, tbu->nz, tbu->nt, tbu->nc, datasize);
+
+  // away we go
+  //imview_force_socket();
+  int res = imviewputimage(tbu, name, conn_id);
+            
+  return res;
+}
+
 int putimage(struct xvimage *realdata,const char *name, int conn_id)
 {
   IMAGE *tbu = (IMAGE *)calloc(1,sizeof(IMAGE)); // TBU = To Be Uploaded
