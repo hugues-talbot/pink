@@ -12,16 +12,16 @@
 // The pink python wrapper core file
 
 #include "pink_python.h"
-#include "ldir.h"
+//#include "ldir.h" //commenté par Sophie, 08 Fevrier 2016
 //#include "lccv.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lhtkern.h"
 //#include "lconvol3.h" //commenté par Sophie 04 Fevrier 2016
-#include "legalise.h"
+//#include "legalise.h" //commenté par Sophie, 08 Fevrier 2016
 //#include "lcontours.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lhtkern3d.h"
-#include "lhistscal.h"
+//#include "lhistscal.h" //commenté par Sophie, 09 Fevrier 2016
 #include "ldirections.h"
-#include "ldetectcercles.h"
+//#include "ldetectcercles.h" //commenté par Sophie, 05 Fevrier 2016
 
 #include <boost/preprocessor/slot/counter.hpp>
 
@@ -58,23 +58,25 @@ namespace arithmetic
     );
 # include BOOST_PP_UPDATE_COUNTER()*/
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 05 Fevrier 2016
+  /*UI_WRAP_FUNCTION(
     "detectcercles",
     ldetectcercles,
     (arg("image"), arg("radius")),
     doc__detectcercles__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
 //NOTE: consider directionalfilter because of the converfloat
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 08 Fevrier 2016
+ /* UI_WRAP_FUNCTION(
     "dir",
     ldir,
     (arg("image"), arg("dir")),
     doc__dir__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
   UI_WRAP_FUNCTION(
     "directions",
@@ -84,21 +86,23 @@ namespace arithmetic
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 08 Fevrier 2016
+/*  UI_WRAP_FUNCTION(
     "dynrecons",
     ldynrecons,
     (arg("image"), arg("cond image"), arg("connexity")),
     doc__dynrecons__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 08 Fevrier 2016
+  /*UI_WRAP_FUNCTION(
     "egalise",
     legalise,
     (arg("image"), arg("n")),
     doc__egalise__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
 // UI_WRAP_FUNCTION(
 //   "fermetrous3d",
@@ -144,7 +148,8 @@ namespace arithmetic
 //   );
 // # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 09 Fevrier 2016
+  /*UI_WRAP_FUNCTION(
     "histscal",
     lhistscal3,
     (arg("image"), arg("a"), arg("A"), arg("b"), arg("B"), arg("c"), arg("C")),
@@ -158,7 +163,7 @@ namespace arithmetic
     (arg("image"), arg("a"), arg("A"), arg("b"), arg("B")),
     doc__histscal__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
 // Commentaire M9F2016
 //  UI_WRAP_FUNCTION(

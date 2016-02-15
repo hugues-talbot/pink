@@ -174,13 +174,13 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lclick.h"
 //#include "lcomphisto.h"
 //#include "lcontours.h" //commenté par Sophie, 04 Fevrier 2016
-//#include "lconvexhull.h" //commenté par Sophie, 04 Fevrier 2016
+#include "lconvexhull.h" 
 #include "lconvol.h"
 //#include "lconvol3.h" //commenté par Sophie, 04 Fevrier 2016
 #include "lcrop.h"
 #include "lderiche.h"
-#include "ldetectcercles.h"
-#include "ldiZenzo.h"
+//#include "ldetectcercles.h" //commenté par Sophie, 05 Fevrier 2016
+//#include "ldiZenzo.h" // commenté par Sophie, 08 Fevrier 2016 
 #include "ldilat.h"
 #include "ldilatbin.h"
 #include "ldilatbin3d.h"
@@ -189,16 +189,16 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "ldilatfast.h"
 #include "ldilatfast3d.h"
 //#include "ldilatplan.h"
-#include "ldir.h"
+//#include "ldir.h" //commenté par Sophie, 08 Fevrier 2016
 #include "ldirections.h"
 #include "ldist.h"
 #include "ldistgeo.h"
 #include "ldraw.h"
 #include "ldynamique.h"
 #include "ldynamique_grimaud.h"
-#include "legalise.h"
+//#include "legalise.h" //commenté par Sophie, 08 Fevrier 2016
 #include "lellipsefit.h"
-#include "lellipseincl.h"
+//#include "lellipseincl.h" //commenté par Sophie, 08 Fevrier 2016
 #include "lepaisgeo.h"
 #include "leros.h"
 #include "lerosbin.h"
@@ -214,14 +214,14 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lga2khalimsky.h"
 #include "lgeo.h"
 #include "lgeodesic.h"
-#include "lgettree.h"
-#include "lgradill.h"
+//#include "lgettree.h" //commenté par Sophie, 09 Fevrier 2016
+//#include "lgradill.h" //commenté par Sophie, 09 Fevrier 2016
 #include "lgradinf.h"
 #include "lgradinf3d.h"
 #include "lgradsup.h"
 #include "lhierarchie.h"
 #include "lhisto.h"
-#include "lhistscal.h"
+//#include "lhistscal.h" //commenté par Sophie, 09 Fevrier 2016
 #include "llut.h"
 //#include "lhma.h" commentaire M9F2016
 #include "lhoughcercles.h"
@@ -332,7 +332,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #  include "uiCutPlane.hpp"
 #  include "ui_convert.hpp"
 #  include "ui_genball.hpp"
-#  include "ui_extractplane.hpp"
+#  include "ui_extractplane.hpp" //commenté par Sophie, 08 Fevrier 2016
 #  include "ui_measure.hpp"
 //#  include "ui_any_to_complex.hpp" commentaire M9F2016
 #endif /* __cplusplus */

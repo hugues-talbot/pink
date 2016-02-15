@@ -23,7 +23,7 @@
 #include "l2dkhalimsky.h"
 #include "l3dkhalimsky.h"
 #include "lfiltrestopo.h"
-#include "ldetectcercles.h"
+//#include "ldetectcercles.h" //commenté par Sophie, 05 Fevrier 2016
 
 #include <boost/preprocessor/slot/counter.hpp>
 
@@ -119,14 +119,14 @@ namespace sept
     )
 # include BOOST_PP_UPDATE_COUNTER()
 
-    //commenté par Sophie, 03 Fevrier 2016
-/*  UI_WRAP_FUNCTION(
+    
+   UI_WRAP_FUNCTION(
     "barycentrelab",
     lbarycentrelab,
     (arg("image")),
     doc__barycentrelab__c__
     )
-# include BOOST_PP_UPDATE_COUNTER() */
+# include BOOST_PP_UPDATE_COUNTER() 
 
   UI_WRAP_FUNCTION(
     "crestrestoration",
@@ -135,46 +135,51 @@ namespace sept
     doc__crestrestoration__c__
     )
 # include BOOST_PP_UPDATE_COUNTER()
-
-  UI_WRAP_FUNCTION(
+    
+    //commenté par Sophie, 05 Fevrier 2016
+  /*UI_WRAP_FUNCTION(
     "despics2d",
     ldespics,
     (arg("image"), arg("mask"), arg("connexmin")),
     doc__despics__c__
     )
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
   
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 05 Fevrier 2016
+/*  UI_WRAP_FUNCTION(
     "despics3d",
     ldespics3d,
     (arg("image"), arg("mask"), arg("connexmin")),
     doc__despics3d__c__
     )
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER()*/
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 05 Fevrier 2016
+  /*UI_WRAP_FUNCTION(
     "despuits",
     ldespuits,
     (arg("image"), arg("mask"), arg("connexmin")),
     doc__despuits__c__
     )
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER()*/
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 05 Fevrier 2016
+ /* UI_WRAP_FUNCTION(
     "despuits3d",
     ldespuits3d,
     (arg("image"), arg("mask"), arg("connexmin")),
     doc__despuits3d__c__
     )
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER()*/
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 05 Fevrier 2016
+  /*UI_WRAP_FUNCTION(
     "detectcircles",
     ldetectcercles,
     (arg("image"), arg("radius")),
     doc__detectcercles__c__
     )
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
   UI_WRAP_VALUE(
     "distsets",

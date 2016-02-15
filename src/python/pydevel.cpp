@@ -59,12 +59,13 @@ void pydevel()
        "  (x-center_x)^2 + (y-center_y)^2 == r^2 "
     );
 
-  def(
+    //commenté par Sophie, 09 Fevrier 2016
+  /*def(
     "gradient_abs",
     pink::uiGradientAbs,
     (arg("image")),
     doc__gradient_abs__cpp__
-    );
+    ); */
 
   def(
     "measure",

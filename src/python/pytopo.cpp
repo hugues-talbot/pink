@@ -293,13 +293,14 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie 09 Fevrier 2016
+  /*UI_WRAP_FUNCTION(
     "alpha",
     lalpha,
     ( arg("image"), arg("connexity"), arg("sign") ),
     doc__alpha__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
  /* UI_WRAP_FUNCTION(
     "amont",
@@ -325,21 +326,23 @@ namespace topo
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 08 Fevrier 2016
+ /* UI_WRAP_FUNCTION(
     "ellipticite",
     lellipticite,
     (arg("image"), arg("connex")),
     doc__ellipticite__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
-  UI_WRAP_FUNCTION(
+    //commenté par Sophie, 06 Fevrier 2016
+ /* UI_WRAP_FUNCTION(
     "drawtorus",
     ldrawtorus,
     (arg("image"), arg("r1"), arg("r2"), arg("xc"), arg("yc"), arg("zc")),
     doc__drawtorus__c__
     );
-# include BOOST_PP_UPDATE_COUNTER()
+# include BOOST_PP_UPDATE_COUNTER() */
 
   UI_WRAP_FUNCTION(
     "drawball",
