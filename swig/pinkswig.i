@@ -191,7 +191,7 @@ def fromnumpy(mat):
       print "fromnumpy: Please use ""numpy.ascontiguousarray""."
       print "fromnumpy: and do not forget to keep a reference"
       print "fromnumpy: to the Numpy array thus created."
-      return None
+      raise NameError("Memory not C-contiguous")
     if len(mat.shape) == 2:
       row, col = mat.shape
       depth = 1
@@ -201,13 +201,16 @@ def fromnumpy(mat):
     translate = {'uint8' : 1, 'uint16' : 2, 'uint32' : 4, 'float32' : 5, 'float64' : 6}
     if type in translate:
       im = __createimage__(row, col, depth, translate[type], mat.ctypes.data)
-      im.owndata = False
       return im
     else:
       print "Type:", type, "is not supported"
-      return None
+      raise NameError("Type not supported")
+
 
 def surimp(imgrey, mask):
+    """Combines a greyscale image with a binary mask.
+       Returns a numpy color image, with the mask in red
+       over the original greyscale image."""
     im = imgrey.tonumpy()
     w, h = im.shape
     ret = np.empty((w, h, 3), dtype=np.uint8)
@@ -271,6 +274,11 @@ def __setitem__(self, tup, value):
       x, y, z = tup
       self.setpixel(value,x,y,z)
 
+def __le__(self,other):
+     return inf(self,other)
+def __ge__(self,other):
+     return sup(self,other)
+	
 def __add__(self,other):
      return add(self, other)
 
@@ -335,31 +343,98 @@ int writerawGAimage(struct xvimage * image,  char *filename);
 %newobject createimage;
 struct xvimage* createimage(index_t x, index_t y, index_t z, int32_t type, long int data);
 
+%rename(copy) copyimage;
+%newobject copyimage;
+struct xvimage *copyimage(struct xvimage *f);
 
 %rename(add) addconst;
 %rename(sub) subconst;
 %rename(mult) multconst;
 %rename(divide) divideconst;
 
+%feature("docstring",
+	 "Pixelwise addition of two images.\n"
+	 "Description:\n"
+	 "For each pixel x, out[x] = in1[x] + in2[x].\n"
+	 "If out[x] exceeds the maximum possible value for the pixel type,\n"
+	 "then out[x] is to this maximum value.\n"
+	 "Images must be of the same dimensions.\n"
+	 "The second image can be a constant number.\n"
+	 "In that case, it is as if adding image of constant value.\n"
+	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
 %newobject add;
 struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2);
 %newobject addconst;
 struct xvimage* addconst(struct xvimage *imagein1, double const);
+%feature("docstring",
+	 "Pixelwise substraction of two images\n"
+	 "Description:\n"
+	 "For each pixel x, out[x] = in1[x] - in2[x].\n"
+	 "For byte and int32_t image types, if out[x] < 0, then out[x] is set to 0.\n"
+	 "Images must be of the same dimensions.\n"
+	 "The second image can be a constant number.\n"
+	 "In that case, it is as if substracting an image of constant value.\n"
+	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
 %newobject sub;
 struct xvimage* sub(struct xvimage *imagein1, struct xvimage *imagein2);
 %newobject subconst;
 struct xvimage* subconst(struct xvimage *imagein1, double constante);
+%feature("docstring",
+	 "Pixelwise multiplication of two images\n"
+	 "Description:\n"
+	 "For each pixel x, out[x] = in1[x] * in2[x]. If both images are byte images,\n"
+	 "and if out[x] exceeds 255, then out[x] is set to 255.\n"
+	 "Images must be of the same dimensions.\n"
+	 "The second image can be a constant number.\n"
+	 "In that case, it is as if multiplying by an image of constant value.\n"
+	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
 %newobject mult;
 struct xvimage* mult(struct xvimage *imagein1, struct xvimage *imagein2);
 %newobject multconst;
 struct xvimage* multconst(struct xvimage *imagein1, double constante);
+%feature("docstring",
+	 "Pixelwise division of two images\n"
+	 "Description:\n"
+	 "For each pixel x such that in2[x] != 0, out[x] = in1[x] / in2[x]. \n"
+	 "For each pixel x such that in2[x] = 0, out[x] = 0. \n"
+	 "Images must be of the same type and same dimensions.\n"
+	 "The second image can be a constant number.\n"
+	 "In that case, it is as if dividing by an image of constant value.\n"
+	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d)\n");
 %newobject divide;
 struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2);
 %newobject divideconst;
 struct xvimage* divideconst(struct xvimage *imagein1, double constante);
+%feature("docstring",
+	 "pixelwise xor of two images\n"
+	 "Description:\n"
+	 "For each pixel x, if out[x] = in1[x] xor in2[x].\n"
+	 "Images must be of the same type and same dimensions.\n"
+	 "Types supported: byte 2d, byte 3d\n");
 %newobject xor;
 struct xvimage* xor(struct xvimage *imagein1, struct xvimage *imagein2);
+%newobject inf;
+%feature("docstring",
+	 "pixelwise inf predicate\n"
+	 "Description:\n"
+	 "For each pixel x, if in1[x] <= in2[x] then out[x] = 255 else out[x] = 0.\n"
+	 "Images must be of the same type and same dimensions.\n"
+	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+struct xvimage* inf(struct xvimage *imagein1, struct xvimage *imagein2);
+%newobject sup;
+%feature("docstring",
+	 "pixelwise sup predicate\n"
+	 "Description:\n"
+	 "For each pixel x, if in1[x] >= in2[x] then out[x] = 255 else out[x] = 0.\n"
+	 "Images must be of the same type and same dimensions.\n"
+	 "Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+struct xvimage* sup(struct xvimage *imagein1, struct xvimage *imagein2);
 
+%feature("docstring",
+	 "absolute value of an image.\n"
+	 "Description:\n"
+	 "For each pixel x, out[x] = abs(in[x]).\n"
+	 "Types supported: float 2d, float 3d\n");
 %rename(abs) absimg;
 %newobject absimg;
 struct xvimage* absimg(struct xvimage *imagefloat);
@@ -1127,13 +1202,13 @@ struct xvimage* tlf(struct xvimage *imagebyte, int32_t connexmin, int32_t radius
 struct xvimage* crestrestoration(struct xvimage *imagebyte, int32_t niter, int32_t connex=4, struct xvimage* imcond=NULL, xvimage** condout=NULL);
 
 %feature("docstring",
-	 "TO DO\n"
+	 "TO DO - LNA Private\n"
 	 "Types supported: float 2D\n");
 %newobject zerocrossing;
 struct xvimage* zerocrossing(struct xvimage *imagefloat, int32_t bar);
 
 %feature("docstring",
-	 "TO DO\n"
+	 "TO DO - LNA private\n"
 	 "Types supported: float 2D\n");
 %newobject interpolateX2;
 struct xvimage* interpolateX2(struct xvimage *imagefloat);

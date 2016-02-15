@@ -25,6 +25,8 @@ static "C" {
  struct xvimage* multconst(struct xvimage *imagein1, double constante);
  struct xvimage* divide(struct xvimage *imagein1, struct xvimage *imagein2);
  struct xvimage* divideconst(struct xvimage *imagein1, double constante);
+ struct xvimage* sup(struct xvimage *imagein1, struct xvimage *imagein2);
+ struct xvimage* inf(struct xvimage *imagein1, struct xvimage *imagein2);
  struct xvimage* xor(struct xvimage *imagein1, struct xvimage *imagein2);
  struct xvimage* absimg(struct xvimage *imagefloat);
  struct xvimage* normalize(struct xvimage *imagein, double nmin, double nmax);

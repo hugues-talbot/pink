@@ -895,7 +895,7 @@ struct xvimage* addconst(struct xvimage *imagein1, double constante)
 
 struct xvimage* subconst(struct xvimage *imagein1, double constante)
 {
-  static char *name="addconst";
+  static char *name="subconst";
  
   struct xvimage *image1 = checkAllocCopy(imagein1, name);
   if (image1 == NULL)
@@ -1056,7 +1056,87 @@ struct xvimage* xor(struct xvimage *imagein1, struct xvimage *imagein2)
 
   return image1;
 }
+
+struct xvimage* inf(struct xvimage *imagein1, struct xvimage *imagein2)
+{
+  static char *name="inf";
+
+  struct xvimage *image1 = checkAllocCopy(imagein1, name);
+  if (image1 == NULL)
+    return NULL;
+  struct xvimage *image2 = checkAllocCopy(imagein2, name);
+  if (image2 == NULL) {
+    freeimage(image1);
+    return NULL;
+  }
+
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
+
+  if (! convertgen(&image1, &image2))
+  {
+    fprintf(stderr, "%s: function convertgen failed\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
+
+  if (! linf(image1, image2))
+  {
+    fprintf(stderr, "%s: function linf failed\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
   
+  freeimage(image2);
+  return image1;
+}
+
+struct xvimage* sup(struct xvimage *imagein1, struct xvimage *imagein2)
+{
+  static char *name="sup";
+
+  struct xvimage *image1 = checkAllocCopy(imagein1, name);
+  if (image1 == NULL)
+    return NULL;
+  struct xvimage *image2 = checkAllocCopy(imagein2, name);
+  if (image2 == NULL) {
+    freeimage(image1);
+    return NULL;
+  }
+
+  if (!EqualSize(imagein1, imagein2)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
+
+  if (! convertgen(&image1, &image2))
+  {
+    fprintf(stderr, "%s: function convertgen failed\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
+
+  if (! lsup(image1, image2))
+  {
+    fprintf(stderr, "%s: function lsup failed\n", name);
+    freeimage(image1);
+    freeimage(image2);
+    return NULL;
+  }
+  
+  freeimage(image2);
+  return image1;
+}
+
 struct xvimage* normalize(struct xvimage *imagein, double nmin, double nmax)
 {
   static char *name="normalize";

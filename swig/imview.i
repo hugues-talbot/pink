@@ -23,6 +23,7 @@ import numpy as np
 def imview(images,name="",debug=False):
     """A function to display an image in Pink/Python. It works on
     images and lists of images.  
+    An image is either a pink/xvimage or a Numpy array
     An optional name can be provided for the window title.
     The function returns an Imview object.
     Examples:
@@ -42,7 +43,8 @@ def imview(images,name="",debug=False):
         return viewer
 
 class Imview:
-    """A class to display images in Pink/Python"""
+    """A class to display images in Pink/Python.
+    An image is either a pink/xvimage or a Numpy array"""
     def __init__(self, image, viewername=""):
 	self.port = __init__()
         self.conn = __login__("","",self.port)
@@ -51,6 +53,8 @@ class Imview:
     def debug(self,d=False):
         self.debugstatus = __setdebug__(d)
     def show(self,image, name="", color=False):
+      """Display an xv/numpy image.
+         Use both the (optional) name and te image name"""
       if hasattr(image, 'tonumpy'): 
         self.up = __putimage__(image,name+"-"+image.name(),self.conn)
       else:
