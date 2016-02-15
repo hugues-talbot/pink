@@ -1778,6 +1778,27 @@ struct xvimage* ComputeEdgeGraphGrey(struct xvimage* im, int32_t param, double a
   return ga;
 }
 
+struct xvimage* asf(struct xvimage *imagein, int32_t radiusmax, int32_t radiusmin)
+{
+  static char *name="asf";
+
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+ 
+  if (radiusmin == 0)  {
+    radiusmin = 1;
+  }
+  if (! ldilateros_lasf(image, radiusmax, radiusmin))
+  {
+    fprintf(stderr, "%s: function ldilateros_lasf failed\n", name);
+    freeimage(image);
+    return NULL;
+  }
+
+  return image;
+}
+
 struct xvimage* ComputeEdgeGraphColor(struct xvimage* r, struct xvimage* v, struct xvimage* b, int32_t param)
 {
   static char *name="pgm2GA";

@@ -53,6 +53,7 @@ static "C" {
  struct xvimage* opening(struct xvimage *image, struct xvimage *elem, int32_t x, int32_t y, int32_t z);
  struct xvimage* closing(struct xvimage *image, struct xvimage *elem, int32_t x, int32_t y, int32_t z);
  struct xvimage* asfbin(struct xvimage *imagein, int32_t radiusmax, int32_t radiusmin);
+ struct xvimage* asf(struct xvimage *imagein, int32_t radiusmax, int32_t radiusmin);
  struct xvimage* geodilat(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter);
  struct xvimage* geoeros(struct xvimage *image1, struct xvimage *image2, int32_t connex, int32_t niter);
  struct xvimage* erosball(struct xvimage *imagein, int r, int mode);

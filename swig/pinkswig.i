@@ -662,6 +662,29 @@ struct xvimage* dilatball(struct xvimage *imagein, int r, int dist=0);
 %newobject asfbin;
 struct xvimage* asfbin(struct xvimage *imagein, int32_t radiusmax, int32_t radiusmin=1);
 
+%feature("docstring",
+	 "Alternate sequential filter\n"
+	 "Description:\n"
+	 "Alternate sequential filter for grayscale images (for binary images\n"
+	 "use preferably asfbin).\n"
+	 "Disc-shaped structuring elements of increasing radius, ranging from 1\n"
+	 "(or ""radiusmin"" if this parameter is specified) to ""radiusmax"", are\n"
+	 "generated.\n"
+	 "\n"
+	 "Let D1...Dn be these structuring elements, sorted by increasing radius.\n"
+	 "\n"
+	 "Let I0 be the input image, the ith intermediate result Ii is obtained by\n"
+	 "the closing of the opening of Ii-1 by the structuring element Di.\n"
+	 "\n"
+	 "The function returns the final result In.\n"
+	 "\n"
+	 "Giving a value 0 for the optional parameter <B>rmin</B> has the effect\n"
+	 "of beginning by a closing instead of an opening.\n"
+	 "\n"
+	 "Types supported: byte 2d, byte 3d\n");
+%newobject asf;
+struct xvimage* asf(struct xvimage *imagein, int32_t radiusmax, int32_t radiusmin=1);
+
 
 %feature("docstring",
 	 "Generates an image with a white border and a black interior\n\n"
