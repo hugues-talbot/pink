@@ -77,6 +77,10 @@ try:
 except:
     print("Warning: no readimage")
 
+try:
+    from erosball import erosball
+except:
+    print("Warning: cannot import erosball")
 
 # from python_pink import *
 # from long2byte import long2byte
