@@ -1420,7 +1420,7 @@ struct xvimage* skeletondist2(struct xvimage *imagein, int32_t mode, int32_t con
     }
   struct xvimage* prio = dist(imagein, mode);
   if (prio == NULL) {
-    fprintf(stderr, "%s: ditance failed - Priority image is NULL - This is a problem.", name);
+    fprintf(stderr, "%s: distance failed - Priority image is NULL - This is a problem.", name);
     freeimage(image);
     return NULL;
   }
@@ -1497,7 +1497,7 @@ struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t con
     return NULL;
   struct xvimage* prio = dist(imagein, mode);
   if (prio == NULL) {
-    fprintf(stderr, "%s: ditance failed - Priority image is NULL - This is a problem.", name);
+    fprintf(stderr, "%s: distance failed - Priority image is NULL - This is a problem.", name);
     return NULL;
   }
   if (depth(image) == 1)
@@ -1521,6 +1521,155 @@ struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t con
       }
   }
 
+  return image;
+}
+
+struct xvimage* skelsurfprio(struct xvimage *imagein, struct xvimage *prio, int32_t connex, struct xvimage *inhibimage)
+{
+  static char *name="skelsurfprio";
+
+  if ((connex != 6) && (connex != 26)) {
+    fprintf(stderr, "%s: connectivity should be 6 or 26.\n", name);
+    return NULL;
+  }
+
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+  if (datatype(image) != VFF_TYP_1_BYTE) {
+    fprintf(stderr, "%s: only byte images can be processed\n", name);
+    freeimage(image);
+    return NULL;
+  }
+  if (depth(image) == 1)
+  {
+    fprintf(stderr, "%s: 3d images only\n", name);
+    freeimage(image);
+    return NULL;
+  }
+  if (prio == NULL) {
+    fprintf(stderr, "%s: Priority image is NULL - This is a problem.", name);
+    freeimage(image);
+    return NULL;
+  }
+  if (!EqualSize(imagein, prio)) {
+    fprintf(stderr, "%s: image not of the same size\n", name);
+    freeimage(image);
+    return NULL;
+  }
+  if (inhibimage)
+    if (!EqualSize(imagein, inhibimage)) {
+      fprintf(stderr, "%s: image not of the same size\n", name);
+      freeimage(image);
+      return NULL;
+    }
+
+  struct xvimage *prioLong = NULL;
+  if (datatype(prio) == VFF_TYP_1_BYTE)  {
+    int32_t rs = rowsize(prio);
+    int32_t cs = colsize(prio);
+    int32_t ds = depth(prio);
+    int32_t N = rs * cs * ds;
+    uint8_t *B = UCHARDATA(prio);
+    int32_t *L;
+    int32_t x;
+    prioLong = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+    if (prioLong == NULL)   {
+      fprintf(stderr, "%s: allocimage failed\n", name);
+      freeimage(image);
+      return NULL;
+    }
+    L = SLONGDATA(prioLong);
+    for (x = 0; x < N; x++) L[x] = (int32_t)B[x];
+  }
+  else if (datatype(prio) == VFF_TYP_4_BYTE)  {
+    prioLong = prio;
+  }
+  else    {
+    fprintf(stderr, "%s: bad datatype for prio\n", name);
+    freeimage(image);
+    return NULL;
+  }
+  
+  if (! lskelsurf3d(image, prioLong, inhibimage, connex))
+  {
+    fprintf(stderr, "%s: lskelsurf3d failed\n", name);
+    if (datatype(prio) == VFF_TYP_1_BYTE)
+      freeimage(prioLong);
+    freeimage(image);
+    return NULL;
+  }
+
+  if (datatype(prio) == VFF_TYP_1_BYTE)
+    freeimage(prioLong);
+  return image;
+}
+
+struct xvimage* skelsurfdist(struct xvimage *imagein, int32_t mode, int32_t connex, struct xvimage *inhibimage)
+{
+  static char *name="skelsurfdist";
+
+  if ((mode != 0) && (mode != 1) && (mode != 2) && (mode != 3)
+      && (mode != 6) && (mode != 18) && (mode != 26)) {
+    fprintf(stderr, "%s: mode sould be 0, 1, 2, 3, 6, 18 or 26\n", name);
+    return NULL;
+  }
+
+  if ((connex != 6) && (connex != 26)) {
+    fprintf(stderr, "%s: connectivity should be 6 or 26.\n", name);
+    return NULL;
+  }
+  
+  struct xvimage *image = checkAllocCopy(imagein, name);
+  if (image == NULL)
+    return NULL;
+
+  if (datatype(image) != VFF_TYP_1_BYTE) {
+    fprintf(stderr, "%s: only byte images can be processed\n", name);
+    freeimage(image);
+    return NULL;
+  }
+  
+  if (depth(image) == 1)
+  {
+    fprintf(stderr, "%s: 3d images only\n", name);
+    freeimage(image);
+    return NULL;
+  }
+
+  if (inhibimage)
+    if (!EqualSize(imagein, inhibimage)) {
+      fprintf(stderr, "%s: image not of the same size\n", name);
+      freeimage(image);
+      return NULL;
+    }
+
+  int32_t N = rowsize(image) * colsize(image) * depth(image);
+  uint8_t *F = UCHARDATA(image);
+  int8_t i;
+  for (i = 0; i < N; i++) // inverse l'image
+    if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
+
+  struct xvimage* prio = dist(imagein, mode);
+
+  for (i = 0; i < N; i++) // re-inverse l'image
+    if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
+
+  if (prio == NULL) {
+    fprintf(stderr, "%s: distance failed - Priority image is NULL - This is a problem.", name);
+    freeimage(image);
+    return NULL;
+  }
+ 
+  if (! lskelsurf3d(image, prio, inhibimage, connex))
+  {
+    fprintf(stderr, "%s: lskelsurf3d failed\n", name);
+    freeimage(prio);
+    freeimage(image);
+    return NULL;
+  }
+
+  freeimage(prio);
   return image;
 }
 

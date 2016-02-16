@@ -90,6 +90,8 @@ static "C" {
  struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t connex, int32_t inhibivalue);
  struct xvimage* skeletonprio2(struct xvimage *imagein, struct xvimage *prio, int32_t connex, struct xvimage *inhibimage);
  struct xvimage* skeletondist2(struct xvimage *imagein, int32_t mode, int32_t connex, struct xvimage *inhibimage);
+ struct xvimage* skelsurfdist(struct xvimage *imagein, int32_t mode, int32_t connex, struct xvimage *inhibimage);
+ struct xvimage* skelsurfprio(struct xvimage *imagein, struct xvimage *prio, int32_t connex, struct xvimage *inhibimage);
  struct xvimage* ptisolated(struct xvimage *imagein, int32_t connex);
  struct xvimage* ptjunction(struct xvimage *imagein, int32_t connex);
  struct xvimage* ptcurve(struct xvimage *imagein, int32_t connex);

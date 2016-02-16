@@ -899,6 +899,60 @@ struct xvimage* skeletonprio1(struct xvimage *imagein, struct xvimage *prio, int
 %newobject skeletondist1;
 struct xvimage* skeletondist1(struct xvimage *imagein, int32_t mode, int32_t connex, int32_t inhibit);
 
+%feature("docstring",
+	 "Surfacic binary skeleton guided by a priority image\n"
+	 "Description:\n"
+	 "Surfacic binary skeleton guided by a priority image.\n"
+	 "The lowest values of the priority image correspond to the highest priority.\n"
+	 "\n"
+	 "The parameter ""prio"" is either an image (byte or int32_t), or a numerical code\n"
+	 "indicating that a distance map will be used as a priority image; \n"
+	 "the possible choices are:\n"
+         "-   0: euclidean distance (rounded to the nearest int32)\n"
+         "-   1: approximate quadratic euclidean distance (Danielsson)\n"
+         "-   2: chamfer distance ([5,7] in 2D; [4,5,6] in 3D)\n"
+         "-   3: exact quadratic euclidean distance (int32)\n"
+         "-   6: 6-distance in 3d\n"
+         "-  18: 18-distance in 3d\n"
+         "-  26: 26-distance in 3d\n"
+	 "\n"
+	 "The parameter ""connex"" indicates the connectivity of the binary object.\n"
+	 "Possible choices are 6, 26.\n"
+	 "\n"
+	 "If the parameter ""inhibit"" is given and is a binary image name,\n"
+	 "then the points of this image will be left unchanged. \n"
+	 "\n"
+	 "Let X be the set corresponding to the input image.\n"
+	 "Let P be the function corresponding to the priority image.\n"
+	 "Let I be the set corresponding to the inhibit image, if given, or the empty\n"
+	 "set otherwise.\n"
+	 "The algorithm is the following:\n"
+	 "\n"
+	 "C = {y in F | Tb(y) > 1}\n"
+	 "Repeat until stability\n"
+	 "  choose a point x in X, simple for X, such that C[x] == 0 \n"
+	 "    and such that P[x] is minimal\n"
+	 "  X = X \ {x}\n"
+	 "  for all y in gamma(x)\n"
+	 "    if Tb(y) > 1 then C[y] = 1\n"
+	 "Result: X\n"
+	 "\n"
+	 "where Tb(y) refers to the second connectivity number of y, that is, \n"
+	 "(informally) the number of connected components of gamma(y) inter complement(X).\n"
+	 "\n"
+	 "References: \n"
+	 "[BC07] G. Bertrand and M. Couprie: Transformations topologiques discretes\n"
+	 "Geometrie discrete et images numeriques, D. Coeurjolly and A. Montanvert and J.M. Chassery, pp. 187-209, Hermes, 2007.\n"
+	 "link: http://www.esiee.fr/~coupriem/Pdf/chapitre_topo.pdf\n"
+	 "\n"
+         "Types supported: byte 3d\n");
+
+%rename(skelsurf) skelsurfprio;
+%rename(skelsurf) skelsurfdist;
+%newobject skelsurfdist;
+struct xvimage* skelsurfdist(struct xvimage *imagein, int32_t prio, int32_t connex, struct xvimage *inhibimage);
+%newobject skelsurfprio;
+struct xvimage* skelsurfprio(struct xvimage *imagein, struct xvimage *prio, int32_t connex, struct xvimage *inhibimage);
 
 %feature("docstring",
          "Detects isolated points in a binary image\n"
@@ -1037,7 +1091,7 @@ void watershedcut(struct xvimage* image, struct xvimage* markers,  xvimage** wc,
 struct xvimage* EWG2Khalimsky(struct xvimage *edgeWeightedImage, int32_t type=0);
 
 %feature("docstring",
-	 "\brief labeling of the foreground components of a binary image\n"
+	 "Labeling of the foreground components of a binary image\n"
 	 "Description:\n"
 	 "Each connected component of the input image is labeled with a unique integer, starting from 1.\n"
 	 "The background points are labeled by 0.\n"
@@ -1061,7 +1115,7 @@ struct xvimage* labelfgd(struct xvimage *imagein, int32_t connex=4);
 struct xvimage* selectcomp(struct xvimage *imagein, int32_t x, int32_t y, int32_t z, int32_t connex=4);
 
 %feature("docstring",
-	 "\brief converts an ""int32_t"" image to a ""byte"" image\n"
+	 "Converts an ""int32_t"" image to a ""byte"" image\n"
 	 "Description:\n"
 	 "Depending on the value given for the (optional) parameter ""mode"":\n"
 	 "-   mode == 0 (default) : for all x, out[x] = min(255, in[x]).\n"
