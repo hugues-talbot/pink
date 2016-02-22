@@ -13,9 +13,9 @@
 // time.h is on different place
 #ifdef UNIXIO
 #  include <unistd.h>
+#  include <time.h>
 #  include <sys/time.h>
 #else /* NOT UNIXIO */
-#  include <stdlib.h>
 #  include <io.h>
 #  include <time.h>
 #endif /* NOT UNIXIO */
@@ -90,7 +90,7 @@ int winsock_started=0;
 # include <netdb.h>
 # define im_close close
 # define USRID    "USER"
-#else /* NOT WIN32 */
+#else /* WIN32 */
 # include <windows.h>
 # include <winsock.h>
 struct timezone
@@ -1327,14 +1327,13 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
     wsize_t         buflen, rec, tbs = 0;
     pixtype        imp;
     struct timeval start_prog, start_put, start_upload, end_upload, end_prog;
-    struct timezone dummy;
     double         time0, time1, time2, time3, time4;
     double         dt0, dt1, dt2, dt3, dt4, dt5;
     
 
     res = 0;
     
-    gettimeofday(&start_prog, &dummy);
+    gettimeofday(&start_prog, NULL);
     sprintf(FnName,"imviewput(%p,%s,%d)", I, name, conn_id);
     
     if (!I || !name) {
@@ -1438,10 +1437,10 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
     /* priority is SYSV > POSIX > SOCKET */
     /* at this stage POSIX IPC is not well-tested */
     if (conn_array[conn_id].use_shm == SHM_SYSV) { /* using Shared Memory */
-	gettimeofday(&start_put, &dummy);
+	gettimeofday(&start_put, NULL);
 	if ((imview_command_noanswer(conn_array[conn_id].fd, put_command) != NULL) 
 	    && (imview_sysv_ipc_setup(conn_array[conn_id].sync_filename) == 0)) {
-	    gettimeofday(&start_upload, &dummy);
+	    gettimeofday(&start_upload, NULL);
 	    for (c = 0 ; c < nbc ; c++) {
 		buff = imgetbuff(I, c);
 		buflen = imgetnx(I,c) * imgetny(I,c) * imgetnz(I,c) * imgetnt(I,c);
@@ -1453,7 +1452,7 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
 		    break;
 		}
 	    }
-	    gettimeofday(&end_upload, &dummy);
+	    gettimeofday(&end_upload, NULL);
 	    /* release access to shared memory */
 	    imview_sysv_ipc_wind_down();
 	    nb_da=imview_get_delayed_response(conn_array[conn_id].fd, delayed_answer); /* I don't know that this is necessary */
@@ -1469,14 +1468,14 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
     } else if (conn_array[conn_id].use_shm == SHM_POSIX) { /* using POSIX IPC */
         char *ppath_answer = NULL; 
         
-        gettimeofday(&start_put, &dummy);
+        gettimeofday(&start_put, NULL);
         /* find the path to the resources */
         ppath_answer = imview_command(conn_array[conn_id].fd, "ppath" EOC);
         sscanf(ppath_answer,"%s ", ipc_base_path);
         LIARdebug("ipc_base_path = (%s)", ipc_base_path);
 	if ((imview_command_noanswer(conn_array[conn_id].fd, put_command) != NULL) 
 	    && (imview_px_ipc_setup(ipc_base_path) == 0)) {
-	    gettimeofday(&start_upload, &dummy);
+	    gettimeofday(&start_upload, NULL);
 	    for (c = 0 ; c < nbc ; c++) {
 		buff = imgetbuff(I, c);
 		buflen = imgetnx(I,c) * imgetny(I,c) * imgetnz(I,c) * imgetnt(I,c);
@@ -1488,7 +1487,7 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
 		    break;
 		}
 	    }
-	    gettimeofday(&end_upload, &dummy);
+	    gettimeofday(&end_upload, NULL);
 	    /* release access to shared memory */
 	    imview_px_ipc_wind_down();
 	    nb_da=imview_get_delayed_response(conn_array[conn_id].fd, delayed_answer); /* I don't know that this is necessary */
@@ -1502,7 +1501,7 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
 	    res = 9;
 	}
     } else { /* upload via the TCP/IP connection */
-	gettimeofday(&start_put, &dummy);
+	gettimeofday(&start_put, NULL);
 	cmdres = imview_command(conn_array[conn_id].fd, put_command); 
 	if (cmdres == NULL) {
 	    imexception("imview_put: sent command didn't work\n");
@@ -1522,7 +1521,7 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
 	    LIARdebug("OK, sending binary data now");
 	    /* 3a: open binary port connection (same host) */
 	    if ((bfd = imview_open_binconn(conn_array[conn_id].hostname, binport)) > 0) {
-		gettimeofday(&start_upload, &dummy);
+		gettimeofday(&start_upload, NULL);
 		/* 3b: send back the magic number */
 		if (imview_send_data(bfd, (char *)(&magic), HEADER_ID_SIZE, 0) == HEADER_ID_SIZE) {
 		    /* 3c: send each buffer in turn */
@@ -1541,7 +1540,7 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
 			    break;
 			}
 		    }
-		    gettimeofday(&end_upload, &dummy);
+		    gettimeofday(&end_upload, NULL);
 		    /* close the binary connection */
 		    LIARdebug("Closing binary connection");
 		    imview_close_binconn(bfd);
@@ -1549,7 +1548,7 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
 	    }
 	}
     }
-    gettimeofday(&end_prog,&dummy);
+    gettimeofday(&end_prog,NULL);
 
     time0 = start_prog.tv_sec + start_prog.tv_usec/1e6;
     time1 = start_put.tv_sec + start_put.tv_usec/1e6;
@@ -1728,11 +1727,10 @@ int imviewput2(IMAGE          *I,         /* input image */
     const char    *imgt, *pixt;
     struct timeval start_prog, start_opensocket, start_login; 
     struct timeval start_put, start_upload, end_upload, before_close, end_prog;
-    struct timezone dummy;
     double         time0, time1, time2, time3, time4, time5, time6, time7;
     double         dt0, dt1, dt2, dt3, dt4, dt5, dt6, dt7, dt8;
 
-    gettimeofday(&start_prog, &dummy);
+    gettimeofday(&start_prog, NULL);
     sprintf(FnName,"imviewput2(%s,%s,%d)", name, hostname, port);
     res = 0; /* all peachy */
     
@@ -1815,7 +1813,7 @@ int imviewput2(IMAGE          *I,         /* input image */
 	return 5;
     }
 
-    gettimeofday(&start_opensocket, &dummy);
+    gettimeofday(&start_opensocket, NULL);
     LIARdebug("Step 1: open socket");
     /* step 1: open a socket to the imview command server */
     if (port == 0) {
@@ -1843,7 +1841,7 @@ int imviewput2(IMAGE          *I,         /* input image */
 	return 6;
     }
 
-    gettimeofday(&start_login, &dummy);
+    gettimeofday(&start_login, NULL);
     LIARdebug("Step 2: log in");
     /* step 2: log in */
     sprintf(login_command, "user %s", username);
@@ -1869,7 +1867,7 @@ int imviewput2(IMAGE          *I,         /* input image */
 
 
     /* step 2: send a PUT command */
-    gettimeofday(&start_put, &dummy);
+    gettimeofday(&start_put, NULL);
     LIARdebug("Sending Put command");
     final_name[0] = '"';
     strncpy(final_name+1, name, ANSWER_MAX_SIZE-100);
@@ -1906,7 +1904,7 @@ int imviewput2(IMAGE          *I,         /* input image */
     if (use_shm == SHM_SYSV) {
 	imview_command_noanswer(fd, put_command);
 	if (imview_sysv_ipc_setup(sync_filename) == 0) {
-	    gettimeofday(&start_upload, &dummy);
+	    gettimeofday(&start_upload, NULL);
 	    for (c = 0 ; c < nbc ; c++) {
 		buff = imgetbuff(I, c);
 		buflen = imgetnx(I,c) * imgetny(I,c) * imgetnz(I,c) * imgetnt(I,c);
@@ -1918,7 +1916,7 @@ int imviewput2(IMAGE          *I,         /* input image */
 		    break;
 		}
 	    }
-	    gettimeofday(&end_upload, &dummy);
+	    gettimeofday(&end_upload, NULL);
 	    /* release access to shared memory */
 	    imview_sysv_ipc_wind_down();
 	    nb_da=imview_get_delayed_response(fd, delayed_answer); /* I don't know that this is necessary */
@@ -1938,7 +1936,7 @@ int imviewput2(IMAGE          *I,         /* input image */
         imview_command_noanswer(fd, put_command);
         
 	if (imview_px_ipc_setup(ipc_base_path) == 0) {
-	    gettimeofday(&start_upload, &dummy);
+	    gettimeofday(&start_upload, NULL);
 	    for (c = 0 ; c < nbc ; c++) {
 		buff = imgetbuff(I, c);
 		buflen = imgetnx(I,c) * imgetny(I,c) * imgetnz(I,c) * imgetnt(I,c);
@@ -1950,7 +1948,7 @@ int imviewput2(IMAGE          *I,         /* input image */
 		    break;
 		}
 	    }
-	    gettimeofday(&end_upload, &dummy);
+	    gettimeofday(&end_upload, NULL);
 	    /* release access to shared memory */
 	    imview_px_ipc_wind_down();
 	    nb_da=imview_get_delayed_response(fd, delayed_answer); /* I don't know that this is necessary */
@@ -1982,7 +1980,7 @@ int imviewput2(IMAGE          *I,         /* input image */
 	    /* 3a: open binary port connection (same host) */
 	    if ((bfd = imview_open_binconn(hostname, binport)) > 0) {
 		/* 3b: send back the magic number */
-		gettimeofday(&start_upload, &dummy);
+		gettimeofday(&start_upload, NULL);
 		if (imview_send_data(bfd, (char *)(&magic), HEADER_ID_SIZE, 0) == HEADER_ID_SIZE) {
 		    /* 3c: send each buffer in turn */
 		    for (c = 0 ; c < nbc ; c++) {
@@ -2000,7 +1998,7 @@ int imviewput2(IMAGE          *I,         /* input image */
 			    break;
 			}
 		    }
-		    gettimeofday(&end_upload, &dummy);
+		    gettimeofday(&end_upload, NULL);
 		    /* close the binary connection */
 		    LIARdebug("Closing binary connection");
 		    imview_close_binconn(bfd);
@@ -2008,11 +2006,11 @@ int imviewput2(IMAGE          *I,         /* input image */
 	    }
 	}
     }
-    gettimeofday(&before_close,&dummy);
+    gettimeofday(&before_close,NULL);
     /* close connection gracefully */
     LIARdebug("Closing command connection");
     imview_close_connection(fd);
-    gettimeofday(&end_prog,&dummy);
+    gettimeofday(&end_prog,NULL);
 
     /* compute timings */
     time0 = start_prog.tv_sec + start_prog.tv_usec/1e6;

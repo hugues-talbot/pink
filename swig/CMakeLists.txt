@@ -18,7 +18,7 @@ if (NOT CONFIGURED_ONCE)
 endif()
 
 if (CMAKE_HOST_UNIX)
-    add_definitions( -DUNIXIO -DPC)
+    add_definitions( -DUNIXIO -DPC -fPIC -std=c99 )
 endif (CMAKE_HOST_UNIX)
 
 if (THIS_IS_MSVC)
