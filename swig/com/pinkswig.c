@@ -828,6 +828,53 @@ struct xvimage* sub(struct xvimage *imagein1, struct xvimage *imagein2)
   return image1;
 }
 
+struct xvimage* average(struct xvimage *imagein1, struct xvimage *imagein2, double alpha)
+{
+    static char *name="average";
+    
+    struct xvimage *image1 = checkAllocCopy(imagein1, name);
+    if (image1 == NULL)
+        return NULL;
+    struct xvimage *image2 = checkAllocCopy(imagein2, name);
+    if (image2 == NULL) {
+        freeimage(image1);
+        return NULL;
+    }
+    
+    if (alpha < 0.|| alpha > 1.) {
+        fprintf(stderr, "%s: alpha must be between 0 and 1\n", name);
+        freeimage(image1);
+        freeimage(image2);
+        return NULL;
+    }
+    
+    if (!EqualSize(imagein1, imagein2)) {
+        fprintf(stderr, "%s: image not of the same size\n", name);
+        freeimage(image1);
+        freeimage(image2);
+        return NULL;
+    }
+    
+    if (! convertgen(&image1, &image2))
+    {
+        fprintf(stderr, "%s: function convertgen failed\n", name);
+        freeimage(image1);
+        freeimage(image2);
+        return NULL;
+    }
+    
+    if (! laverage(image1, image2, alpha))
+    {
+        fprintf(stderr, "%s: function laverage failed\n", name);
+        freeimage(image1);
+        freeimage(image2);
+        return NULL;
+    }
+    
+    freeimage(image2);
+    return image1;
+}
+
 struct xvimage* add(struct xvimage *imagein1, struct xvimage *imagein2)
 {
   static char *name="add";
@@ -2599,3 +2646,6 @@ struct xvimage* absimg(struct xvimage *imagefloat)
   }
   return image;
 }
+
+
+

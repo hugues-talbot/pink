@@ -1289,3 +1289,18 @@ struct xvimage* zerocrossing(struct xvimage *imagefloat, int32_t bar);
 	 "Types supported: float 2D\n");
 %newobject interpolateX2;
 struct xvimage* interpolateX2(struct xvimage *imagefloat);
+    
+%feature("docstring",
+         "pixelwise (weighted) average of two images\n"
+         "Description:\n"
+         "The default value for the optional parameter \b alpha is 0.5 .\n"
+         "For each pixel x, out[x] = alpha * in1[x] + (1 - alpha) * in2[x].\n"
+         "If both images are byte images,\n"
+         "and if out[x] exceeds 255, then out[x] is set to 255.\n"
+         "Images must be of the same dimensions.\n"
+         "Type supported:\n"
+         "byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+%newobject average;
+struct xvimage* average(struct xvimage *imagein1, struct xvimage *imagein2, double alpha);
+    
+

@@ -30,6 +30,7 @@ static "C" {
  struct xvimage* xor(struct xvimage *imagein1, struct xvimage *imagein2);
  struct xvimage* absimg(struct xvimage *imagefloat);
  struct xvimage* normalize(struct xvimage *imagein, double nmin, double nmax);
+ struct xvimage* average(struct xvimage *imagein1, struct xvimage *imagein2, double alpha);
   
  // real Com functions start here
  struct xvimage* ComputeEdgeGraphGrey(struct xvimage* im, int32_t param, double alpha);
