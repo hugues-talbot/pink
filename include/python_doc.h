@@ -1263,25 +1263,6 @@
 "\n"
 
 
-#define doc__ppm2pgm__c__ "  ppm2pgm.c\n"         \
-"\n"         \
-" converts a color ppm image into 3 grayscale pgm images\n"         \
-"\n"         \
-"Usage: ppm2pgm in.ppm r.pgm g.pgm b.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Converts a color ppm image  in.ppm into 3 grayscale pgm images\n"         \
-"r.pgm, g.pgm and b.pgm which are the red, \n"         \
-"green and blue color planes of the original color image.\n"         \
-"\n"         \
-"Types supported: byte color 2d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
 
 
 #define doc__any2complex__c__ "  any2complex.c\n"         \
@@ -3627,21 +3608,6 @@
 "\n"
 
 
-#define doc__dynamique__c__ "  dynamique.c\n"         \
-"\n"         \
-" dynamics of the maxima\n"         \
-"\n"         \
-"If parameter  len is given and non-zero, the spline is extended on both sides by straight line segments of length  len. \n"         \
-"\n"         \
-"Types supported: byte 2D, byte 3D\n"         \
-"\n"         \
-"Category: draw geo\n"         \
-"  draw geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
 
 #define doc__drawsplineorient__c__ "  drawsplineorient.c\n"         \
 "\n"         \
@@ -5357,25 +5323,6 @@
 "\n"
 
 
-#define doc__histo__c__ "  histo.c\n"         \
-"\n"         \
-" computes the histogram of an image or a region\n"         \
-"\n"         \
-"Usage: histo in.pgm [mask.pgm] out.list\n"         \
-"\n"         \
-"Description:\n"         \
-"Calculates the histogram of  im.pgm (masked by the binary image\n"         \
-" mask.pgm, if given) and saves it in file  out.list .\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n"         \
-"\n"         \
-"Category: histo\n"         \
-"  histo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
 
 #define doc__histo2__c__ "WRITE ME!!!\n"         \
 "\n"
@@ -7078,26 +7025,6 @@
 "\n"
 
 
-#define doc__variance1__c__ "  variance1.c\n"         \
-"\n"         \
-"lvkern ur1 null 4 ur1_lvkern\n"         \
-"minima ur1_lvkern 4 ur1_lvkern_m\n"         \
-"\n"         \
-"Usage: variance1 in.pgm [mask.pgm] out.list\n"         \
-"\n"         \
-"  \n"         \
-"      \n"         \
-"      \n"         \
-"  \n"         \
-"  ur1\n"         \
-"      ur1_lvkern\n"         \
-"      ur1_lvkern_m\n"         \
-"  \n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n"         \
-"\n"         \
-"\n"
-
 
 #define doc__lvkernu__c__ "  lvkernu.c\n"         \
 "\n"         \
@@ -7969,36 +7896,6 @@
 "\n"
 
 
-#define doc__zoom__c__ "  zoom.c\n"         \
-"\n"         \
-" zoom (shrink or expand) an image\n"         \
-"\n"         \
-"Usage: zoom in.pgm {f | x rs | y cs | z ds | fx fy fz} out.pgm\n"         \
-"\n"         \
-"openball cells 3 cells_openball\n"         \
-"\n"         \
-"1 argument: the same scale factor f is applied to both dimensions \n"         \
-"  x and y (and z in 3D)\n"         \
-"\n"         \
-"  \n"         \
-"      \n"         \
-"  \n"         \
-"  cells\n"         \
-"      cells_openball\n"         \
-"  \n"         \
-"\n"         \
-"3 arguments: different zoom factors fx, fy, fz\n"         \
-"  are given for directions x, y, z.\n"         \
-"\n"         \
-"Types supported: byte 1d, byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n"         \
-"\n"         \
-"Category: geo\n"         \
-"  geo\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
 
 #define doc__opening__c__ "  opening.c\n"         \
 "\n"         \
@@ -8813,27 +8710,6 @@
 " converts a color ppm image into 3 grayscale pgm images\n"         \
 "\n"         \
 "Usage: ppm2pgm in.ppm r.pgm g.pgm b.pgm\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__recalagerigide__c__ "  recalagerigide.c\n"         \
-"\n"         \
-" rigid registration of two closed contours\n"         \
-"\n"         \
-"Usage: recalagerigide in1 in2 out\n"         \
-"\n"         \
-"Description:\n"         \
-"Converts a color ppm image  in.ppm into 3 grayscale pgm images\n"         \
-"r.pgm, g.pgm and b.pgm which are the red, \n"         \
-"green and blue color planes of the original color image.\n"         \
-"\n"         \
-"Types supported: byte color 2d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Michel Couprie\n"         \
 "\n"         \
 "\n"
 
@@ -9877,29 +9753,6 @@
 "\n"         \
 "\n"
 
-
-#define doc__rotse__c__ "  rotse.c\n"         \
-"\n"         \
-" rotation of a structuring element\n"         \
-"\n"         \
-"Usage: rotse in.pgm angle out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Rotation of a structuring element, by an angle of 0, 90, 180 or 270 degrees.\n"         \
-"\n"         \
-"\n"         \
-"sigma = 1 / (2*width*width);\n"         \
-"lambda = 1 / (2*length*length);\n"         \
-"theta = i * PI / n;\n"         \
-"xr = cos(theta) * x - sin(theta) * y;\n"         \
-"yr = sin(theta) * x + cos(theta) * y;\n"         \
-"Ki(x,y) = exp(-lambda*yr*yr) *\n"         \
-"          (4*sigma*sigma*xr*xr - 2*sigma) * \n"         \
-"          exp(-sigma*xr*xr) \n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
 
 
 #define doc__saliency__c__ "  saliency.c\n"         \
@@ -10946,31 +10799,6 @@
 "\n"         \
 "\n"
 
-
-#define doc__skel_CKG__c__ "  skel_CKG.c\n"         \
-"\n"         \
-" parallel 2D and 3D binary guided thinning\n"         \
-"\n"         \
-"Usage: skel_CKG in.pgm prio.pgm val out.pgm\n"         \
-"\n"         \
-"Description: Parallel 2D and 3D binary guided thinning based on\n"         \
-"critical kernels. The parameter  in.pgm specifies the set\n"         \
-"(object) to be thinned. The parameter  prio.pgm specifies the priority\n"         \
-"function. The parameter  val is a threshold: any\n"         \
-"pixel having a priority greater than or equal to  val will be preserved\n"         \
-"from deletion.  If  val equals -1, then all points will be\n"         \
-"considered for deletion.\n"         \
-"\n"         \
-"Warning: The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
 
 
 #define doc__skel_CKG_map__c__ "  skel_CKG_map.c\n"         \
@@ -12499,25 +12327,6 @@
 "\n"         \
 "Category: orders\n"         \
 "  orders\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__fits2pgm__c__ "  fits2pgm.c\n"         \
-"\n"         \
-" converts from fits format into pgm format\n"         \
-"\n"         \
-"Usage: fits2pgm in.fits out.pgm\n"         \
-"\n"         \
-"Description: Converts from fits format into pgm format.\n"         \
-"\n"         \
-"Parameters:\n"         \
-"  in.fits : source file in fits format\n"         \
-"\n"         \
-"Category: convert\n"         \
-" convert\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
