@@ -127,7 +127,14 @@ int geodist(
 
 		/* Early stopping criteria */
 		if (stopping == STOPONMETRIC) {
-			if (g->buf[imageIndex] > threshold) break;
+                    if (g->buf[imageIndex] > threshold) {
+                        /* Decompose the root's image index into pixel co-ordinates */
+                        intToBvect(imageIndex, coord, distance->dim);
+                        /* Remove the root (making it KNOWNNODE) and promote a new one */
+                        stateStruct->nodeState[imageIndex] = KNOWNNODE;
+                        heapPull(heapStruct, 0, distance);
+                        continue; /* does not stop at the first instance */
+                    }
 		} else if (stopping == STOPONDISTANCE) {
 			if (distance->buf[imageIndex] > threshold) break;
 		} /* else no stopping */
