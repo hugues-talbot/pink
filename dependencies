@@ -85,6 +85,8 @@ emacs, emacs-gtk
 
 // mandatory 
 sudo apt-get install imview libboost-dev libncurses-dev cmake python-imaging-tk python-vtk ipython python-dev libx11-dev g++ gcc make libtiff-dev
+libeigen3-dev  python-numpy
+	 
 
 // optional
 sudo apt-get install cmake-gui

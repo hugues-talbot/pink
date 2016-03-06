@@ -29,9 +29,9 @@
 #  include <boost/function_types/result_type.hpp>
 #  include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
-#  include <eigen2/Eigen/LU>
-#  include <eigen2/Eigen/Core>
-#  include <eigen2/Eigen/Geometry>
+#  include <eigen3/Eigen/LU>
+#  include <eigen3/Eigen/Core>
+#  include <eigen3/Eigen/Geometry>
 
 #  include <gsl/gsl_interp.h> // uiGradient is using it
 #  include <gsl/gsl_multifit_nlin.h> // uiCircle is using it

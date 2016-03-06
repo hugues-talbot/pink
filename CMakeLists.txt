@@ -301,14 +301,14 @@ if (DEVELOPMENT)
 
     SET( CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDE} ${EIGEN_INCLUDE} )
 
-    CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/Core HTEST12 ${CMAKE_REQUIRED_FLAGS} )
+    CHECK_INCLUDE_FILE_CXX( eigen3/Eigen/Core HTEST12 ${CMAKE_REQUIRED_FLAGS} )
     if (NOT HTEST12)
- 	message( FATAL_ERROR "error eigen2/Eigen/Core does not compile. Check if its correctly installed. You may need a newer version. ")
+ 	message( FATAL_ERROR "error eigen3/Eigen/Core does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST12)
 
-    CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/LU HTEST14  ${CMAKE_REQUIRED_FLAGS} )
+    CHECK_INCLUDE_FILE_CXX( eigen3/Eigen/LU HTEST14  ${CMAKE_REQUIRED_FLAGS} )
     if (NOT HTEST14)
- 	message( FATAL_ERROR "error eigen2/Eigen/LU does not compile. Check if its correctly installed. You may need a newer version. ")
+ 	message( FATAL_ERROR "error eigen3/Eigen/LU does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST14)
 
 endif (DEVELOPMENT)

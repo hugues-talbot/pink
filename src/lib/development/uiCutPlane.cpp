@@ -23,13 +23,11 @@
 # include <gsl/gsl_multifit_nlin.h>
 #endif /* PINK_HAVE_PYTHON */
 
-#include <eigen2/Eigen/Core>
-#include <eigen2/Eigen/LU>
-#include <eigen2/Eigen/Geometry>
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/LU>
+#include <eigen3/Eigen/Geometry>
 
 #include "pink.h"
-
-USING_PART_OF_NAMESPACE_EIGEN
 
 // #define DVECT(x) cout << "----------------\n" << BOOST_PP_STRINGIZE(x) << " = \n" << x << "\n"
 
@@ -45,7 +43,7 @@ namespace pink {
   } /* tmp_round */
   
 
-  class v3d : public Vector3d 
+  class v3d : public Eigen::Vector3d 
   {
   public:
     v3d( double x, double y, double z)
@@ -56,7 +54,7 @@ namespace pink {
       } /* v3d */
     
 
-    v3d( const VectorXd & other )      
+    v3d( const Eigen::VectorXd & other )      
       {
 	FOR(q, 3)
 	{
@@ -91,9 +89,9 @@ namespace pink {
 
   // generates a simple rotation matrix. The input are the unit vectors and the output is
   // the rotation with z axe left unchanged
-  MatrixXd simple_rotation( double alpha )
+  Eigen::MatrixXd simple_rotation( double alpha )
   {
-    MatrixXd result(4,4);
+    Eigen::MatrixXd result(4,4);
     
     result << 
       cos(alpha), -sin(alpha), 0., 0.,
@@ -106,17 +104,17 @@ namespace pink {
   
 
 
-  MatrixXd ortho_normalize( MatrixXd simple )
+  Eigen::MatrixXd ortho_normalize( Eigen::MatrixXd simple )
   {
 
     //DVECT(simple);
     
 
-    MatrixXd result(4,4);
+    Eigen::MatrixXd result(4,4);
 
-    Vector3d reference;
-    Vector3d orient;
-    Vector3d axe;
+    Eigen::Vector3d reference;
+    Eigen::Vector3d orient;
+    Eigen::Vector3d axe;
 
     orient << simple(0,0), simple(1,0), simple(2,0);
     //DVECT(orient);
@@ -218,7 +216,7 @@ namespace pink {
     //cout << "parameter"; DVECT(axe);
     
 
-    MatrixXd P1(4,4), P2(4,4), P3(4,4);
+    Eigen::MatrixXd P1(4,4), P2(4,4), P3(4,4);
     P1 << 
       1.,   0.,  0.,  1., /* orient */
       -1., -1., -1., -1., /* reference */
@@ -235,14 +233,14 @@ namespace pink {
 
     //DVECT(P3);
 
-    MatrixXd image(4,4);
+    Eigen::MatrixXd image(4,4);
     image << 
       1,0,0,0,
       0,1,0,0,
       0,0,1,0,
       1,1,1,1;
     
-    MatrixXd T1(4,4), T2(4,4);
+    Eigen::MatrixXd T1(4,4), T2(4,4);
     
     // this transformation takes the unity base to the 
     // beeds
@@ -255,12 +253,12 @@ namespace pink {
     //DVECT(T1);
     
 
-    MatrixXd transformation;
+    Eigen::MatrixXd transformation;
     T2 = T1.inverse();
 
     //DVECT(T2);
     //v3d(0,0,0,1);
-    //VectorXd test(4), res(4);
+    //Eigen::VectorXd test(4), res(4);
     //test << 0,1,0,1;
     //DVECT(test);
     
@@ -268,13 +266,13 @@ namespace pink {
 
 
     
-    MatrixXd R1(4,4);
+    Eigen::MatrixXd R1(4,4);
     
     R1 = simple_rotation(alpha);
 
     //DVECT(R1);
 
-    MatrixXd B1(4,4);
+    Eigen::MatrixXd B1(4,4);
 
     
     // this projection (B1) rotates the base around the axe (pA pB) 
@@ -282,7 +280,7 @@ namespace pink {
     
     //DVECT(B1);
 
-    MatrixXd new_base;
+    Eigen::MatrixXd new_base;
     new_base = B1*P3;
     // at this point projection holds the new base of the cut
     //DVECT(new_base);
@@ -311,7 +309,7 @@ namespace pink {
     //DVECT(new_base);
         
 
-    MatrixXd TR = new_base * image.inverse();
+    Eigen::MatrixXd TR = new_base * image.inverse();
 
 //     DVECT(image.inverse());
     
@@ -319,7 +317,7 @@ namespace pink {
     //DVECT(TR);
     
     
-    //VectorXd test(4);
+    //Eigen::VectorXd test(4);
     //test << 1,0,0,1;
     //DVECT(test);
     //DVECT(TR*test);
@@ -341,8 +339,8 @@ namespace pink {
     //DVECT(TR*test);
 
 
-    VectorXd point(4);
-    VectorXd inpoint(4);
+    Eigen::VectorXd point(4);
+    Eigen::VectorXd inpoint(4);
     pink::types::vint curr;
     pink::types::vint pcurr;
     
