@@ -80,16 +80,19 @@ option( 64BIT "Compiles Pink in 64bit mode. This is necessary for files which co
 
 if (CMAKE_HOST_UNIX) ### We build with gcc
     # default optimization options
-    SET( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -msse -msse2" CACHE STRING "Optimization flags for the C++ compiler in Release mode" FORCE )
-    SET( CMAKE_C_FLAGS_RELEASE   "-O3 -DNDEBUG -msse -msse2" CACHE STRING "Optimization flags for the C   compiler in Release mode" FORCE )
+    set(CMAKE_C_FLAGS " ${CMAKE_C_FLAGS} -pthread ")
+    set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -pthread ")
+    set(CMAKE_EXE_LINKER_FLAGS " ${CMAKE_EXE_LINKER_FLAGS} -pthread ")
+    SET( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS} -O3 -DNDEBUG -msse -msse2 " CACHE STRING "Optimization flags for the C++ compiler in Release mode" FORCE )
+    SET( CMAKE_C_FLAGS_RELEASE   "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG -msse -msse2 " CACHE STRING "Optimization flags for the C   compiler in Release mode" FORCE )
 else (CMAKE_HOST_UNIX) ## We build with MSVC
     SET( CMAKE_CXX_FLAGS_RELEASE " /O2 -DNDEBUG /MT " CACHE STRING "Optimization flags for the C++ compiler in Release mode" FORCE )
     SET( CMAKE_C_FLAGS_RELEASE   " /O2 -DNDEBUG /MT " CACHE STRING "Optimization flags for the C   compiler in Release mode" FORCE )
 #    SET( PINK_LINKING_FLAGS "/DBOOST_PYTHON_STATIC_LIB /STACK:10000000 /machine:x64 /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libc.lib, /NODEFAULTLIB:msvcrt.lib, /NODEFAULTLIB:libcd.lib, /NODEFAULTLIB:libcmtd.lib, /NODEFAULTLIB:msvcrtd.lib /NODEFAULTLIB:msvcprt.lib /VERBOSE:LIB " )
     if (64BIT)
-	SET( PINK_LINKING_FLAGS "/STACK:10000000 /machine:x64 /VERBOSE:LIB /NODEFAULTLIB:libcmt.lib" )
+	SET( PINK_LINKING_FLAGS " /STACK:10000000 /machine:x64 /VERBOSE:LIB /NODEFAULTLIB:libcmt.lib " )
     else (64BIT)
-	SET( PINK_LINKING_FLAGS "/STACK:10000000 /machine:x86 /VERBOSE:LIB /NODEFAULTLIB:libcmt.lib" )
+	SET( PINK_LINKING_FLAGS " /STACK:10000000 /machine:x86 /VERBOSE:LIB /NODEFAULTLIB:libcmt.lib " )
     endif (64BIt)
     SET( CMAKE_LINKER_FLAGS ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
     SET( CMAKE_LINKER_FLAGS_RELEASE ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
