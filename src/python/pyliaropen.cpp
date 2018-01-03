@@ -549,19 +549,19 @@ namespace pink {
                 PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
                 
                 //create the NonLocalFilter object
-                NonLocalFilter<PixelType> NL1(input_buffer, patch_size, search_size, alpha, nx, ny,1);
+                NonLocalFilter<PixelType> NonLocal1(input_buffer, patch_size, search_size, alpha, nx, ny,1);
                 
                 // Execute
-                NL1.Execute2D();
+                NonLocal1.Execute2D();
                 
             } else { // 3D image
                 PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
                 
                 // create the NonLocalFilter object
-                NonLocalFilter<PixelType> NL1(input_buffer, patch_size, search_size, alpha, nx, ny,nz);
+                NonLocalFilter<PixelType> NonLocal1(input_buffer, patch_size, search_size, alpha, nx, ny,nz);
                 
                 // Execute
-                NL1.Execute3D();
+                NonLocal1.Execute3D();
             }
         } else {
             pink_error("Pixel type not yet supported\n");

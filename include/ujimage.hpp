@@ -1826,10 +1826,10 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   template <class pixel_type >
   PyObject* ujoi<pixel_type >::get_pixels_python()
   {
-    return PyBuffer_FromMemory(
-      reinterpret_cast<void*>(this->pixels.get()),
-      this->size->prod()*sizeof(pixel_type)
-      );    
+      //return PyBuffer_FromMemory(
+      return PyMemoryView_FromMemory(
+      reinterpret_cast<char*>(this->pixels.get()),
+      this->size->prod()*sizeof(pixel_type), PyBUF_READ);    
 //    return pixels.get();
   } /* ujoi::get_pixels */
 # endif /* PINK_HAVE_PYTHON */

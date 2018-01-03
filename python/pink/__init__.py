@@ -12,11 +12,11 @@
 # NOTE: the order of the imports is important.
 # Modules which the function calls must be included before the function's module
 
-from exceptions import python_component_missing
-from isize import iSize
-import cpp # the functions imported directly from c/c++
+#from exceptions import python_component_missing
+#from isize import iSize
+#import cpp # the functions imported directly from c/c++
 
-from windowing import windowing
+#from windowing import windowing
 
 #### end of code concerning Tkinter dialogs
 
