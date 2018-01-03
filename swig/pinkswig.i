@@ -79,7 +79,7 @@ typedef struct xvimage {
       fprintf(stderr,"%s: malloc failed for name\n", "xvimage");
       return;
     }
-    sprintf((char *)($self->name), name);
+    sprintf((char *)($self->name), "%s", name);
   }
   const char* name()
   {
@@ -104,9 +104,9 @@ typedef struct xvimage {
     default: sprintf(type,"other");
     }
     if (depth($self)==1)
-      sprintf(tmp,"xvimage(%d,%d) [type = %s]", rowsize($self),colsize($self), type);
+        snprintf(tmp,1023,"xvimage(%d,%d) [type = %s]", rowsize($self),colsize($self), type);
     else 
-      sprintf(tmp,"xvimage(%d,%d,%d) [type = %s]", rowsize($self),colsize($self),depth($self), type);
+        snprintf(tmp,1023, "xvimage(%d,%d,%d) [type = %s]", rowsize($self),colsize($self),depth($self), type);
     return tmp;
   }
 
@@ -182,16 +182,20 @@ typedef struct xvimage {
 
 }} xvimage;
 
+/*
+  HT 2018-01-03
+  necessary for the print function in python 2.x
+ */
+%pythonbegin %{
+from __future__ import print_function
+%}
+
 %pythoncode{
 import ctypes
 
 def fromnumpy(mat):
     if mat.flags['C_CONTIGUOUS'] == False:
-      print "fromnumpy: Memory is not C contiguous."
-      print "fromnumpy: Please use ""numpy.ascontiguousarray""."
-      print "fromnumpy: and do not forget to keep a reference"
-      print "fromnumpy: to the Numpy array thus created."
-      raise NameError("Memory not C-contiguous")
+      raise NameError("Memory not C-contiguous, Please use numpy.ascontiguousarray")
     if len(mat.shape) == 2:
       row, col = mat.shape
       depth = 1
@@ -203,7 +207,6 @@ def fromnumpy(mat):
       im = __createimage__(row, col, depth, translate[type], mat.ctypes.data)
       return im
     else:
-      print "Type:", type, "is not supported"
       raise NameError("Type not supported")
 
 
