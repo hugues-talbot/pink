@@ -14,65 +14,65 @@
 
 #from exceptions import python_component_missing
 #from isize import iSize
-#import cpp # the functions imported directly from c/c++
+import pink.cpp # the functions imported directly from c/c++
 
 #from windowing import windowing
 
 #### end of code concerning Tkinter dialogs
 
-try:
-    from pil_photoimage import to_photoimage, to_rgb_photoimage
-except:
-    print("warning: cannot import to_photoimage or to_rgb_photoimage")
+#try:
+#    from pil_photoimage import to_photoimage, to_rgb_photoimage
+#except:
+#    print("warning: cannot import to_photoimage or to_rgb_photoimage")
+
+#try:
+#    from view3d import view3d
+#except:
+#    print("warning: cannot import view3d")
+
+#try:
+#    from render import render
+#except:
+#    print("warning: cannot import render")
+
+#try:
+#    from seuilmesh import seuilmesh
+#except:
+#    print("warning: cannot import seuilmesh")
 
 try:
-    from view3d import view3d
-except:
-    print("warning: cannot import view3d")
-
-try:
-    from render import render
-except:
-    print("warning: cannot import render")
-
-try:
-    from seuilmesh import seuilmesh
-except:
-    print("warning: cannot import seuilmesh")
-
-try:
-    from imview import *
+    from pink.imview import *
 except:
     print("warning: cannot import imview")
 
-try:
-    from manipulate import manipulate
-except:
+#try:
+#    from manipulate import manipulate
+#except:
     print("warning: cannot import manipulate")
 
-try:
-    from histo import *
-except:
-    print("warning: cannot import histo")
+#try:
+#    from histo import *
+#except:
+#    print("warning: cannot import histo")
 
 try:
-    from numpy_conv import *
+    from pink.numpy_conv import *
 except:
     print("warning: cannot import numpy_conv")
 
 
 try:
-    from matplotlib_helper import *
+    from pink.matplotlib_helper import *
 except:
     print("warning: cannot import matplotlib")
 
 try:
-    from watershed import MeyerWatershed
+    from pink.watershed import MeyerWatershed
 except:
     print("Warning: cannot import Watershed")
 
 try:
-    from readimage import readimage
+    from pink.readimage import readimage
 except:
     print("Warning: no readimage")
 

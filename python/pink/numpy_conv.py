@@ -12,7 +12,8 @@
 # histograms 
 
 import sys
-from pink import cpp as pink
+import pink
+import pink.cpp
 
 try:
     import numpy as np
@@ -30,7 +31,7 @@ pink2npdtype  = {
                 'double' :np.dtype('f8')
 	}
 
-np2pinkdtype  = dict((v,k) for k, v in pink2npdtype.iteritems())
+np2pinkdtype  = dict((v,k) for k, v in pink2npdtype.items())
 
 def pink2numpy(image):
     """
@@ -47,6 +48,9 @@ def pink2numpy(image):
         sys.stderr.write("Number of dimensions not supported, data was not reshaped\n")
     return nparray
 
+# alias
+nparray=pink2numpy
+
 def numpy2pink(array):
     """
     Makes an image from a numpy array
@@ -54,19 +58,19 @@ def numpy2pink(array):
     ## Not elegant
     if (np.size(array.shape) == 2):
         Image= {
-        'uint8_t':pink.char_image([array.shape[1],array.shape[0]]), 
-        'uint16_t':pink.short_image([array.shape[1],array.shape[0]]), 
-        'int32_t':pink.int_image([array.shape[1],array.shape[0]]), 
-        'float'  :pink.float_image([array.shape[1],array.shape[0]]), 
-        'double' :pink.double_image([array.shape[1],array.shape[0]]), 
+        'uint8_t':pink.cpp.char_image([array.shape[1],array.shape[0]]), 
+        'uint16_t':pink.cpp.short_image([array.shape[1],array.shape[0]]), 
+        'int32_t':pink.cpp.int_image([array.shape[1],array.shape[0]]), 
+        'float'  :pink.cpp.float_image([array.shape[1],array.shape[0]]), 
+        'double' :pink.cpp.double_image([array.shape[1],array.shape[0]]), 
         }
     elif (np.size(array.shape) == 3):
         Image= {
-        'uint8_t':pink.char_image([array.shape[2],array.shape[1],array.shape[0]]), 
-        'uint16_t':pink.short_image([array.shape[2],array.shape[1],array.shape[0]]), 
-        'int32_t':pink.int_image([array.shape[2],array.shape[1],array.shape[0]]), 
-        'float'  :pink.float_image([array.shape[2],array.shape[1],array.shape[0]]), 
-        'double' :pink.double_image([array.shape[2],array.shape[1],array.shape[0]]), 
+        'uint8_t':pink.cpp.char_image([array.shape[2],array.shape[1],array.shape[0]]), 
+        'uint16_t':pink.cpp.short_image([array.shape[2],array.shape[1],array.shape[0]]), 
+        'int32_t':pink.cpp.int_image([array.shape[2],array.shape[1],array.shape[0]]), 
+        'float'  :pink.cpp.float_image([array.shape[2],array.shape[1],array.shape[0]]), 
+        'double' :pink.cpp.double_image([array.shape[2],array.shape[1],array.shape[0]]), 
         }
     else:
         sys.stder.write("Number of dimensions not supported\n")
@@ -76,5 +80,8 @@ def numpy2pink(array):
     # copy data
     myimg.set_pixels(array.ctypes.data,array.nbytes)
     return myimg 
-    
+
+#alias
+pinkimg=numpy2pink
+
 # LuM end of file
