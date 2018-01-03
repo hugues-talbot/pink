@@ -52,7 +52,7 @@
 #include <mccodimage.h>
 #include <mcimage.h>
 
-#include "pink.h"
+//#include "pink.h"
 #include "liarp.h"
 #include "fseries.hpp"
 #include "liar_fseries.h"

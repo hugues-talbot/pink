@@ -18,7 +18,7 @@ if (NOT CONFIGURED_ONCE)
 endif()
 
 if (CMAKE_HOST_UNIX)
-    add_definitions( -DUNIXIO -DPC -fPIC -std=c99 )
+    add_definitions( -DUNIXIO -DPC -fPIC )
 endif (CMAKE_HOST_UNIX)
 
 if (THIS_IS_MSVC)
@@ -95,6 +95,7 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/lib/llambdakern.c
 	     ../src/lib/lfiltreordre.c
 	     ../src/lib/lfiltrestopo.c
+	     ../src/lib/liar_fseries.cxx
 #	     ../src/lib/liar_line.cpp
 	     )
 

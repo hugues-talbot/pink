@@ -397,7 +397,8 @@ int glineminmax3d(Type *f, int nx, int ny, int nz, int k,
                 if (usemin) {
                     genfmin(f+offset, g, h, line+start, end-start+1,
                             (k-period+1)/period);
-                } else {
+                }
+                else {
                     genfmax(f+offset, g, h, line+start, end-start+1,
                             (k-period+1)/period);
                 }

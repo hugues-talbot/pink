@@ -289,13 +289,14 @@ int glineminmax3d(Type *f, int nx, int ny, int nz, int k,
 
 	    /* perform the actual min/max operation */
 	    /* but only if this value of end is acceptable */
-	    if (good_previous)
-            if (usemin) {
-                genfmin(f+offset, g, h, line+start, end-start+1,
-                        (k-period+1)/period);
-            } else {
-               genfmax(f+offset, g, h, line+start, end-start+1,
-                        (k-period+1)/period);
+	    if (good_previous) {
+                if (usemin) {
+                    genfmin(f+offset, g, h, line+start, end-start+1,
+                            (k-period+1)/period);
+                } else {
+                    genfmax(f+offset, g, h, line+start, end-start+1,
+                            (k-period+1)/period);
+                }
             }
 
 

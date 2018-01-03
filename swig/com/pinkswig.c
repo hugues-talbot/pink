@@ -53,6 +53,8 @@
 #include <lga2khalimsky.h>
 #include <llabelextrema.h>
 
+#include <liar_fseries.h>
+
 /* ==================================== */
 // Helper function to use with numpy (dataInt should be uintptr_t)
 xvimage *  createimage(index_t x, index_t y, index_t z, int32_t type, long int dataInt) {
@@ -129,6 +131,24 @@ struct xvimage* checkAllocCopy(struct xvimage* imagein, char *name)
     free(image);
     return NULL;
   }
+  return image;
+}
+
+/* HT: no copy */
+struct xvimage* checkAlloc(struct xvimage* imagein, char *name)
+{
+  if (imagein == NULL) {
+    fprintf(stderr, "%s:  NULL image - can not process\n", name);
+    return NULL;
+  }
+  
+  struct xvimage * image=allocimage(NULL, rowsize(imagein), colsize(imagein), depth(imagein), datatype(imagein));
+
+  if (image == NULL)  {
+      fprintf(stderr, "%s:  malloc failed\n", name); /* idiomatic but pretty useless */
+    return NULL;
+  }
+
   return image;
 }
 
@@ -2647,5 +2667,54 @@ struct xvimage* absimg(struct xvimage *imagefloat)
   return image;
 }
 
+/* F-series, flat and fast */
+typedef int (*fmorpho2D)(struct xvimage *, int32_t, int32_t, struct xvimage *);
+typedef int (*fmorpho3D)(struct xvimage *, int32_t, int32_t, int32_t, struct xvimage *);
 
+/* kinda generic call */
+struct xvimage* fseries_rect(const char * name, fmorpho2D f2d, const char *f2d_name, fmorpho3D f3d, const char *f3d_name,
+                             struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez=1)
+{
+  struct xvimage * result=checkAlloc(image, name);
+  if (result == NULL)
+    return NULL;
+
+  if (depth(image) == 1) {
+      if (! f2d(image, sizex, sizey, result))
+      {
+          fprintf(stderr, "%s: function %s failed\n", name, f2d_name);
+          freeimage(result);
+          return(NULL);
+      }
+  } else {
+      if (! f3d(result, elem, sizex, sizey, sizez, result))
+      {
+          fprintf(stderr, "%s: function %s failed\n", name, f3d_name);
+          freeimage(result);
+          return(NULL);
+      }
+   }
+  return result;
+}
+
+/* instantiation */
+struct xvimage *fdilate_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez=1)
+{
+    return(fseries_rect("fdilate_rect", imfdilat_rect, "imfdilat_rect", imfdilat3D_rect, "imfdilat3D_rect", image, sizex, sizey, sizez));
+}
+
+struct xvimage *ferode_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez=1)
+{
+    return(fseries_rect("ferode_rect", imferode_rect, "imferode_rect", imferode3D_rect, "imferode3D_rect", image, sizex, sizey, sizez));
+}
+
+struct xvimage *fclose_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez=1)
+{
+    return(fseries_rect("fclose_rect", imfclose_rect, "imfclose_rect", imfclose3D_rect, "imfclose3D_rect", image, sizex, sizey, sizez));
+}
+
+struct xvimage *fopen_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez=1)
+{
+    return(fseries_rect("fopen_rect", imfopen_rect, "imfopen_rect", imfopen3D_rect, "imferode3D_rect", image, sizex, sizey, sizez));
+}
 

@@ -31,7 +31,7 @@ Functions in this file implement the low-level min-max along a line segment arbi
  */
 
 #ifndef GLINEMM_GENERIC_HPP
-#define GLINENN_GENERIC_HPP
+#define GLINEMM_GENERIC_HPP
 
 #include <math.h>
 #include <stdio.h>

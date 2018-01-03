@@ -13,7 +13,9 @@
 #include <limits>
 
 // Type Traits are only supported in C++0x
-#include <boost/type_traits.hpp>
+// #include <boost/type_traits.hpp>
+// HT: standard enough
+#include <type_traits>
 
 template <typename Type>
 void gline( Type *IN,      /**< [in] input image */
@@ -246,7 +248,7 @@ void gsrank(Type *IN,	/**< [in] pointer to input image */
     Type   offset;
     PIX_TYPE *TrueIN, *TrueOUT; // result of conversion to 8-bit, if needed
     
-    if(!boost::is_same<Type,PIX_TYPE>::value) {
+    if(!std::is_same<Type,PIX_TYPE>::value) {
         std::cerr << "Conversion to 8-bit" << std::endl;
         to_8bit(IN, &TrueIN, nx, ny, &slope, &offset); // this allocates TrueIN
         TrueOUT = (PIX_TYPE *) malloc(nx*ny*sizeof(PIX_TYPE));
