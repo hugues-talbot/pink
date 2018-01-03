@@ -35,7 +35,7 @@ np2pinkdtype  = dict((v,k) for k, v in pink2npdtype.items())
 
 def pink2numpy(image):
     """
-    Makes a numpy array from an image. Shape is retained!
+    Makes a numpy array from a pink image. Shape is retained!
     """
     nparray=np.frombuffer(image.get_pixels()[:],pink2npdtype[image.imtype()])
     if (len(image.size) == 3):
@@ -49,11 +49,11 @@ def pink2numpy(image):
     return nparray
 
 # alias
-nparray=pink2numpy
+array=pink2numpy
 
 def numpy2pink(array):
     """
-    Makes an image from a numpy array
+    Makes a pink image from a numpy array
     """
     ## Not elegant
     if (np.size(array.shape) == 2):
@@ -82,6 +82,6 @@ def numpy2pink(array):
     return myimg 
 
 #alias
-pinkimg=numpy2pink
+image=numpy2pink
 
 # LuM end of file
