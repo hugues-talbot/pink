@@ -269,7 +269,7 @@ void gsrank(Type *IN,	/**< [in] pointer to input image */
 
     close_running_rank();
 
-    if (!boost::is_same<Type,PIX_TYPE>::value) {
+    if (!std::is_same<Type,PIX_TYPE>::value) {
         std::cerr << "Conversion from 8-bit" << std::endl;
         from_8bit(TrueOUT, OUT, nx, ny, slope, offset);
         free(TrueOUT);

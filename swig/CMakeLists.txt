@@ -95,6 +95,11 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/lib/llambdakern.c
 	     ../src/lib/lfiltreordre.c
 	     ../src/lib/lfiltrestopo.c
+	     ../src/liar/liarwrap.c
+	     ../src/liar/bresen.c
+	     ../src/liar/bresen3d.c
+	     ../src/liar/periodic.c
+	     ../src/liar/period3d.c
 	     ../src/lib/liar_fseries.cxx
 #	     ../src/lib/liar_line.cpp
 	     )

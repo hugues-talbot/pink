@@ -11,6 +11,7 @@
 #include <cmath>
 #include <limits>  // for type min(), max()
 #include "liarp.h"
+#include "pink_messages.hpp"
 
 /** \brief opening by union of lines
  * 

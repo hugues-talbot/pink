@@ -1305,5 +1305,31 @@ struct xvimage* interpolateX2(struct xvimage *imagefloat);
          "byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
 %newobject average;
 struct xvimage* average(struct xvimage *imagein1, struct xvimage *imagein2, double alpha);
-    
 
+%feature("docstring",
+         "Fast dilation by a rectangular (2D) or parallelipedic (3D) structuring element\n"
+         "Type supported:\n"
+         "byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+%newobject fdilate_rect;
+struct xvimage* fdilate_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez);
+    
+%feature("docstring",
+         "Fast erosion by a rectangular (2D) or parallelipedic (3D) structuring element\n"
+         "Type supported:\n"
+         "byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+%newobject ferode_rect;
+struct xvimage* ferode_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez);
+
+%feature("docstring",
+         "Fast closing by a rectangular (2D) or parallelipedic (3D) structuring element\n"
+         "Type supported:\n"
+         "byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+%newobject fclose_rect;
+struct xvimage* fclose_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez);
+
+%feature("docstring",
+         "Fast opening by a rectangular (2D) or parallelipedic (3D) structuring element\n"
+         "Type supported:\n"
+         "byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
+%newobject fopen_rect;
+struct xvimage* fopen_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez);

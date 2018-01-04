@@ -12,7 +12,9 @@ static "C" {
  void copybyte(struct xvimage*result, struct xvimage * image);
  void copyinvertbyte(struct xvimage*result, struct xvimage * image);
  int EqualSize(struct xvimage * image1, struct xvimage *image2);
- struct xvimage* checkAllocCopy(struct xvimage* imagein, char *name);
+ struct xvimage* checkAllocCopy(struct xvimage* imagein, const char *name);
+ struct xvimage* checkAlloc(struct xvimage* imagein, const char *name);
+
  
  struct xvimage* createimage(index_t x, index_t y, index_t z, int32_t type, long int data);
 
@@ -104,7 +106,12 @@ static "C" {
  struct xvimage* tuf(struct xvimage *imagebyte, int32_t connexmin, int32_t radius);
  struct xvimage* tlf(struct xvimage *imagebyte, int32_t connexmin, int32_t radius);
  struct xvimage* crestrestoration(struct xvimage *imagebyte, int32_t niter, int32_t connex, struct xvimage* imcond, struct xvimage** condout);
- 
+
+ struct xvimage* fdilate_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez);
+ struct xvimage* ferode_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez);
+ struct xvimage* fclose_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez);
+ struct xvimage* fopen_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez);
+
 #ifdef __cplusplus
 }
 #endif

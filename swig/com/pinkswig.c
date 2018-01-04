@@ -114,7 +114,7 @@ void copyinvertbyte(struct xvimage*result, struct xvimage * image)
     *r = NDG_MAX - *pt;
 } // copyinverse
 
-struct xvimage* checkAllocCopy(struct xvimage* imagein, char *name)
+struct xvimage* checkAllocCopy(struct xvimage* imagein, const char *name)
 {
   if (imagein == NULL) {
     fprintf(stderr, "%s:  NULL image - can not process\n", name);
@@ -135,7 +135,7 @@ struct xvimage* checkAllocCopy(struct xvimage* imagein, char *name)
 }
 
 /* HT: no copy */
-struct xvimage* checkAlloc(struct xvimage* imagein, char *name)
+struct xvimage* checkAlloc(struct xvimage* imagein, const char *name)
 {
   if (imagein == NULL) {
     fprintf(stderr, "%s:  NULL image - can not process\n", name);
@@ -2668,12 +2668,12 @@ struct xvimage* absimg(struct xvimage *imagefloat)
 }
 
 /* F-series, flat and fast */
-typedef int (*fmorpho2D)(struct xvimage *, int32_t, int32_t, struct xvimage *);
-typedef int (*fmorpho3D)(struct xvimage *, int32_t, int32_t, int32_t, struct xvimage *);
+typedef int (*fmorpho2D)(const struct xvimage *, int32_t, int32_t, struct xvimage *);
+typedef int (*fmorpho3D)(const struct xvimage *, int32_t, int32_t, int32_t, struct xvimage *);
 
 /* kinda generic call */
 struct xvimage* fseries_rect(const char * name, fmorpho2D f2d, const char *f2d_name, fmorpho3D f3d, const char *f3d_name,
-                             struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez=1)
+                             struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez)
 {
   struct xvimage * result=checkAlloc(image, name);
   if (result == NULL)
@@ -2687,7 +2687,7 @@ struct xvimage* fseries_rect(const char * name, fmorpho2D f2d, const char *f2d_n
           return(NULL);
       }
   } else {
-      if (! f3d(result, elem, sizex, sizey, sizez, result))
+      if (! f3d(result, sizex, sizey, sizez, result))
       {
           fprintf(stderr, "%s: function %s failed\n", name, f3d_name);
           freeimage(result);
@@ -2698,22 +2698,22 @@ struct xvimage* fseries_rect(const char * name, fmorpho2D f2d, const char *f2d_n
 }
 
 /* instantiation */
-struct xvimage *fdilate_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez=1)
+struct xvimage *fdilate_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez)
 {
     return(fseries_rect("fdilate_rect", imfdilat_rect, "imfdilat_rect", imfdilat3D_rect, "imfdilat3D_rect", image, sizex, sizey, sizez));
 }
 
-struct xvimage *ferode_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez=1)
+struct xvimage *ferode_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez)
 {
     return(fseries_rect("ferode_rect", imferode_rect, "imferode_rect", imferode3D_rect, "imferode3D_rect", image, sizex, sizey, sizez));
 }
 
-struct xvimage *fclose_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez=1)
+struct xvimage *fclose_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez)
 {
     return(fseries_rect("fclose_rect", imfclose_rect, "imfclose_rect", imfclose3D_rect, "imfclose3D_rect", image, sizex, sizey, sizez));
 }
 
-struct xvimage *fopen_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez=1)
+struct xvimage *fopen_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez)
 {
     return(fseries_rect("fopen_rect", imfopen_rect, "imfopen_rect", imfopen3D_rect, "imferode3D_rect", image, sizex, sizey, sizez));
 }
