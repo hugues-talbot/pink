@@ -57,7 +57,7 @@ for instance openings by unions of line and closings by intersection of lines.
 #include <mccodimage.h>
 #include <mcimage.h>
 
-#include "pink.h"
+#include "pink_messages.hpp"
 #include "liarp.h"
 #include "liar_line.h"
 

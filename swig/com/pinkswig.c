@@ -54,6 +54,7 @@
 #include <llabelextrema.h>
 
 #include <liar_fseries.h>
+#include <liar_line.h>
 
 /* ==================================== */
 // Helper function to use with numpy (dataInt should be uintptr_t)
@@ -2675,26 +2676,27 @@ typedef int (*fmorpho3D)(const struct xvimage *, int32_t, int32_t, int32_t, stru
 struct xvimage* fseries_rect(const char * name, fmorpho2D f2d, const char *f2d_name, fmorpho3D f3d, const char *f3d_name,
                              struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez)
 {
-  struct xvimage * result=checkAlloc(image, name);
-  if (result == NULL)
-    return NULL;
+    int retval = 0;
+    struct xvimage * result=checkAlloc(image, name);
+    if (result == NULL)
+        return NULL;
 
-  if (depth(image) == 1) {
-      if (! f2d(image, sizex, sizey, result))
-      {
-          fprintf(stderr, "%s: function %s failed\n", name, f2d_name);
-          freeimage(result);
-          return(NULL);
-      }
-  } else {
-      if (! f3d(result, sizex, sizey, sizez, result))
-      {
-          fprintf(stderr, "%s: function %s failed\n", name, f3d_name);
-          freeimage(result);
-          return(NULL);
-      }
-   }
-  return result;
+    if (depth(image) == 1) {
+        if ((retval = f2d(image, sizex, sizey, result)) != 0 )
+        {
+            fprintf(stderr, "%s: function %s failed with code %d\n", name, f2d_name, retval);
+            freeimage(result);
+            return(NULL);
+        }
+    } else {
+        if ((retval = f3d(result, sizex, sizey, sizez, result)) != 0)
+        {
+            fprintf(stderr, "%s: function %s failed with code %d\n", name, f3d_name, retval);
+            freeimage(result);
+            return(NULL);
+        }
+    }
+    return result;
 }
 
 /* instantiation */
@@ -2718,3 +2720,38 @@ struct xvimage *fopen_rect(struct xvimage *image, int32_t sizex, int32_t sizey, 
     return(fseries_rect("fopen_rect", imfopen_rect, "imfopen_rect", imfopen3D_rect, "imferode3D_rect", image, sizex, sizey, sizez));
 }
 
+/* line segments as structuring elements */
+
+struct xvimage *openbun(const struct xvimage *input, int radius, int n, double angle, double range, double rank)
+{
+    int retval = 0;
+    static char *name="openbun";
+    
+    struct xvimage * result=checkAlloc(input, name);
+    if (result == NULL)
+        return NULL;
+    
+    if ((retval = imopenbun(input, radius, n, angle, range, rank, result)) != 0) {
+        fprintf(stderr, "%s: function imopenbun failed with code %d\n",name, retval);
+        freeimage(result);
+        return(NULL);
+    }
+    return (result);
+}
+
+struct xvimage *closebin(const struct xvimage *input, int radius, int n, double angle, double range, double rank)
+{
+    int retval = 0;
+    static char *name="closebin";
+
+    struct xvimage * result=checkAlloc(input, name);
+    if (result == NULL)
+        return NULL;
+    
+    if ((retval = imclosebin(input, radius, n, angle, range, rank, result)) != 0) {
+        fprintf(stderr, "%s: function imclosebin failed with code %d\n",name, retval);
+        freeimage(result);
+        return(NULL);
+    }
+    return (result);
+}

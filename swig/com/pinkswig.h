@@ -112,6 +112,9 @@ static "C" {
  struct xvimage* fclose_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez);
  struct xvimage* fopen_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez);
 
+ struct xvimage *openbun(const struct xvimage *input, int radius, int n, double angle, double range, double rank);
+ struct xvimage *closebin(const struct xvimage *input, int radius, int n, double angle, double range, double rank);
+
 #ifdef __cplusplus
 }
 #endif

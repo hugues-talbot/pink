@@ -101,7 +101,7 @@ ADD_LIBRARY( pinklib STATIC
 	     ../src/liar/periodic.c
 	     ../src/liar/period3d.c
 	     ../src/lib/liar_fseries.cxx
-#	     ../src/lib/liar_line.cpp
+	     ../src/lib/liar_line.cxx
 	     )
 
 SET_SOURCE_FILES_PROPERTIES(pinkswig.i PROPERTIES C ON)

@@ -1333,3 +1333,40 @@ struct xvimage* fclose_rect(struct xvimage *image, int32_t sizex, int32_t sizey,
          "byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n");
 %newobject fopen_rect;
 struct xvimage* fopen_rect(struct xvimage *image, int32_t sizex, int32_t sizey, int32_t sizez);
+
+
+%feature("docstring",
+         "Opening by a family of segment\n"
+         "This type opening is sometime called a radial opening. It uses a family of segments\n"
+         "as structuring elements. The openings are combined by supremum\n"
+         "This function can restrict its operations over a cone, and can allow a proportion\n"
+         "of noise, i.e. a percentage of pixels that are not taken into account when computing\n"
+         "the openings. Useful range is between 0-0.15 (up to 15% noise).\n"
+         "Arguments: \n"
+	 "	    int radius,     length of all segments\n" 
+         "          int n,          number of segments to consider (typically 4*radius)\n"
+         "          double angle,   cone starting angle in degrees (0 by default)\n"
+         "          double range,   cone span in degrees (180 by default)\n"
+         "          double rank,    noise robustness feature: fraction of allowed noise (0 by default)\n"
+         "Type supported:\n"
+         "byte 2d\n");
+%newobject openbun;
+struct xvimage *openbun(const struct xvimage *input, int radius, int n, double angle=0.0, double range=180.0, double rank=0.0);
+
+%feature("docstring",
+         "Closing by a family of segment\n"
+         "This type closing is sometime called a radial closing. It uses a family of segments\n"
+         "as structuring elements. The closings are combined by infimum\n"
+         "This function can restrict its operations over a cone, and can allow a proportion\n"
+         "of noise, i.e. a percentage of pixels that are not taken into account when computing\n"
+         "the closings. Useful range is between 0-0.15 (up to 15% noise).\n"
+         "Arguments: \n"
+	 "	    int radius,     length of all segments\n" 
+         "          int n,          number of segments to consider (typically 4*radius)\n"
+         "          double angle,   cone starting angle in degrees (0 by default)\n"
+         "          double range,   cone span in degrees (180 by default)\n"
+         "          double rank,    noise robustness feature: fraction of allowed noise (0 by default)\n"
+         "Type supported:\n"
+         "byte 2d\n");
+%newobject closebin;
+struct xvimage *closebin(const struct xvimage *input, int radius, int n, double angle=0.0, double range=180.0, double rank=0.0);
