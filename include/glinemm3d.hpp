@@ -205,11 +205,11 @@ int glineminmax3d(Type *f, int nx, int ny, int nz, int k,
 	    /* perform the actual min/max operation */
 	    /* but only if this value of end is acceptable */
 	    if (good_previous){
-            if (usemin) {
-                genfmin(f+offset, g, h, line+start, end-start+1,(k-period+1)/period);
-            } else {
-               genfmax(f+offset, g, h, line+start, end-start+1,(k-period+1)/period);
-            }
+                if (usemin) {
+                    genfmin(f+offset, g, h, line+start, end-start+1,(k-period+1)/period);
+                } else {
+                    genfmax(f+offset, g, h, line+start, end-start+1,(k-period+1)/period);
+                }
 	    }
 	    /* set the start (and end) to the next point */
 	    start = ++end;
@@ -389,15 +389,15 @@ int glineminmax3d(Type *f, int nx, int ny, int nz, int k,
 
 	    /* perform the actual op */
 	    /* but only if this value of end is acceptable */
-	    if (good_previous)
-            if (usemin) {
-                genfmin(f+offset, g, h, line+start, end-start+1,
+	    if (good_previous) {
+                if (usemin) {
+                    genfmin(f+offset, g, h, line+start, end-start+1,
                             (k-period+1)/period);
-            } else {
-                genfmax(f+offset, g, h, line+start, end-start+1,
+                } else {
+                    genfmax(f+offset, g, h, line+start, end-start+1,
                             (k-period+1)/period);
+                }
             }
-
 
 	    /* update start and end positions */
 	    start = ++end;
