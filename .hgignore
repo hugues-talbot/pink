@@ -1,17 +1,2 @@
-# use glob syntax.
 syntax: glob
-
-*.elc
-re:.*~$
-re:.*\.orig
-re:include/python_doc.h
-re:/_.*
-*.pyc
-*~
-*.aux
-*.log
-*.out
-*.lot
-*.lof
-*.err
-usermanual/dynamic/*.pdf
+swig/build/**
