@@ -17,9 +17,7 @@ reads an image in the PNM format
 """
 
 
-    
-
-
+import pink    
 
 def readimage( path ):
     """
@@ -28,7 +26,7 @@ def readimage( path ):
     """
     try:
         image=pink.cpp.readimage(path)
-        return pink.pink2numpy(image)
+        return pink.pink2numpy(image) ## ?? HT 2018/01/04
 
     except:
         print("Read error (%s)" % path)
