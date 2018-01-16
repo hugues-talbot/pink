@@ -22,7 +22,7 @@ cmake_minimum_required (VERSION 2.6)
 project(pink-image)
 INCLUDE (UJ_CheckIncludeFile.cmake)
 INCLUDE (UJ_CheckIncludeFileCXX.cmake)
-#INCLUDE (FindCFITSIO.cmake)
+INCLUDE (FindCFITSIO.cmake)
 
 set( POTENTIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library /usr/X11/include)
 set( INCLUDES include src/python /usr/include /opt/local/include)
